@@ -1,0 +1,265 @@
+{template '_header'}
+<script type="text/javascript" src="../addons/ewei_shopv2/static/js/dist/area/cascade.js"></script>
+<div class="page-heading"> 
+    <span class='pull-right'>
+        {ifp 'shop.depot.add'}
+        	<a class="btn btn-primary btn-sm" href="{php echo webUrl('shop/depot/add')}">添加新仓库</a>
+        {/if}
+        <a class="btn btn-default  btn-sm" href="{php echo webUrl('shop/depot')}">返回列表</a>
+    </span>
+    <h2>{if !empty($item['id'])}编辑{else}添加{/if}仓库 <small>{if !empty($item['id'])}修改【{$item['title']}】{/if}</small></h2>
+</div>
+
+
+<form {ife 'shop.depot' $item}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="{$item['id']}" />
+    <div class="form-group">
+        <label class="col-sm-2 control-label must">仓库名称</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.depot' $item}
+            	<input type="text" id='title' name="title" class="form-control" value="{$item['title']}" data-rule-required='true' style="width:300px;"/>
+            {else}
+            	<div class='form-control-static'>{$item['title']}</div>
+            {/if}
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label must">保税配送ID</label>
+        <div class="col-sm-9 col-xs-12">
+                <input type="text" id='cnbuyershoping_id' name="cnbuyershoping_id" class="form-control" value="{$item['cnbuyershoping_id']}" style="width:300px;"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label must">实名购买</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class='radio-inline'>
+                <input type='radio' name='ifidentity' id="ifidentity" value='1' {if $item['ifidentity']==1}checked{/if} /> 是
+            </label>
+            <label class='radio-inline'>
+                <input type='radio' name='ifidentity' id="ifidentity" value='0' {if $item['ifidentity']==0}checked{/if}/> 否
+            </label>
+            <span class="help-block">部分关区需要购买用户提供真实姓名和身份证</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label ">订单报关</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class='radio-inline'>
+                <input type='radio' name='if_customs' id="if_customs" value='1' {if $item['if_customs']==1}checked{/if} onclick="showDiscount()"/> 是
+            </label>
+            <label class='radio-inline'>
+                <input type='radio' name='if_customs' id="if_customs" value='0' {if $item['if_customs']==0}checked{/if} onclick="hideDiscount()" /> 否
+            </label>
+            <span class="help-block">该选项主要针对跨境商品,若勾选，订单支付成功后会自动向支付机构发起报关请求，<br/></span>
+        </div>
+    </div>
+    
+    <div class="form-group customs">
+        <label class="col-sm-2 control-label must">报关地点</label>
+        <div class="col-sm-9 col-xs-12" >
+           <select class="form-control tpl-category-parent select2"  id="customs_place" name="customs_place" style="width:300px;">
+                <option value="NINGBO" {if $item['customs_place'] == 'NINGBO'}selected="true"{/if}>宁波</option>
+                <option value="HANGZHOU" {if $item['customs_place'] == 'HANGZHOU'}selected="true"{/if}>杭州</option>
+                <option value="GUANGZHOU" {if $item['customs_place'] == 'GUANGZHOU'}selected="true"{/if}>广州</option>
+                <option value="SHANGHAI" {if $item['customs_place'] == 'SHANGHAI'}selected="true"{/if}>上海</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group customs">
+        <label class="col-sm-2 control-label must">海关编码</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.depot' $item}
+                <input type="text" id='customs_code' name="customs_code" class="form-control" value="{$item['customs_code']}" {if $item['if_customs']==1} data-rule-required='true'{else} data-rule-required='true'{/if} style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['customs_code']}</div>
+            {/if}
+
+        </div>
+    </div>
+     <div class="form-group customs">
+        <label class="col-sm-2 control-label must">是否需要申报</label>
+        <div class="col-sm-9 col-xs-12">
+             <label class='radio-inline'>
+                <input type='radio' name='if_declare' id="if_declare" value='1' {if $item['if_declare']==1}checked{/if} onclick="showdeclare()" /> 是
+            </label>
+            <label class='radio-inline'>
+                <input type='radio' name='if_declare' id="if_declare" value='0' {if $item['if_declare']==0}checked{/if} onclick="hidedeclare()" /> 否
+            </label>
+            <span class="help-block">该选项主要针对跨境商品,若勾选，订单支付成功后会自动向海关申报订单请求，<br/></span>
+
+        </div>
+    </div>
+    
+    
+    <div class="form-group declare">
+        <label class="col-sm-2 control-label must">海关备案名</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.depot' $item}
+            	<input type="text" id='customs_name' name="customs_name" class="form-control" value="{$item['customs_name']}" {if $item['if_customs']==1} data-rule-required='true'{else} data-rule-required='true'{/if} style="width:300px;"/>
+            {else}
+            	<div class='form-control-static'>{$item['customs_name']}</div>
+            {/if}
+
+        </div>
+    </div>
+     
+            
+
+    <div class="form-group declare">
+        <label class="col-sm-2 control-label must">测试APIURL</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.test_api' $item}
+                <input type="text" id='test_api' name="test_api" class="form-control" value="{$item['test_api']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['test_api']}</div>
+            {/if}
+        <span class="help-block">需要:http://</span>
+        </div>
+    </div>
+
+    <div class="form-group declare">
+        <label class="col-sm-2 control-label must">APIURL</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.api_url' $item}
+                <input type="text" id='api_url' name="api_url" class="form-control" value="{$item['api_url']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['api_url']}</div>
+            {/if}
+            <span class="help-block">需要:https://</span>
+        </div>
+    </div>
+
+     <div class="form-group declare">
+        <label class="col-sm-2 control-label must">企业名称</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.orgname' $item}
+                <input type="text" id='orgname' name="orgname" class="form-control" value="{$item['orgname']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['orgname']}</div>
+            {/if}
+        </div>
+    </div>
+    <div class="form-group declare">
+        <label class="col-sm-2 control-label must">企业账号</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.rrguser' $item}
+                <input type="text" id='rrguser' name="rrguser" class="form-control" value="{$item['rrguser']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['rrguser']}</div>
+            {/if}
+        </div>
+    </div>
+
+    <div class="form-group declare">
+        <label class="col-sm-2 control-label must">企业key</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.orgkey' $item}
+                <input type="text" id='orgkey' name="orgkey" class="form-control" value="{$item['orgkey']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['orgkey']}</div>
+            {/if}
+        </div>
+    </div>
+
+     <div class="form-group declare">
+        <label class="col-sm-2 control-label must">店铺代码</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.ordershop' $item}
+                <input type="text" id='ordershop' name="ordershop" class="form-control" value="{$item['ordershop']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['ordershop']}</div>
+            {/if}
+        </div>
+    </div>
+
+     <div class="form-group declare">
+        <label class="col-sm-2 control-label must">购物网站代码</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.orderfrom' $item}
+                <input type="text" id='orderfrom' name="orderfrom" class="form-control" value="{$item['orderfrom']}" style="width:300px;"/>
+            {else}
+                <div class='form-control-static'>{$item['orderfrom']}</div>
+            {/if}
+        </div>
+    </div>
+        <div class="form-group">
+        <label class="col-sm-2 control-label ">是否启用</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class='radio-inline'>
+                <input type='radio' name='enabled' id="enabled" value='1' {if $item['enabled']==1}checked{/if} /> 是
+            </label>
+            <label class='radio-inline'>
+                <input type='radio' name='enabled' id="enabled" value='0' {if $item['enabled']==0}checked{/if} /> 否
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label "></label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.depot' $item}
+            	<input type="submit" value="提交" class="btn btn-primary"  />
+            {/if}
+            <input type="button" name="back" onclick='history.back()' {ifp 'shop.depot.add|shop.depot.edit'}style='margin-left:10px;'{/if} value="返回列表" class="btn btn-default" />
+        </div>
+    </div>
+
+
+</div>
+</div>
+
+</form>
+</div>
+
+<script language='javascript'>
+    function formcheck() {
+
+        if ($("#title").isEmpty()) {
+            Tip.focus("title", "请填写仓库名称!", "top");
+            return false;
+        }
+		
+		var if_customs=$('input:radio[name="if_customs"]:checked').val();	
+		if(if_customs == 1){
+			if ($("#customs_code").isEmpty()) {
+				Tip.focus("customs_code", "请填写海关编码!", "top");
+				return false;
+			}	
+		}
+
+        return true;
+    }
+	
+	$(function(){
+		var if_customs=$('input:radio[name="if_customs"]:checked').val();	
+		if(if_customs == 1){
+			showDiscount();
+		}else{
+			hideDiscount();
+		}	   
+	})
+    $(function(){
+        var if_customs=$('input:radio[name="if_declare"]:checked').val();   
+        if(if_customs == 1){
+            showdeclare();
+        }else{
+            hidedeclare();
+        }      
+    })
+	function showdeclare(){
+        $('.declare').show();
+    }
+    function hidedeclare(){
+        $('.declare').hide();
+    }
+	function showDiscount(){
+		$('.customs').show();
+	}
+	
+	function hideDiscount(){
+		$('.customs').hide();
+	}
+</script>
+
+{template '_footer'}

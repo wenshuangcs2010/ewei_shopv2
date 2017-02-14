@@ -1,0 +1,492 @@
+{php $no_left=true}
+{template '_header'}
+<style>
+    .form-horizontal .form-group{margin-right: -50px;}
+    .col-sm-9{padding-right: 0;}
+	.tm .btn { margin-bottom:5px;}
+</style>
+
+<div class="page-heading"> 
+	
+	<span class='pull-right'>
+		
+		{ifp 'tmessage.add'}
+                            <a class="btn btn-primary btn-sm" href="{php echo webUrl('sysset/tmessage/add')}">添加消息模板</a>
+		{/if}
+                
+		<a class="btn btn-default  btn-sm" href="{php echo webUrl('sysset/tmessage')}">返回列表</a>
+                
+                <a class='btn btn-warning btn-sm' data-toggle='popover' href="javascript:;" data-placement='bottom' data-html='true'
+                   data-content="如模板详情为: <br/><br/> {{first.DATA}}<br/>
+                            订单金额：{{keyword1.DATA}}<br/>
+商品详情：{{keyword2.DATA}}<br/>
+收货信息：{{keyword3.DATA}}<br/>
+{{remark.DATA}}<br/><br/>
+
+<b>头部标题</b>：{{keyword1.DATA}}<br/>
+<b>键名</b>：keyword1/keyword2 <br/><b>键值</b>： 您要设置的模板项的值<br/>
+<b>尾部描述</b>：{{remark.DATA}}<br/>
+">
+                    <i class='fa fa-question-circle'></i> 简易帮助
+                </a>
+	</span>
+	<h2>{if !empty($item['id'])}编辑{else}添加{/if}消息模板 <small>{if !empty($item['id'])}修改【{$item['title']}】{/if}</small></h2> 
+</div>
+
+<div class="row">
+	<div class="col-sm-9">
+		
+	 <form {ife 'sysset.tmessage' $list}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
+                <input type="hidden" name="tp_id" value="{$list['id']}" />
+                <div class="form-group">
+                    <label class="col-sm-2 control-label must" >模板名称</label>
+                    <div class="col-sm-9 col-xs-12">
+                        {ife 'sysset.tmessage' $list}
+                        <input type="text" name="tp_title" class="form-control" value="{$list['title']}" placeholder="模版名称，例：新品上市通知群发（自定义）" data-rule-required='true' />
+                        {else}
+                        <div class='form-control-static'>{$list['title']}</div>
+                        {/if}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label must" >模板消息ID</label>
+                    <div class="col-sm-9 col-xs-12">
+                            {ife 'sysset.tmessage' $list}
+                        <input type="text" name="tp_template_id" class="form-control" value="{$list['template_id']}" placeholder="模版消息ID，例：P8MxRKmW7wdejmZl14-swiGmsJVrFJiWYM7zKSPXq4I" data-rule-required='true' />
+                             {else}
+                        <div class='form-control-static'>{$list['template_id']}</div>
+                        {/if}
+                    </div> 
+                </div> 
+                <div class="form-group">
+                    <label class="col-sm-2 control-label must" >头部标题</label>  
+                    
+                    {ife 'sysset.tmessage' $list}
+                    <div class="col-sm-9 title" style='padding-right:0' >
+                            
+                        <textarea name="tp_first" class="form-control" value="" data-rule-required='true' placeholder="{{first.DATA}}">{$list['first']}</textarea>
+                        <span class='help-block'>对填充模板 {{first.DATA}} 的值 </span>
+                    </div>
+                       <div class="col-sm-1" style='padding-left:0;' >
+                        
+						   <input type="color" name="firstcolor" value="{$list['firstcolor']}" style="width:32px;height:32px;" />
+                        
+                    </div>
+                       {else}
+                       <div class="col-sm-3">
+                             <div class='form-control-static'>{$list['first']} 颜色: {$list['firstcolor']}</div>
+                             </div>
+                        {/if}
+                        
+                </div>
+                  
+                {loop $data $list2}
+                    {template 'sysset/tmessage/tpl'}
+                {/loop}
+                  {ife 'sysset.tmessage' $list}
+                <div id="type-items"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" ></label>
+                    <div class="col-sm-9 col-xs-12">
+                        <a class="btn btn-default btn-add-type" href="javascript:;" onclick="addType();"><i class="fa fa-plus" title=""></i> 增加一条键</a>
+                        <span class='help-block'>
+                        
+                        </span>
+                    </div>
+                </div>
+                {/if}
+                
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >尾部描述</label>
+                       {ife 'sysset.tmessage' $list}
+                     <div class="col-sm-9 title" style='padding-right:0' >
+                        <textarea name="tp_remark" class="form-control" placeholder="{{remark.DATA}}" >{$list['remark']}</textarea>
+                      <span class='help-block'>填充模板 {{remark.DATA}} 的值</span>
+                    </div>
+                    <div class="col-sm-1" style='padding-left:0' >
+                     
+						    <input type="color" name="remarkcolor" value="{$list['remarkcolor']}" style="width:32px;height:32px;" />
+                        
+                    </div>
+                    
+                        {else}
+                      <div class="col-sm-3">
+                             <div class='form-control-static'>{$list['remark']} 颜色: {$list['remarkcolor']}</div>
+                             </div>
+                        {/if}
+                        
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >消息链接</label>
+                    <div class="col-sm-9 col-xs-12">
+                        {ife 'sysset.tmessage' $list}
+	                        <div class="input-group form-group">
+								<input type="text" name="tp_url" class="form-control" value="{$list['url']}" placeholder="" id="tpl_url" />
+								<span data-input="#tpl_url" data-toggle="selectUrl" data-full="true" class="input-group-addon btn btn-default">选择链接</span>
+							</div>
+                        {else}
+                        <div class='form-control-static'>{$list['url']}</div>
+                        {/if}
+                    </div>
+                </div>
+                <div class="form-group"></div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label" ></label>
+                    <div class="col-sm-9 col-xs-12">
+                        {ife 'sysset.tmessage' $list}
+                       <input type="submit"  value="提交" class="btn btn-primary"  />
+	       
+                        {/if}
+                       <input type="button" name="back" onclick='history.back()' {ifp 'sysset.tmessage.add|sysset.tmessage.edit'}style='margin-left:10px;'{/if} value="返回列表" class="btn btn-default" />
+                    </div>
+                </div>
+	 
+</form>
+		
+	</div>
+	<div class="col-sm-3">
+		<div class="panel panel-default" style="width:200px;margin-left:20px;">
+	<div class="panel-heading">
+		<select class="form-control" onclick="$('.tm').hide();$('.tm-' + $(this).val()).show()">
+			<option value="">选择模板变量类型</option>
+			<option value="order">订单类</option>
+			<option value="upgrade">升级类</option>
+			<option value="rw">充值提现类</option>
+			{if cv('commission')}
+			<option value="commission">分销类</option>
+			{/if}
+            {if cv('globonus')}
+            <option value="globonus">股东类</option>
+            {/if}
+            {if cv('merch')}
+            <option value="merch">多商户类</option>
+            {/if}
+            {if cv('pstore')}
+            <option value="pstore">门店类</option>
+            {/if}
+            {if cv('bargain')}
+            <option value="bargain">砍价类</option>
+            {/if}
+            {if cv('cashier')}
+            <option value="cashier">收银台类</option>
+            {/if}
+		</select>
+	</div>
+	<div class="panel-body tm tm-upgrade" style="display:none">
+            <a href='JavaScript:' class="btn btn-default  btn-sm ">商城名称</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">粉丝昵称</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">旧等级</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">新等级</a>
+	</div>
+     <div class="panel-heading tm tm-rw" style="display:none">充值</div>
+
+            <div class="panel-body tm tm-rw" style="display:none">
+                <a href='JavaScript:' class="btn btn-default  btn-sm">支付方式</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">充值金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">充值时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">赠送金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">实际到账</a>
+            </div>
+
+            <div class="panel-heading tm tm-rw" style="display:none">充值退款</div>
+            <div class="panel-body tm tm-rw" style="display:none">
+                <a href='JavaScript:' class="btn btn-default  btn-sm">支付方式</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">充值金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">充值时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">赠送金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">实际到账</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">退款金额</a>
+            </div>
+
+            <div class="panel-heading tm tm-rw" style="display:none">提现</div>
+            <div class="panel-body tm tm-rw" style="display:none">
+                <a href='JavaScript:' class="btn btn-default  btn-sm">提现金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">提现时间</a>
+            </div>
+	<div class="panel-heading tm tm-order" style="display:none">
+		 订单信息
+	</div>
+	<div class="panel-body tm tm-order" style="display:none">
+		         <a href='JavaScript:' class="btn btn-default  btn-sm">商城名称</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">粉丝昵称</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">订单号</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">订单金额</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">运费</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">商品详情</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">单品详情</a>(单品商家下单通知变量)
+			<a href='JavaScript:' class="btn btn-default btn-sm">快递公司</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">快递单号</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">购买者姓名</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">购买者电话</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">收货地址</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">下单时间</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">支付时间</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">发货时间</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">收货时间</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">门店</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">门店地址</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">门店联系人</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">门店营业时间</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">虚拟物品自动发货内容</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">虚拟卡密自动发货内容</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">自提码</a>
+		
+	</div>
+			<div class="panel-heading tm tm-order" style="display:none">
+		 售后相关
+	</div>
+	<div class="panel-body tm tm-order" style="display:none">
+			<a href='JavaScript:' class="btn btn-default btn-sm">售后类型</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">退款金额</a>
+			
+			<a href='JavaScript:' class="btn btn-default btn-sm">退货地址</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">换货快递公司</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">换货快递单号</a>
+		 
+	</div>
+            <div class="panel-heading tm tm-order" style="display:none">
+                订单状态更新
+            </div>
+            <div class="panel-body tm tm-order" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm"></a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">粉丝昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">订单编号</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">原收货地址</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新收货地址</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">订单原价格</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">订单新价格</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">修改时间</a>
+
+            </div>
+     <div class="panel-heading tm tm-commission" style="display:none">成为下级或分销商</div>
+	<div class="panel-body tm tm-commission" style="display:none">
+			<a href='JavaScript:' class="btn btn-default btn-sm">昵称</a>
+			<a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+	</div>
+            <div class="panel-heading tm tm-commission" style="display:none">新增下线通知</div>
+            <div class="panel-body tm tm-commission" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">下线层级</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">下级昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+            </div>
+            <div class="panel-heading tm tm-commission" style="display:none">下级付款类</div>
+            <div class="panel-body tm tm-commission" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">下级昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">订单编号</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">订单金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">商品详情</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">佣金金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">下线层级</a>
+            </div>
+            <div class="panel-heading tm tm-commission" style="display:none">提现申请和佣金打款类</div>
+            <div class="panel-body tm tm-commission" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">提现方式</a>
+            </div>
+            <div class="panel-heading tm tm-commission" style="display:none">分销商等级升级通知</div>
+            <div class="panel-body tm tm-commission" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">旧等级</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">旧一级分销比例</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">旧二级分销比例</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">旧三级分销比例</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新等级</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新一级分销比例</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新二级分销比例</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新三级分销比例</a>
+            </div>
+
+
+
+            <div class="panel-heading tm tm-globonus" style="display:none">成为股东</div>
+            <div class="panel-body tm tm-globonus" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+            </div>
+
+            <div class="panel-heading tm tm-globonus" style="display:none">股东等级升级通知</div>
+            <div class="panel-body tm tm-globonus" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">旧等级</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">旧分红例</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新等级</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">新分红比例</a>
+            </div>
+            <div class="panel-heading tm tm-globonus" style="display:none">分红发放通知</div>
+            <div class="panel-body tm tm-globonus" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">打款方式</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">金额</a>
+            </div>
+
+            <div class="panel-heading tm tm-merch" style="display:none">入驻申请</div>
+            <div class="panel-body tm tm-merch" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">商户名称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">主营项目</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">手机号</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请时间</a>
+            </div>
+            <div class="panel-heading tm tm-merch" style="display:none">入驻申请(用户)</div>
+            <div class="panel-body tm tm-merch" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">驳回原因</a>
+            </div>
+
+            <div class="panel-heading tm tm-bargain" style="display:none">砍价类</div>
+            <div class="panel-body tm tm-bargain" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">砍价金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">当前金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">砍价时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">砍价人昵称</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">砍掉或增加</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">成功或失败</a>
+            </div>
+
+            <div class="panel-heading tm tm-pstore" style="display:none">申请通知</div>
+            <div class="panel-body tm tm-pstore" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请时间</a>
+            </div>
+
+            <div class="panel-heading tm tm-pstore" style="display:none">申请结算通知</div>
+            <div class="panel-body tm tm-pstore" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+            </div>
+
+            <div class="panel-heading tm tm-pstore" style="display:none">审核通知</div>
+            <div class="panel-body tm tm-pstore" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">审核状态</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">审核时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">驳回原因</a>
+            </div>
+
+            <div class="panel-heading tm tm-pstore" style="display:none">打款通知</div>
+            <div class="panel-body tm tm-pstore" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">打款时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">打款金额</a>
+
+            </div>
+
+            <div class="panel-heading tm tm-pstore" style="display:none">门店支付通知</div>
+            <div class="panel-body tm tm-pstore" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">付款人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">付款金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">付款时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">门店名称</a>
+
+            </div>
+
+            <!--收银台模板消息 begin-->
+            <div class="panel-heading tm tm-cashier" style="display:none">申请结算通知</div>
+            <div class="panel-body tm tm-cashier" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+            </div>
+
+            <div class="panel-heading tm tm-cashier" style="display:none">打款通知</div>
+            <div class="panel-body tm tm-cashier" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">打款时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">打款金额</a>
+            </div>
+
+            <div class="panel-heading tm tm-cashier" style="display:none">支付通知</div>
+            <div class="panel-body tm tm-cashier" style="display:none">
+                <a href='JavaScript:' class="btn btn-default btn-sm">付款金额</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">余额抵扣</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">付款时间</a>
+                <a href='JavaScript:' class="btn btn-default btn-sm">收银台名称</a>
+
+            </div>
+            <!--收银台模板消息 end-->
+
+			<div class="panel-footer">
+				点击变量后会自动插入选择的文本框的焦点位置，在发送给粉丝时系统会自动替换对应变量值
+				<div class="text text-danger">
+					注意：以上模板消息变量只适用于系统类通知，会员群发工具不适用
+				</div>
+			</div>
+</div>
+	</div>
+</div>
+
+ 
+<script language='javascript'>
+    var kw = 1;
+    function addType() {
+        $(".btn-add-type").button("loading");
+        $.ajax({ 
+            url: "{php echo webUrl('sysset/tmessage/tpl')}&kw="+kw,
+            cache: false
+        }).done(function (html) {
+            $(".btn-add-type").button("reset");
+            $("#type-items").append(html);
+        });
+        kw++;
+    }
+ 
+        $('form').submit(function(){
+      
+            if($('.key_item').length<=0){
+                tip.msgbox.err('请添加一条键!');
+                $('form').attr('stop',1);
+                return false;
+            }
+            var checkkw = true;
+            $(":input[name='tp_kw[]']").each(function(){
+                if ( $.trim( $(this).val() ) ==''){ 
+                    checkkw = false;
+                    tip.msgbox.err('请输入键名!');
+                    $(this).focus();
+                    $('form').attr('stop',1);
+                    return false;
+                }
+            });
+            if( !checkkw){
+                return false;
+            }
+            $('form').removeAttr('stop');
+            return true;
+      });
+
+    $(function () {
+        require(['jquery.caret'],function(){
+            var jiaodian;
+            $(document).on('focus', 'input,textarea',function () {
+                jiaodian = this;
+            });
+
+            $("a[href='JavaScript:']").click(function () {
+                if (jiaodian) {
+                    $(jiaodian).insertAtCaret("["+this.innerText+"]" );
+                }
+            })
+
+        })
+    })
+ 
+    </script>
+
+{template '_footer'}

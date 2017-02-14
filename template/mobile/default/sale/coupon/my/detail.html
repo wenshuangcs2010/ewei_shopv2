@@ -1,0 +1,125 @@
+{template '_header'}
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/coupon.css?v=2.0.0">
+<div class='fui-page fui-page-current coupon-detail-page'>
+	<div class="fui-header">
+		<div class="fui-header-left">
+			<a class="back"></a>
+		</div>
+		<div class="title">优惠券详情</div>
+		<div class="fui-header-right">
+			<a href="{php echo mobileUrl('sale/coupon/my')}" class="external">
+				<i class="icon icon-home"></i>
+			</a>
+		</div>
+	</div>
+
+	<div class='fui-content'>
+		<div class="coupon-detail">
+			<div class="coupon-detail-head {$coupon['color']}">
+				<div class="coupon-detail-head-title">
+					<h2>{$coupon['couponname']}</h2>
+					<p>有效期:{if $coupon['timestr']=='0'}
+						永久有效
+						{else}
+						{if $coupon['timestr']=='1'}
+						即{$coupon['gettypestr']}日内 {$coupon['timedays']} 天有效
+						{else}
+						{$coupon['timestr']}
+						{/if}
+						{/if}
+						{if !empty($coupon['merchname'])}
+						限购[{$coupon['merchname']}]店铺商品
+						{/if}</p>
+				</div>
+				<div class="coupon-detail-head-info">
+					<span>{$coupon['title2']}{$coupon['title3']}</span>
+					{if !empty($coupon['used'])}
+						<a  href="javascript:void(0);">	<p>已使用</p></a>
+					{elseif $coupon['past']}
+						<a  href="javascript:void(0);">	<p>已过期</p></a>
+					{else}
+						<a  href="{$useurl}">
+							<p>
+								{if empty($coupon['coupontype'])}
+									立即去选商品使用
+								{else if $coupon['coupontype']=='1'}
+									立即去充值
+								{else}
+									返回我的优惠卷
+								{/if}
+							</p>
+						</a>
+					{/if}
+				</div>
+				<div class="coupon-detal-bot">
+					<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+					<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+				</div>
+			</div>
+			<div class="coupon-detail-content">
+				<div class="coupon-detail-content-info">
+					<div class="coupon-detail-content-info-top">
+						<strong>拥有数量</strong>
+						<p>
+							{if $num>0}
+								共 {$num} 张
+							{/if}
+						</p>
+					</div>
+
+					<div class="coupon-detail-content-info-top">
+
+						<strong>使用说明</strong>
+						{if empty($coupon['descnoset'])}
+							{if empty($coupon['coupontype'])}
+								{php echo htmlspecialchars_decode($set['consumedesc'])}
+							{else}
+								{php echo htmlspecialchars_decode($set['rechargedesc'])}
+							{/if}
+						{else}
+							<p>{$coupon['desc']}</p>
+						{/if}
+
+					</div>
+					<div class="coupon-detail-content-info-bot">
+						<strong>使用限制</strong>
+
+						{if $coupon['coupontype']=='2'}
+						<p>本优惠卷只能在收银台中使用</p>
+						{/if}
+
+						{if $coupon['limitdiscounttype']=='1'}
+							<p>不允许与促销优惠同时使用</p>
+						{elseif $coupon['limitdiscounttype']=='2'}
+							<p>不允许与会员折扣同时使用</p>
+						{elseif $coupon['limitdiscounttype']=='3'}
+							<p>不允许与促销优惠和会员折扣同时使用</p>
+						{/if}
+						{if $coupon['limitgoodtype']=='1'}
+						<p>允许以下商品使用:</p>
+						<p>
+							{loop $goods $g}
+								<p>{$g['title']}</p>
+							{/loop}
+						</p>
+						{/if}
+						{if $coupon['limitgoodtype']=='1'}
+							<p>允许以下商品分类使用:</p>
+							<p>
+								{loop $category $c}
+								{$c['name']}&nbsp;
+								{/loop}
+							</p>
+						{/if}
+						{if $coupon['limitgoodtype']=='0'&& $coupon['limitgoodtype']=='0'&&$coupon['limitdiscounttype']=='0'&&$coupon['coupontype']!='2'}
+						<p>无</p>
+						{/if}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script language='javascript'>require(['biz/sale/coupon/mydetail'], function (modal) {modal.init();});</script>
+</div>
+{template '_footer'}

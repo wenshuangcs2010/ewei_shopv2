@@ -1,0 +1,96 @@
+{php echo tpl_ueditor('editor',$article['article_content'],array('height'=>550))}
+
+<script language="javascript">
+    $(function(){
+        var ue =  UE.getEditor('editor');
+        ue.addListener('contentChange',function(){
+            $("#preview-content").html(ue.getContent());
+        });
+        
+	        
+	    // 初始化 系统链接选择
+	    UE.registerUI('mylink', function(editor, uiName) {
+	        var btn = new UE.ui.Button({
+	            name: 'selectUrl',
+	            title: '系统链接',
+	            aaa: 'sadasd',
+	            cssRules: 'background-position: -500px 0;',
+	            onclick: function() {
+	            	$("#"+this.id).attr({"data-toggle": "selectUrl", "data-callback": "selectUrlCallback"});
+	            }
+	        });
+	        editor.addListener('selectionchange', function() {
+	            var state = editor.queryCommandState(uiName);
+	            if (state == -1) {
+	                btn.setDisabled(true);
+	                btn.setChecked(false);
+	            } else {
+	                btn.setDisabled(false);
+	                btn.setChecked(state);
+	            }
+	        });
+	        return btn;
+	    });
+
+        UE.registerUI('myinsertimage',function(editor,uiName){
+            editor.registerCommand(uiName, {
+                execCommand:function(){
+                    require(['fileUploader'], function(uploader){
+                        uploader.show(function(imgs){
+                            if (imgs.length == 0) {
+                                return;
+                            } else if (imgs.length == 1) {
+                                editor.execCommand('insertimage', {
+                                    'src' : imgs[0]['url'],
+                                    '_src' : imgs[0]['url'],
+                                    'width' : '100%',
+                                    'alt' : imgs[0].filename
+                                });
+                            } else {
+                                var imglist = [];
+                                for (i in imgs) {
+                                    imglist.push({
+                                        'src' : imgs[i]['url'],
+                                        '_src' : imgs[i]['url'],
+                                        'width' : '100%',
+                                        'alt' : imgs[i].filename
+                                    });
+                                }
+                                editor.execCommand('insertimage', imglist);
+                            }
+                        }, opts);
+                    });
+                }
+            });
+
+            var btn = new UE.ui.Button({
+                name: '插入图片',
+                title: '插入图片',
+                cssRules :'background-position: -726px -77px',
+                onclick:function () {
+                    editor.execCommand(uiName);
+                }
+            });
+            editor.addListener('selectionchange', function () {
+                var state = editor.queryCommandState(uiName);
+                if (state == -1) {
+                    btn.setDisabled(true);
+                    btn.setChecked(false);
+                } else {
+                    btn.setDisabled(false);
+                    btn.setChecked(state);
+                }
+            });
+            return btn;
+        }, 19);
+
+    })
+    // 选择链接 callback
+    function selectUrlCallback(href){
+    	var ue =  UE.getEditor('editor');
+    	if(href){
+    		ue.execCommand('link', {href: href});
+    	}
+    }
+</script>
+ 

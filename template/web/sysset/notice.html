@@ -1,0 +1,947 @@
+{template '_header'}
+<style>
+    .select2 {width: 100%;}
+    .select2-container .select2-choice .select2-arrow b {background-color: #eeeeee}
+    {if !empty($opensms)}
+        .w200 {width: {if empty($data['is_advanced'])}200px{else}250px{/if};}
+    {else}
+        .w200 {width: {if empty($data['is_advanced'])}400px{else}550px{/if};}
+    {/if}
+    .w60 {width: {if empty($data['is_advanced'])}60px{else}70px{/if}; text-align: right;}
+    .form-horizontal .form-group {margin-left: 0; margin-right: 0;}
+    .table > thead > tr > th {border:none;}
+    .is_default {display: {if empty($data['is_advanced'])}table-block{else}none{/if}; }
+    .is_advanced {display: {if !empty($data['is_advanced'])}table-block{else}none{/if};}
+    #openids_selector .input-group {width: 100%;}
+    .is_sms {display: {if !empty($opensms)}table-block{else}none{/if};}
+</style>
+<div class="page-heading">
+    <div class="pull-right" style="text-align: right; margin-top: 10px;">
+        <strong>高级模式</strong>
+        <input class="js-switch small" id="is_advanced" type="checkbox" {if !empty($data['is_advanced'])}checked{/if}/>
+    </div>
+    <h2>消息提醒设置</h2>
+</div>
+
+<div class="alert alert-info">
+    <b>注意：</b>
+    <p>请将公众平台模板消息所在行业选择为： IT科技/互联网|电子商务</p>
+    <p>普通模式需手动填写模板ID，高级模板则直接选择模板库里提前设置好的模板。<a href="{php echo webUrl('sysset/tmessage')}" title="模板消息库">点击进入模板消息库</a>{if $opensms}，<a href="{php echo webUrl('sysset/sms')}" title="短信消息库">点击进入短信消息库</a>{/if}</p>
+</div>
+
+<form action="" method="post" class="form-horizontal  form-validate" enctype="multipart/form-data" >
+    <input type="hidden" value="{php echo intval($data['is_advanced'])}" name='data[is_advanced]' />
+
+    <table class="table table-responsive">
+        <thead>
+        <th>卖家通知</th>
+        <th class="is_default">公众平台模板库编号</th>
+        <th class="w200">模板消息</th>
+        <th class="w60"></th>
+        <th class="w200 is_sms">短信模板</th>
+        <th class="w60 is_sms"></th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>订单生成通知</td>
+            <td class="is_default">OPENTM205213550</td>
+            <td>
+                <input type="text" name="data[new]" class="form-control input-sm is_default" value="{$data['new']}" />
+                <select class="select2 is_advanced" name="data[saler_submit_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['saler_submit_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;">
+                <input type="hidden" name='data[newtype][]' value="{if in_array("0",$newtype)}0{/if}" data-true="0" data-false="" />
+                <input class="js-switch small checkhi" type="checkbox" {if in_array("0",$newtype)}checked{/if} />
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[saler_submit_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['saler_submit_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[saler_submit_close_sms]" value="{php echo intval($data['saler_submit_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['saler_submit_close_sms'])}" {if empty($data['saler_submit_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>订单付款通知</td>
+            <td class="is_default">-</td>
+            <td>
+                <span class="is_default">同上订单生成通知</span>
+                <select class="select2 is_advanced" name="data[saler_pay_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['saler_pay_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;">
+                <input type="hidden" name='data[newtype][]' value="{if in_array('1',$newtype)}1{/if}" data-true="1" data-false="" />
+                <input class="js-switch small checkhi" type="checkbox" {if in_array('1',$newtype)}checked{/if} />
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[saler_pay_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['saler_pay_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[saler_pay_close_sms]" value="{php echo intval($data['saler_pay_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['saler_pay_close_sms'])}" {if empty($data['saler_pay_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>订单确认收货</td>
+            <td class="is_default">-</td>
+            <td>
+                <span class="is_default">同上订单生成通知</span>
+                <select class="select2 is_advanced" name="data[saler_finish_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['saler_finish_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;">
+                <input type="hidden" name='data[newtype][]' value="{if in_array('2',$newtype)}2{/if}" data-true="2" data-false="" />
+                <input class="js-switch small checkhi" type="checkbox" {if in_array('2',$newtype)}checked{/if} />
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[saler_finish_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['saler_finish_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[saler_finish_close_sms]" value="{php echo intval($data['saler_finish_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['saler_finish_close_sms'])}" {if empty($data['saler_finish_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">选择通知人(模板消息)</td>
+            <td colspan="{if !empty($opensms)}4{else}2{/if}" class="colstd">
+                {php echo tpl_selector('openids',array('key'=>'openid','text'=>'nickname', 'thumb'=>'avatar','multi'=>1,'placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择通知人', 'items'=>$salers,'url'=>webUrl('member/query') ))}
+                <span class='help-block'>订单生成后以模板消息的方式商家通知，可以制定多个人，如果不填写则不通知</span>
+            </td>
+            <td class="is_default is_sms"></td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">填写通知人(短信)</td>
+            <td colspan="{if !empty($opensms)}4{else}2{/if}" class="colstd">
+                <textarea class="form-control" name="data[mobile]" style="resize: none; padding: 6px;" rows="3">{$data['mobile']}</textarea>
+                <span class='help-block'>订单生成后以短信的方式商家通知，如果不填写则不通知(11位手机号，多个请以英文逗号隔开)</span>
+            </td>
+            <td class="is_default is_sms"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group splitter"></div>
+
+    <table class="table table-responsive">
+        <thead>
+            <th>买家通知 - 订单通知</th>
+            <th class="is_default">公众平台模板库编号	</th>
+            <th class="w200">模板消息</th>
+            <th class="w60 is_default"><input class="js-switch small checkall" data-type="tpl-normal" type="checkbox" /></th>
+            <th class="w60 is_advanced"><input class="js-switch small checkall" data-type="tpl-advanced" type="checkbox" /></th>
+            <th class="w200 is_sms">短信模板</th>
+            <th class="w60 is_sms"><input class="js-switch small checkall" data-type="sms" type="checkbox" /></th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>订单提交成功通知</td>
+                <td class="is_default">OPENTM200746866</td>
+                <td>
+                    <input type="text" name="data[submit]" class="form-control input-sm is_default" value="{$data['submit']}" />
+                    <select class="select2 is_advanced" name="data[submit_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['submit_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[submit_close_normal]" value="{php echo intval($data['submit_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['submit_close_normal'])}" {if empty($data['submit_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[submit_close_advanced]" value="{php echo intval($data['submit_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['submit_close_advanced'])}" {if empty($data['submit_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[submit_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['submit_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[submit_close_sms]" value="{php echo intval($data['submit_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['submit_close_sms'])}" {if empty($data['submit_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+            <tr>
+                <td>自提订单提交成功通知</td>
+                <td class="is_default">OPENTM201594720</td>
+                <td>
+                    <input type="text" name="data[carrier]" class="form-control input-sm is_default" value="{$data['carrier']}" />
+                    <select class="select2 is_advanced" name="data[carrier_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['carrier_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[carrier_close_normal]" value="{php echo intval($data['carrier_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['carrier_close_normal'])}" {if empty($data['carrier_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[carrier_close_advanced]" value="{php echo intval($data['carrier_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['carrier_close_advanced'])}" {if empty($data['carrier_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[carrier_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['carrier_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[carrier_close_sms]" value="{php echo intval($data['carrier_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['carrier_close_sms'])}" {if empty($data['carrier_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+            <tr>
+                <td>订单取消通知</td>
+                <td class="is_default">TM00850</td>
+                <td>
+                    <input type="text" name="data[cancel]" class="form-control input-sm is_default" value="{$data['cancel']}" />
+                    <select class="select2 is_advanced" name="data[cancel_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['cancel_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[cancel_close_normal]" value="{php echo intval($data['cancel_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['cancel_close_normal'])}" {if empty($data['cancel_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[cancel_close_advanced]" value="{php echo intval($data['cancel_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['cancel_close_advanced'])}" {if empty($data['cancel_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[cancel_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['cancel_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[cancel_close_sms]" value="{php echo intval($data['cancel_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['cancel_close_sms'])}" {if empty($data['cancel_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+            <tr>
+                <td>订单支付成功通知</td>
+                <td class="is_default">OPENTM204987032</td>
+                <td>
+                    <input type="text" name="data[pay]" class="form-control input-sm is_default" value="{$data['pay']}" />
+                    <select class="select2 is_advanced" name="data[pay_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['pay_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[pay_close_normal]" value="{php echo intval($data['pay_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['pay_close_normal'])}" {if empty($data['pay_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[pay_close_advanced]" value="{php echo intval($data['pay_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['pay_close_advanced'])}" {if empty($data['pay_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[pay_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['pay_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[pay_close_sms]" value="{php echo intval($data['pay_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['pay_close_sms'])}" {if empty($data['pay_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+            <tr>
+                <td>订单发货通知</td>
+                <td class="is_default">OPENTM202243318</td>
+                <td>
+                    <input type="text" name="data[send]" class="form-control input-sm is_default" value="{$data['send']}" />
+                    <select class="select2 is_advanced" name="data[send_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['send_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[send_close_normal]" value="{php echo intval($data['send_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['send_close_normal'])}" {if empty($data['send_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[send_close_advanced]" value="{php echo intval($data['send_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['send_close_advanced'])}" {if empty($data['send_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[send_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['send_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[send_close_sms]" value="{php echo intval($data['send_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['send_close_sms'])}" {if empty($data['send_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+            <tr>
+                <td>订单确认收货通知</td>
+                <td class="is_default">OPENTM202314085</td>
+                <td>
+                    <input type="text" name="data[finish]" class="form-control input-sm is_default" value="{$data['finish']}" />
+                    <select class="select2 is_advanced" name="data[finish_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['finish_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[finish_close_normal]" value="{php echo intval($data['finish_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['finish_close_normal'])}" {if empty($data['finish_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[finish_close_advanced]" value="{php echo intval($data['finish_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['finish_close_advanced'])}" {if empty($data['finish_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[finish_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['finish_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[finish_close_sms]" value="{php echo intval($data['finish_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['finish_close_sms'])}" {if empty($data['finish_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+            <tr>
+                <td>自动发货通知<br>(虚拟物品及卡密)</td>
+                <td class="is_default">OPENTM207793687</td>
+                <td>
+                    <input type="text" name="data[virtualsend]" class="form-control input-sm is_default" value="{$data['virtualsend']}" />
+                    <select class="select2 is_advanced" name="data[virtualsend_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['virtualsend_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[virtualsend_close_normal]" value="{php echo intval($data['virtualsend_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['virtualsend_close_normal'])}" {if empty($data['virtualsend_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[virtualsend_close_advanced]" value="{php echo intval($data['virtualsend_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['virtualsend_close_advanced'])}" {if empty($data['virtualsend_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[virtualsend_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['virtualsend_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[virtualsend_close_sms]" value="{php echo intval($data['virtualsend_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['virtualsend_close_sms'])}" {if empty($data['virtualsend_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>订单状态更新<br>(修改收货地址)(修改价格)</td>
+                <td class="is_default">TM00017</td>
+                <td>
+                    <input type="text" name="data[orderstatus]" class="form-control input-sm is_default" value="{$data['orderstatus']}" />
+                    <select class="select2 is_advanced" name="data[orderstatus_template]">
+                        <option value=''>从模板消息库中选择</option>
+                        {loop $template_list $template_val}
+                        <option value="{$template_val['id']}" {if $data['orderstatus_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_default">
+                    <input type="hidden" name="data[orderstatus_close_normal]" value="{php echo intval($data['orderstatus_close_normal'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['orderstatus_close_normal'])}" {if empty($data['orderstatus_close_normal'])}checked{/if}/>
+                </td>
+                <td style="text-align: right;" class="is_advanced">
+                    <input type="hidden" name="data[orderstatus_close_advanced]" value="{php echo intval($data['orderstatus_close_advanced'])}" />
+                    <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['orderstatus_close_advanced'])}" {if empty($data['orderstatus_close_advanced'])}checked{/if}/>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" name="data[orderstatus_sms]">
+                        <option value=''>从短信消息库中选择</option>
+                        {loop $template_sms $template_val}
+                        <option value="{$template_val['id']}" {if $data['orderstatus_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                        {/loop}
+                    </select>
+                </td>
+                <td style="text-align: right;" class="is_sms">
+                    <input type="hidden" name="data[orderstatus_close_sms]" value="{php echo intval($data['orderstatus_close_sms'])}" />
+                    <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['orderstatus_close_sms'])}" {if empty($data['orderstatus_close_sms'])}checked{/if}/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group splitter"></div>
+
+    <table class="table table-responsive">
+        <thead>
+        <th>买家通知 - 退款通知</th>
+        <th class="is_default">公众平台模板库编号</th>
+        <th class="w200">模板消息</th>
+        <th class="w60 is_default"><input class="js-switch small checkall" data-type="tpl-normal" type="checkbox" /></th>
+        <th class="w60 is_advanced"><input class="js-switch small checkall" data-type="tpl-advanced" type="checkbox" /></th>
+        <th class="w200 is_sms">短信模板</th>
+        <th class="w60 is_sms"><input class="js-switch small checkall" data-type="sms" type="checkbox" /></th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>退款申请通知</td>
+            <td class="is_default">TM00431</td>
+            <td>
+                <input type="text" name="data[refund]" class="form-control input-sm is_default" value="{$data['refund']}" />
+                <select class="select2 is_advanced" name="data[refund_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['refund_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[refund_close_normal]" value="{php echo intval($data['refund_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['refund_close_normal'])}" {if empty($data['refund_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[refund_close_advanced]" value="{php echo intval($data['refund_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['refund_close_advanced'])}" {if empty($data['refund_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[refund_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['refund_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[refund_close_sms]" value="{php echo intval($data['refund_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['refund_close_sms'])}" {if empty($data['refund_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>退款进度通知</td>
+            <td class="is_default">OPENTM401479948</td>
+            <td>
+                <input type="text" name="data[refunding]" class="form-control input-sm is_default" value="{$data['refunding']}" />
+                <select class="select2 is_advanced" name="data[refunding_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['refunding_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[refunding_close_normal]" value="{php echo intval($data['refunding_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['refunding_close_normal'])}" {if empty($data['refunding_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[refunding_close_advanced]" value="{php echo intval($data['refunding_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['refunding_close_advanced'])}" {if empty($data['refunding_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[refunding_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['refunding_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[refunding_close_sms]" value="{php echo intval($data['refunding_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['refunding_close_sms'])}" {if empty($data['refunding_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>退款成功通知</td>
+            <td class="is_default">TM00430</td>
+            <td>
+                <input type="text" name="data[refund1]" class="form-control input-sm is_default" value="{$data['refund1']}" />
+                <select class="select2 is_advanced" name="data[refund1_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['refund1_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[refund1_close_normal]" value="{php echo intval($data['refund1_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['refund1_close_normal'])}" {if empty($data['refund1_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[refund1_close_advanced]" value="{php echo intval($data['refund1_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['refund1_close_advanced'])}" {if empty($data['refund1_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[refund1_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['refund1_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[refund1_close_sms]" value="{php echo intval($data['refund1_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['refund1_close_sms'])}" {if empty($data['refund1_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>退款申请驳回通知</td>
+            <td class="is_default">TM00432</td>
+            <td>
+                <input type="text" name="data[refund2]" class="form-control input-sm is_default" value="{$data['refund2']}" />
+                <select class="select2 is_advanced" name="data[refund2_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['refund2_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[refund2_close_normal]" value="{php echo intval($data['refund2_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['refund2_close_normal'])}" {if empty($data['refund2_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[refund2_close_advanced]" value="{php echo intval($data['refund2_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['refund2_close_advanced'])}" {if empty($data['refund2_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[refund2_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['refund2_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[refund2_close_sms]" value="{php echo intval($data['refund2_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['refund2_close_sms'])}" {if empty($data['refund2_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group splitter"></div>
+
+    <table class="table table-responsive">
+        <thead>
+        <th>买家通知 - 支付通知</th>
+        <th class="is_default">公众平台模板库编号</th>
+        <th class="w200">模板消息</th>
+        <th class="w60 is_default"><input class="js-switch small checkall" data-type="tpl-normal" type="checkbox" /></th>
+        <th class="w60 is_advanced"><input class="js-switch small checkall" data-type="tpl-advanced" type="checkbox" /></th>
+        <th class="w200 is_sms">短信模板</th>
+        <th class="w60 is_sms"><input class="js-switch small checkall" data-type="sms" type="checkbox" /></th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>充值成功通知</td>
+            <td class="is_default">TM00977</td>
+            <td>
+                <input type="text" name="data[recharge_ok]" class="form-control input-sm is_default" value="{$data['recharge_ok']}" />
+                <select class="select2 is_advanced" name="data[recharge_ok_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['recharge_ok_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[recharge_ok_close_normal]" value="{php echo intval($data['recharge_ok_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['recharge_ok_close_normal'])}" {if empty($data['recharge_ok_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[recharge_ok_close_advanced]" value="{php echo intval($data['recharge_ok_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['recharge_ok_close_advanced'])}" {if empty($data['recharge_ok_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[recharge_ok_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['recharge_ok_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[recharge_ok_close_sms]" value="{php echo intval($data['recharge_ok_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['recharge_ok_close_sms'])}" {if empty($data['recharge_ok_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>充值退款通知</td>
+            <td class="is_default">TM00004</td>
+            <td>
+                <input type="text" name="data[recharge_refund]" class="form-control input-sm is_default" value="{$data['recharge_refund']}" />
+                <select class="select2 is_advanced" name="data[recharge_refund_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['recharge_refund_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[recharge_refund_close_normal]" value="{php echo intval($data['recharge_refund_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['recharge_refund_close_normal'])}" {if empty($data['recharge_refund_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[recharge_refund_close_advanced]" value="{php echo intval($data['recharge_refund_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['recharge_refund_close_advanced'])}" {if empty($data['recharge_refund_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[recharge_refund_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['recharge_refund_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[recharge_refund_close_sms]" value="{php echo intval($data['recharge_refund_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['recharge_refund_close_sms'])}" {if empty($data['recharge_refund_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>提现提交通知</td>
+            <td class="is_default">TM00979</td>
+            <td>
+                <input type="text" name="data[withdraw]" class="form-control input-sm is_default" value="{$data['withdraw']}" />
+                <select class="select2 is_advanced" name="data[withdraw_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['withdraw_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[withdraw_close_normal]" value="{php echo intval($data['withdraw_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['withdraw_close_normal'])}" {if empty($data['withdraw_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[withdraw_close_advanced]" value="{php echo intval($data['withdraw_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['withdraw_close_advanced'])}" {if empty($data['withdraw_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[withdraw_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['withdraw_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[withdraw_close_sms]" value="{php echo intval($data['withdraw_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['withdraw_close_sms'])}" {if empty($data['withdraw_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>提现成功通知</td>
+            <td class="is_default">TM00980</td>
+            <td>
+                <input type="text" name="data[withdraw_ok]" class="form-control input-sm is_default" value="{$data['withdraw_ok']}" />
+                <select class="select2 is_advanced" name="data[withdraw_ok_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['withdraw_ok_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[withdraw_ok_close_normal]" value="{php echo intval($data['withdraw_ok_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['withdraw_ok_close_normal'])}" {if empty($data['withdraw_ok_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[withdraw_ok_close_advanced]" value="{php echo intval($data['withdraw_ok_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-withdraw_ok_close_advanced" type="checkbox" value="{php echo intval($data['withdraw_ok_close_advanced'])}" {if empty($data['withdraw_ok_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[withdraw_ok_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['withdraw_ok_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[withdraw_ok_close_sms]" value="{php echo intval($data['withdraw_ok_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['withdraw_ok_close_sms'])}" {if empty($data['withdraw_ok_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        <tr>
+            <td>提现失败通知</td>
+            <td class="is_default">TM00981</td>
+            <td>
+                <input type="text" name="data[withdraw_fail]" class="form-control input-sm is_default" value="{$data['withdraw_fail']}" />
+                <select class="select2 is_advanced" name="data[withdraw_fail_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['withdraw_fail_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[withdraw_fail_close_normal]" value="{php echo intval($data['withdraw_fail_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['withdraw_fail_close_normal'])}" {if empty($data['withdraw_fail_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[withdraw_fail_close_advanced]" value="{php echo intval($data['withdraw_fail_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['withdraw_fail_close_advanced'])}" {if empty($data['withdraw_fail_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[withdraw_fail_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['withdraw_fail_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[withdraw_fail_close_sms]" value="{php echo intval($data['withdraw_fail_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['withdraw_fail_close_sms'])}" {if empty($data['withdraw_fail_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group splitter"></div>
+
+    <table class="table table-responsive">
+        <thead>
+        <th>买家通知 - 会员通知</th>
+        <th class="is_default">公众平台模板库编号</th>
+        <th class="w200">模板消息</th>
+        <th class="w60"></th>
+        <th class="w200 is_sms">短信模板</th>
+        <th class="w60 is_sms"></th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>会员升级通知<br>(任务处理通知)</td>
+            <td class="is_default">OPENTM200605630</td>
+            <td>
+                <input type="text" name="data[upgrade]" class="form-control input-sm is_default" value="{$data['upgrade']}" />
+                <select class="select2 is_advanced" name="data[upgrade_template]">
+                    <option value=''>从模板消息库中选择</option>
+                    {loop $template_list $template_val}
+                    <option value="{$template_val['id']}" {if $data['upgrade_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_default">
+                <input type="hidden" name="data[upgrade_close_normal]" value="{php echo intval($data['upgrade_close_normal'])}" />
+                <input class="js-switch small checkone" data-type="tpl-normal" type="checkbox" value="{php echo intval($data['upgrade_close_normal'])}" {if empty($data['upgrade_close_normal'])}checked{/if}/>
+            </td>
+            <td style="text-align: right;" class="is_advanced">
+                <input type="hidden" name="data[upgrade_close_advanced]" value="{php echo intval($data['upgrade_close_advanced'])}" />
+                <input class="js-switch small checkone" data-type="tpl-advanced" type="checkbox" value="{php echo intval($data['upgrade_close_advanced'])}" {if empty($data['upgrade_close_advanced'])}checked{/if}/>
+            </td>
+            <td class="is_sms">
+                <select class="select2" name="data[upgrade_sms]">
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['upgrade_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </td>
+            <td style="text-align: right;" class="is_sms">
+                <input type="hidden" name="data[upgrade_close_sms]" value="{php echo intval($data['upgrade_close_sms'])}" />
+                <input class="js-switch small checkone" data-type="sms" type="checkbox" value="{php echo intval($data['upgrade_close_sms'])}" {if empty($data['upgrade_close_sms'])}checked{/if}/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="form-group splitter"></div>
+
+    <div class="form-group">
+        <div class="col-sm-12 col-xs-12" style="text-align: right;">
+            {ifp 'sysset.notice.edit'}
+            <input type="submit"  value="提交" class="btn btn-primary"  />
+
+            {/if}
+        </div>
+    </div>
+</form>
+
+
+<script>
+    $(function () {
+
+        var sms =  {if !empty($opensms)}true{else}false{/if};
+
+        $(".js-switch").not(".checkhi").click(function () {
+            var next = $(this).next();
+            if(next.hasClass('checked')){
+                $(this).val("1").prev().val("0");
+            }else{
+                $(this).val("0").prev().val("1");
+            }
+        });
+
+        $(".checkhi").click(function () {
+            var trueval = $(this).prev().data('true');
+            var falseval = $(this).prev().data('false');
+            var next = $(this).next();
+            if(next.hasClass('checked')){
+                $(this).val("1").prev().val(trueval);
+            }else{
+                $(this).val("0").prev().val(falseval);
+            }
+        });
+
+        $(".checkall").click(function () {
+            var type = $(this).data('type');
+            var val = $(this).val();
+            if(val==0){
+                $(this).closest(".table").find(".checkone[data-type='"+type+"']").attr("checked","false").val("1").next().removeClass("checked").prev().prev().val("1");
+            }else{
+                $(this).closest(".table").find(".checkone[data-type='"+type+"']").attr("checked","true").val("0").next().addClass("checked").prev().prev().val("0");
+            }
+        });
+
+        $(".checkone").click(function () {
+            var type = $(this).data('type');
+            var val = $(this).val();
+            if(val==0){
+                $(this).attr("checked","false").val("1").next().removeClass("checked");
+                $(this).closest(".table").find(".checkall[data-type='"+type+"']").val("1").attr("checked","false").next().removeClass("checked");
+            }else{
+                $(this).attr("checked","true").val("0").next().addClass("checked");
+                var all = true;
+                $(this).closest(".table").find(".checkone[data-type='"+type+"']").each(function () {
+                    var val = $(this).val();
+                    if(val!='on' && val==1){
+                        all = false;
+                        return;
+                    }
+                });
+                if(all){
+                    $(this).closest(".table").find(".checkall[data-type='"+type+"']").val("0").attr("checked","true").next().addClass("checked");
+                }
+            }
+        });
+
+        $(".table").each(function () {
+            var _this = $(this);
+            var all_tpl_normal = true;
+            var all_tpl_advanced = true;
+            var all_sms = true;
+            _this.find(".checkone[data-type='tpl-normal']").each(function () {
+               var val = $(this).val();
+               if(val!='on' && val==1){
+                   all_tpl_normal = false;
+                   return;
+               }
+           });
+            _this.find(".checkone[data-type='tpl-advanced']").each(function () {
+                var val = $(this).val();
+                if(val!='on' && val==1){
+                    all_tpl_advanced = false;
+                    return;
+                }
+            });
+            _this.find(".checkone[data-type='sms']").each(function () {
+                var val = $(this).val();
+                if(val!='on' && val==1){
+                    all_sms = false;
+                    return;
+                }
+            });
+            if(all_tpl_normal){
+                _this.find(".checkall[data-type='tpl-normal']").val("0").attr("checked","true").next().addClass("checked");
+            }
+            if(all_tpl_advanced){
+                _this.find(".checkall[data-type='tpl-advanced']").val("0").attr("checked","true").next().addClass("checked");
+            }
+            if(all_sms){
+                _this.find(".checkall[data-type='sms']").val("0").attr("checked","true").next().addClass("checked");
+            }
+        });
+
+        $("#is_advanced").click(function () {
+            $(":input[name='data[is_advanced]']").val( this.checked ?1:0);
+            var val = $(this).val();
+            if(val==0){
+                $(".is_advanced").hide();
+                $(".is_default").not('.is_sms').show();
+                $(".w60").css('width', '70px');
+                if (sms){
+                    $(".w200").css('width', '200px');
+                }else{
+                    $(".w200").css('width', '400px');
+                    $(".colstd").attr('colspan',2);
+                }
+            }else{
+                $(".is_advanced").show();
+                $(".select2").hide();
+                $(".select2-container").show();
+                $(".is_default").hide();
+                $(".w60").css('width', '70px');
+                if (sms){
+                    $(".w200").css('width', '250px');
+                }else{
+                    $(".w200").css('width', '550px');
+                    $(".colstd").attr('colspan',2);
+                }
+            }
+        });
+
+    })
+</script>
+
+{template '_footer'}     

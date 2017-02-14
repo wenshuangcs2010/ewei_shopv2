@@ -1,0 +1,28 @@
+{template '_header'}
+<style type='text/css'>
+    .trhead td {  background:#efefef;text-align: center}
+    .trbody td {  text-align: center; vertical-align:top;border-left:1px solid #f2f2f2;overflow: hidden; font-size:12px;}
+    .trorder { background:#f8f8f8;border:1px solid #f2f2f2;text-align:left;}
+    .ops { border-right:1px solid #f2f2f2; text-align: center;}
+</style>
+
+<div class="page-content" style="display: block;">
+        
+<div class="page-heading">
+    <h2 style="text-align: center;">支付结果</h2>
+</div>
+
+
+
+<div class="col-md-12 col-sm-12">
+        <div class="contact-box" style="border: 1px solid #e7eaec">
+        <h1 style="text-align: center;">{if $_GPC['d']==1}支付成功{else}支付失败{/if}</h1>
+   
+    </div>
+</div>
+
+
+
+</div>
+
+{template '_footer'}

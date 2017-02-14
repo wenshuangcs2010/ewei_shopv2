@@ -1,0 +1,32 @@
+{if !empty($stores)}
+<script language='javascript' src='http://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7'></script>
+<div class='fui-according-group' style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px; background: {$diyitem['style']['background']};">
+    <div class='fui-according'>
+        <div class='fui-according-header'>
+            <i class='icon icon-shop' style="color: {$diyitem['style']['titlecolor']};"></i>
+            <span class="text" style="color: {$diyitem['style']['titlecolor']};">适用门店</span>
+            <span class="remark"><div class="badge">{php echo count($stores)}</div></span>
+        </div>
+        <div class="fui-according-content store-container">
+            {loop $stores $item}
+            <div  class="fui-list store-item" data-lng="{php echo floatval($item['lng'])}" data-lat="{php echo floatval($item['lat'])}">
+                <div class="fui-list-media">
+                    <i class='icon icon-shop'></i>
+                </div>
+                <div class="fui-list-inner store-inner">
+                    <div class="title" style="color: {$diyitem['style']['shopnamecolor']};"><span class='storename'>{$item['storename']}</span></div>
+                    <div class="text" style="color: {$diyitem['style']['shopiconcolor']};">地址: <span class='realname'>{$item['address']}</span></div>
+                    <div class="text">电话: <span class='address'>{$item['tel']}</span></div>
+                </div>
+                <div class="fui-list-angle ">
+                    {if !empty($item['tel'])}<a href="tel:{$item['tel']}" class='external '><i class=' icon icon-phone' style="color: {$diyitem['style']['navtelcolor']}"></i></a>{/if}
+                    <a href="{php echo mobileUrl('store/map',array('id'=>$item['id'],'merchid'=>$item['merchid']))}" class='external' ><i class='icon icon-location' style="color: {$diyitem['style']['navlocationcolor']};"></i></a>
+                </div>
+            </div>
+            {/loop}
+        </div>
+        <div id="nearStore" style="display:none">
+            <div class='fui-list store-item'  id='nearStoreHtml'></div>
+        </div>
+    </div></div>
+{/if}

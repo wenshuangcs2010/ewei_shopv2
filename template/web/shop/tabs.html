@@ -1,0 +1,48 @@
+
+<ul class="menu-head-top">
+    <li {if $_W['controller']=='shop'} class="active" {/if}><a href="{php echo webUrl('shop')}">商城概述 <i class="fa fa-caret-right"></i></a></li>
+</ul>
+
+
+{ifp 'shop.adv|shop.nav|shop.banner|shop.sort'}
+<div class='menu-header'>首页</div>
+<ul>
+    {ifp 'shop.adv'}<li {if $_W['action'] == 'shop.adv'} class="active" {/if}><a href="{php echo webUrl('shop/adv')}">幻灯片</a></li>{/if}
+    {ifp 'shop.nav'}<li {if $_W['action'] == 'shop.nav'} class="active" {/if}><a href="{php echo webUrl('shop/nav')}">导航图标</a></li>{/if}
+    {ifp 'shop.banner'}<li {if $_W['action'] == 'shop.banner'} class="active" {/if}><a href="{php echo webUrl('shop/banner')}">广告</a></li>{/if}
+    {ifp 'shop.cube'}<li {if $_W['action'] == 'shop.cube'} class="active" {/if}><a href="{php echo webUrl('shop/cube')}">魔方推荐</a></li>{/if}
+    {ifp 'shop.recommand'}<li {if $_W['action'] == 'shop.recommand'} class="active" {/if}><a href="{php echo webUrl('shop/recommand')}">商品推荐</a></li>{/if}
+    {ifp 'shop.sort'}<li {if $_W['action'] == 'shop.sort'} class="active" {/if}><a href="{php echo webUrl('shop/sort')}">排版设置</a></li>{/if}
+    
+</ul>
+{/if}
+
+{ifp 'shop.dispatch|shop.notice|shop.comment|shop.refundaddress'}
+<div class='menu-header'>商城</div>
+<ul>
+    {ifp 'shop.dispatch'}<li {if $_W['action']== 'shop.dispatch'} class="active" {/if}><a href="{php echo webUrl('shop/dispatch')}">配送方式</a></li>{/if}
+    {ifp 'shop.notice'}<li {if $_W['action'] == 'shop.notice'} class="active" {/if}><a href="{php echo webUrl('shop/notice')}">公告管理</a></li>{/if}
+    {ifp 'shop.comment'}<li {if $_W['action'] == 'shop.comment'} class="active" {/if}><a href="{php echo webUrl('shop/comment')}">评价管理</a></li>{/if}
+    {ifp 'shop.refundaddress'}<li {if $_W['action'] == 'shop.refundaddress'} class="active" {/if}><a href="{php echo webUrl('shop/refundaddress')}">退货地址管理</a></li>{/if}
+     {ifp 'shop.depot'}<li {if $_W['action'] == 'shop.depot'} class="active" {/if}><a href="{php echo webUrl('shop/depot')}">仓库管理</a></li>{/if}
+</ul>
+ {/if}
+
+ {ifp $_W['isfounder']}<!--只有站长可以设置-->
+<div class='menu-header'>站长设置</div>
+<ul>
+    {ifp 'disseting'}<li {if $_W['routes']=='disseting'}class="active"{/if}><a href="{php echo webUrl('disseting')}">代理等级设置</a></li>{/if}
+    {ifp 'disseting.reslcom'}<li {if $_W['routes']=='disseting/reslcom'}class="active"{/if}><a href="{php echo webUrl('disseting/reslcom')}">代理等级关系设置</a></li>{/if}
+</ul>
+{/if}
+{if com('verify')}
+{ifp 'shop.verify.store|shop.verify.saler|shop.verify.set'}
+ <ul>
+<div class='menu-header'>O2O</div>
+<ul>
+    {ifp 'shop.verify.store'}<li {if $_W['action'] == 'shop.verify.store'} class="active" {/if}><a href="{php echo webUrl('shop/verify/store')}">门店管理</a></li>{/if}
+    {ifp 'shop.verify.saler'}<li {if $_W['action'] == 'shop.verify.saler'} class="active" {/if}><a href="{php echo webUrl('shop/verify/saler')}">店员管理</a></li>{/if}
+    {ifp 'shop.verify.set'}<li {if $_W['action'] == 'shop.verify.set'} class="active" {/if}><a href="{php echo webUrl('shop/verify/set')}">关键词设置</a></li>{/if}
+</ul>
+{/if}
+{/if}

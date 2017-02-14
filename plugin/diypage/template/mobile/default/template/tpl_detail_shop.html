@@ -1,0 +1,24 @@
+<div class="fui-cell-group fui-shop-group">
+    <div class='fui-list'>
+        <div class="fui-list-media {$diyitem['params']['logostyle']}">
+            <img data-lazy="{php echo tomedia($shopdetail['logo'])}" />
+        </div>
+        <div class='fui-list-inner'>
+            <div class='title' style="color: {$diyitem['style']['shopnamecolor']};">{$shopdetail['shopname']}</div>
+            <div class='subtitle' style="color: {$diyitem['style']['shopdesccolor']};">{$shopdetail['description']}</div>
+        </div>
+    </div>
+    {if empty($diyitem['params']['hidenum'])}
+    <div class="fui-cell">
+        <div class="fui-cell-text center" style="color: {$diyitem['style']['goodsnumcolor']};">{$statics['all']}<p style="color: {$diyitem['style']['goodstextcolor']};">全部</p></div>
+        <div class="fui-cell-text center" style="color: {$diyitem['style']['goodsnumcolor']};">{$statics['new']}<p style="color: {$diyitem['style']['goodstextcolor']};">新品</p></div>
+        <div class="fui-cell-text center" style="color: {$diyitem['style']['goodsnumcolor']};">{$statics['discount']}<p style="color: {$diyitem['style']['goodstextcolor']};">促销</p></div>
+    </div>
+    {/if}
+    <div class="fui-cell btns">
+        <div class="fui-cell-text center">
+            <a class="btn btn-default-o external" href="{$shopdetail['btnurl1']}{if !empty($_GPC['frommyshop'])}&frommyshop=1{/if}" style="border-color: {$diyitem['style']['leftnavcolor']}; color: {$diyitem['style']['leftnavcolor']};">{if !empty($shopdetail['btntext1'])}{$shopdetail['btntext1']}{else}全部商品{/if}</a>
+            <a class="btn btn-default-o external" href="{$shopdetail['btnurl2']}" style="border-color: {$diyitem['style']['rightnavcolor']}; color: {$diyitem['style']['rightnavcolor']};">{if !empty($shopdetail['btntext2'])}{$shopdetail['btntext2']}{else}进店逛逛{/if}</a>
+        </div>
+    </div>
+</div>

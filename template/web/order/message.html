@@ -1,0 +1,19 @@
+<div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-body">
+            {loop $array $key $item}
+                   	<div class="form-group">
+						<label class="col-sm-2 control-label">{$key}</label>
+						<div class="col-sm-9 col-xs-12">
+							<div class="form-control-static">
+								{$item['Result']}----status:{$item['Status']}
+							</div>
+						</div>
+					</div>
+			{/loop}		
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+    </div>

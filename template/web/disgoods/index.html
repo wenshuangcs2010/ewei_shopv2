@@ -1,0 +1,136 @@
+{template '_header'}
+<div class="page-heading"> 
+    
+    <h2>代理商品管理</h2> </div>
+
+<form action="./index.php" method="get" class="form-horizontal form-search" role="form">
+    <input type="hidden" name="c" value="site" />
+    <input type="hidden" name="a" value="entry" />
+    <input type="hidden" name="m" value="ewei_shopv2" />
+    <input type="hidden" name="do" value="web" />
+    <input type="hidden" name="r"  value="disgoods" />
+    <input type="hidden" name="goodsfrom" value="dis" />
+    <div class="page-toolbar row m-b-sm m-t-sm">
+        <div class="col-sm-8 pull-right">
+            {php echo tpl_daterange('time', array('sm'=>true,'placeholder'=>'创建时间'),true);}
+            <select name="cate" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="商品分类">
+                <option value="" {if empty($_GPC['cate'])}selected{/if} >商品分类</option>
+                {loop $category $c}
+                <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
+                {/loop}
+            </select>
+            <div class="input-group">				 
+                <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="ID/名称/编号/条码{if $merch_plugin}/商户名称{/if}"> <span class="input-group-btn">
+                    <button class="btn btn-sm btn-primary" type="submit"> 搜索</button> </span>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+{if count($list)>0 && cv('goods.main')}
+<table class="table table-hover table-responsive"> 
+    <thead class="navbar-inner">
+        <tr>
+            <th style="width:60px;text-align:center;">排序</th>
+            <th style="width:20%;">商品</th>
+            <th  style="width:200px;">&nbsp;</th>
+             <th style="width:20%;" >市场价格</th>
+            <th style="width:20%;" >代理价格</th>
+            <th style="width:20%;" >代理差额</th>
+            <th style="width:20%;" >库存</th>
+          
+            <th  style="width:20%;" >状态</th>
+        
+            <th style="width:20%;">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {loop $list $item}
+        <tr {if $item['disprice']==0 ||empty($item['disprice'])} style="background-color: yellow" {/if}>
+            <td style='text-align:center;'>
+               {$item['displayorder']}
+            </td>
+            <td>
+                <img src="{php echo tomedia($item['thumb'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"  />
+            </td>
+            <td class='full' style="overflow-x: hidden">
+                {if !empty($category[$item['pcate']])}
+                	<span class="text-danger">[{$category[$item['pcate']]['name']}]</span>
+                {/if}
+                {if !empty($category[$item['ccate']])}
+                	<span class="text-info">[{$category[$item['ccate']]['name']}]</span>
+                {/if}
+                {if !empty($category[$item['tcate']]) && intval($shopset['catlevel'])==3}
+                	<span class="text-info">[{$category[$item['tcate']]['name']}]</span>
+                {/if}
+                <br/>
+               
+                {$item['title']}
+               
+            </td>
+
+            <td>
+                {$item['marketprice']}
+            </td>
+            <td>            
+                {$item['disprice']}             
+            </td>
+            <td>            
+                {$item['zprice']}             
+            </td>
+            <td>
+                
+                {$item['total']}
+              
+            </td>
+          
+         
+            <td  style="overflow:visible;">
+                {if $item['status']==2}<span class="label label-danger">赠品</span>{else}
+                <span class='label {if $item['status']==1}label-success{else}label-default{/if}' 
+                      >
+                      {if $item['status']==1}上架{else}下架{/if}</span>
+                {/if}
+               
+                </td>
+     
+                <td  style="overflow:visible;position:relative">
+
+                     
+                    {if $_GPC['goodsfrom']=='dis'}
+                       <div class="col-sm-2 pull-right" style="text-align: right;padding-right: 28px">
+                          
+                            <input class="js-switch small"  data-goods-id="{$item['id']}" type="checkbox" {if $disr["$item[id]"]}checked=""{/if} style="display: none;">
+                       </div>
+                      {/if}
+
+        
+
+                    </td>
+                </tr>
+                            {/loop}
+                           </tbody>
+                          </table>
+                          {$pager}
+                          {else}
+                          <div class='panel panel-default'>
+                              <div class='panel-body' style='text-align: center;padding:30px;'>
+                                  暂时没有任何商品!
+                              </div>
+                          </div>
+                          {/if}
+                          <script type="text/javascript">
+                         $(".js-switch").click(function () {
+                          var checked= $(".js-switch").val( this.checked ?1:0);
+                          var goods_id=$(this).attr('data-goods-id');
+                             // alert(goods_id);
+                            $.post("{php echo webUrl('disgoods/ajaxpost')}",{checked:checked.val(),goods_id:goods_id},function(re){
+                              //console.log(re.status);
+                                 if(re.status==0){
+                                  alert(re.message);
+                                 }
+                              },'json');
+                           })
+                         </script> 
+                          {template '_footer'}

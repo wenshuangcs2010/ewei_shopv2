@@ -1,0 +1,92 @@
+<!-- 商品信息块 -->
+<div class="fui-cell-group fui-detail-group" style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px; background: {$diyitem['style']['background']};" >
+    <div class="fui-cell">
+        <div class="fui-cell-text name" style="color: {$diyitem['style']['titlecolor']};">{$goods['title']}</div>
+        <a class="fui-cell-remark share"  {if !empty($diyitem['params']['share_link'])}href="{$diyitem['params']['share_link']}" data-nocache="true"{elseif !empty($goods['sharebtn']) && $member['isagent']==1 && $member['status']==1} href="{php echo mobileUrl('commission/qrcode', array('goodsid'=>$goods['id']))}" {else} id='btn-share' {/if}>
+        <i class="icon icon-share"></i><p>{php echo !empty($diyitem['params']['share'])?$diyitem['params']['share']:"分享"}</p>
+        </a>
+    </div>
+    {if !empty($goods['subtitle'])}
+    <div class="fui-cell goods-subtitle">
+        <span class='text-danger' style="color: {$diyitem['style']['subtitlecolor']};">{$goods['subtitle']}</span>
+    </div>
+    {/if}
+
+    {if empty($seckillinfo)}
+
+        <div class="fui-cell">
+            <div class="fui-cell-text price">
+                <span class="text-danger" style="color: {$diyitem['style']['pricecolor']};">￥{if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}
+                    {if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
+                        <span class="original" style="color: {$diyitem['style']['textcolor']};">￥{$goods['productprice']}</span>
+                    {else}
+                        {if $goods['productprice']>0}<span  class="original" style="color: {$diyitem['style']['textcolor']};">￥{$goods['productprice']}</span>{/if}
+                    {/if}
+                </span>
+            </div>
+        </div>
+
+
+        {if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
+        <div class="row row-time">
+            <div id='discount-container' class='fui-labeltext fui-labeltext-danger' style="border-color: {$diyitem['style']['timecolor']};"
+                 data-now="{php echo date('Y-m-d H:i:s')}"
+                 data-end="{php echo date('Y-m-d H:i:s', $goods['isdiscount_time'])}"
+                 data-end-label='{php echo empty($goods['isdiscount_title'])?'促销':$goods['isdiscount_title']}' >
+            <div class='label' style="background: {$diyitem['style']['timecolor']};">{php echo empty($goods['isdiscount_title'])?'促销':$goods['isdiscount_title']}</div>
+            <div class='text'><span class="day number text-danger" style="color: {$diyitem['style']['timetextcolor']};">-</span><span class="time">天</span><span class="hour number text-danger" style="color: {$diyitem['style']['timetextcolor']};">-</span><span class="time">小时</span><span class="minute number text-danger" style="color: {$diyitem['style']['timetextcolor']};">-</span><span class="time">分</span><span class="second number text-danger" style="color: {$diyitem['style']['timetextcolor']};">-</span><span class="time">秒</span>
+            </div>
+        </div>
+    </div>
+    {/if}
+
+
+{if $goods['istime']}
+<div class="row row-time">
+    <div id='time-container' class='fui-labeltext fui-labeltext-danger' style="border-color: {$diyitem['style']['timecolor']}";
+         data-now="{php echo date('Y-m-d H:i:s')}"
+         data-start-label='距离限时购开始'
+         data-end-label='距离限时购结束'
+         data-end-text='活动已经结束，下次早点来~'
+         data-start="{php echo date('Y-m-d H:i:s', $goods['timestart'])}"
+         data-end="{php echo date('Y-m-d H:i:s', $goods['timeend'])}">
+        <div class='label' style="background: {$diyitem['style']['timecolor']};">限时购</div>
+        <div class='text'>
+            <span class="day number" style="color: {$diyitem['style']['timetextcolor']};"></span>
+            <span class="time">天</span>
+            <span class="hour number" style="color: {$diyitem['style']['timetextcolor']};"></span>
+            <span class="time">小时</span>
+            <span class="minute number" style="color: {$diyitem['style']['timetextcolor']};"></span>
+            <span class="time">分</span>
+            <span class="second number" style="color: {$diyitem['style']['timetextcolor']};"></span>
+            <span class="time">秒</span>
+        </div>
+    </div>
+</div>
+{/if}
+
+
+{/if}
+
+
+<div class="fui-cell">
+    <div class="fui-cell-text flex">
+        {if is_array($goods['dispatchprice'])}
+        {if $goods['type']==1}
+        <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo number_format($goods['dispatchprice']['min'],2)} ~ {php echo number_format($goods['dispatchprice']['max'],2)}</span>
+        {/if}
+        {else}
+        {if $goods['type']==1}
+        <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo $goods['dispatchprice'] == 0 ? '包邮' : number_format($goods['dispatchprice'],2)}</span>
+        {/if}
+        {/if}
+        {if $goods['showtotal'] == 1}
+        <span style="color: {$diyitem['style']['textcolor']};">库存:  {$goods['total']}</span>
+        {/if}
+        <span style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</span>
+        {if $goods['province'] != '请选择省份' && $goods['city'] != '请选择城市'}
+        <span style="color: {$diyitem['style']['textcolor']};">{$goods['province']} {$goods['city']}</span>
+        {/if}
+    </div>
+</div>
+</div>

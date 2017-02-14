@@ -1,0 +1,122 @@
+
+<form class="form-horizontal form-validate" action="{if $globalaction=='add'}{php echo weburl('disseting.reslcomadd')}{else}{php echo weburl('disseting.reslcomedit')}{/if}" method="post" enctype="multipart/form-data">
+	<input type='hidden' name='id' value='{$id}' />
+
+	<div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">{if $globalaction=='add'}添加{else}修改{/if}代理级别</h4>
+            </div>
+            <div class="modal-body">
+					<div class="form-group ">
+                    <label class="col-sm-2 control-label must">选择公众号</label>
+                    <div class="col-sm-9 col-xs-12">
+                                <select name="account" class='form-control input-sm select-sm select2' aria-required="true" style="width:200px;" data-placeholder="商品分类">
+                                <option value="0" {if empty($_GPC['cate'])}selected{/if} >选择公众号</option>
+                                {loop $accountList $c}
+                                <option value="{$c['uniacid']}" {if $resellerlevelrow['Accountsid']==$c['uniacid']}selected{/if} >{$c['name']}</option>
+                                {/loop}
+                            </select>
+                            <span id="keyword-error" class="help-block-validate">此项必须填写{$resellerlevelrow['Accountsid']}</span>
+                            
+                            </div>
+                    </div>
+                    <div class="form-group">
+                    <label class="col-sm-2 control-label must">公众号代理级别</label>
+                    <div class="col-sm-9 col-xs-12">
+                                   <select name="resellerid" class='form-control input-sm select-sm select2' aria-required="true" style="width:200px;" data-placeholder="选择代理级别">
+                                <option value="0" {if empty($_GPC['cate'])}selected{/if} >选择代理级别</option>
+                                {loop $resellerlist $c}
+                                <option value="{$c['id']}" {if $resellerlevelrow['resellerid']==$c['id']}selected{/if} >{$c['name']}</option>
+                                {/loop}
+                            </select>
+                            <span id="keyword-error" class="help-block-validate">此项必须填写</span>
+                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">公众号收款方式</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class='radio-inline'>
+                                <input type='radio' name='ifpayment' value='0' {if $resellerlevelrow['ifpayment']==0}checked{/if} onclick="showDiscount()" /> 公众号
+                            </label>
+                            <label class='radio-inline'>
+                                <input type='radio' name='ifpayment' value='1' {if $resellerlevelrow['ifpayment']==1}checked{/if} onclick="hideDiscount()"/> 平台
+                            </label>
+                            <span class="help-block-validate" id="keyword-error">请确认当前公众号是否开通收款功能</span>
+                        </div>
+                    </div>
+                    <div class="form-group secondpay" {if $resellerlevelrow['ifpayment']==0}style="display:block" {else} style="display:none;"{/if}>
+                        <label class="col-sm-2 control-label">是否二次结算</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class='radio-inline'>
+                                <input name='secondpay' type='radio' value='1' checked="checked" {if $resellerlevelrow['secondpay']==1}checked{/if} /> 是
+                            </label>
+                            <label class='radio-inline'>
+                                <input type='radio' name='secondpay' value='0' {if $resellerlevelrow['secondpay']==0}checked{/if} /> 否
+                            </label>
+                            <span class="help-block-validate" id="keyword-error">若设置为否，该公众号的订单将不用付款给供货商，订单将直接走发货流程</span>
+                        </div>
+                    </div>
+                    <div class="form-group secondpay" {if $resellerlevelrow['ifpayment']==0}style="display:block" {else} style="display:none;"{/if}>
+                        <label class="col-sm-2 control-label">二次结算方式</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class='radio-inline'>
+                                <input name='secondpaytype' type='radio' value='0' checked="checked" {if $resellerlevelrow['secondpaytype']==1}checked{/if} /> 微信
+                            </label>
+                            <!--
+                            <label class='radio-inline'>
+                                <input type='radio' name='secondpaytype' value='1' {if $resellerlevelrow['secondpaytype']==1}checked{/if} /> 盛付通
+                            </label>-->
+                             <label class='radio-inline'>
+                                <input type='radio' name='secondpaytype' value='2' {if $resellerlevelrow['secondpaytype']==2}checked{/if} /> 支付宝(无法自动结算)
+                            </label>
+                            <span class="help-block-validate" id="keyword-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-group secondpay" {if $resellerlevelrow['ifpayment']==0}style="display:block" {else} style="display:none;"{/if} >
+                        <label class="col-sm-2 control-label">是否自动结算</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class='radio-inline'>
+                                <input name='autoretainage' type='radio' value='1' checked="checked" {if $resellerlevelrow['autoretainage']==1}checked{/if} /> 是
+                            </label>
+                            <label class='radio-inline'>
+                                <input type='radio' name='autoretainage' value='0' {if $resellerlevelrow['autoretainage']==0}checked{/if} /> 否
+                            </label>
+                            <span class="help-block-validate" id="keyword-error">若设置为否,该公众号不会自动打款到指定OPENID需要手动进行结算</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label class="col-sm-2 control-label must">唯一标示符</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <input type="text" name="distcode" class="form-control" value="{$resellerlevelrow['distcode']}" />
+                        <span class="help-block-validate" id="keyword-error">必填(非汉字、非符号，4个字符)，该参数将追加到订单编号之前</span>
+                    </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label must">收款OPENID</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type="text" name="openid" class="form-control" value="{$resellerlevelrow['openid']}" />
+                            <span class="help-block-validate" id="keyword-error">对应代理商二次付款时收款个人账号在该分销店铺的OPENID</span>
+                        </div>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">保存信息</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script language="javascript">
+function showDiscount(){
+        $('.secondpay').show();
+    }
+    
+    function hideDiscount(){
+        $('.secondpay').hide();
+    }
+
+</script>

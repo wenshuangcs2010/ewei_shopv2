@@ -1,0 +1,109 @@
+
+<div class="detail-sale" style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px;">
+
+    {loop $diyitem['data'] $saledata}
+
+        {if $saledata['type']=='erci'}
+
+            {if floatval($goods['buyagain'])>0 && empty($seckillinfo)}}
+            <div class="fui-cell-group  fui-sale-group" style="margin-top:0; background: {$diyitem['style']['background']};">
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="white-space: normal; color: {$diyitem['style']['textcolor']};">此商品二次购买 可享受 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">{$goods['buyagain']}</span> 折优惠
+                        {if empty($goods['buyagain_sale'])}
+                        <br>二次购买的时候 不与其他优惠共享
+                        {/if}
+                    </div>
+                </div>
+            </div>
+            {/if}
+
+        {elseif $saledata['type']=='huiyuan' && empty($seckillinfo)}
+
+            {if empty($goods['isdiscount']) || (!empty($goods['isdiscount']) &&$goods['isdiscount_time']<time())}
+                {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
+                <div class="fui-cell-group  fui-sale-group" style="margin-top:0; background: {$diyitem['style']['background']};">
+                    <div class="fui-cell">
+                        <div class="fui-cell-text" style="white-space: normal; color: {$diyitem['style']['textcolor']};">您的会员等级是 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">{$level['levelname']}</span> 可享受 <span class="text-danger">￥{$memberprice}</span> 的价格</div>
+                    </div>
+                </div>
+                {/if}
+            {/if}
+
+        {elseif $saledata['type']=='jifen'}
+
+            {if (!empty($goods['deduct']) && $goods['deduct'] != '0.00')  || !empty($goods['credit'])}
+            <div class='fui-cell-group  fui-sale-group' style='margin-top:0; background: {$diyitem['style']['background']};'>
+                <div class='fui-cell'>
+                    <div class='fui-cell-text' style="color: {$diyitem['style']['textcolor']};">{$_W['shopset']['trade']['credittext']} {if !empty($goods['deduct']) && $goods['deduct'] != '0.00'}最高抵扣 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">{$goods['deduct']}</span> 元{/if} {if !empty($goods['credit'])}购买赠送 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">{$goods['credit']}</span> {$_W['shopset']['trade']['credittext']}{/if}</div>
+                </div>
+            </div>
+            {/if}
+
+        {elseif $saledata['type']=='bupeisong'}
+
+            {if $has_city}
+            <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0; background: {$diyitem['style']['background']};' id="city-picker">
+                <div class='fui-cell'>
+                    <div class='fui-cell-text' style="color: {$diyitem['style']['textcolor']};">不配送区域:
+                        {loop $citys $item}
+                        {$item}
+                        {/loop}
+                    </div>
+                    <div class='fui-cell-remark'></div>
+                </div>
+            </div>
+            {/if}
+
+        {elseif $saledata['type']=='youhui' && empty($seckillinfo)}
+
+            {if $hasSales}
+            <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0; background: {$diyitem['style']['background']};' id="sale-picker">
+                <div class='fui-cell'>
+                    <div class='fui-cell-text' style="color: {$diyitem['style']['textcolor']};">优惠
+                        {if $enoughfree && $enoughfree==-1}
+                        全场包邮
+                        {else}
+                        {if $goods['ednum']>0}单品满 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">{$goods['ednum']}</span> {php echo empty($goods['unit'])?'件':$goods['unit']}包邮{/if}
+                        {if $goods['edmoney']>0}单品满 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">￥{$goods['edmoney']}</span> 包邮{/if}
+                        {if $enoughfree}全场满 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">￥{$enoughfree}</span> 包邮{/if}
+                        {/if}
+                        {if $enoughs && count($enoughs)>0}
+                        全场满 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">￥{$enoughs[0]['enough']}</span> 立减 <span class="text-danger" style="color: {$diyitem['style']['textcolorhigh']};">￥{$enoughs[0]['money']}</span>
+                        {/if}
+                    </div>
+                    <div class='fui-cell-remark'></div>
+                </div>
+            </div>
+            {/if}
+
+        {elseif $saledata['type']=='biaoqian'}
+
+            {if $hasServices || $labelname}
+            <div class="fui-cell-group fui-option-group" style="margin-top:0;">
+                <div class="goods-label-demo">
+                    <div class="goods-label-list
+                            {if empty($style['style'])}goods-label-style1
+                            {elseif $style['style']==1}goods-label-style2
+                            {elseif $style['style']==2}goods-label-style3
+                            {elseif $style['style']==3}goods-label-style4
+                            {elseif $style['style']==4}goods-label-style5{/if}" style="background: {$diyitem['style']['background']};">
+                        {if $goods['cash']==2}<span class="{if $style['style']<2}cl-3 cl-4 cl-2{/if}"><i></i><strong>货到付款</strong></span>{/if}
+                        {if $goods['quality']}<span class="{if $style['style']<2}cl-3 cl-4 cl-2{/if}"><i></i><strong>正品保证</strong></span>{/if}
+                        {if $goods['repair']}<span class="{if $style['style']<2}cl-3 cl-4 cl-2{/if}"><i></i><strong>保修</strong></span>{/if}
+                        {if $goods['invoice']}<span class="{if $style['style']<2}cl-3 cl-4 cl-2{/if}"><i></i><strong>发票</strong></span>{/if}
+                        {if $goods['seven']}<span class="{if $style['style']<2}cl-3 cl-4 cl-2{/if}"><i></i><strong>7天退换</strong></span>{/if}
+                        {if $labelname}
+                        {loop $labelname $item}
+                        <span class="{if $style['style']<2}cl-3 cl-4 cl-2{/if}"><i></i><strong>{$item}</strong></span>
+                        {/loop}
+                        {/if}
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+            </div>
+            {/if}
+
+        {/if}
+
+    {/loop}
+</div>

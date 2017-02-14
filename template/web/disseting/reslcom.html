@@ -1,0 +1,64 @@
+{template '_header'}
+
+<div class="page-heading">
+    <span class='pull-right'>
+        <a class='btn btn-primary btn-sm'  data-toggle="ajaxModal" href="{php echo webUrl('disseting/reslcomadd')}"><i class='fa fa-plus'></i> 添加代理关系</a>
+    </span>
+    <h2>添加代理关系</h2> </div>
+<form action="" method="post">
+    {if count($resellerlevelList)>0}
+    <table class="table table-hove table-responsive">
+        <thead class="navbar-inner">
+            <tr>
+                <th style="width:25%;">ID</th>
+                <th style="width:50%;">公众号</th>
+                <th style="width:50%;">代理级别</th>
+                <th style="width:50%;">收款方</th>
+                <th style="width:50%;">是否二次结算</th>
+                <th style="width:50%;">是否自动二次结算</th>
+                <th style="width:50%;">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {loop $resellerlevelList $item}
+            <tr>
+              <td>{$item['id']}</td>
+                <td>{$item['Accountsid']}</td>
+               <td>{$item['resellerid']}</td>
+               <td>{$item['ifpayment']}</td>
+               <td>{$item['secondpay']}</td>
+               <td>{$item['autoretainage']}</td>
+                <td style="text-align:left;">
+                    {ifp 'disseting.reselleredit'}
+                        <a href="{php echo webUrl('disseting/reslcomedit', array('id' => $item['id']))}" data-toggle="ajaxModal" class="btn btn-default btn-sm">
+                            <i class='fa fa-edit'></i> {ifp 'disseting.reselleredit'}修改{/if}
+                        </a>
+                    {/if}
+                    {ifp 'shop.depot.delete'}
+                        <a data-toggle='ajaxRemove' href="{php echo webUrl('disseting/reslleveldel', array('id' => $item['id']))}"class="btn btn-default btn-sm" data-confirm='确认要删除此代理么?'><i class="fa fa-trash"></i> 删除</a>
+                    {/if}
+                </td>
+            </tr>
+            {/loop}
+
+            <tr>
+                <td colspan='8'>
+
+                    <div class='pagers' style='float:right;'>
+                        {$pager}
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+            {else}
+            <div class='panel panel-default'>
+                <div class='panel-body' style='text-align: center;padding:30px;'>
+                    暂时没有任何代理级别信息!
+                </div>
+            </div>
+            {/if}
+        </form>
+    
+        {template '_footer'}

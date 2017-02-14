@@ -1,0 +1,37 @@
+
+<form class="form-horizontal form-validate" action="{php echo webUrl('goods/down/downqrcode')}" method="post" enctype="multipart/form-data">
+	<input type="hidden"  name="goods_id" value="{$goodsid}" />
+    <div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">下载分销二维码</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+    <label class="col-sm-2 control-label">分销商选择</label>
+    <div class="col-sm-8 col-xs-12">
+
+        <select id="cates"  name='cates[]' class="form-control select2"  multiple='' >
+        <option value="0" >总店</option>
+            {loop $list $c}
+            <option value="{$c['id']}" {if is_array($cates) &&  in_array($c['id'],$cates)}selected{/if} >{if !empty($c['realname'])}
+                {$c['realname']}{else}{$c['nickname']}
+            {/if}</option>
+            {/loop}
+        </select>
+          
+    </div>
+
+    </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">提交</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+    </div>
+    </form>
+<script type="text/javascript">
+$("#cates").select2();
+</script>

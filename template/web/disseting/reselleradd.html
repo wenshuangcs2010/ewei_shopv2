@@ -1,0 +1,30 @@
+
+<form class="form-horizontal form-validate" action="{if $globalaction=='add'}{php echo weburl('disseting.reselleradd')}{else}{php echo weburl('disseting.reselleredit')}{/if}" method="post" enctype="multipart/form-data">
+	<input type='hidden' name='id' value='{$id}' />
+
+	<div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">{if $globalaction=='add'}添加{else}修改{/if}代理级别</h4>
+            </div>
+            <div class="modal-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label must">代理级别</label>
+						<div class="col-sm-9 col-xs-12">
+							<input type="text" name="resellername" class="form-control" value="{$item['name']}" data-rule-required='true' />
+						</div>
+					</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">保存信息</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script language="javascript">
+
+
+</script>

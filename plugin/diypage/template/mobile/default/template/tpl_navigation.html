@@ -1,0 +1,35 @@
+{if !empty($diyitem['data'])}
+    <div  class="headtop" 
+    style="{if $diyitem['style']['show']==1}top:0px;z-index: 9{/if}">
+        <div class="title swiper-container3" style="height:100%;{if $diyitem['style']['show_sher']==0}width:88%;{else}width:100%;{/if}background-color: {$diyitem['style']['background']}">
+            <div  class="swiper-wrapper fui-tab fui-tab-danger tabcheck" style="background-color: {$diyitem['style']['background']}">
+            	{php $url='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];}
+				 {loop $diyitem['data'] $key $item}
+                    
+                <a href="{$item['linkurl']}"  class="tab swiper-slide 
+{if $item['linkurl']==$url}active{/if} {if $key=='C1483495700486'}active{/if}">
+
+				 {$item['text']}
+                </a>
+				{/loop}
+            </div>
+   
+        </div>
+		{if $diyitem['style']['show_sher']==0}
+		<div class="fui-header-right btn-add"><a class="tab swiper-slide" href="{php echo mobileUrl('shop/category')}"><i class="icon icon-search"></i></a></div>
+		{/if}
+    </div>
+{if $diyitem['style']['show']==1}
+	<script type="text/javascript">
+	$(document).ready(function(){
+	var elm = $('.headtop');
+	var startPos = $(elm).offset().top;
+		document.getElementById('fui-page-current').onscroll = function() {
+        var p = $("#fui-page-current").scrollTop();
+ 			$(elm).css('position', ((p) > startPos) ? 'fixed' : 'static');
+        	$(elm).css('top', ((p) > startPos) ? '0px' : "");
+      };
+  });
+	</script>
+{/if}
+{/if}

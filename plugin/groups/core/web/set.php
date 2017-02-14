@@ -1,0 +1,125 @@
+<?php
+/*
+ * 人人商城V2
+ *
+ * @author ewei 狸小狐 QQ:22185157
+ */
+if (!defined('IN_IA')) {
+    exit('Access Denied');
+}
+class Set_EweiShopV2Page extends PluginWebPage {
+    function main() {
+        global $_W, $_GPC;
+        $uniacid = intval($_W['uniacid']);
+        $set = pdo_fetch("SELECT * FROM ".tablename('ewei_shop_groups_set')." WHERE uniacid = :uniacid ",array(':uniacid'=>$uniacid));
+        if ($_W['ispost']) {
+            $data2 = is_array($_GPC['data2']) ? $_GPC['data2'] : array();
+            //兑换关键词
+            $exchangekeyword = $data2['exchangekeyword'];
+            $keyword = m('common')->keyExist($exchangekeyword);
+            if(!empty($keyword)){
+                if($keyword['name']!='ewei_shopv2:groups'){
+                    show_json(0, '关键字已存在!');
+                }
+            }
+            $rule = pdo_fetch("select * from " . tablename('rule') . ' where uniacid=:uniacid and module=:module and name=:name  limit 1',
+                array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':name' => "ewei_shopv2:groups"));
+            if (empty($rule)) {
+                $rule_data = array(
+                    'uniacid' => $_W['uniacid'],
+                    'name' => 'ewei_shopv2:groups',
+                    'module' => 'ewei_shopv2',
+                    'displayorder' => 0,
+                    'status' => 1
+                );
+                pdo_insert('rule', $rule_data);
+                $rid = pdo_insertid();
+
+                $keyword_data = array(
+                    'uniacid' => $_W['uniacid'],
+                    'rid' => $rid,
+                    'module' => 'ewei_shopv2',
+                    'content' => trim($exchangekeyword),
+                    'type' => 1,
+                    'displayorder' => 0,
+                    'status' => 1
+                );
+                pdo_insert('rule_keyword', $keyword_data);
+            } else {
+                pdo_update('rule_keyword', array('content' => trim($exchangekeyword)), array('rid' => $rule['id']));
+            }
+            $this->updateSet($data2);
+
+
+            $data = array(
+                'uniacid' => $uniacid,
+                'groups' => intval($_GPC['data']['groups']),
+                'followurl' => trim($_GPC['data']['followurl']),
+                'followqrcode' => trim($_GPC['data']['followqrcode']),
+                'groupsurl' => trim($_GPC['data']['groupsurl']),
+                'share_title' => trim($_GPC['data']['share_title']),
+                'share_icon' => trim($_GPC['data']['share_icon']),
+                'share_desc' => trim($_GPC['data']['share_desc']),
+                'share_url' => trim($_GPC['data']['share_url']),
+                'groups_description' =>  m('common')->html_images($_GPC['groups_description']),
+                'rules' =>  m('common')->html_images($_GPC['rules']),
+                'description' => intval($_GPC['data']['description']),
+                'creditdeduct' => intval($_GPC['data']['creditdeduct']),                /*是否开启积分抵扣*/
+                'credit' => intval($_GPC['data']['credit']),                              /*积分*/
+                'groupsdeduct' => intval($_GPC['data']['groupsdeduct']),                /*是否使用拼团积分比例*/
+                'groupsmoney' => $_GPC['data']['groupsmoney'],                          /*拼团积分抵扣比例*/
+                'refund' => intval($_GPC['data']['refund']),                             /*拼团失败X小时后自动退款*/
+                'refundday' => intval($_GPC['data']['refundday']),                      /*完成订单X天之内允许退换货*/
+                'receive' => intval($_GPC['data']['receive']),                      /*完成发货X天之后自动收货*/
+                'discount' => intval($_GPC['data']['discount']),                      /*是否开启团长优惠*/
+                'headstype' => intval($_GPC['headstype']),                      /*优惠类型*/
+                'headsmoney' => floatval($_GPC['headsmoney']),                      /*优惠金额*/
+                'headsdiscount' => intval($_GPC['headsdiscount']),                      /*优惠折扣*/
+                'goodsid' => !empty($_GPC['goodsid'])?implode(',',$_GPC['goodsid']):0
+            );
+            if(!empty($set)){
+                $set_update = pdo_update('ewei_shop_groups_set', $data, array('id' => $set['id'],'uniacid' => $uniacid));
+            }else{
+                $set_insert = pdo_insert('ewei_shop_groups_set',$data);
+            }
+
+            pdo_update('ewei_shop_groups_goods', array('rights'=>1), array('uniacid' => $uniacid));
+            $goodsid = explode(',',$data['goodsid']);
+            foreach($goodsid as $value){
+                $goods_update = pdo_update('ewei_shop_groups_goods', array('rights'=>0), array('id' => intval($value),'uniacid' => $uniacid));
+
+            }
+            show_json(1, array('url' => webUrl('groups/set', array( 'tab' => str_replace("#tab_", "", $_GPC['tab'])))));
+        }
+        /*商城*/
+        $sys_data = m('common')->getPluginset('sale');
+        $data2 = $this->set;
+
+        $data = pdo_fetch("SELECT * FROM ".tablename('ewei_shop_groups_set')." WHERE uniacid = :uniacid ",array(':uniacid'=>$uniacid));
+        if($data['goodsid']){
+            $goods = pdo_fetchall("SELECT id,title,thumb FROM ".tablename('ewei_shop_groups_goods')."
+                    WHERE uniacid = :uniacid and id in ({$data['goodsid']}) ",array(':uniacid'=>$uniacid));
+        }
+        include $this->template();
+    }
+    /*搜索商品*/
+    function query(){
+        global $_W, $_GPC;
+        $kwd = trim($_GPC['keyword']);
+        $params = array();
+        $params[':uniacid'] = $_W['uniacid'];
+        $params[':deleted'] = 0;
+        $condition=" and uniacid=:uniacid and deleted = :deleted ";
+        if (!empty($kwd)) {
+            $condition.=" AND `title` LIKE :keyword";
+            $params[':keyword'] = "%{$kwd}%";
+        }
+        $ds = pdo_fetchall('SELECT id,title,rights,thumb FROM ' . tablename('ewei_shop_groups_goods') . " WHERE 1 {$condition} order by createtime desc", $params);
+
+        $ds = set_medias($ds,array('thumb','share_icon'));
+        if($_GPC['suggest']){
+            die(json_encode(array('value'=>$ds)));
+        }
+        include $this->template();
+    }
+}

@@ -1,0 +1,350 @@
+{template '_header'}
+<div class="page-heading"> 
+    <span class='pull-right'>
+        {ifp 'goods.add'}
+        <a class='btn btn-primary btn-sm' href="{php echo webUrl('goods/add')}"><i class='fa fa-plus'></i> 添加商品</a>
+        {/if}
+        <!--
+        {if $_W['uniacid']==DIS_ACCOUNT}
+        <a class='btn btn-primary btn-sm' href="{php echo webUrl('disgoods/export')}"><i class='fa fa-plus'></i>代理价格导入</a>
+        {/if}
+        -->
+    </span>
+    <h2>商品管理</h2> </div>
+
+<form action="./index.php" method="get" class="form-horizontal form-search" role="form">
+    <input type="hidden" name="c" value="site" />
+    <input type="hidden" name="a" value="entry" />
+    <input type="hidden" name="m" value="ewei_shopv2" />
+    <input type="hidden" name="do" value="web" />
+    <input type="hidden" name="r"  value="goods" />
+    <input type="hidden" name="goodsfrom" value="{$goodsfrom}" />
+    <div class="page-toolbar row m-b-sm m-t-sm">
+        <div class="col-sm-4">
+
+            <div class="input-group-btn">
+                <button class="btn btn-default btn-sm"  type="button" data-toggle='refresh'><i class='fa fa-refresh'></i></button>
+                {ifp 'goods.edit'}
+                {if $_GPC['goodsfrom']=='sale'}
+                <button class="btn btn-default btn-sm" type="button" data-toggle='batch'  data-href="{php echo webUrl('goods/status',array('status'=>0))}"><i class='fa fa-circle-o'></i> 下架</button>
+                {/if}
+                {if $_GPC['goodsfrom']=='stock'}
+                <button class="btn btn-default btn-sm" type="button" data-toggle='batch' data-href="{php echo webUrl('goods/status',array('status'=>1))}"><i class='fa fa-circle'></i> 上架</button>
+
+                {/if}
+                {/if}
+
+                {if $_GPC['goodsfrom']=='cycle'}
+                {ifp 'goods.delete1'}
+                <button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="如果商品存在购买记录，会无法关联到商品, 确认要彻底删除吗?" data-href="{php echo webUrl('goods/delete1')}"><i class='fa fa-remove'></i> 彻底删除</button>
+                {/if}
+
+                {ifp 'goods.restore'}
+                <button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="确认要恢复?" data-href="{php echo webUrl('goods/restore')}"><i class='fa fa-reply'></i> 恢复到仓库</button>
+                {/if}
+
+                {else}
+                {ifp 'goods.delete'}
+                <button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="确认要删除吗?" data-href="{php echo webUrl('goods/delete')}"><i class='fa fa-trash'></i> 删除</button>
+                {/if}
+                {/if}
+
+
+
+            </div> 
+        </div>	
+
+
+        <div class="col-sm-8 pull-right">
+
+            <select name="cate" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="商品分类">
+                <option value="" {if empty($_GPC['cate'])}selected{/if} >商品分类</option>
+                {loop $category $c}
+                <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
+                {/loop}
+            </select>
+
+            <div class="input-group">				 
+                <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="ID/名称/编号/条码{if $merch_plugin}/商户名称{/if}"> <span class="input-group-btn">
+                    		
+                    <button class="btn btn-sm btn-primary" type="submit"> 搜索</button> </span>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+{if count($list)>0 && cv('goods.main')}
+<table class="table table-hover table-responsive"> 
+    <thead class="navbar-inner">
+        <tr>
+            <th style="width:25px;"><input type='checkbox' /></th>
+            <th style="width:60px;text-align:center;">排序</th>
+            <th style="width:60px;">商品</th>
+            <th  style="width:200px;">&nbsp;</th>
+            {if $_W['uniacid']==DIS_ACCOUNT}
+            {loop $reseller $item}
+             <th style="width:80px;">{$item['name']}</th>
+            {/loop}
+            {else}
+            <th style="width:70px;" >代理价格</th>
+            {/if}
+            {loop $levels  $le}
+            <th style="width:70px;" >{$le['levelname']}</th>
+            {/loop}
+            <th style="width:60px;" >价格</th>
+            <th style="width:70px;" >库存</th>
+            <th style="width:80px;" >销量</th>
+            {if $goodsfrom!='cycle'}
+            <th  style="width:60px;" >状态</th>
+            {/if}
+         
+        </tr>
+    </thead>
+    <tbody>
+        {loop $list $item}
+        <tr>
+
+
+            <td>
+                <input type='checkbox'  value="{$item['id']}"/>
+            </td>
+
+            <td style='text-align:center;'>
+                {ifp 'goods.edit'}
+                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'displayorder','id'=>$item['id']))}" >{$item['displayorder']}</a>
+                {else}
+                {$item['displayorder']} 
+                {/if}
+            </td>
+            <td>
+                <img src="{php echo tomedia($item['thumb'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"  />
+            </td>
+            <td class='full' style="overflow-x: hidden">
+                {if !empty($category[$item['pcate']])}
+                	<span class="text-danger">[{$category[$item['pcate']]['name']}]</span>
+                {/if}
+                {if !empty($category[$item['ccate']])}
+                	<span class="text-info">[{$category[$item['ccate']]['name']}]</span>
+                {/if}
+                {if !empty($category[$item['tcate']]) && intval($shopset['catlevel'])==3}
+                	<span class="text-info">[{$category[$item['tcate']]['name']}]</span>
+                {/if}
+                <br/>
+                {ifp 'goods.edit'}
+                <a href='javascript:;' data-toggle='ajaxEdit' data-edit='textarea'  data-href="{php echo webUrl('goods/change',array('type'=>'title','id'=>$item['id']))}" >{$item['title']}</a>
+                {else}
+                {$item['title']}
+                {/if}
+            </td>
+          {if $_W['uniacid']==DIS_ACCOUNT}
+            {if empty($t[$item['id']])}
+              {loop $reseller $re}
+               <td><a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'disprice','id'=>$item['id'],'key'=>$re['id']))}" >0.00</a></td>
+              {/loop}
+            {else}
+            {loop $reseller $re}
+                    <td><a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'disprice','id'=>$item['id'],'key'=>$re['id']))}" >{if empty($t[$item['id']][$re['id']])}0.00{else}{$t[$item['id']][$re['id']]}{/if}</a></td>
+                 {/loop}
+            {/if}
+           
+          {else}
+            <td >{if empty($t[$item['disgoods_id']][$DisInfo['resellerid']])}
+                自营
+              {else}
+              {$t[$item['disgoods_id']][$DisInfo['resellerid']]}
+            {/if}</td>
+            {/if}
+            {php $discounts=json_decode($item['discounts'], true);}
+
+            {loop $levels  $le}
+              {php $key=$le['key']."_pay"}
+            <td style="width:70px;" >
+
+            {if $item['hasoption']==1}
+             <span data-toggle='tooltip' title='多规格不支持快速修改'> {if empty($discounts[$key])}{$item['marketprice']}{else}{$discounts[$key]}{/if}</span>
+            {else}
+            <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'memberprice','id'=>$item['id'],'key'=>$le['key']))}" title='只能修改价格无法修改折扣'>
+            {if empty($discounts[$key])}{$item['marketprice']}{else}{$discounts[$key]}{/if}
+
+            </a>
+
+            {/if}
+            </td>
+            {/loop}
+            <td>
+                {if $item['hasoption']==1}
+                {ifp 'goods.edit'}
+                <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['marketprice']}</span>
+                {else}
+                {$item['marketprice']}
+                {/if}
+                {else}
+                {ifp 'goods.edit'}
+
+                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'marketprice','id'=>$item['id']))}" >{$item['marketprice']}</a>
+                {else}
+                {$item['marketprice']}
+                {/if}{/if}
+
+            </td>
+
+            <td>
+                {if $item['hasoption']==1}
+                {ifp 'goods.edit'}
+                <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['total']}</span>
+                {else}
+                {$item['total']}
+                {/if}
+                {else}
+                {ifp 'goods.edit'}
+                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'total','id'=>$item['id']))}" >{$item['total']}</a>							
+                {else}
+                {$item['total']}
+                {/if}{/if}
+            </td>
+            <td>{$item['salesreal']}</td>
+
+            {if $goodsfrom!='cycle'}
+            <td  style="overflow:visible;">
+                {if $item['status']==2}<span class="label label-danger">赠品</span>{else}
+                <span class='label {if $item['status']==1}label-success{else}label-default{/if}' 
+                      {ifp 'goods.edit'}
+                      data-toggle='ajaxSwitch' 
+                      data-confirm = "确认是{if $item['status']==1}下架{else}上架{/if}？"
+                      data-switch-refresh='true'
+                      data-switch-value='{$item['status']}'
+                      data-switch-value0='0|下架|label label-default|{php echo webUrl('goods/status',array('status'=>1,'id'=>$item['id']))}'  
+                      data-switch-value1='1|上架|label label-success|{php echo webUrl('goods/status',array('status'=>0,'id'=>$item['id']))}'  
+                      {/if}
+                      >
+                      {if $item['status']==1}上架{else}下架{/if}</span>
+                {/if}
+                {if !empty($item['merchid'])}
+                <br>
+                <span class='label {if $item['checked']==0}label-success{else}label-warning{/if}'
+                {ifp 'goods.edit'}
+                data-toggle='ajaxSwitch'
+                data-confirm = "确认是{if $item['checked']==0}审核中{else}审核通过{/if}？"
+                data-switch-refresh='true'
+                data-switch-value='{$item['checked']}'
+                data-switch-value1='1|审核中|label label-warning|{php echo webUrl('goods/checked',array('checked'=>0,'id'=>$item['id']))}'
+                data-switch-value0='0|通过|label label-success|{php echo webUrl('goods/checked',array('checked'=>1,'id'=>$item['id']))}'
+                {/if}
+                >
+                {if $item['checked']==0}通过{else}审核中{/if}</span>
+                {/if}
+                </td>
+                {/if}
+               
+                </tr>
+                <tr>
+                    <td colspan='4' style='text-align: left;border-top:none;padding:5px 0;' class='aops'>
+                     <a class='{if $item['isnew']==1}text-danger{else}text-default{/if}'  
+                       {ifp 'goods.property'}
+                       data-toggle='ajaxSwitch' 
+                       data-switch-value='{$item['isnew']}'
+                       data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'new', 'data'=>1,'id'=>$item['id']))}'  
+                       data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'new','data'=>0,'id'=>$item['id']))}'  
+                       {/if}
+                       >新品</a>
+                        <a class='{if $item['ishot']==1}text-danger{else}text-default{/if}'  
+                           {ifp 'goods.property'}
+                           data-toggle='ajaxSwitch' 
+                           data-switch-value='{$item['ishot']}'
+                           data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'hot', 'data'=>1,'id'=>$item['id']))}'  
+                           data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'hot','data'=>0,'id'=>$item['id']))}'  
+                           {/if}
+                           >热卖</a>
+                         <a class='{if $item['isrecommand']==1}text-danger{else}text-default{/if}'  
+                            {ifp 'goods.property'}
+                            data-toggle='ajaxSwitch' 
+                            data-switch-value='{$item['isrecommand']}'
+                            data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'recommand', 'data'=>1,'id'=>$item['id']))}'  
+                            data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'recommand','data'=>0,'id'=>$item['id']))}'  
+                            {/if}
+                            >推荐</a>
+                          <a class='{if $item['isdiscount']==1}text-danger{else}text-default{/if}'  
+                             {ifp 'goods.property'}
+                             data-toggle='ajaxSwitch' 
+                             data-switch-value='{$item['isdiscount']}'
+                             data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'discount', 'data'=>1,'id'=>$item['id']))}'  
+                             data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'discount','data'=>0,'id'=>$item['id']))}'  
+                             {/if}
+                             >促销</a>
+                             {if $_W['if_pay_type']==0}
+                           <a class='{if $item['issendfree']==1}text-danger{else}text-default{/if}'  
+                              {ifp 'goods.property'}
+                              data-toggle='ajaxSwitch' 
+                              data-switch-value='{$item['issendfree']}'
+                              data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'sendfree', 'data'=>1,'id'=>$item['id']))}'  
+                              data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'sendfree','data'=>0,'id'=>$item['id']))}'  
+                              {/if}
+                              >包邮</a>
+                              {/if}
+                            <a class='{if $item['istime']==1}text-danger{else}text-default{/if}'  
+                               {ifp 'goods.property'}
+                               data-toggle='ajaxSwitch' 
+                               data-switch-value='{$item['istime']}'
+                               data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'time', 'data'=>1,'id'=>$item['id']))}'  
+                               data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'time','data'=>0,'id'=>$item['id']))}'  
+                               {/if}
+                               >限时卖</a>
+                             <a class='{if $item['isnodiscount']==1}text-danger{else}text-default{/if}'  
+                                {ifp 'goods.property'}
+                                data-toggle='ajaxSwitch' 
+                                data-switch-value='{$item['isnodiscount']}'
+                                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'nodiscount', 'data'=>1,'id'=>$item['id']))}'  
+                                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'nodiscount','data'=>0,'id'=>$item['id']))}'  
+                                {/if}
+                                >不参与折扣</a>
+                    </td>
+
+                    <td colspan='
+                    {if $goodsfrom=='cycle'}
+                      {if $_W['uniacid']==DIS_ACCOUNT}
+                        {php echo 4+count($reseller)+count($levels);}
+                      {else} {php echo 4+count($levels);}
+                      {/if}
+                    {else}
+                      {if $_W['uniacid']==DIS_ACCOUNT}
+                        {php echo 5+count($reseller)+count($levels)}
+                      {else}
+                      {php echo 5+count($levels)}
+                      {/if}
+                    {/if}' style='text-align: right;border-top:none;padding:5px 0;overflow:visible;position:relative' >
+
+                         {ifp 'goods.edit|goods.view'}
+                            <a  class='btn btn-default btn-sm' href="{php echo webUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> {ifp 'goods.edit'}编辑{else}查看{/if}</a>
+                        {/if}
+                        {if $_GPC['goodsfrom']=='cycle'}
+                        {ifp 'goods.restore'}
+                        <a  class='btn btn-default btn-sm' data-toggle='ajaxRemove' href="{php echo webUrl('goods/restore', array('id' => $item['id']))}" data-confirm='确认要恢复?'><i class='fa fa-reply'></i> 恢复到仓库</a>
+                        {/if}
+                        {ifp 'goods.delete1'}
+                        <a  class='btn btn-default btn-sm' data-toggle='ajaxRemove' href="{php echo webUrl('goods/delete1', array('id' => $item['id']))}" data-confirm='如果此商品存在购买记录，会无法关联到商品, 确认要彻底删除吗?？'><i class='fa fa-remove'></i> 彻底删除</a>
+                        {/if}
+                        {else}
+                        {ifp 'goods.delete'}
+                        <a  class='btn btn-default btn-sm' data-toggle='ajaxRemove' href="{php echo webUrl('goods/delete', array('id' => $item['id']))}" data-confirm='确认删除此商品？'><i class='fa fa-trash'></i> 删除</a>
+                        {/if}
+                        {/if}
+                         <a  class='btn btn-default btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('goods/down/qrcode', array('id' => $item['id']))}" ><i class='fa fa-trash'></i> 下载分销二维码</a>   
+
+                        {if $_GPC['goodsfrom']!='cycle'}
+                        <a href="javascript:;" class='btn btn-default btn-sm js-clip' data-url="{php echo mobileUrl('goods/detail', array('id' => $item['id']),true)}"><i class='fa fa-link'></i> 复制链接</a>
+                        {/if}
+                             </td>
+                            </tr>
+                            {/loop}
+                           </tbody>
+                          </table>
+                          {$pager}
+                          {else}
+                          <div class='panel panel-default'>
+                              <div class='panel-body' style='text-align: center;padding:30px;'>
+                                  暂时没有任何商品!
+                              </div>
+                          </div>
+                          {/if}
+                          {template '_footer'}
