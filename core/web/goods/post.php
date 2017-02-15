@@ -17,7 +17,7 @@ foreach($labelname as $key => $value){
 }
 /*wsq*/
 $resellerlist=pdo_fetchall("select * from ".tablename("ewei_shop_reseller"));
-if($item['isdis']==1 && $_W['uniacid']!=DIS_ACCOUNT){
+if($item['disgoods_id']>0 && $_W['uniacid']!=DIS_ACCOUNT){
     $depot_data = pdo_fetchall('select * from ' . tablename('ewei_shop_depot') . ' where uniacid=:uniacid and enabled=1 order by id desc', array(':uniacid' => DIS_ACCOUNT));
 }else{
     $depot_data = pdo_fetchall('select * from ' . tablename('ewei_shop_depot') . ' where uniacid=:uniacid and enabled=1 order by id desc', array(':uniacid' => $_W['uniacid']));
@@ -27,7 +27,7 @@ if(!empty($item)){
     $disprice=pdo_fetch("select * from ".tablename("ewei_shop_goodsresel")." where goods_id=:goodsid",array(":goodsid"=>$id));
 
     if(!empty($disprice)){
-        $disprice=unserialize($disprice['disprice']);
+        $disprice=Dispage::get_disprice($id,$_W['uniacid']);
     }
 }
 //税率展示优化
@@ -391,6 +391,12 @@ if ($_W['ispost']) {
         $id = pdo_insertid();
         plog('goods.add', "添加商品 ID: {$id}<br>".(!empty($data['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
     } else {
+        if($item['disgoods_id']>0){
+            unset($data['isdis']);
+            unset($data['depotid']);
+            unset($data['consumption_tax']);
+            unset($data['vat_rate']);
+        }
         unset($data['createtime']);
         pdo_update('ewei_shop_goods', $data, array('id' => $id));
         plog('goods.edit', "编辑商品 ID: {$id}<br>".(!empty($data['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
@@ -402,8 +408,8 @@ if ($_W['ispost']) {
             //处理代理商品的税率 和其他的一些数据
         Dispage::delDisGoods($id,$data,$_W['uniacid']);
         //wsqend
+       
     }
-   
     //处理商品参数
     $param_ids = $_POST['param_id'];
     $param_titles = $_POST['param_title'];
