@@ -339,7 +339,8 @@ class Notice_EweiShopV2Model {
 		$url = $this->getUrl('order/detail', array('id' => $orderid));
 
         $param = array();
-        $param[':uniacid'] = $_W['uniacid'];
+        $uniacid=$order['uniacid'];
+        $param[':uniacid'] = $uniacid;
 
         if ($order['isparent'] == 1) {
             $scondition = " og.parentorderid=:parentorderid";
@@ -369,9 +370,9 @@ class Notice_EweiShopV2Model {
 		$store = false;
 		if (!empty($order['storeid'])) {
             if ($order['merchid'] > 0) {
-                $store = pdo_fetch('select * from ' . tablename('ewei_shop_merch_store') . " where id=:id and uniacid=:uniacid and merchid = :merchid limit 1", array(':id' => $order['storeid'], ':uniacid' => $_W['uniacid'], ':merchid' => $order['merchid']));
+                $store = pdo_fetch('select * from ' . tablename('ewei_shop_merch_store') . " where id=:id and uniacid=:uniacid and merchid = :merchid limit 1", array(':id' => $order['storeid'], ':uniacid' => $uniacid, ':merchid' => $order['merchid']));
             } else {
-                $store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $order['storeid'], ':uniacid' => $_W['uniacid']));
+                $store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $order['storeid'], ':uniacid' => $uniacid));
             }
 		}
 		
@@ -387,7 +388,7 @@ class Notice_EweiShopV2Model {
 				$address = iunserializer($order['address']);
 				if (!is_array($address)) {
 					$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where id=:id and uniacid=:uniacid limit 1'
-						, array(':id' => $order['addressid'], ':uniacid' => $_W['uniacid']));
+						, array(':id' => $order['addressid'], ':uniacid' => $uniacid));
 				}
 			}
 			if (!empty($address)) {
@@ -543,7 +544,7 @@ class Notice_EweiShopV2Model {
 							$address = iunserializer($order['address']);
 							if (!is_array($address)) {
 								$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where id=:id and uniacid=:uniacid limit 1'
-									, array(':id' => $order['addressid'], ':uniacid' => $_W['uniacid']));
+									, array(':id' => $order['addressid'], ':uniacid' =>$uniacid));
 							}
 						}
 					}
