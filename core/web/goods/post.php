@@ -397,10 +397,13 @@ if ($_W['ispost']) {
     }
     //处理代理价
     /*wsq 更改*/
-    Dispage::disPrice($id,$_GPC['disprice']);
-    //处理代理商品的税率 和其他的一些数据
-    Dispage::delDisGoods($id,$data,$_W['uniacid']);
-    //wsqend
+    if($_W['uniacid']==DIS_ACCOUNT){
+        Dispage::disPrice($id,$_GPC['disprice']);
+            //处理代理商品的税率 和其他的一些数据
+        Dispage::delDisGoods($id,$data,$_W['uniacid']);
+        //wsqend
+    }
+   
     //处理商品参数
     $param_ids = $_POST['param_id'];
     $param_titles = $_POST['param_title'];
