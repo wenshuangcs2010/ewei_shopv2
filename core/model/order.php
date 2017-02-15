@@ -85,15 +85,18 @@ class Order_EweiShopV2Model
                         //处理积分与库存
                         $this->setStocksAndCredits($orderid, 1);
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
-                        $depot=Dispage::getDepot($order['depotid']);
+                        WeUtility::logging('pay_order', var_export($order,true));
+                     
                         if($customs){
                             $depot=m("kjb2c")->get_depot($order['depotid']);
+                            WeUtility::logging('pay_depot', var_export($depot,true));
                             $params=array(
                                 'out_trade_no'=>$order['ordersn'],
                                 'transaction_id'=>$params['paymentno'],
                                 'customs'=>$customs,
                                 'mch_customs_no'=>$depot['customs_code'],
                             );
+                              WeUtility::logging('pay_params', var_export($params,true));
                             if($order['paytype']==21){
                                 load()->model('payment');
                                 $setting = uni_setting($_W['uniacid'], array('payment'));
@@ -103,6 +106,7 @@ class Order_EweiShopV2Model
                                             'mch_id'=>$setting['payment']['wechat']['mchid'],
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
+                                         WeUtility::logging('pay_config', var_export($config,true));
                                     m("kjb2c")->to_customs($params,$config,'wx'); 
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
@@ -115,7 +119,7 @@ class Order_EweiShopV2Model
                         }
                         if($order['isdisorder']==1){
                              $depot=m("kjb2c")->get_depot($order['depotid']);
-                             if($depot['secondpaytype']==0){
+                             if($depot['secondpaytype']==0 && $depot['autoretainage']==1){
                                 $order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
                                 $payfee=$order['disorderamount'];
                                 $disorder_sn=Dispage::createNO("shop_order_dispay","id","dis");//生成订单号
