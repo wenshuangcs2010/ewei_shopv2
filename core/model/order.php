@@ -403,10 +403,11 @@ class Order_EweiShopV2Model
     {
 
         global $_W;
-        $order = pdo_fetch('select id,ordersn,price,openid,dispatchtype,addressid,carrier,status,isparent,paytype from ' . tablename('ewei_shop_order') . ' where id=:id limit 1', array(':id' => $orderid));
+        $order = pdo_fetch('select id,ordersn,uniacid,price,openid,dispatchtype,addressid,carrier,status,isparent,paytype from ' . tablename('ewei_shop_order') . ' where id=:id limit 1', array(':id' => $orderid));
 
         $param = array();
-        $param[':uniacid'] = $_W['uniacid'];
+        $uniacid=$order['uniacid'];
+        $param[':uniacid'] = $uniacid;
 
         if ($order['isparent'] == 1) {
             $condition = " og.parentorderid=:parentorderid";
@@ -467,7 +468,7 @@ class Order_EweiShopV2Model
                             $stock <= 0 && $stock = 0;
                         }
                         if ($stock != -1) {
-                            pdo_update('ewei_shop_goods_option', array('stock' => $stock), array('uniacid' => $_W['uniacid'], 'goodsid' => $g['goodsid'], 'id' => $g['optionid']));
+                            pdo_update('ewei_shop_goods_option', array('stock' => $stock), array('uniacid' => $uniacid, 'goodsid' => $g['goodsid'], 'id' => $g['optionid']));
                         }
                     }
                 }
@@ -483,7 +484,7 @@ class Order_EweiShopV2Model
                         $totalstock <= 0 && $totalstock = 0;
                     }
                     if ($totalstock != -1) {
-                        pdo_update('ewei_shop_goods', array('total' => $totalstock), array('uniacid' => $_W['uniacid'], 'id' => $g['goodsid']));
+                        pdo_update('ewei_shop_goods', array('total' => $totalstock), array('uniacid' => $uniacid, 'id' => $g['goodsid']));
                     }
                 }
             }
@@ -503,18 +504,18 @@ class Order_EweiShopV2Model
             if ($type == 0) {
                 //虚拟销量只要是拍下就加 || 如果是付款减库存,则付款才加销量
                 if ($g['totalcnf'] != 1) {
-                    pdo_update('ewei_shop_goods', array('sales' => $g['sales'] + $g['total']), array('uniacid' => $_W['uniacid'], 'id' => $g['goodsid']));
+                    pdo_update('ewei_shop_goods', array('sales' => $g['sales'] + $g['total']), array('uniacid' => $uniacid, 'id' => $g['goodsid']));
                 }
             } elseif ($type == 1) {
                 //真实销量付款才加
                 if ($order['status'] >= 1) {
                     if ($g['totalcnf'] != 1) {
-                        pdo_update('ewei_shop_goods', array('sales' => $g['sales'] - $g['total']), array('uniacid' => $_W['uniacid'], 'id' => $g['goodsid']));
+                        pdo_update('ewei_shop_goods', array('sales' => $g['sales'] - $g['total']), array('uniacid' => $uniacid, 'id' => $g['goodsid']));
                     }
                     //实际销量
                     $salesreal = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_order_goods') . ' og '
                         . ' left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid '
-                        . ' where og.goodsid=:goodsid and o.status>=1 and o.uniacid=:uniacid limit 1', array(':goodsid' => $g['goodsid'], ':uniacid' => $_W['uniacid']));
+                        . ' where og.goodsid=:goodsid and o.status>=1 and o.uniacid=:uniacid limit 1', array(':goodsid' => $g['goodsid'], ':uniacid' => $uniacid));
                     pdo_update('ewei_shop_goods', array('salesreal' => $salesreal), array('id' => $g['goodsid']));
                 }
             }
