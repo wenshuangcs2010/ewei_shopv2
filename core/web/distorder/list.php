@@ -190,6 +190,10 @@ class List_EweiShopV2Page extends WebPage {
                 $sql.="LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
             }
             $list = pdo_fetchall($sql, $paras);
+            foreach($list as $key=>$vlue){
+                 $list[$key]['disinfo']=Dispage::getDisInfo($vlue['uniacid']);
+            }
+
         }else{
             $status_condition = str_replace('o.','',$statuscondition);
             $sql = "select o.*,ac.name as accountname,de.if_declare,de.if_customs from " . tablename('ewei_shop_order') . " as o "
@@ -240,6 +244,7 @@ class List_EweiShopV2Page extends WebPage {
                     $list[$key]['salerid'] = $verifyopenid_array[$value['verifyopenid']]['salerid'];
                     $list[$key]['salernickname'] = $verifyopenid_array[$value['verifyopenid']]['salernickname'];
                     $list[$key]['salername'] = $verifyopenid_array[$value['verifyopenid']]['salername'];
+                    $list[$key]['disinfo']=Dispage::getDisInfo($value['uniacid']);
                 }
                 unset($value);
             }
@@ -748,7 +753,7 @@ class List_EweiShopV2Page extends WebPage {
         $totalmoney = $t['sumprice'];
         $pager = pagination($total, $pindex, $psize);
         $stores = pdo_fetchall('select id,storename from ' . tablename('ewei_shop_store') . ' where uniacid <>:uniacid ', array(':uniacid' => $uniacid));
-        $disinfo=Dispage::getDisInfo($_W['uniacid']);
+       
         $r_type = array( '0' => '退款', '1' => '退货退款', '2' => '换货');
         load()->func('tpl');
 

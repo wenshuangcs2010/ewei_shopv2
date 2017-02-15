@@ -18,13 +18,13 @@
 {if !empty($item['addressid']) }
 <!--快递 发货-->
 {ifp 'order.op.send'}
-	{if  (!empty($disinfo) && $disinfo['secondpay']==0) || $item['paystatus']==2}
+	{if  (!empty($item['disinfo']) && ($item['disinfo']['secondpay']==0) || $item['paystatus']==2)}
 		<br/>
 		{if $item['if_customs']==1}
 		<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('distorder/kjb2c/to_customs', array('id' => $item['id']))}">报关</a><br/>
 		{/if}
 		{if $item['if_declare']==1}
-			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('distorder/kjb2c/to_declare', array('id' => $item['id']))}">申报</a><br/>
+			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('distorder/kjb2c/to_declare', array('id' => $item['id']))}">申报1</a><br/>
 			<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/kjb2c/send_order', array('id' => $item['id']))}">货物放行</a>
 			{else}
 			<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('disorder/op/send', array('id' => $item['id']))}">确认发货</a><br/>

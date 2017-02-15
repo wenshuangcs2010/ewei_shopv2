@@ -101,7 +101,13 @@
     <tr ><td colspan='8' style='height:20px;padding:0;border-top:none;'>&nbsp;</td></tr>
     <tr class='trorder'>
         <td colspan='4' >
-        订单编号:  {$item['ordersn']} 代理商:<span style="color: red">{$item['accountname']}</span>{if $item['ispackage']}<span class="text-danger">（套餐）</span>{/if}
+        订单编号:  {$item['ordersn']} 
+    
+        代理商:<span style="color: red">{$item['accountname']}</span>
+{if $_W['uniacid']==DIS_ACCOUNT && !empty($item['cnbuyers_order_sn'])}
+                <span style="color: red">关联订单:{$item['cnbuyers_order_sn']}</span>
+            {/if}
+        {if $item['ispackage']}<span class="text-danger">（套餐）</span>{/if}
             {if !empty($item['refundstate'])}<label class='label label-danger'>{$r_type[$item['rtype']]}申请</label>{/if}
             {if !empty($item['refundstate']) && $item['rstatus'] == 4}<label class='label label-default'>客户退回物品</label>{/if}
         </td>

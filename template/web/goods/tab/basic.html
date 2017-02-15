@@ -267,6 +267,14 @@
 </div>
 
 {/if}
+{if $item['disgoods_id']>0}
+<div class="form-group">
+    <label class="col-sm-2 control-label">代理价格</label>
+    <div class="col-sm-9 col-xs-12">
+        <div class='form-control-static'>代理价格:{$disprice} 元</div>
+    </div>
+</div>
+{/if}
 <div class="form-group">
     <label class="col-sm-2 control-label must">商品图片</label>
     <div class="col-sm-9 col-xs-12 gimgs">
@@ -316,7 +324,7 @@
 <div class="col-sm-6 col-xs-6" style='padding-left:0'>
     {ife 'goods' $item}
     <div class="input-group">
-        <span class='input-group-addon' style='border:none'><label class="radio-inline" style='margin-top:-7px;' ><input type="radio" name="dispatchtype" value="0" {if empty($item['dispatchtype'])}checked="true"{/if}   /> 运费模板</label></span>
+        <span class='input-group-addon' style='border:none'><label class="radio-inline" style='margin-top:-7px;' ><input type="radio"  name="dispatchtype" value="0" {if empty($item['dispatchtype'])}checked="true"{/if}   /> 运费模板</label></span>
         <select class="form-control tpl-category-parent select2" id="dispatchid" name="dispatchid">
             <option value="0">默认模板</option>
             {loop $dispatch_data $dispatch_item}
@@ -374,7 +382,7 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">所在仓</label>
     <div class="col-sm-6 col-xs-6">
-    {if $item['isdis']==1 and $_W['uniacid']!=DIS_ACCOUNT}  
+    {if $item['disgoods_id']>0 and $_W['uniacid']!=DIS_ACCOUNT}  
         <input type="hidden" name="depotid"   value="$item['depotid']" />
         <p> 
         {if empty($item['depotid'])}默认仓库
