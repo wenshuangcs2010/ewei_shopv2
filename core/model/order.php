@@ -24,7 +24,7 @@ class Order_EweiShopV2Model
         $data = array('status' => $params['result'] == 'success' ? 1 : 0);
       
         $ordersn = $params['tid'];
-        $order = pdo_fetch('select id,ordersn,depotid,isdisorder, price,openid,dispatchtype,addressid,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':ordersn' => $ordersn));
+        $order = pdo_fetch('select id,ordersn,depotid,isdisorder,disorderamount, price,openid,dispatchtype,addressid,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':ordersn' => $ordersn));
 
         $orderid = $order['id'];
 
@@ -121,7 +121,7 @@ class Order_EweiShopV2Model
                                 $disorder_sn=Dispage::createNO("shop_order_dispay","id","dis");//生成订单号
                                 $orderinfo=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_dispay")." where order_id=:orderid ",array(":orderid"=>$orderid));
                                 if($orderinfo['status']!=2 && $payfee!=0){
-                                   $order=array(
+                                   $orderpay=array(
                                         'order_sn'=>$disorder_sn,
                                         'desc'=>"代理商自动扣款",
                                         'pay_fee'=>$payfee*100,
@@ -152,7 +152,7 @@ class Order_EweiShopV2Model
                                         'openid'=>$disInfo['openid'],
                                     );
                                     $payment=paybase::getPayment('wx',$config);
-                                    $returncode=$payment->buildRequestForm($order);
+                                    $returncode=$payment->buildRequestForm($orderpay);
                                     if($returncode['status']==0){
                                         m("kjb2c")->to_declare($orderid);
                                     }
