@@ -322,30 +322,7 @@
     <tr ><td colspan='8' style='background:#fdeeee;color:red;'>买家备注: {$item['remark']}</td></tr>
     {/if}
 
-    {if !empty($level) || (!empty($item['merchname']) && $item['merchid'] > 0)}
-    <tr style=";border-bottom:none;background:#f9f9f9;">
-        <td colspan='4' style='text-align:left'>
-            {if !empty($item['merchname']) && $item['merchid'] > 0}
-            商户名称:<span class="text-info">{$item['merchname']}</span>
-            {/if}
-            {if !empty($agentid)}
-            <b>分销订单级别:</b> {$item['level']}级 <b>分销佣金:</b> {$item['commission']} 元
-            {/if}
-        </td>
-        <td colspan='4' style='text-align:right'>
-            {if empty($agentid)}
-            {if $item['commission1']!=-1}<b>1级佣金:</b> {$item['commission1']} 元 {/if}
-            {if $item['commission2']!=-1}<b>2级佣金:</b> {$item['commission2']} 元 {/if}
-            {if $item['commission3']!=-1}<b>3级佣金:</b> {$item['commission3']} 元 {/if}
-            {/if}
-
-            {if !empty($item['agentid']) && !$is_merch[$item['id']]}
-            {ifp 'commission.apply.changecommission'}
-            <a data-toggle="ajaxModal"  href="{php echo webUrl('commission/apply/changecommission', array('id' => $item['id']))}">修改佣金</a>
-            {/if}
-            {/if}
-        </td></tr>
-    {/if}
+    
     {/loop}
 </table>
 <div style="text-align:right;width:100%;">
