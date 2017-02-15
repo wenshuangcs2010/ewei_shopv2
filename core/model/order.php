@@ -83,6 +83,8 @@ class Order_EweiShopV2Model
                             $this->setChildOrderPayResult($order, $time, 1);
                         }
                         //处理积分与库存
+                        WeUtility::logging('pay_order', "test支付后台测试");
+                        WeUtility::logging('pay_order', var_export($order,true));
                         $this->setStocksAndCredits($orderid, 1);
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
                         WeUtility::logging('pay_order', var_export($order,true));
