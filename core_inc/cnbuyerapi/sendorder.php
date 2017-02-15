@@ -34,7 +34,7 @@ class Sendorder{
 			$goodstemp['goods_name']="aaa";
 			$goodstemp['only_sku']=$goods['goodssn'];
 			$goodstemp['quantity']=$goods['total'];
-			$goodstemp['price']=$goods['price']/$goods['total'];
+			$goodstemp['price']=$goods['realprice']/$goods['total'];
 			$goodstemp1[]=$goodstemp;
 		}
 		$this->params['outOrderGoods']=$goodstemp1;
