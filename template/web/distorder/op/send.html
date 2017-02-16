@@ -1,4 +1,4 @@
-<form class="form-horizontal form-validate" action="{if $edit_flag==1}{php echo webUrl('order/op/changeExpress')}{else}{php echo webUrl('order/op/send')}{/if}" method="post" enctype="multipart/form-data">
+<form class="form-horizontal form-validate" action="{if $edit_flag==1}{php echo webUrl('order/op/changeExpress')}{else}{php echo webUrl('distorder/op/send')}{/if}" method="post" enctype="multipart/form-data">
 	<input type='hidden' name='id' value='{$id}' />
 
 	<div class="modal-dialog">

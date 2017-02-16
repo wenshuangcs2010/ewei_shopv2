@@ -473,7 +473,8 @@ class Op_EweiShopV2Page extends WebPage {
         global $_W, $_GPC;
         $opdata = $this->opData();
         extract($opdata);
-
+      
+        $_W['uniacid']=$opdata['item']['uniacid'];
         if (empty($item['addressid'])) {
             show_json(0, '无收货地址，无法发货！');
         }
