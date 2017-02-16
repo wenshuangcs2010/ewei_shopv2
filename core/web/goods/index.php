@@ -58,8 +58,30 @@ class Index_EweiShopV2Page extends WebPage {
         }
 
         if (!empty($_GPC['cate'])) {
-            $_GPC['cate'] = intval($_GPC['cate']);
-            $condition .= " AND FIND_IN_SET({$_GPC['cate']},cates)<>0 ";
+            $_GPC['cate'] =$args['cate']= intval($_GPC['cate']);
+            $category = m('shop')->getAllCategory();
+            $catearr = array($args['cate']);
+            foreach ($category as $index => $row) {
+                if ($row['parentid'] == $args['cate']) {
+                    $catearr[] = $row['id'];
+                    foreach ($category as $ind => $ro) {
+                        if ($ro['parentid'] == $row['id']) {
+                            $catearr[] = $ro['id'];
+                        }
+                    }
+                }
+            }
+            $catearr = array_unique($catearr);
+            $condition .= " AND ( ";
+            foreach ($catearr as $key=>$value){
+                if ($key==0) {
+                    $condition .= "FIND_IN_SET({$value},cates)";
+                }else{
+                    $condition .= " || FIND_IN_SET({$value},cates)";
+                }
+            }
+            $condition .= " <>0 )";
+           // $condition .= " AND FIND_IN_SET({$_GPC['cate']},cates)<>0 ";
         }
 
         $goodsfrom = strtolower(trim($_GPC['goodsfrom']));
