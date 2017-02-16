@@ -25,7 +25,9 @@ class Store_EweiShopV2Page extends ComWebPage {
 
         $paras = array(':uniacid' => $_W['uniacid']);
         $condition = " uniacid = :uniacid";
-
+        $url=mobileUrl('store.map', array(), false);
+        $url=$_W['siteroot']."app/" .substr($url,2);
+        //var_dump($url);
         if (!empty($_GPC['keyword'])) {
             $_GPC['keyword'] = trim($_GPC['keyword']);
             $condition .= " AND (storename LIKE '%{$_GPC['keyword']}%' OR address LIKE '%{$_GPC['keyword']}%' OR tel LIKE '%{$_GPC['keyword']}%')";
