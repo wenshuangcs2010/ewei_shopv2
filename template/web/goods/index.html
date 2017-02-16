@@ -48,8 +48,32 @@
                 <button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="确认要删除吗?" data-href="{php echo webUrl('goods/delete')}"><i class='fa fa-trash'></i> 删除</button>
                 {/if}
                 {/if}
-
-
+              <button class="btn btn-default btn-sm" id="data-ajax-update" type="button"  data-toggle="ajaxModal"  href=""><i class='fa fa-trash'></i> 批量更新分类</button>
+                <script type="text/javascript">
+                     
+                    $("#data-ajax-update").click(function(event) {
+                      var chk_value =[];    
+                     
+                        $('input[name="checkbox"]:checked').each(function(){
+                          chk_value.push($(this).val());    
+                        });
+                      
+                        if(chk_value.length==0){
+                          alert('你还没有选择任何内容！');
+                          return false;
+                        }
+                        var url="{php echo webUrl('goods/update')}";
+                        var adddata=chk_value.join(",");
+               
+                        url=url+"&id="+adddata;
+                        //alert(url);
+                      $(this).attr("href",url);
+                    });
+                   
+                 // $("#data-ajax-update")
+                 
+                </script>
+    
 
             </div> 
         </div>	
@@ -107,7 +131,7 @@
 
 
             <td>
-                <input type='checkbox'  value="{$item['id']}"/>
+                <input type='checkbox'  name="checkbox"  data-type="checkbox"  value="{$item['id']}"/>
             </td>
 
             <td style='text-align:center;'>

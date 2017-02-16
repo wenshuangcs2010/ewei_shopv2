@@ -171,7 +171,87 @@ class Index_EweiShopV2Page extends WebPage {
 
         require dirname(__FILE__)."/post.php";
     }
+     function update(){
+        global $_W, $_GPC;
+        if(is_numeric($_REQUEST['id'])){
+             $id = intval($_REQUEST['id']);
+        }else{
+             $id = $_REQUEST['id'];
+             $ids=explode(",", $id);
+        }
+        $category = m('shop')->getFullCategory(true,false);
+        if($_W['ispost']){
+           
+            $pcates = array();
+            $ccates = array();
+            $tcates = array();
+            $fcates = array();
+            $cates = array();
+            $pcateid=0;
+            $ccateid = 0;
+            $tcateid = 0;
+            if (is_array($_GPC['cates'])) {
 
+                $cates = $_GPC['cates'];
+
+                foreach ($cates as $key=>$cid) {
+
+                    $c = pdo_fetch('select level from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cid, ':uniacid' => $_W['uniacid']));
+
+                    if($c['level']==1){ //一级
+                        $pcates[] = $cid;
+                    } else if($c['level']==2){  //二级
+                        $ccates[] = $cid;
+                    } else if($c['level']==3){  //三级
+                        $tcates[] =$cid;
+                    }
+
+                    if($key==0){
+                        //兼容 1.x
+                        if($c['level']==1){ //一级
+                            $pcateid = $cid;
+                        }
+                        else if($c['level']==2){
+                            $crow = pdo_fetch('select parentid from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cid, ':uniacid' => $_W['uniacid']));
+                            $pcateid = $crow['parentid'];
+                            $ccateid = $cid;
+
+                        }
+                        else if($c['level']==3){
+                            $tcateid = $cid;
+                            $tcate = pdo_fetch('select id,parentid from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cid, ':uniacid' => $_W['uniacid']));
+                            $ccateid = $tcate['parentid'];
+                            $ccate = pdo_fetch('select id,parentid from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $ccateid, ':uniacid' => $_W['uniacid']));
+                            $pcateid = $ccate['parentid'];
+                        }
+                    }
+
+
+                }
+
+            }
+
+            $data['pcate'] = $pcateid;
+            $data['ccate'] = $ccateid;
+            $data['tcate'] = $tcateid;
+            $data['cates'] = implode(',', $cates);
+
+            $data['pcates'] = implode(',', $pcates);
+            $data['ccates'] = implode(',', $ccates);
+            $data['tcates'] = implode(',', $tcates);
+               
+            if(!is_numeric($id)){
+                foreach($ids as $id){
+                    $ret[]=pdo_update("ewei_shop_goods",$data,array("id"=>$id));
+                }
+            }else{
+                 pdo_update("ewei_shop_goods",$data,array("id"=>$id));
+            }
+            show_json(1, array('url' => referer()));
+        }
+        
+       include $this->template();
+    }
     function delete() {
         global $_W, $_GPC;
         $id = intval($_GPC['id']);

@@ -1,0 +1,40 @@
+
+<form class="form-horizontal form-validate" action="{php echo webUrl('goods/update')}" method="post" enctype="multipart/form-data">
+	<input type='hidden' name='id' value='{$id}' />
+    <div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">批量更新分类</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+    <label class="col-sm-2 control-label">商品分类</label>
+    <div class="col-sm-8 col-xs-12">
+        {ife 'goods' $item}
+        <select id="cates"  name='cates[]' class="form-control select2"  multiple='' >
+            {loop $category $c}
+            <option value="{$c['id']}" {if is_array($cates) &&  in_array($c['id'],$cates)}selected{/if} >{$c['name']}</option>
+            {/loop}
+        </select>
+        {else}
+        <div class='form-control-static ops'>
+            {loop $cates $c}
+            <a>{$category[$c]['name']}</a>
+            {/loop}
+        </div>
+
+        {/if}
+    </div>
+</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">提交</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+    </div>
+    </form>
+<script type="text/javascript">
+$("#cates").select2();
+</script>
