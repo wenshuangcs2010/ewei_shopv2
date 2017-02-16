@@ -83,23 +83,21 @@ class Order_EweiShopV2Model
                             $this->setChildOrderPayResult($order, $time, 1);
                         }
                         //处理积分与库存
-                        WeUtility::logging('pay_order', "test支付后台测试");
-                        WeUtility::logging('pay_order', var_export($order,true));
+                        
                         $this->setStocksAndCredits($orderid, 1);
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
-                        WeUtility::logging('pay_order', var_export($order,true));
-                     
+                       
                         if($customs){
                             $depot=m("kjb2c")->get_depot($order['depotid']);
-                            WeUtility::logging('pay_depot', var_export($depot,true));
+                           
                             $params=array(
                                 'out_trade_no'=>$order['ordersn'],
                                 'transaction_id'=>$params['paymentno'],
                                 'customs'=>$customs,
                                 'mch_customs_no'=>$depot['customs_code'],
                             );
-                              WeUtility::logging('pay_params', var_export($params,true));
-                            if($order['paytype']==21){
+                           
+                            //if($order['paytype']==21){
                                 load()->model('payment');
                                 $setting = uni_setting($_W['uniacid'], array('payment'));
                                 if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
@@ -115,9 +113,9 @@ class Order_EweiShopV2Model
                                     m("kjb2c")->to_declare($orderid);
                                 }
                                 
-                            }elseif($order['paytype']==22){
+                            //}elseif($order['paytype']==22){
 
-                            }
+                           // }
                         }
                         if($order['isdisorder']==1){
                              $depot=m("kjb2c")->get_depot($order['depotid']);
