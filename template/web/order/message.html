@@ -1,6 +1,9 @@
 <div class="modal-dialog">
            <div class="modal-content">
             <div class="modal-body">
+            {if $bool}
+            商品发货
+            {/if}
             {loop $array $key $item}
                    	<div class="form-group">
 						<label class="col-sm-2 control-label">{$key}</label>
