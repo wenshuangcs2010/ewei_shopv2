@@ -26,8 +26,11 @@ if($item['disgoods_id']>0 && $_W['uniacid']!=DIS_ACCOUNT){
 if(!empty($item)){
     $disprice=pdo_fetch("select * from ".tablename("ewei_shop_goodsresel")." where goods_id=:goodsid",array(":goodsid"=>$id));
 
-    if(!empty($disprice)){
+    if(!empty($disprice) && $_W['uniacid']!=DIS_ACCOUNT){
         $disprice=Dispage::get_disprice($id,$_W['uniacid']);
+    }
+    if($_W['uniacid']==DIS_ACCOUNT){
+         $disprice=unserialize($disprice['disprice']);
     }
 }
 //税率展示优化
