@@ -44,6 +44,7 @@ class orderpay_EweiShopV2Page extends WebPage {
 		        		'pay_type'=>0,
 		        		'create_time'=>$_W['timestamp'],
 		        		'order_table'=>"ewei_shop_order",
+		        		'pay_message'=>"代理商手动扣款",
 	        		);
 	        	//if(empty($orderinfo)){
 	        		pdo_insert("ewei_shop_order_dispay",$orderpaydata);

@@ -130,7 +130,7 @@ class Index_EweiShopV2Page extends WebPage
 	        }
 	        m('notice')->sendOrderMessage($item['id']);
             plog('order.op.send', "订单发货 ID: {$item['id']} 订单号: {$item['ordersn']} <br/>快递公司: {$_GPC['expresscom']} 快递单号: {$_GPC['expresssn']}");
-			show_json(1,"已发货");
+			//show_json(1,"已发货");
 		}
 		include $this->template("order/message");
 	}
