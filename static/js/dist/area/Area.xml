@@ -952,7 +952,7 @@
   </city>
   </province>
  <province name="上海市">
- <city name="上海辖区">
+ <city name="上海市">
   <county name="黄浦区" /> 
   <county name="卢湾区" /> 
   <county name="徐汇区" /> 
@@ -972,7 +972,7 @@
   <county name="南汇区" /> 
   <county name="奉贤区" /> 
   </city>
- <city name="上海辖县">
+ <city name="上海市">
   <county name="崇明县" /> 
   </city>
   </province>

@@ -42,8 +42,9 @@ class build_EweiShopV2Page extends PluginPfMobilePage {
 			}
 		} else {
 			//查找二维码类型
-
+		
 			$poster = pdo_fetch('select * from ' . tablename('ewei_shop_poster') . ' where keyword2=:keyword and isdefault=1 and uniacid=:uniacid limit 1', array(':keyword' => $content, ':uniacid' => $_W['uniacid']));
+			
 			if (empty($poster)) {
 				m('message')->sendCustomNotice($openid, '未找到海报类型!');
 				exit;
