@@ -107,7 +107,8 @@ class Order_EweiShopV2Model
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
                                          WeUtility::logging('pay_config', var_export($config,true));
-                                    m("kjb2c")->to_customs($params,$config,'wx'); 
+                                    $returndatatemp=m("kjb2c")->to_customs($params,$config,'wx'); 
+                                    WeUtility::logging('报关结果', var_export($returndatatemp, true));
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);
@@ -158,6 +159,7 @@ class Order_EweiShopV2Model
                                     );
                                     $payment=paybase::getPayment('wx',$config);
                                     $returncode=$payment->buildRequestForm($orderpay);
+                                    WeUtility::logging('支付结果', var_export($returncode, true));
                                     if($returncode['status']==0){
                                         m("kjb2c")->to_declare($orderid);
                                     }
