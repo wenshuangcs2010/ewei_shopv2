@@ -169,7 +169,7 @@
 			{/if}
 			</span>
         </div>
-         {if $member['isagent']==1 && $member['status']==1 && $goods['hascommission']==1}
+         {if $member['isagent']==1 && $member['status']==1 && $goods['hascommission']==1 && $_W['uniacid']!=DIS_ACCOUNT}
                    分销佣金:￥{$commissionprice}
          {/if}
     </div>

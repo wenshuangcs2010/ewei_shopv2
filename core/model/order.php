@@ -114,7 +114,12 @@ class Order_EweiShopV2Model
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);
                                 }
-                                
+                                 if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
+                                    $disInfo=m("kjb2c")->getDisInfo($_W['uniacid']);
+                                    if($disInfo['secondpay']==0){
+                                         m("kjb2c")->to_declare($orderid);
+                                    }
+                                 }
                             //}elseif($order['paytype']==22){
 
                            // }
@@ -122,6 +127,7 @@ class Order_EweiShopV2Model
                         if($order['isdisorder']==1){
                              m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
                         }
+
                         //发送赠送优惠券
                         if (com('coupon')) {
                             com('coupon')->sendcouponsbytask($order['id']); //订单支付

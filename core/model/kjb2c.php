@@ -188,8 +188,9 @@ class Kjb2c_EweiShopV2Model {
 	function pay_disorder_wx($orderid,$uniacid){
 		
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
-		$depot=m("kjb2c")->get_depot($order['depotid']);
-		 if($depot['secondpaytype']==0 && $depot['autoretainage']==1 && $depot['secondpay']==1){//需要二次支付和自动付款
+		$disInfo=m("kjb2c")->getDisInfo($uniacid);
+
+		 if($disInfo['secondpaytype']==0 && $disInfo['autoretainage']==1 && $disInfo['secondpay']==1){//需要二次支付和自动付款
 		 	$payfee=$order['disorderamount'];
 		 	$disorder_sn=Dispage::createNO("shop_order_dispay","id","dis");//生成订单号
 		 	$orderinfo=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_dispay")." where order_id=:orderid ",array(":orderid"=>$orderid));
