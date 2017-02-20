@@ -114,6 +114,7 @@ class Kjb2c_EweiShopV2Model {
                 $return_data[$key] = $value;
             }
         }
+          WeUtility::logging('申报结果', var_export($return_data, true));
         if($return_data['Header']['Result'] == 'F'){
                	show_json(0,$return_data['Header']['ResultMsg']);
         }else{
@@ -181,5 +182,58 @@ class Kjb2c_EweiShopV2Model {
             }
         }
         return $return_data;
+	}
+
+	//wx代理支付
+	function pay_disorder_wx($orderid,$uniacid){
+		
+		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		$depot=m("kjb2c")->get_depot($order['depotid']);
+		 if($depot['secondpaytype']==0 && $depot['autoretainage']==1 && $depot['secondpay']==1){//需要二次支付和自动付款
+		 	$payfee=$order['disorderamount'];
+		 	$disorder_sn=Dispage::createNO("shop_order_dispay","id","dis");//生成订单号
+		 	$orderinfo=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_dispay")." where order_id=:orderid ",array(":orderid"=>$orderid));
+		 	if($orderinfo['status']!=2 && $payfee!=0){
+		 		$orderpay=array(
+                    'order_sn'=>$disorder_sn,
+                    'desc'=>"代理商自动扣款",
+                    'pay_fee'=>$payfee*100,
+                );
+                $disInfo=Dispage::getDisInfo($uniacid);
+                $orderpaydata=array(
+                    'order_sn'=>$disorder_sn,
+                    'pay_fee'=>$payfee*100,
+                    'status'=>1,
+                    'order_id'=>$orderid,
+                    'pay_code'=>"wx",
+                    'openid'=>$disInfo['openid'],
+                    'uniacid'=>$uniacid,
+                    'pay_type'=>0,
+                    'create_time'=>$_W['timestamp'],
+                    'order_table'=>"ewei_shop_order",
+                    'pay_message'=>"代理商自动扣款",
+                );
+                pdo_insert("ewei_shop_order_dispay",$orderpaydata);
+                load()->model('payment');
+                $setting = uni_setting($uniacid, array('payment'));
+                $options = $setting['payment']['wechat'];
+                $uniacidAPP = pdo_fetch('SELECT `key`,`secret` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
+                $options['appid']=$uniacidAPP['key'];
+                $options['secret'] = $uniacidAPP['secret'];
+                $config=array(
+                    'appId'=>$options['appid'],
+                    'mchid'=>$options['mchid'],
+                    'key'=>$options['apikey'],
+                    'openid'=>$disInfo['openid'],
+                   );
+                $payment=paybase::getPayment('wx',$config);
+                $returncode=$payment->buildRequestForm($orderpay);
+                WeUtility::logging('支付结果', var_export($returncode, true));
+                if($returncode['status']==0){
+                    m("kjb2c")->to_declare($orderid);
+                }
+		 	}
+
+		 }
 	}
 }
