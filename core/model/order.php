@@ -107,7 +107,7 @@ class Order_EweiShopV2Model
                                             'mch_id'=>$setting['payment']['wechat']['mchid'],
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
-                                         WeUtility::logging('pay_config', var_export($config,true));
+                                      
                                     $returndatatemp=m("kjb2c")->to_customs($params,$config,'wx'); 
                                     WeUtility::logging('报关结果', var_export($returndatatemp, true));
                                 }

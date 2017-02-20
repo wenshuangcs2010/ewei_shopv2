@@ -1,0 +1,46 @@
+{template '_header'}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=uvlCwUWyIK4zr4Umk6oqk27U"></script>
+<div class='fui-page  fui-page-current store-map-page' >
+
+    <div class="fui-header">
+	<div class="fui-header-left">
+	    <a class="back"></a>
+	</div>
+	<div class="title">门店列表</div> 
+	<div class="fui-header-right">&nbsp;</div>
+    </div>
+    <div class='fui-content' id="container"> </div>
+    <div style="display: none" id="bpmap"></div>   
+    
+</div>
+ <script type='text/html' id='tpl_store_list'>
+     <%each list as g%>
+    <div class="fui-goods-item" data-goodsid="" data-type="1">
+      <a href="{php echo mobileUrl('store/map')}&id=<%g.id%>))">
+      <div class="image" data-lazyloaded="true" style="background-image: url('<%g.logo%>');">
+         
+      </div>
+        </a>
+    <div class="detail">
+       <a href="">
+               <div class="name"><%g.storename%>
+
+               <div>营业时间:<span><%g.saletime%></span></div>
+                <div>距离:<span><%g.distance%></span></div>
+               </div>
+       </a>
+               <div class="price">
+           <span class="text"><%g.address%></span>
+          </div>
+        </div>
+    </div>
+    <%/each%>
+    </script>
+
+
+
+ <script language='javascript'>
+            require(['biz/store/index'], function (modal) {
+                modal.init({store: {php echo json_encode($storelist)}});
+            });</script>
+{template '_footer'}

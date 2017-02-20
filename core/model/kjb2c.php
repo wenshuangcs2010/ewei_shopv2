@@ -114,7 +114,7 @@ class Kjb2c_EweiShopV2Model {
                 $return_data[$key] = $value;
             }
         }
-          WeUtility::logging('申报结果', var_export($return_data, true));
+       
         if($return_data['Header']['Result'] == 'F'){
                	show_json(0,$return_data['Header']['ResultMsg']);
         }else{

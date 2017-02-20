@@ -127,6 +127,50 @@ class Index_EweiShopV2Page extends WebPage {
         foreach($goodsresel as $resel){
             $t[$resel['goods_id']]=unserialize($resel['disprice']);
         }
+        if($_GPC['export']==1){
+            $categorys = m('shop')->getFullCategory(true);
+            $sql = 'SELECT g.id,g.unit,g.title,g.goodssn,g.marketprice,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $goodslist=pdo_fetchall($sql,$params);
+            $categorystemp=array();
+            foreach ($categorys as $r) {
+               $categorystemp[$r['id']]=$r['name'];
+            }
+            $disinfo=Dispage::getDisInfo($_W['uniacid']);
+           
+            foreach($goodslist as $key=> $goodstemp){
+                //if($goodstemp['cates']){
+                  // $cates= explode(',', $goodstemp['cates']);
+                  // foreach ($cates as $v) {
+                    // var_dump($categorystemp);
+                    // $catesstr[]=$categorystemp[$v];
+                  // }
+                  // $catesstr=implode(",", $catesstr);
+               // }
+               $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
+               //$goodslist[$key]['category']=$catesstr;
+               if($_W['uniacid']!=DIS_ACCOUNT){
+                 $goodslist[$key]['disprice']=$t[$goodstemp['disgoods_id']][$disinfo['resellerid']];
+               }
+            }
+          
+             plog('order.op.export', "导出商品");
+             $columns = array(
+                array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
+                array('title' => '商品名称', 'field' => 'title', 'width' => 24),
+                array('title' => '单位', 'field' => 'unit', 'width' => 12),
+                array('title' => '商品单价', 'field' => 'marketprice', 'width' => 12),
+            );
+              if($_W['uniacid']!=DIS_ACCOUNT){
+                 $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
+               }
+              
+              m('excel')->export($goodslist, array(
+                "title" => "订单数据-" . date('Y-m-d-H-i', time()),
+                "columns" => $columns
+            ));
+           
+           exit;
+        }
         $sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
         $total_all = pdo_fetchall($sql, $params);
         $total = count($total_all);
