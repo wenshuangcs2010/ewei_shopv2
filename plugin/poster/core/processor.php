@@ -21,13 +21,13 @@ class PosterProcessor extends PluginProcessor {
 	public function respond($obj = null) {
 		global $_W;
 		$message = $obj->message;
-
+	
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
 
 		//更新用户信息
 		$obj->member = $this->model->checkMember($message['from']);
-
+	
 
 		if ($msgtype == 'text' || $event == 'click') {
 			return $this->responseText($obj);

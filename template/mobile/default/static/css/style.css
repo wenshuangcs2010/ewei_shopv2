@@ -225,7 +225,9 @@ a {
     bottom: 0;
     z-index: 999;
     background-repeat: no-repeat;
-    background-position: center;
+    /*background-position: center;*/
+    background-position-x: 50%;
+    background-position-y: 30%;
 }
 
 .fui-swipe .salez {
@@ -239,8 +241,8 @@ a {
 }
 
 .fui-swipe .salez img {
-    height: auto;
-    width: auto;
+    height: 160px;
+    width: 160px;
     display: block;
 }
 

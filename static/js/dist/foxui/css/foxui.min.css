@@ -3945,7 +3945,7 @@ height:2.2rem;
     top: 0;
     color: #999;
     display: block;
-    padding: 0 .5rem;
+    /*padding: 0 .5rem;*/
 }
 
 .headtop .fui-header-right {

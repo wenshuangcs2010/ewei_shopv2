@@ -127,6 +127,50 @@ class Index_EweiShopV2Page extends WebPage {
         foreach($goodsresel as $resel){
             $t[$resel['goods_id']]=unserialize($resel['disprice']);
         }
+        if($_GPC['export']==1){
+            $categorys = m('shop')->getFullCategory(true);
+            $sql = 'SELECT g.id,g.unit,g.title,g.goodssn,g.marketprice,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $goodslist=pdo_fetchall($sql,$params);
+            $categorystemp=array();
+            foreach ($categorys as $r) {
+               $categorystemp[$r['id']]=$r['name'];
+            }
+            $disinfo=Dispage::getDisInfo($_W['uniacid']);
+           
+            foreach($goodslist as $key=> $goodstemp){
+                //if($goodstemp['cates']){
+                  // $cates= explode(',', $goodstemp['cates']);
+                  // foreach ($cates as $v) {
+                    // var_dump($categorystemp);
+                    // $catesstr[]=$categorystemp[$v];
+                  // }
+                  // $catesstr=implode(",", $catesstr);
+               // }
+               $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
+               //$goodslist[$key]['category']=$catesstr;
+               if($_W['uniacid']!=DIS_ACCOUNT){
+                 $goodslist[$key]['disprice']=$t[$goodstemp['disgoods_id']][$disinfo['resellerid']];
+               }
+            }
+          
+             plog('order.op.export', "导出商品");
+             $columns = array(
+                array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
+                array('title' => '商品名称', 'field' => 'title', 'width' => 24),
+                array('title' => '单位', 'field' => 'unit', 'width' => 12),
+                array('title' => '商品单价', 'field' => 'marketprice', 'width' => 12),
+            );
+              if($_W['uniacid']!=DIS_ACCOUNT){
+                 $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
+               }
+              
+              m('excel')->export($goodslist, array(
+                "title" => "订单数据-" . date('Y-m-d-H-i', time()),
+                "columns" => $columns
+            ));
+           
+           exit;
+        }
         $sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
         $total_all = pdo_fetchall($sql, $params);
         $total = count($total_all);
@@ -171,7 +215,87 @@ class Index_EweiShopV2Page extends WebPage {
 
         require dirname(__FILE__)."/post.php";
     }
+     function update(){
+        global $_W, $_GPC;
+        if(is_numeric($_REQUEST['id'])){
+             $id = intval($_REQUEST['id']);
+        }else{
+             $id = $_REQUEST['id'];
+             $ids=explode(",", $id);
+        }
+        $category = m('shop')->getFullCategory(true,false);
+        if($_W['ispost']){
+           
+            $pcates = array();
+            $ccates = array();
+            $tcates = array();
+            $fcates = array();
+            $cates = array();
+            $pcateid=0;
+            $ccateid = 0;
+            $tcateid = 0;
+            if (is_array($_GPC['cates'])) {
 
+                $cates = $_GPC['cates'];
+
+                foreach ($cates as $key=>$cid) {
+
+                    $c = pdo_fetch('select level from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cid, ':uniacid' => $_W['uniacid']));
+
+                    if($c['level']==1){ //一级
+                        $pcates[] = $cid;
+                    } else if($c['level']==2){  //二级
+                        $ccates[] = $cid;
+                    } else if($c['level']==3){  //三级
+                        $tcates[] =$cid;
+                    }
+
+                    if($key==0){
+                        //兼容 1.x
+                        if($c['level']==1){ //一级
+                            $pcateid = $cid;
+                        }
+                        else if($c['level']==2){
+                            $crow = pdo_fetch('select parentid from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cid, ':uniacid' => $_W['uniacid']));
+                            $pcateid = $crow['parentid'];
+                            $ccateid = $cid;
+
+                        }
+                        else if($c['level']==3){
+                            $tcateid = $cid;
+                            $tcate = pdo_fetch('select id,parentid from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cid, ':uniacid' => $_W['uniacid']));
+                            $ccateid = $tcate['parentid'];
+                            $ccate = pdo_fetch('select id,parentid from ' . tablename('ewei_shop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $ccateid, ':uniacid' => $_W['uniacid']));
+                            $pcateid = $ccate['parentid'];
+                        }
+                    }
+
+
+                }
+
+            }
+
+            $data['pcate'] = $pcateid;
+            $data['ccate'] = $ccateid;
+            $data['tcate'] = $tcateid;
+            $data['cates'] = implode(',', $cates);
+
+            $data['pcates'] = implode(',', $pcates);
+            $data['ccates'] = implode(',', $ccates);
+            $data['tcates'] = implode(',', $tcates);
+               
+            if(!is_numeric($id)){
+                foreach($ids as $id){
+                    $ret[]=pdo_update("ewei_shop_goods",$data,array("id"=>$id));
+                }
+            }else{
+                 pdo_update("ewei_shop_goods",$data,array("id"=>$id));
+            }
+            show_json(1, array('url' => referer()));
+        }
+        
+       include $this->template();
+    }
     function delete() {
         global $_W, $_GPC;
         $id = intval($_GPC['id']);

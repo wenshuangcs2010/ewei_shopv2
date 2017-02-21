@@ -101,69 +101,33 @@ class Order_EweiShopV2Model
                                 load()->model('payment');
                                 $setting = uni_setting($_W['uniacid'], array('payment'));
                                 if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
+                                    $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$_W['uniacid']));
                                         $config=array(
-                                            "appid"=>$_W['account']['key'],
+                                            "appid"=>$APPID,
                                             'mch_id'=>$setting['payment']['wechat']['mchid'],
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
-                                         WeUtility::logging('pay_config', var_export($config,true));
-                                    m("kjb2c")->to_customs($params,$config,'wx'); 
+                                      
+                                    $returndatatemp=m("kjb2c")->to_customs($params,$config,'wx'); 
+                                    WeUtility::logging('报关结果', var_export($returndatatemp, true));
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);
                                 }
-                                
+                                 if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
+                                    $disInfo=m("kjb2c")->getDisInfo($_W['uniacid']);
+                                    if($disInfo['secondpay']==0){
+                                         m("kjb2c")->to_declare($orderid);
+                                    }
+                                 }
                             //}elseif($order['paytype']==22){
 
                            // }
                         }
                         if($order['isdisorder']==1){
-                             $depot=m("kjb2c")->get_depot($order['depotid']);
-                             if($depot['secondpaytype']==0 && $depot['autoretainage']==1){
-                                $order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
-                                $payfee=$order['disorderamount'];
-                                $disorder_sn=Dispage::createNO("shop_order_dispay","id","dis");//生成订单号
-                                $orderinfo=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_dispay")." where order_id=:orderid ",array(":orderid"=>$orderid));
-                                if($orderinfo['status']!=2 && $payfee!=0){
-                                   $orderpay=array(
-                                        'order_sn'=>$disorder_sn,
-                                        'desc'=>"代理商自动扣款",
-                                        'pay_fee'=>$payfee*100,
-                                    );
-                                   $disInfo=Dispage::getDisInfo($_W['uniacid']);
-                                   $orderpaydata=array(
-                                        'order_sn'=>$disorder_sn,
-                                        'pay_fee'=>$payfee*100,
-                                        'status'=>1,
-                                        'order_id'=>$orderid,
-                                        'pay_code'=>"wx",
-                                        'openid'=>$disInfo['openid'],
-                                        'uniacid'=>$_W['uniacid'],
-                                        'pay_type'=>0,
-                                        'create_time'=>$_W['timestamp'],
-                                        'order_table'=>"ewei_shop_order",
-                                        'pay_message'=>"代理商自动扣款",
-                                    );
-                                   pdo_insert("ewei_shop_order_dispay",$orderpaydata);
-                                   load()->model('payment');
-                                   $setting = uni_setting($_W['uniacid'], array('payment'));
-                                    $options = $setting['payment']['wechat'];
-                                    $options['appid'] = $_W['account']['key'];
-                                    $options['secret'] = $_W['account']['secret'];
-                                    $config=array(
-                                        'appId'=>$_W['account']['key'],
-                                        'mchid'=>$options['mchid'],
-                                        'key'=>$options['apikey'],
-                                        'openid'=>$disInfo['openid'],
-                                    );
-                                    $payment=paybase::getPayment('wx',$config);
-                                    $returncode=$payment->buildRequestForm($orderpay);
-                                    if($returncode['status']==0){
-                                        m("kjb2c")->to_declare($orderid);
-                                    }
-                                }
-                             }
+                             m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
                         }
+
                         //发送赠送优惠券
                         if (com('coupon')) {
                             com('coupon')->sendcouponsbytask($order['id']); //订单支付

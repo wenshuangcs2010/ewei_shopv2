@@ -17,10 +17,12 @@ class Index_EweiShopV2Page extends WebPage
 			show_json(0,"订单无需报关");
 		}
 		$_W['uniacid']=$order['uniacid'];
+		$depot=m("kjb2c")->get_depot($order['depotid']);
 		 $params=array(
 		 	'out_trade_no'=>$order['ordersn'],
 		 	'transaction_id'=>$order['paymentno'],
 		 	'customs'=>$customs,
+		 	'mch_customs_no'=>$depot['customs_code'],
 		 	);
 
 		 if($order['paytype']==21){
@@ -35,9 +37,13 @@ class Index_EweiShopV2Page extends WebPage
                     	);
                   
                 $retrundata=m("kjb2c")->to_customs($params,$config,'wx');
+
                 if($retrundata['return_code']=="FAIL"){
                 	show_json(0,$retrundata['return_msg']);
                 }else{
+                	if($retrundata['result_code']=="FAIL"){
+                		show_json(0,$retrundata['err_code_des']);
+                	}
                 	show_json(1,$retrundata['return_msg']);
                 }
                 if(isset($retrundata['errno'])){
