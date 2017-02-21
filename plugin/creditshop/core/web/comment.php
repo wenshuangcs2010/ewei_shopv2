@@ -50,11 +50,11 @@ class Comment_EweiShopV2Page extends PluginWebPage {
             $replystatus = intval($_GPC['replystatus']);
             if($replystatus==1){
                 // 首评待审核
-                $condition .= " AND c.checked=0 AND virtual=0 ";
+                $condition .= " AND c.checked=0 AND c.virtual=0 ";
             }
             elseif ($replystatus==2){
                 // 追评待审核
-                $condition .= " AND (c.append_content<>'' OR c.append_images<>'') AND c.append_checked=0 AND  virtual=0 ";
+                $condition .= " AND (c.append_content<>'' OR c.append_images<>'') AND c.append_checked=0 AND  c.virtual=0 ";
             }
             elseif ($replystatus==3){
                 // 首评待回复
@@ -68,7 +68,7 @@ class Comment_EweiShopV2Page extends PluginWebPage {
 
         if(!empty($checked)){
             // 待审核
-            $condition .= " AND (c.checked=0 OR ( (c.append_content<>'' OR c.append_images<>'') AND c.append_checked=0 )) AND virtual=0 ";
+            $condition .= " AND (c.checked=0 OR ( (c.append_content<>'' OR c.append_images<>'') AND c.append_checked=0 )) AND c.virtual=0 ";
         }
 
         $list = pdo_fetchall("SELECT  c.*,g.title,g.thumb FROM " . tablename('ewei_shop_creditshop_comment') . " c  "
