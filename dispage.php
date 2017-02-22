@@ -57,6 +57,7 @@ class Dispage{
 						'weight'=>$data['weight'],//商品重量
 						'tariffnum'=>$data['tariffnum'],//商品HS编码
 						'originplace'=>$data['originplace'],//商品原产地
+						'total'=>$data['total'],
 						'keywords'=>$data['keywords'],//关键字//临时改
 					);
 					pdo_update("ewei_shop_goods",$updatedata,array('id'=>$value['id']));
