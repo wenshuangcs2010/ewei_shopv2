@@ -26,10 +26,18 @@ class Category_EweiShopV2Page extends MobilePage {
         include $this->template();
     }
     function suxin(){
-        global $_W;
+        global $_W,$_GPC;
         $url="http://www.softsea.cn/weixing/babywx/weixing/index.php?openid=".$_W['openid'];
-        Header("Location: $url"); 
+        Header("Location: $url");
     }
+
+    function suxinpost(){
+        global $_W,$_GPC;
+
+        $url="http://www.softsea.cn/weixing/babywx/weixing/link.php?openid=".$_W['openid']."&url=".urlencode($_GPC['url']);
+        Header("Location: $url");
+    }
+
     protected function getCategory($level, $merchid = 0)
     {
         $level = intval($level);

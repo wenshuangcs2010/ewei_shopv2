@@ -190,6 +190,13 @@ class Index_EweiShopV2Page extends WebPage {
                 }
             }
         }
+        if ($goodsfrom == 'stock' && $_W['uniacid']!=DIS_ACCOUNT){
+            foreach ($list as &$goods) {
+               if($goods['disgoods_id']>0){
+                 $goods['account_shop']=pdo_fetchcolumn("SELECT `status` from ".tablename("ewei_shop_goods")." where id=:id",array(":id"=>$goods['disgoods_id']));
+               }
+            }
+        }
         //var_dump($sql);
         //die();
         $categorys = m('shop')->getFullCategory(true);

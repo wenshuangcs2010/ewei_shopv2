@@ -37,8 +37,8 @@ class Index_EweiShopV2Page extends WebPage {
         }
         if(!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])){
             $starttime = strtotime($_GPC['time']['start']);
-            $endtime = strtotime($_GPC['time']['end']);           
-             $condition .= " AND g.createtime>={$starttime} and g.createtime<={$endtime}";
+            $endtime = strtotime($_GPC['time']['end']);
+            $condition .= " AND g.createtime>={$starttime} and g.createtime<={$endtime}";
         }
         if (!empty($_GPC['cate'])) {
             $_GPC['cate'] = intval($_GPC['cate']);
@@ -65,7 +65,7 @@ class Index_EweiShopV2Page extends WebPage {
                         $row['merchname'] = $merch_user[$row['merchid']]['merchname'] ? $merch_user[$row['merchid']]['merchname'] : $_W['shopset']['shop']['name'];
                     }
                 }
-            } 
+            }
         }
         $disinfo=Dispage::getDisInfo($_W['uniacid']);
         $disleve=$disinfo['resellerid'];
