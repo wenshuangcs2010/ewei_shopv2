@@ -122,6 +122,9 @@
             <th style="width:60px;" >价格</th>
             <th style="width:70px;" >库存</th>
             <th style="width:80px;" >销量</th>
+            {if $goodsfrom=='stock' && $_W['uniacid']!=DIS_ACCOUNT}
+            <th style="width:80px;">主站状态</th>
+            {/if}
             {if $goodsfrom!='cycle'}
             <th  style="width:60px;" >状态</th>
             {/if}
@@ -231,7 +234,23 @@
                 {/if}{/if}
             </td>
             <td>{$item['salesreal']}</td>
+            {if $goodsfrom=='stock'  && $_W['uniacid']!=DIS_ACCOUNT}
+            <td>
+              {if $item['disgoods_id']>0}
+             
+                {if $item['account_shop']==0}
+                  <span style="color: #353e69">下架</span>
+                {/if}
+                {if $item['account_shop']==1}
+                  <span style="color: red">上架</span>
+                {/if}
+              {else}
+              <span>非代理</span>
+              {$item['account_shop']}
+              {/if}
 
+            </td>
+            {/if}
             {if $goodsfrom!='cycle'}
             <td  style="overflow:visible;">
                 {if $item['status']==2}<span class="label label-danger">赠品</span>{else}
@@ -375,3 +394,4 @@
                           </div>
                           {/if}
                           {template '_footer'}
+              }

@@ -1,0 +1,137 @@
+{template '_header'}
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/css/lottery.css?{php echo time();}" />
+<div class='fui-page  fui-page-current'>
+
+    <div class="fui-content">
+        <div class="lottery-head">
+            <div class="div_top"><a><span class="lottery-head_top">规则</span></a></div>
+            <div class="div_head"><i></i><span class="head"><strong>已签到天数</strong></span><i></i></div>
+            <div class="div_head_tow"><span class="head_img">
+            <a>
+                <strong>签到</strong>
+            </a>
+            </span></div>
+            <div class="div_head_four">
+            积分<span id="credit1">{$s['credit1']}</span>
+            </div>
+            {if $isshowlx==1}
+            <div class="div_head_three">
+                <div class ="threediv swiper-wrapper">
+                    {loop $nginfirstweek $key $val}
+                        {if $val['is']==1}
+                    {if $firstweek>$key}
+                    <div class="divthree  swiper-slide">
+                        <div>
+                        <img  src="../addons/ewei_shopv2/static/images/qd/foot_hui.png">
+                        </div>
+                        <div class="img_weiz" ><img  src="../addons/ewei_shopv2/static/images/qd/huiju.png"></div>
+                        <small class="img_weiz_active"><strong>+{$val['number']}</strong></small>
+                        <small class="img_weiz_foant"><strong>{if $val['ngistype']==1}积分{else}抽奖机会{/if}</strong></small>
+                        <span class="divspan"><small>已签到</small></span>
+                    </div>
+                    {else}
+                    <div class="divthree  swiper-slide">
+                        <div>
+
+                        <img class="updateimg_{$key}" src="../addons/ewei_shopv2/static/images/qd/foot_active.png">
+
+                        </div>
+                        <div class="img_weiz updateimgsmall_{$key}" ><img  src="../addons/ewei_shopv2/static/images/qd/yellow_ju.png"></div>
+                        <small class="img_weiz_active"><strong>+{$val['number']}</strong></small>
+                        <small class="img_weiz_foant"><strong>{if $val['ngistype']==1}积分{else}抽奖机会{/if}</strong></small>
+                        <span class="divspan"><small class="updateimgwz_{$key}">{$val['nexttime']}</small></span>
+                    </div>
+
+                    {/if}
+                    {/if}
+                    {/loop}
+                </div>
+            </div>
+            {/if}
+            <div class="div_head_five">
+             <img width="50%" src="../addons/ewei_shopv2/static/images/qd/quan1.png" alt=""><img src="../addons/ewei_shopv2/static/images/qd/quan2.png"  width="50%" alt="">
+            </div>
+        </div>
+        <div class="lottery-content-content" style="top: -29px">
+              {if $type==1}{template 'sale/nsign/zhuanpan'}{/if}
+        </div>
+         <div style="clear:both;"></div>
+        <div class="lottery-foot_foot" >
+            <div class="foot_lottery" >
+            <a href="{php echo mobileUrl('creditshop');}"><img width="100%" src="../addons/ewei_shopv2/static/images/qd/zhanpan09.gif" alt=""></a> 
+            </div>
+            <div class="foot">
+                <img width="100%" src="../addons/ewei_shopv2/static/images/qd/foot.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <style type="text/css" media="screen">
+        .lottery-content li{
+            float:left
+        }
+    </style>
+
+    <div id="failngsgnmodel" style="display: none;">
+    <div class="task-model">
+        <div class="task-model-faile-content" ><h4 id="model-nsign_failtitle"></h4></div>
+        <div class="task-model-footer task-btn-close">好的，我知道了</div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+        require(['swiper'], function (modal) {
+            var swiper = new Swiper('.div_head_three', {
+            paginationClickable: true,
+            slidesPerView: 6,
+            spaceBetween: 50,
+            preventClicks:true,
+            breakpoints: {
+                1024: {
+                    slidesPerView: 6,
+                    spaceBetween: 40
+                },
+                768: {
+                    slidesPerView: 5,
+                    spaceBetween: 30
+                },
+                640: {
+                    slidesPerView: 5,
+                    spaceBetween: 20
+                },
+                320: {
+                    slidesPerView: 4,
+                    spaceBetween: 10
+                }
+            }
+             });
+          });
+        $(".div_head_tow a").click(function(event) {
+            $.post('{php echo mobileUrl("sale/nsign/startnsign");}',function (data) {
+                var retstart=data.status;
+                if(retstart==0){
+                    var firstweek=data.ret.firstweek-1;
+                        $(".updateimg_"+firstweek).attr("src","../addons/ewei_shopv2/static/images/qd/foot_hui.png");
+                        $(".updateimgsmall_"+firstweek).attr("src","../addons/ewei_shopv2/static/images/qd/huiju.png");
+                        $(".updateimgwz_"+firstweek).html("已签到");
+                        $("#credit1").html(data.ret.credit1);
+                        console.log(firstweek);
+                    }
+                         $('#model-nsign_failtitle').html(data.msg);
+                            taskget = new FoxUIModal({
+                            content: $('#failngsgnmodel').html(),
+                            extraClass: 'picker-modal',
+                            maskClick: function () {
+                                taskget.close()
+                            }
+                        });
+                        taskget.container.find('.task-btn-close').click(function () {
+                            taskget.close()
+                        });
+                            taskget.show();
+            },"json")
+        });
+        
+</script>
+
+

@@ -75,7 +75,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
     }
 
 
-    function taskposter($member, $couponid, $couponnum) {
+    function taskposter($member, $couponid, $couponnum,$gettype=3) {
         global $_W, $_GPC;
         $pposter = p('poster');
         if (!$pposter) {
@@ -106,7 +106,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                 'uniacid' => $_W['uniacid'],
                 'openid' => $member['openid'],
                 'couponid' => $couponid,
-                'gettype' => 3,
+                'gettype' => $gettype,
                 'gettime' => time(),
                 'nocount' => 1
             );
@@ -194,7 +194,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                     if ($row['timestart'] >= $time) {
                         $row['timestr'] = date('Y-m-d H:i', $row['timestart']) . '-' . date('Y-m-d H:i', $row['timeend']);
                     } else {
-                        $row['timestr'] = date('Y-m-d H:i', $row['timeend']);
+                        $row['timestr'] = date('Y-m-d H:i', $row['timestart']) . '-' .date('Y-m-d H:i', $row['timeend']);
                     }
                 }
                 if ($row['backtype'] == 0) {
@@ -365,9 +365,10 @@ class Coupon_EweiShopV2ComModel extends ComModel {
         $coupon = pdo_fetch('select * from ' . tablename('ewei_shop_coupon') . ' where id=:id limit 1', array(':id' => $log['couponid']));
         $coupon = $this->setCoupon($coupon, time());
         //无法从领券中心领取
+        /*
         if (empty($coupon['gettype'])) {
             return error(-1, '无法领取');
-        }
+        }*/
         if ($coupon['total'] != -1) {
             if ($coupon['total'] <= 0) {
                 return error(-1, '优惠券数量不足'); //数量不足
@@ -1011,6 +1012,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
             $row['getstatus'] = 3;
             $row['gettypestr'] = "领取";
         }
+
         $row['timestr'] = "0";
         if (empty($row['timelimit'])) {
             if (!empty($row['timedays'])) {
@@ -1020,7 +1022,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
             if ($row['timestart'] >= $time) {
                 $row['timestr'] = date('Y-m-d', $row['timestart']) . '-' . date('Y-m-d', $row['timeend']);
             } else {
-                $row['timestr'] = date('Y-m-d', $row['timeend']);
+                $row['timestr'] = date('Y-m-d', $row['timestart']) . '-'.date('Y-m-d', $row['timeend']);
             }
         }
         $row['css'] = 'deduct';
@@ -1050,6 +1052,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                 $row['_backmoney'] = $row['backcredit'];
             }
         }
+
         if ($withOpenid) {
             //限制领取
             $row['cangetmax'] = -1; //无限领取
@@ -1070,6 +1073,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                 }
             }
         }
+
         return $row;
     }
 
@@ -1106,7 +1110,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
             if ($row['timestart'] >= $time) {
                 $row['timestr'] = date('Y-m-d H:i', $row['timestart']) . '-' . date('Y-m-d', $row['timeend']);
             } else {
-                $row['timestr'] = date('Y-m-d H:i', $row['timeend']);
+                $row['timestr'] = date('Y-m-d H:i', $row['timestart']) . '-'.date('Y-m-d H:i', $row['timeend']);
             }
 
             if ($row['timeend'] < $time) {
@@ -1510,7 +1514,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                     if ($row['timestart'] >= $time) {
                         $row['timestr'] = date('Y-m-d H:i', $row['timestart']) . '-' . date('Y-m-d H:i', $row['timeend']);
                     } else {
-                        $row['timestr'] = date('Y-m-d H:i', $row['timeend']);
+                        $row['timestr'] = date('Y-m-d H:i', $row['timestart']) . '-' . date('Y-m-d H:i', $row['timeend']);
                     }
                 }
                 if ($row['backtype'] == 0) {

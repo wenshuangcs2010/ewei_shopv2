@@ -17,7 +17,7 @@ class Picker_EweiShopV2Page extends MobilePage {
         $id = intval($_GPC['id']);
         $rank = intval($_SESSION[$id . '_rank']);
         $join_id = intval($_SESSION[$id . '_join_id']);
-
+        $log_id=intval($_GPC['log_id']);
         $seckillinfo = false;
         $seckill  = p('seckill');
         if( $seckill){
@@ -244,7 +244,23 @@ class Picker_EweiShopV2Page extends MobilePage {
                 }
             }
         }
-
+        if($log_id>0){
+            $lotterygoods=m("lottery")->show_goods($openid,$id,$log_id);
+            if(!empty($lotterygoods)){
+                
+               // var_dump($lotterygoods['marketprice']);
+                $goods['marketprice']=$lotterygoods['marketprice'];
+                $goods['minprice']=$lotterygoods['marketprice'];
+                $goods['maxprice']=$lotterygoods['marketprice'];
+                $goods['productprice']=$lotterygoods['marketprice'];
+                if($order_goodscount>=$lotterygoods['total']){
+                    $goods['userbuy'] = 0;
+                    $goods['canbuy']  = false;
+                }
+                $goods['maxbuy']=$lotterygoods['total'];
+                $canAddCart = false;
+            }
+        }
         //是否可以加入购物车
         $goods['canAddCart'] = true;
         if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund'])) {

@@ -47,7 +47,7 @@ class Store_EweiShopV2Page extends ComWebPage {
         $pager = pagination($total, $pindex, $psize);
 
         $list = pdo_fetchall($sql, $paras);
-
+        $storeurl=mobileUrl("store",array(),ture);
         foreach ($list as &$row) {
             $row['salercount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_saler') . ' where storeid=:storeid limit 1', array(':storeid' => $row['id']));
         }
@@ -69,6 +69,7 @@ class Store_EweiShopV2Page extends ComWebPage {
         global $_W, $_GPC;
 
         $id = intval($_GPC['id']);
+        $store_config=pdo_fetch("SELECT * from ".tablename("ewei_shop_store_config")." where uniacid=:uniacid",array(":uniacid"=>$_W['uniacid']));
         if ($_W['ispost']) {
             $data = array(
                 'uniacid' => $_W['uniacid'],
@@ -81,10 +82,13 @@ class Store_EweiShopV2Page extends ComWebPage {
                 'realname' => trim($_GPC['realname']),
                 'mobile' => trim($_GPC['mobile']),
                 'fetchtime' => trim($_GPC['fetchtime']),
-	       'saletime' => trim($_GPC['saletime']),
-	      'logo' => save_media($_GPC['logo']),
-	      'desc' => trim($_GPC['desc']),
-                'status' => intval($_GPC['status'])
+	            'saletime' => trim($_GPC['saletime']),
+	            'logo' => save_media($_GPC['logo']),
+	            'desc' => trim($_GPC['desc']),
+                'status' => intval($_GPC['status']),
+                'locationurl'=>$_GPC['locationurl'],
+                'gametype'=>$_GPC['gametype'],
+                'defaultchick'=>$_GPC['defaultchick'],
             );
             $data['order_printer'] = is_array($_GPC['order_printer']) ? implode(',',$_GPC['order_printer']) : '';
             $data['order_template'] = intval($_GPC['order_template']);
@@ -97,9 +101,22 @@ class Store_EweiShopV2Page extends ComWebPage {
                 $id = pdo_insertid();
                 plog('shop.verify.store.add', "添加门店 ID: {$id}");
             }
+             $storeconfg=array(
+                "store_thumb"=>$_GPC['store_thumb'],
+                'uniacid' => $_W['uniacid'],
+                );
+            if(!empty($store_config)){
+                pdo_update("ewei_shop_store_config",$storeconfg,array("id"=>$store_config['id']));
+            }else{
+                pdo_insert("ewei_shop_store_config",$storeconfg);
+            }
+
             show_json(1, array('url' => webUrl('shop/verify/store')));
         }
         $item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_store') . " WHERE id =:id and uniacid=:uniacid limit 1", array(':uniacid' => $_W['uniacid'], ':id' => $id));
+        if(!empty($store_config)){
+            $item['store_thumb']=$store_config['store_thumb'];
+        }
         if ($printer = com('printer')){
             $item = $printer->getStorePrinterSet($item);
             $order_printer_array = $item['order_printer'];

@@ -249,9 +249,11 @@ class Detail_EweiShopV2Page extends MobilePage {
         $coupon = pdo_fetch('select * from ' . tablename('ewei_shop_coupon') . ' where id=:id and uniacid=:uniacid  limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
         $coupon = com('coupon')->setCoupon($coupon, time());
         //无法从领券中心领取
+        //var_dump($coupon['gettype']);
+        /*
         if (empty($coupon['gettype'])) {
             show_json(-1, '无法'.$coupon['gettypestr']);
-        }
+        }*/
         if ($coupon['total'] != -1) {
             if ($coupon['total'] <= 0) {
                 show_json(-1, '优惠券数量不足'); //数量不足

@@ -490,7 +490,7 @@ class Distorder_EweiShopV2Model
 
         //$paras = array(':uniacid' => $_W['uniacid']);
         $merch = intval($merch);
-        $condition = ' and isparent=0';
+        $condition = ' and isdisorder=1 and isparent=0';
         if ($merch < 0) {
             $condition .= ' and merchid=0';
         }

@@ -244,7 +244,13 @@
     </div>
 </div>
 </div>
-
+{if !empty($lotterygoods)}
+    <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
+    <div class="fui-cell">
+        <div class="fui-cell-text" style="white-space: normal;">您的抽奖获得商品可享受 <span class="text-danger">￥{$lotterygoods['marketprice']}</span> 的价格<br>不与其他优惠共享</div>
+    </div>
+</div>
+{/if}
 {if empty($seckillinfo)}
 {if floatval($goods['buyagain'])>0}
 <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
@@ -876,7 +882,8 @@
         modal.init({
             goodsid:"{$goods['id']}",
             getComments : "{$getComments}",
-            seckillinfo: {php echo json_encode($seckillinfo)}
+            seckillinfo: {php echo json_encode($seckillinfo)},
+            log_id:"{$log_id}",
         });
     });</script>
 </div>

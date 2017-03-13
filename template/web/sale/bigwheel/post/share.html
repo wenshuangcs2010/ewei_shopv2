@@ -1,0 +1,49 @@
+<div class="form-group">
+	<label class="col-sm-2 control-label">分享标题</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.bigwheel' $item}
+		<input type="text" name="share_title" class="form-control" value="{$item['share_title']}"  />
+		<span class='help-block'>分享标题</span>
+		{else}
+		<div class='form-control-static'>{$item['share_title']}</div>
+		{/if}
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">分享图标</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.bigwheel' $item}
+		{php echo tpl_form_field_image('share_thumb', $item['share_thumb'])}
+		{else}
+		<input type="hidden" name="share_thumb" value="{$item['share_thumb']}"/>
+      
+		{if !empty($item['share_thumb'])}
+		<a href='{php echo tomedia($item['share_thumb'])}' target='_blank'>
+		   <img src="{php echo tomedia($item['share_thumb'])}" style='width:100px;border:1px solid #ccc;padding:1px' />
+		</a>
+		{/if}
+		{/if} <span class="help-block">不选择默认商城LOGO</span>
+	</div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">分享描述</label>
+    <div class="col-sm-9 col-xs-12">
+        {ife 'sale.bigwheel' $item}
+        <input type="text" name="share_desc" class="form-control" value="{$item['share_desc']}"  />
+        <span class='help-block'>分享描述</span>
+        {else}
+        <div class='form-control-static'>{$item['share_desc']}</div>
+        {/if}
+    </div>
+</div>
+
+<div class="form-group">
+                <label class="col-sm-2 control-label must">每日分享获得抽奖次数</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="share_unm_total" class="form-control" value="{$item['share_unm_total']}"  />
+                    <span class='help-block' >每日分享获得抽奖次数！ -1 为不限制 推荐设置为1次!(注意会被<用户每天最多获得抽奖次数限制>)</span>
+                </div>
+</div>
+

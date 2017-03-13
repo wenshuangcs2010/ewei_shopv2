@@ -77,8 +77,8 @@ class Index_EweiShopV2Page extends WebPage
                 show_json(0, '订单未付款，无法发货！');
             }
         }
-      
 		$rerundata=m("kjb2c")->send_order($orderid);
+
 		$mft=(array)$rerundata['Body']['Mft'];
 		$MftInfos=(array)$mft['MftInfos'];
 		$MftInfo=(array)$MftInfos['MftInfo'];

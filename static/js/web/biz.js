@@ -349,6 +349,7 @@ define(['jquery'], function ($) {
             params = $.extend({}, params || {});
 			biz.selector_open.callback = typeof( params.callback )==='undefined'?false: params.callback;
 
+			biz.selector_open.params = params;
             var name = params.name===undefined?'default':params.name;
             var modalid = name +"-selector-modal";
             modalObj =$('#' +modalid);
@@ -361,7 +362,7 @@ define(['jquery'], function ($) {
                 modal += '<div class="row">';
                 modal += '<div class="input-group">';
                 modal += '<input type="text" class="form-control" name="keyword" id="' + name +'_input" placeholder="' + ( params.placeholder===undefined?'':params.placeholder) + '" />';
-                modal += '<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector.search(this, \'' + name + '\');">搜索</button></span>';
+                modal += '<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector_open.search(this, \'' + name + '\');">搜索</button></span>';
                 modal += '</div>';
                 modal += '</div>';
                 modal += '<div class="content" style="padding-top:5px;" data-name="' + name +'"></div>';
@@ -374,6 +375,7 @@ define(['jquery'], function ($) {
                 modalObj = $(modal);
                 modalObj.on('show.bs.modal',function(){
                     if(params.autosearch=='1') {
+
                         $.get(params.url, {
                             keyword: ''
                         }, function (dat) {
@@ -385,10 +387,12 @@ define(['jquery'], function ($) {
             modalObj.modal('show');
         }
         , search:function(searchbtn, name){
+
             var input = $(searchbtn).closest('.modal').find('#' + name + '_input');
             var selector = $("#" + name + '_selector');
             var needkeywords = true;
-            if( selector.data('nokeywords')=='1') {
+			var params= biz.selector_open.params;
+            if( params.nokeywords =='1') {
                 needkeywords = false;
             };
 
@@ -401,17 +405,17 @@ define(['jquery'], function ($) {
             var modalObj =  $('#' +name +"-selector-modal");
             $('.content' ,modalObj).html("正在搜索....");
 
-            $.get( selector.data('url'), {
+            $.get( params.url, {
                 keyword: keyword
             }, function(dat){
                 $('.content' ,modalObj).html(dat);
             });
         }
         , remove: function (obj,name ) {
-            var selector = $("#" + name + '_selector');
-            var css = selector.data('type') =='image'?'.multi-item':'.multi-audio-item';
+			var params= biz.selector_open.params;
+            var css = params.type  =='image'?'.multi-item':'.multi-audio-item';
             $(obj).closest(css).remove();
-            biz.selector.refresh(name);
+            biz.selector_open.refresh(name);
         }
         , set: function (obj, data) {
 
@@ -419,8 +423,8 @@ define(['jquery'], function ($) {
 			var name = $(obj).closest('.content').data('name');
 			var modalObj =  $('#' +name +"-selector-modal");
 			var selector  =  $('#' +name +"_selector");
-
-			var  multi = selector.data('multi') || 0;
+			var params= biz.selector_open.params;
+			var  multi = params.multi || 0;
 			if(multi===0){
 				modalObj.modal('hide');
 			}

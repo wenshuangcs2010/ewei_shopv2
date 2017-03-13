@@ -11,7 +11,8 @@ require.config({
         'foxui.citydata':'../dist/foxui/js/foxui.citydata.min',
         'jquery.qrcode':'../dist/jquery/jquery.qrcode.min',
         'ydb':'../dist/Ydb/YdbOnline',
-        'swiper':'../dist/swiper/swiper.min'
+        'swiper':'../dist/swiper/swiper.min',
+        'BMap':"//api.map.baidu.com/api?v=2.0&ak=uvlCwUWyIK4zr4Umk6oqk27U"
     },
     shim: {
         'foxui':{
@@ -23,7 +24,11 @@ require.config({
         },
 		'jquery.gcjs': {
 	                 deps:['jquery']
-		}
+		},
+        'BMap': {
+            deps: ['jquery'],
+            exports: 'BMap'
+        }
     },
     waitSeconds: 0
 });

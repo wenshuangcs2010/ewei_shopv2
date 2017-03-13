@@ -1,0 +1,126 @@
+<div class="modal-dialog">
+	<style>
+		#selectUrl .modal-body {padding: 10px 15px;}
+		#selectUrl .tab-pane {margin-top: 5px; min-height: 350px; max-height: 350px; overflow-y: auto;}
+		#selectUrl .page-header {padding: 9px 0; margin-bottom: 8px;}
+		#selectUrl .page-header h4 {margin: 0;}
+		#selectUrl .btn {margin-bottom: 3px;}
+		#selectUrl .modal-dialog {width: 880px;}
+		#selectUrl .line {border-bottom: 1px dashed #ddd; color: #999; height: 36px; line-height: 36px;}
+		#selectUrl .line .icon {height: 35px; width: 30px; position: relative; float: left;}
+		#selectUrl .line .icon.icon-1:before {content: ""; width: 10px; height: 10px; border: 1px dashed #ccc; position: absolute; top: 12px; left: 10px;}
+		#selectUrl .line .icon.icon-2 {width: 50px;}
+		#selectUrl .line .icon.icon-2:before {content: ""; width: 10px; height: 10px; border-left: 1px dashed #ccc; border-bottom: 1px dashed #ccc; position: absolute; top: 12px; left: 20px;}
+		#selectUrl .line .icon.icon-3 {width: 60px;}
+		#selectUrl .line .icon.icon-3:before {content: ""; width: 10px; height: 10px; border-left: 1px dashed #ccc; border-bottom: 1px dashed #ccc; position: absolute; top: 12px; left: 30px;}
+		#selectUrl .line .btn-sm {float: right; margin-top: 5px; margin-right: 5px; height: 24px; line-height: 24px; padding: 0 10px;}
+		#selectUrl .line .text {display: block;}
+		#selectUrl .line .label-sm {padding: 2px 5px;}
+		#selectUrl .line.good {height: 60px; padding: 4px 0;}
+		#selectUrl .line.good .image {height: 50px; width: 50px; border: 1px solid #ccc; float: left;}
+		#selectUrl .line.good .image img {height: 100%; width: 100%;}
+		#selectUrl .line.good .text {padding-left: 60px; height: 52px;}
+		#selectUrl .line.good .text p {padding: 0; margin: 0;}
+		#selectUrl .line.good .text .name {font-size: 15px; line-height: 32px; height: 28px;}
+		#selectUrl .line.good .text .price {font-size: 12px; line-height: 18px; height: 18px;}
+		#selectUrl .line.good .btn-sm {height: 32px; padding: 5px 10px; line-height: 22px; margin-top: 9px;}
+		#selectUrl .tip {line-height: 250px; text-align: center;}
+		#selectUrl .nav-tabs > li > a {padding: 8px 20px;}
+	</style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">选择优惠卷</h4>
+        </div>
+        <div class="modal-body">
+        	<ul class="nav nav-tabs" id="selectUrlTab">
+				<li class="active"><a href="#sut_shop">优惠劵</a></li>
+			</ul>
+			<div class="tab-content ">
+				
+				<div class="tab-pane active" id="sut_shop">
+					{if count($list)>0}
+<table class="table table-hover table-responsive">
+	<thead class="navbar-inner" >
+	<tr>
+		
+		<th style="width:50px;">ID</th>
+		<th style="width:180px;">优惠券名称</th>
+		<th style="width:100px;">创建时间</th>
+		<th>操作</th>
+	</tr>
+	</thead>
+	<tbody>
+	{loop $list $row}
+	<tr>
+		<td>
+			{$row['id']}
+		</td>
+
+		<td>{if $row['coupontype']==0}
+			<label class='label label-success'>购物</label>
+			{else if $row['coupontype']==1}
+			<label class='label label-warning'>充值</label>
+			{else if $row['coupontype']==2}
+			<label class='label label-info'>收银台</label>
+			{/if}
+			<br/>{$row['couponname']}
+		</td>
+		<td>{php echo date('Y-m-d',$row['createtime'])}<br/>{php echo date('H:i',$row['createtime'])}</td>
+		<td>
+
+			<div class="btn-group btn-group-sm">
+				<nav data-couponid="{$row['id']}" data-couponname="{$row['couponname']}"  class="btn btn-default btn-sm" title="购物车">选择</nav>
+			</div>
+		</td>
+	</tr>
+	{/loop}
+	</tbody>
+
+</table>
+{$pager}
+{else}
+<div class='panel panel-default'>
+	<div class='panel-body' style='text-align: center;padding:30px;'>
+		暂时没有任何优惠券!
+	</div>
+</div>
+{/if}
+				</div>
+				
+				
+
+			</div>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+        </div>
+        <script>
+        	$(function(){
+        		$("#selectUrl").find('#selectUrlTab a').click(function(e) {
+						$('#tab').val($(this).attr('href'));
+						e.preventDefault();
+						$(this).tab('show');
+				});
+        		$(".select-btn").click(function(){
+        			var type = $(this).data("type");
+        			var kw = $.trim($("#select-"+type+"-kw").val());
+        			if(!kw){
+        				tip.msgbox.err("请输入搜索关键字！");
+        				return;
+        			}
+        			$("#select-"+type+"-list").html('<div class="tip">正在进行搜索...</div>');
+        			$.ajax("{php echo webUrl('util/selecturl/query', array('full'=>$full))}", {
+		      			type: "get",
+		      			dataType: "html",
+		      			cache: false,
+		      			data: {kw:kw, type:type}
+		      		}).done(function (html) {
+		      			$("#select-"+type+"-list").html(html);
+		      		});
+        		});
+        	});
+        </script>
+    </div>
+
+ 

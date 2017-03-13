@@ -36,6 +36,7 @@ class Index_EweiShopV2Page extends WebPage {
         $psize = 20;
         $sqlcondition = $groupcondition = '';
         $condition = ' WHERE g.`uniacid` = :uniacid';
+        $orderbuy=' ORDER BY g.`status` DESC, g.`displayorder` DESC,g.`id` DESC';
         $params = array(':uniacid' => $_W['uniacid']);
         if (!empty($_GPC['keyword'])) {
             $_GPC['keyword'] = trim($_GPC['keyword']);
@@ -75,9 +76,9 @@ class Index_EweiShopV2Page extends WebPage {
             $condition .= " AND ( ";
             foreach ($catearr as $key=>$value){
                 if ($key==0) {
-                    $condition .= "FIND_IN_SET({$value},cates)";
+                    $condition .= "FIND_IN_SET({$value},g.cates)";
                 }else{
-                    $condition .= " || FIND_IN_SET({$value},cates)";
+                    $condition .= " || FIND_IN_SET({$value},g.cates)";
                 }
             }
             $condition .= " <>0 )";
@@ -173,11 +174,21 @@ class Index_EweiShopV2Page extends WebPage {
         }
         $sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
         $total_all = pdo_fetchall($sql, $params);
+
         $total = count($total_all);
         unset($total_all);
         if (!empty($total)) {
-            $sql = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC,
-                g.`id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+            // $sqltitle="g.*";
+            if ($goodsfrom == 'stock' && $_W['uniacid']!=DIS_ACCOUNT) {
+                $sqlcondition.= ' left join ' . tablename('ewei_shop_goods') . ' g2 on g.disgoods_id = g2.id';
+                $orderbuy.=",g2.`status` desc";
+                //$sqltitle="g.id,g.title,g.pcate,g.ccate,g.thumb,g.displayorder,g.discounts,g.total,g.sales,g.tcate,g.pcates,g.tcates,g.disgoods_id,g.cates";
+                $sqltitle="g.*,g2.status as account_shop";
+            }else{
+                $sqltitle="g.*";
+            }
+            $sql = 'SELECT '.$sqltitle.' FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . $orderbuy .' LIMIT '. ($pindex - 1) * $psize . ',' . $psize;
+           
             $list = pdo_fetchall($sql, $params);
             $pager = pagination($total, $pindex, $psize);
 
@@ -190,13 +201,7 @@ class Index_EweiShopV2Page extends WebPage {
                 }
             }
         }
-        if ($goodsfrom == 'stock' && $_W['uniacid']!=DIS_ACCOUNT){
-            foreach ($list as &$goods) {
-               if($goods['disgoods_id']>0){
-                 $goods['account_shop']=pdo_fetchcolumn("SELECT `status` from ".tablename("ewei_shop_goods")." where id=:id",array(":id"=>$goods['disgoods_id']));
-               }
-            }
-        }
+       
         //var_dump($sql);
         //die();
         $categorys = m('shop')->getFullCategory(true);

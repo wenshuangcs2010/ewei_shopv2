@@ -1,0 +1,139 @@
+{template '_header'}
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/css/lotteryad.css?{php echo time();}" />
+<div class='fui-page  fui-page-current'>
+
+   <div class="fui-content">
+        <div class="lottery-head">
+            <div class="div_top">
+             <div class="div_head"><i></i><span class="head"><strong>已签到天数</strong></span><i></i></div>     
+             <div class="lottery-head_top">
+             <a href="{php echo mobileUrl('lottery/index/lottery_desc',array('id'=>$lottery['id']),true);}"><img width="100%" height="100%" src="../addons/ewei_shopv2/static/images/newqd/span_top.png" alt=""></a>
+             </div>
+             <div class="clear"></div>
+            </div>
+            
+            <div class="head_img div_head_tow">
+            <a href="#">
+            <img width="100%" height="100%" src="../addons/ewei_shopv2/static/images/newqd/yellowrand.png" alt="">
+            </a>
+           </div>
+            <div class="div_head_four">
+            积分:<span id="credit1">{$s['credit1']}</span>
+            </div>
+            <div class="div_head_three">
+                 <div class ="threediv swiper-wrapper">
+                    {loop $nginfirstweek $key $val}
+                        {if $val['is']==1}
+                             {if $firstweek>$key}
+                            <div class="divthree  swiper-slide">
+                                <div class="divthree_img">
+                                <img src="../addons/ewei_shopv2/static/images/newqd/l2.png">
+                                <p class ="{if $val['ngistype']==1}jifen{else}cjjh{/if}">{if $val['ngistype']==1}积分{else}抽奖机会{/if}</p>
+                                <p class="pstat">已签到</p>
+                                </div>
+                                <div class ="showh1">
+                                   <img src="../addons/ewei_shopv2/static/images/newqd/h1.png"> 
+                                   <p class ="number"><strong>+{$val['number']}</strong></p>
+                                </div>
+                            </div>
+                            {else}
+                                <div class="divthree  swiper-slide">
+                                    <div class="divthree_img">
+                                    <img src="../addons/ewei_shopv2/static/images/newqd/l1.png">
+                                     <p class ="{if $val['ngistype']==1}jifen{else}cjjh{/if}">{if $val['ngistype']==1}积分{else}抽奖机会{/if}</p>
+                                     <p class="pstat">{$val['nexttime']}</p>
+                                    </div>
+                                    <div class ="showh1">
+                                       <img src="../addons/ewei_shopv2/static/images/newqd/h2.png"> 
+                                       <p class ="number"><strong>+{$val['number']}</strong></p>
+                                    </div>
+                                </div>
+                            {/if}
+                        {/if}
+                    {/loop}
+                 </div>
+                <div class="clear"></div>
+                
+            </div>
+         </div>
+        <div class="lottery-content-content">
+              {if $type==1}{template 'sale/nsign/zhuanpan'}{/if}
+        </div>
+        <div style="clear:both;"></div>
+        <div class="lottery-foot_foot" >
+            <div class="foot_lottery" >
+            <a href="{php echo mobileUrl('creditshop');}"><img width="100%" src="../addons/ewei_shopv2/static/images/qd/zhanpan09.gif" alt=""></a> 
+            </div>
+            <div class="foot">
+                <img width="100%" src="../addons/ewei_shopv2/static/images/qd/foot.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <style type="text/css" media="screen">
+        .lottery-content li{
+            float:left
+        }
+    </style>
+
+    <div id="failngsgnmodel" style="display: none;">
+    <div class="task-model">
+        <div class="task-model-faile-content" ><h4 id="model-nsign_failtitle"></h4></div>
+        <div class="task-model-footer task-btn-close">好的，我知道了</div>
+    </div>
+    </div>
+    <script type="text/javascript">
+         require(['swiper'], function (modal) {
+            var swiper = new Swiper('.div_head_three', {
+            paginationClickable: true,
+            slidesPerView: 6,
+            spaceBetween: 50,
+            preventClicks:true,
+            breakpoints: {
+                1024: {
+                    slidesPerView: 6,
+                    spaceBetween: 40
+                },
+                768: {
+                    slidesPerView: 5,
+                    spaceBetween: 30
+                },
+                640: {
+                    slidesPerView: 5,
+                    spaceBetween: 20
+                },
+                320: {
+                    slidesPerView: 5,
+                    spaceBetween: 10
+                }
+            }
+             });
+          });
+         $(".div_head_tow a").click(function(event) {
+            $.post('{php echo mobileUrl("sale/nsign/startnsign");}',function (data) {
+                var retstart=data.status;
+                if(retstart==0){
+                    var firstweek=data.ret.firstweek-1;
+                        $(".updateimg_"+firstweek).attr("src","../addons/ewei_shopv2/static/images/qd/foot_hui.png");
+                        $(".updateimgsmall_"+firstweek).attr("src","../addons/ewei_shopv2/static/images/qd/huiju.png");
+                        $(".updateimgwz_"+firstweek).html("已签到");
+                        $("#credit1").html(data.ret.credit1);
+                        console.log(firstweek);
+                    }
+                         $('#model-nsign_failtitle').html(data.msg);
+                            taskget = new FoxUIModal({
+                            content: $('#failngsgnmodel').html(),
+                            extraClass: 'picker-modal',
+                            maskClick: function () {
+                                taskget.close()
+                            }
+                        });
+                        taskget.container.find('.task-btn-close').click(function () {
+                            taskget.close()
+                        });
+                            taskget.show();
+            },"json")
+        });
+    </script>
+</div>
+
+

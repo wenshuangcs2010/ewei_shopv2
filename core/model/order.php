@@ -109,13 +109,13 @@ class Order_EweiShopV2Model
                                             );
                                       
                                     $returndatatemp=m("kjb2c")->to_customs($params,$config,'wx'); 
-                                    WeUtility::logging('报关结果', var_export($returndatatemp, true));
+                                    WeUtility::logging('自动报关结果', var_export($returndatatemp, true));
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);
                                 }
                                  if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
-                                    $disInfo=m("kjb2c")->getDisInfo($_W['uniacid']);
+                                    $disInfo=Dispage::getDisInfo($_W['uniacid']);
                                     if($disInfo['secondpay']==0){
                                          m("kjb2c")->to_declare($orderid);
                                     }
@@ -1554,6 +1554,7 @@ class Order_EweiShopV2Model
         $out_goods=array();
         //var_dump($order_goods);
         $dispriceamount=0;
+        $dispatch_array=array();
         $disprice_dispatch_price=0;
         foreach($order_goods as $key=>$goods){
             $out_goods[$key]['total']=$goods['total'];
@@ -1568,7 +1569,6 @@ class Order_EweiShopV2Model
             }else{
                 $dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//
             }
-            $areas = unserialize($dispatch_data['areas']);
             if ($dispatch_data['calculatetype'] == 1) {
                             //按件计费
                 $param = $goods['total'];
@@ -1576,9 +1576,40 @@ class Order_EweiShopV2Model
                             //按重量计费
                 $param = $goods['weight'] * $goods['total'];
             }
-            $dprice = m('dispatch')->getCityDispatchPrice($areas, $address['city'], $param, $dispatch_data);
+            $dkey = $dispatch_data['id'];
+            if (array_key_exists($dkey, $dispatch_array)) {
+                    $dispatch_array[$dkey]['param'] += $param;
+                } else {
+                    $dispatch_array[$dkey]['data'] = $dispatch_data;
+                    $dispatch_array[$dkey]['param'] = $param;
+            }
+        }
+        //$dprice = m('dispatch')->getCityDispatchPrice($areas, $address['city'], $param, $dispatch_data);
+       
+
+        if (!empty($dispatch_array)) {
+            foreach ($dispatch_array as $k => $v) {
+                $dispatch_data = $dispatch_array[$k]['data'];
+                $param = $dispatch_array[$k]['param'];
+                $areas = unserialize($dispatch_data['areas']);
+                if (!empty($address)) {
+
+                    //用户有默认地址
+                    $dprice = m('dispatch')->getCityDispatchPrice($areas, $address['city'], $param, $dispatch_data);
+
+                } else if (!empty($member['city'])) {
+                    //设置了城市需要判断区域设置
+                    $dprice = m('dispatch')->getCityDispatchPrice($areas, $member['city'], $param, $dispatch_data);
+                } else {
+                    //如果会员还未设置城市 ，默认邮费
+                    $dprice = m('dispatch')->getDispatchPrice($param, $dispatch_data);
+                }
+            }
             $disprice_dispatch_price+=$dprice;
         }
+        
+        //var_dump($disprice_dispatch_price);
+        //die();
         if($type){
             //计算代理商运费
             $retrundata=$tax->get_dprice_order($out_goods,$disprice_dispatch_price,$dispriceamount);

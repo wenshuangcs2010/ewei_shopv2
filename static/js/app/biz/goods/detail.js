@@ -6,6 +6,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
         modal.optionid = 0;
         modal.total = 1;
         modal.getComments = params.getComments;
+        modal.log_id=params.log_id;
         FoxUI.tab({
             container: $('#tab'), handlers: {
                 tab1: function () {
@@ -75,6 +76,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
         });
         $(".bottom-buttons .buybtn").click(function () {
             modal.optionPicker('buy')
+
         });
         if( $('#time-container').length>0 || $('#discount-container').length>0){
 
@@ -267,9 +269,12 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
         $('.param-block').removeClass('in')
     };
     modal.optionPicker = function (action) {
+       // console.log(modal.total);
+     
         picker.open({
             goodsid: modal.goodsid,
             total: modal.total,
+            log_id:modal.log_id,
             split: ';',
             action:action,
             optionid: modal.optionid,
@@ -279,6 +284,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
             backurl: modal.backurl,
             onConfirm: function (total, optionid, optiontitle) {
                 modal.total = total;
+
                 modal.optionid = optionid;
                 $('.option-selector').html("已选: 数量x" + total + " " + optiontitle);
                 if (action == 'buy') {
@@ -300,6 +306,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                                         id: modal.goodsid,
                                         optionid: modal.optionid,
                                         total: modal.total,
+                                        log_id:modal.log_id,
                                         gdid: ret.result.goods_data_id,
                                         giftid:giftid
                                     }), true);
@@ -312,6 +319,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                                 id: modal.goodsid,
                                 optionid: modal.optionid,
                                 total: modal.total,
+                                log_id:modal.log_id,
                                 giftid:giftid
                             }), false);
                         }

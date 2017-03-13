@@ -1,0 +1,65 @@
+{template '_header'}
+
+<div class="page-heading">
+    <span class='pull-right'>
+        {ifp 'shop.depot.add'}
+        	<a class='btn btn-primary btn-sm' href="{php echo webUrl('sale/bigwheel/add')}"><i class='fa fa-plus'></i> 添加大转盘活动</a>
+        {/if}
+    </span>
+    <h2>大转盘活动管理</h2> </div>
+<form action="" method="post">
+    {if count($list)>0}
+    <table class="table table-hove table-responsive">
+        <thead class="navbar-inner">
+            <tr>
+                <th style="width:20px;"><input type='checkbox' /></th>
+                <th style="width:25%;">名称</th>
+                <th style="width:20%;">类型</th>
+                <th style="width:20%;">启用</th>
+                <th style="width:25%;">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {loop $list $item}
+            <tr>
+                <td><input type='checkbox' value="{$item['id']}"/></td>
+                <td>{$item['activityname']}</td>
+                <td>{if $item['lottery_type']==1} 大转盘 {else} 九宫格 {/if}</td>
+                <td>{if $item['status']==1} 是 {else} 否 {/if}</td>
+                <td style="text-align:left;">
+                    {ifp 'sale.bigwheel.view|shop.depot.edit'}
+                     <a class="btn btn-default btn-sm" href="{php echo webUrl('sale/bigwheel/log', array('id' => $item['id']))}"><i class="fa fa-qrcode"></i> 参与记录</a>
+                    	<a href="{php echo webUrl('sale/bigwheel/edit', array('id' => $item['id']))}" class="btn btn-default btn-sm">
+                    		<i class='fa fa-edit'></i> {ifp 'shop.depot.edit'}修改{else}查看{/if}
+                    	</a>
+
+                    {/if}
+                    {ifp 'sale.bigwheel.delete'}
+                    	<a data-toggle='ajaxRemove' href="{php echo webUrl('sale/bigwheel/delete', array('id' => $item['id']))}"class="btn btn-default btn-sm" data-confirm='确认要删除此抽奖?'><i class="fa fa-trash"></i> 删除</a>
+                    {/if}
+                </td>
+                
+            </tr>
+            {/loop}
+
+            <tr>
+                <td colspan='8'>
+
+                    <div class='pagers' style='float:right;'>
+                        {$pager}
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+            {else}
+            <div class='panel panel-default'>
+                <div class='panel-body' style='text-align: center;padding:30px;'>
+                    暂时没有任何大转盘信息!
+                </div>
+            </div>
+            {/if}
+        </form>
+
+        {template '_footer'}

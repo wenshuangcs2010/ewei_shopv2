@@ -1,0 +1,12 @@
+
+			<div class="form-group">
+	<label class="col-sm-2 control-label">使用说明</label>
+	<div class="col-sm-9 col-xs-12">
+                  {ife 'sale.coupon' $item}
+                            {php echo tpl_ueditor('desc',$item['desc'])}
+                            {else}
+                            <textarea id='desc' style='display:none'>{$item['desc']}</textarea>
+                            <a href='javascript:preview_html("#desc")' class="btn btn-default">查看内容</a>
+                            {/if}
+	</div>
+	</div>
