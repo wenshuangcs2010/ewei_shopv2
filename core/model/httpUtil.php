@@ -55,9 +55,7 @@ class HttpUtil_EweiShopV2Model
 	    	'minbuy'=>$data['min_quantity'],
 	    
 	    	);
-	    var_Dump($data['sku']);
-	    m("order")->updatestock($data['only_sku'],120);
-	    die();
+
 	    pdo_update("ewei_shop_goods",$updatedata,array("id"=>$goodsid));
 	    $sql="select id from " . tablename('ewei_shop_goods') . " where disgoods_id=:disgoods_id";
 	    $disgoodslist=pdo_fetchall($sql,array("disgoods_id"=>$goodsid));

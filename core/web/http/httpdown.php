@@ -11,7 +11,7 @@ class Httpdown_EweiShopV2Page extends WebPage {
 		$id = intval($_GPC['id']);
 		$goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		//var_dump($goods);
-		$return=m("httpUtil")->updateGoods($goods['goodssn'],$goods['id']);
+		$return=m("httputil")->updateGoods($goods['goodssn'],$goods['id']);
 		if($return){
 			show_json(1,"更新成功");
 		}
