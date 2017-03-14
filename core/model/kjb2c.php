@@ -44,6 +44,7 @@ class Kjb2c_EweiShopV2Model {
 					$dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq
 				}
 			}
+			$order['paytype']=21;
 			$order['tax_rate']=empty($order['tax_rate']) ?0 : $order['tax_rate'];
 			$order['tax_consumption']=empty($order['tax_consumption']) ?0 : $order['tax_consumption'];
 			$order['weight']=$Weight;
@@ -81,7 +82,6 @@ class Kjb2c_EweiShopV2Model {
 			$order['tax_consumption']=empty($order['consumption_tax']) ?0 : $order['consumption_tax'];
 			if($order['pay_type']=="wechat"){
 				$order['paytype']=21;
-
 			}
 			$order['price']=$order['price']+$order['freight'];
 			//$order['dpostfee']="00";
