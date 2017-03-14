@@ -386,7 +386,7 @@ class Order_EweiShopV2Model
             $param[':orderid'] = $orderid;
         }
 
-        $goods = pdo_fetchall("select og.goodsid,og.total,g.totalcnf,og.realprice,g.credit,og.optionid,g.total as goodstotal,og.optionid,g.sales,g.salesreal from " . tablename('ewei_shop_order_goods') . " og "
+        $goods = pdo_fetchall("select og.goodsid,og.total,g.totalcnf,og.realprice,g.credit,og.optionid,g.total as goodstotal,og.optionid,g.sales,g.salesreal,g.goodssn from " . tablename('ewei_shop_order_goods') . " og "
             . " left join " . tablename('ewei_shop_goods') . " g on g.id=og.goodsid "
             . " where $condition and og.uniacid=:uniacid ", $param);
 
@@ -421,11 +421,9 @@ class Order_EweiShopV2Model
                 }
             }
             if (!empty($stocktype)) {
-
                 if (!empty($g['optionid'])) {
                     //减少规格库存
                     $option = m('goods')->getOption($g['goodsid'], $g['optionid']);
-
                     if (!empty($option) && $option['stock'] != -1) {
                         $stock = -1;
                         if ($stocktype == 1) {
@@ -454,6 +452,8 @@ class Order_EweiShopV2Model
                     }
                     if ($totalstock != -1) {
                         pdo_update('ewei_shop_goods', array('total' => $totalstock), array('uniacid' => $uniacid, 'id' => $g['goodsid']));
+                        m("order")->updatestock($g['goodssn'],$totalstock);//代理库存更新
+
                     }
                 }
             }
@@ -517,7 +517,25 @@ class Order_EweiShopV2Model
             }
         }
     }
-
+    //代理库存更新
+    function updatestock($goods_sn,$stock){
+        $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where goodssn=:goodssn and uniacid=:uniacid limit 1", array(':goodssn' => $goods_sn, ':uniacid' => DIS_ACCOUNT));
+        if(empty($goods)){
+            return false;
+        }
+        $sql="select id from " . tablename('ewei_shop_goods') . " where disgoods_id=:disgoods_id";
+        $disgoodslist=pdo_fetchall($sql,array("disgoods_id"=>$goods['id']));
+        if(empty($disgoodslist)){
+            return false;
+        }
+        $sql="update ".tablename("ewei_shop_goods")." SET total=:total";
+        foreach ($disgoodslist as $v) {
+           $t[]=$v['id'];
+        }
+        $ids=implode(",",$t);
+        $sql.=" where id in ($ids)";
+        pdo_query($sql,array(":total"=>$stock));
+    }
     function getTotals($merch = 0)
     {
         global $_W;
