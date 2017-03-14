@@ -182,7 +182,19 @@ class index_EweiShopV2Page extends MobilePage {
                 }
                
                 $mylog[$key]['icon'] = '../addons/ewei_shopv2/static/images/qd/shangpin.png';
-            }elseif(isset($lottery_data['coupon'])){
+            }
+            elseif(isset($lottery_data['hxgoods'])){
+                $goods = array_shift($lottery_data['hxgoods']);
+                $mylog[$key]['title'] = '特惠商品:'.$goods['title'];
+                if($mylog[$key]['is_reward']==2){
+                     $mylog[$key]['rewarded'] = 1;
+                }else{
+                     $mylog[$key]['rewarded'] = 0;
+                }
+               
+                $mylog[$key]['icon'] = '../addons/ewei_shopv2/static/images/qd/shangpin.png';
+            }
+            elseif(isset($lottery_data['coupon'])){
                 $coupon = array_shift($lottery_data['coupon']);
                 $mylog[$key]['title'] = '优惠券:'.$coupon['couponname'];
                 $mylog[$key]['rewarded'] = 1;
@@ -610,6 +622,18 @@ class index_EweiShopV2Page extends MobilePage {
             $value = unserialize($value['lottery_data']);
             if(isset($value['goods'])&&!empty($value['goods'])){
                 $goods = array_shift($value['goods']);
+                $goods['log_id']=$log_id;
+                if(!empty($goods)){
+                    $searchsql = 'SELECT thumb,marketprice FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid= '.$_W['uniacid'].' and id='.$goods['id'].' and status=1 and deleted=0';
+                    $goodsinfo = pdo_fetch($searchsql);
+                    $thumb = tomedia($goodsinfo['thumb']);
+                    $goods['thumb']=$thumb;
+                    $goods['oldprice'] = $goodsinfo['marketprice'];
+                }
+                array_push($goodslist,$goods);
+            }
+            if(isset($value['hxgoods'])&&!empty($value['hxgoods'])){
+                $goods = array_shift($value['hxgoods']);
                 $goods['log_id']=$log_id;
                 if(!empty($goods)){
                     $searchsql = 'SELECT thumb,marketprice FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid= '.$_W['uniacid'].' and id='.$goods['id'].' and status=1 and deleted=0';
