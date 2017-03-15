@@ -59,6 +59,9 @@ class HttpUtil_EweiShopV2Model
 	    pdo_update("ewei_shop_goods",$updatedata,array("id"=>$goodsid));
 	    $sql="select id from " . tablename('ewei_shop_goods') . " where disgoods_id=:disgoods_id";
 	    $disgoodslist=pdo_fetchall($sql,array("disgoods_id"=>$goodsid));
+	    if(empty($disgoodslist)){
+	    	return 1;
+		}
 	    $disdata=array(
 			'total'=>$data['stock'],
 	    	'weight'=>$data['weight']*1000,
