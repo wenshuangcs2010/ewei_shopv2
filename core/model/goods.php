@@ -47,7 +47,7 @@ class Goods_EweiShopV2Model {
         $pagesize = !empty($args['pagesize']) ? intval($args['pagesize']) : 10;
         $random = !empty($args['random']) ? $args['random'] : false;
 
-        $order = !empty($args['order']) ? $args['order'] : ' displayorder desc,createtime desc';
+        $order = !empty($args['order']) ? $args['order'] : ' total desc,displayorder desc,createtime desc';
         $orderby = empty($args['order']) ? '' : (!empty($args['by']) ? $args['by'] : '' );
 
         //多商户
