@@ -1081,13 +1081,13 @@ class Common_EweiShopV2Model {
 	//生成单号
 	public function createNO($table, $field, $prefix) {
 
-		$billno = date('YmdHis') . random(6, true);
+		$billno = date('YmdHis') . random(2, true);
 		while (1) {
 			$count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_' . $table) . " where {$field}=:billno limit 1", array(':billno' => $billno));
 			if ($count <= 0) {
 				break;
 			}
-			$billno = date('YmdHis') . random(6, true);
+			$billno = date('YmdHis') . random(2, true);
 		}
 		return $prefix . $billno;
 	}
