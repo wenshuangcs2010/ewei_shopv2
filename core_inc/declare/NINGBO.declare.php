@@ -24,9 +24,11 @@ class NINGBO_Api extends ningboData{
 		$this->setConsumptionDutyAmount($order['tax_consumption']);
 		$this->setGrossWeight($order['weight']);
 		$this->setPaytime($order['paytime']);
+		
 		$this->setPaymentNo($order['paymentno']);
 		$this->setOrderSeqNo($order['paymentno']);
 		$this->setSource($order['paytype']);
+		
 		if(!empty($order['remark'])){
 			$remark=$order['remark'];
 			$this->setDefault01($remark);

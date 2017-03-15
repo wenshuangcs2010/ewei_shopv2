@@ -13,7 +13,7 @@ class Index_EweiShopV2Page extends WebPage
 	function to_customs(){
 		 global $_W,$_GPC;
 		 $orderid=$_GPC['id'];
-		 $order=pdo_fetch("SELECT paymentno,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		 $order=pdo_fetch("SELECT zhan_order_sn,zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);
 		if(!$customs){
@@ -26,6 +26,24 @@ class Index_EweiShopV2Page extends WebPage
 		 	'customs'=>$customs,
 		 	'mch_customs_no'=>$depot['customs_code'],
 		 	);
+		 if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
+			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['zhan_order_sn']));
+			if($sporder['pay_code']=="shenfupay"){
+				$params = array(
+				"order_sn" => $order['zhan_order_sn'],
+				"customs_place" => $customs,//报关地点
+				"businessMode" => 'BONDED',
+				"trade_num"	=>$sporder['paymentno'],
+				"amount" =>$sporder['pay_fee'],
+				"shipping_fee"	=> 0,
+				"amount_tariff"	=> 0,
+				"memo" => '',
+				'mch_customs_no'=>$depot['customs_code'],
+				);
+			}
+			$retrundata=m("kjb2c")->to_customs($params,array(),$sporder['pay_code']);
+			show_json(0,$retrundata['message']);
+		}
 		 if($order['paytype']==21){
 		 	load()->model('payment');
         	$setting = uni_setting($_W['uniacid'], array('payment'));
@@ -51,6 +69,7 @@ class Index_EweiShopV2Page extends WebPage
             	show_json(0,"微信支付已经关闭请重新开启");
             }
 		}else{
+			
 			show_json(0,"特殊支付方式请联系管理员");
 		}
 	}
@@ -133,5 +152,34 @@ class Index_EweiShopV2Page extends WebPage
 			//show_json(1,"已发货");
 		}
 		include $this->template("order/message");
+	}
+
+	function to_zhuanz(){
+		global $_W,$_GPC;
+		$orderid=$_GPC['id'];
+		$item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_order') . " WHERE id = :id", array(':id' =>$orderid));
+		if($item['zhuan_status']==1){
+			show_json(0,'已经支付请到支付机构查看');
+		}
+		
+		if(empty($item['realname'])|| empty($item['imid'])){
+			show_json(0,'未找到身份证信息,请注意');
+		}
+		$order_sn=Dispage::createNO("shop_zpay_log","id","CGFX");
+		$pay_fee=$item['price'];
+		$realname=$item['realname'];
+		$imid=$item['imid'];
+		$data=array(
+			'pay_fee'=>$item['price'],
+			'realname'=>$item['realname'],
+			'imid'=>$item['imid'],
+			'order_sn'=>$order_sn,
+			'orderid'=>$orderid,
+			'add_time'=>time(),
+			);
+		pdo_insert("ewei_shop_zpay_log",$data);
+		require EWEI_SHOPV2_TAX_CORE. '/Transfer/Transfer.php';
+        $payment=Transfer::getPayment("shenfupay");
+        pdo_update("ewei_shop_order",array("zhuan_status"=>1,'zhan_order_sn'=>$order_sn),array("id"=>$orderid));
 	}
 }

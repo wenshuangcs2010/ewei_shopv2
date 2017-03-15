@@ -45,6 +45,11 @@ class Kjb2c_EweiShopV2Model {
 				}
 			}
 			$order['paytype']=21;
+			if($order['if_customs_z']==1 && $order['zhuan_status']==1){
+				$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['zhan_order_sn']));
+				$order['paytype']=23;
+				$order['paymentno']=$sporder['paymentno'];
+			}
 			$order['tax_rate']=empty($order['tax_rate']) ?0 : $order['tax_rate'];
 			$order['tax_consumption']=empty($order['tax_consumption']) ?0 : $order['tax_consumption'];
 			$order['weight']=$Weight;

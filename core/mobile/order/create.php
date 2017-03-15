@@ -84,6 +84,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $allow_sale = true;
         $ifidentity=Dispage::check_readname($depotid);//wsq
 
+        
+
+
         //是否为套餐订单
         $packageid = intval($_GPC['packageid']);
         if (!$packageid) {
@@ -97,6 +100,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
             //会员
             $member = m('member')->getMember($openid, true);
+            
             $member['carrier_mobile'] = empty($member['carrier_mobile']) ? $member['mobile'] : $member['carrier_mobile'];
 
             //会员级别
@@ -242,7 +246,11 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
                 $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $id));
                 $depotid=$data['depotid'];//wsq
-                 $ifidentity=Dispage::check_readname($data['depotid']);//wsq
+                $ifidentity=Dispage::check_readname($data['depotid']);//wsq
+
+                if($member['showifidentity']==1){
+                    $ifidentity=true;
+                }
                 //秒杀信息
                 $data['seckillinfo'] = plugin_run('seckill::getSeckill', $data['goodsid'], $optionid, true, $_W['openid']);
 
@@ -999,6 +1007,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $this->message('套餐活动错误，谢谢您的关注，请联系管理员修改！', '', 'error');
             }
              $ifidentity=Dispage::check_readname($depotid);
+             if($member['showifidentity']==1){
+                    $ifidentity=true;
+            }
             //默认地址
             $address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where openid=:openid and deleted=0 and isdefault=1  and uniacid=:uniacid limit 1'
                 , array(':uniacid' => $uniacid, ':openid' => $openid));
@@ -2339,6 +2350,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $couponid = intval($_GPC['couponid']);
         //参数检查wsq
         $ifidentity=Dispage::check_readname($depotid);//wsq
+        if($member['showifidentity']==1){
+            $ifidentity=true;
+        }
         if($ifidentity){
             $realname=$_GPC['realname'];
             $imid=$_GPC['imid'];
@@ -2618,7 +2632,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 pdo_update("ewei_shop_lottery_log",array("is_reward"=>2),array('id'=>$log_id));
             }
         }
-
+        
         //订单数据
         $order = array();
         $order['ismerch'] = $ismerch;
@@ -2666,6 +2680,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
         if (!empty($ccard)) {
             $order['ccard'] = 1;
+        }
+        if($member['showifidentity']==1){
+            $order['if_customs_z']=1;
         }
         $deductenough=$order['deductenough'];//满额立减优惠
         $couponprice=$order['couponprice'];//优惠券优惠

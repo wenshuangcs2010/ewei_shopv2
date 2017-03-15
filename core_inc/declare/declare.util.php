@@ -63,6 +63,8 @@ class declareUtil{
 	                break;
 	            case 21:
 	                return '13';
+                case 23:
+                    return '03';
 	            default:return ;
 	        }
 	    }

@@ -85,4 +85,22 @@ abstract class customs{
 		curl_close($curl);
 		return simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
 	}
+	//curl  请求
+	/**
+	 * 请求API数据
+	 * @param 请求API数据 $posturl
+	 * @return unknown
+	 */
+	function _curl_post($api, $posturl){
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $api);
+		curl_setopt($curl, CURLOPT_POST, 1);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $posturl);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//这个是重点。
+		$response = curl_exec($curl);
+		curl_close($curl);
+		$return_data = json_decode($response);
+		return $return_data;
+	}
 }

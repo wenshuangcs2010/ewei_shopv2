@@ -60,6 +60,15 @@ class Detail_EweiShopV2Page extends MobilePage {
         
         $merchid = $goods['merchid'];
         $labelname = json_decode($goods['labelname'],true);
+        $stock=m("httputil")->getGoods($goods['goodssn']);
+       
+        if(!empty($stock))
+        {
+
+            $goods['total']=$stock;
+
+            m("httputil")->updateStock($goods['id'],$stock);
+        }
 
         $style = pdo_fetch("SELECT id,uniacid,style FROM " . tablename('ewei_shop_goods_labelstyle') . " WHERE uniacid=" . $uniacid);
 
