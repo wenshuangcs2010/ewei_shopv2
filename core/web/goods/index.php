@@ -130,13 +130,26 @@ class Index_EweiShopV2Page extends WebPage {
         }
         if($_GPC['export']==1){
             $categorys = m('shop')->getFullCategory(true);
-            $sql = 'SELECT g.id,g.unit,g.title,g.goodssn,g.marketprice,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $sql = 'SELECT g.id,g.unit,g.title,g.goodssn,g.marketprice,g.discounts,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
             $goodslist=pdo_fetchall($sql,$params);
             $categorystemp=array();
             foreach ($categorys as $r) {
                $categorystemp[$r['id']]=$r['name'];
             }
             $disinfo=Dispage::getDisInfo($_W['uniacid']);
+           $levels = m('member')->getLevels();
+
+            foreach($levels as &$l){
+                $l['key'] ='level'.$l['id'];
+            }
+            unset($l);
+            $levels =array_merge(array(
+                array(
+                    'id'=>0,
+                    'key'=>'default',
+                    'levelname'=>empty($_W['shopset']['shop']['levelname'])?'默认会员':$_W['shopset']['shop']['levelname']
+                )
+            ),$levels);
            
             foreach($goodslist as $key=> $goodstemp){
                 //if($goodstemp['cates']){
@@ -147,13 +160,21 @@ class Index_EweiShopV2Page extends WebPage {
                   // }
                   // $catesstr=implode(",", $catesstr);
                // }
+            $discounts=(array)json_decode($goodslist[$key]['discounts']);
+               foreach($levels as $l){
+                $goodslist[$key][$l['key']]=$discounts[$l['key'].'_pay'];
+                //var_dump($l['key']);
+               // var_dump($goodslist[$key][$l['key']]);
+               }
+               //var_dump($discounts);
+              
                $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
                //$goodslist[$key]['category']=$catesstr;
                if($_W['uniacid']!=DIS_ACCOUNT){
                  $goodslist[$key]['disprice']=$t[$goodstemp['disgoods_id']][$disinfo['resellerid']];
                }
             }
-          
+      //die();
              plog('order.op.export', "导出商品");
              $columns = array(
                 array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
@@ -161,9 +182,17 @@ class Index_EweiShopV2Page extends WebPage {
                 array('title' => '单位', 'field' => 'unit', 'width' => 12),
                 array('title' => '商品单价', 'field' => 'marketprice', 'width' => 12),
             );
+             foreach($levels as $l){
+                
+                $columns[]=array(
+                    'title' => $l['levelname'],
+                    'field' => $l['key'],
+                    'width' => 24);
+             }
               if($_W['uniacid']!=DIS_ACCOUNT){
                  $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
                }
+
               
               m('excel')->export($goodslist, array(
                 "title" => "订单数据-" . date('Y-m-d-H-i', time()),
