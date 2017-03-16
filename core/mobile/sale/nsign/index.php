@@ -21,9 +21,12 @@ class Index_EweiShopV2Page extends MobileLoginPage {
        			$checkLog=$user_nsig['checkLog'];
        			$last_time=$user_nsig['last_time'];
        		}else{
+            $showqda=0;
        			$last_time=$_W['timestamp'];
        		}
-       		
+
+          $bool=m('nsignutil')->checkNsign($member['id']);
+         
        }
 
        if(!empty($ngisconfig['lx'])){

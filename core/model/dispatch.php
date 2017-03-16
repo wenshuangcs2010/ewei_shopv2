@@ -88,7 +88,9 @@ class Dispatch_EweiShopV2Model {
      */
     function getDefaultDispatch($merchid = 0,$isdis=0,$goods_id=0) {
         global $_W;
+         
         $type=Dispage::get_disType($isdis,$_W['uniacid']);
+        
         $depotid=Dispage::get_depotid($type,$goods_id);
         if($type){
             $sql = 'select * from ' . tablename('ewei_shop_dispatch') . ' where isdefault=1 and uniacid=:uniacid and depotid=:depotid and merchid=:merchid and enabled=1 Limit 1';
@@ -99,6 +101,7 @@ class Dispatch_EweiShopV2Model {
         }
         
         $data = pdo_fetch($sql, $params);
+       //WeUtility::logging('代理运费', var_export($data,true));
         return $data;
     }
 

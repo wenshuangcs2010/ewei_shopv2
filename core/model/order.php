@@ -1570,7 +1570,8 @@ class Order_EweiShopV2Model
         require_once EWEI_SHOPV2_TAX_CORE. '/tax_core.php';
         $tax=new Taxcore();
         $out_goods=array();
-        //var_dump($order_goods);
+        //var_dump($order_goods);\
+        
         $dispriceamount=0;
         $dispatch_array=array();
         $disprice_dispatch_price=0;
@@ -1587,6 +1588,7 @@ class Order_EweiShopV2Model
             }else{
                 $dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//
             }
+          
             if ($dispatch_data['calculatetype'] == 1) {
                             //按件计费
                 $param = $goods['total'];
@@ -1602,9 +1604,10 @@ class Order_EweiShopV2Model
                     $dispatch_array[$dkey]['param'] = $param;
             }
         }
+
         //$dprice = m('dispatch')->getCityDispatchPrice($areas, $address['city'], $param, $dispatch_data);
        
-
+     
         if (!empty($dispatch_array)) {
             foreach ($dispatch_array as $k => $v) {
                 $dispatch_data = $dispatch_array[$k]['data'];
@@ -1625,7 +1628,7 @@ class Order_EweiShopV2Model
             }
             $disprice_dispatch_price+=$dprice;
         }
-        
+      
         //var_dump($disprice_dispatch_price);
         //die();
         if($type){
