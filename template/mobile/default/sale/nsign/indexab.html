@@ -14,7 +14,11 @@
             
             <div class="head_img div_head_tow">
             <a href="#">
-            <img width="100%" height="100%" src="../addons/ewei_shopv2/static/images/newqd/yellowrand.png" alt="">
+            {if $bool==false}
+            <img width="100%" height="100%" id="qdok" src="../addons/ewei_shopv2/static/images/newqd/qd.gif" alt="">
+            {else}
+            <img width="100%" height="100%" id="qdok" src="../addons/ewei_shopv2/static/images/newqd/qda.png" alt="">
+            {/if}
             </a>
            </div>
             <div class="div_head_four">
@@ -117,6 +121,7 @@
                         $(".updateimgsmall_"+firstweek).attr("src","../addons/ewei_shopv2/static/images/qd/huiju.png");
                         $(".updateimgwz_"+firstweek).html("已签到");
                         $("#credit1").html(data.ret.credit1);
+                        $("#qdok").attr('src', '../addons/ewei_shopv2/static/images/newqd/qda.png');
                         console.log(firstweek);
                     }
                          $('#model-nsign_failtitle').html(data.msg);
