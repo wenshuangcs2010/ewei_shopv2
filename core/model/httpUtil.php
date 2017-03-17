@@ -43,6 +43,7 @@ class HttpUtil_EweiShopV2Model
 	      }
 	    $content=(array)@json_decode($content);
 	    $data=(array)$content['data'];
+
 	    if(empty($data)){return array();}
 	    $updatedata=array(
 	    	'title'=>$data['goods_name'],
@@ -53,11 +54,12 @@ class HttpUtil_EweiShopV2Model
 	    	'tariffnum'=>$data['hs_code'],
 	    	'unit'=>$data['unit'],
 	    	'minbuy'=>$data['min_quantity'],
-	    
+	    	//'costprice'=>$data['cost_price'],
 	    	);
 
 	    pdo_update("ewei_shop_goods",$updatedata,array("id"=>$goodsid));
 	    $sql="select id from " . tablename('ewei_shop_goods') . " where disgoods_id=:disgoods_id";
+	    plog('goods.edit', "商品同步ID:{$goodsid}");
 	    $disgoodslist=pdo_fetchall($sql,array("disgoods_id"=>$goodsid));
 	    if(empty($disgoodslist)){
 	    	return 1;
@@ -88,6 +90,7 @@ class HttpUtil_EweiShopV2Model
 		$ids=implode(",",$t);
 		$sql.=" where id in ($ids)";
 		pdo_query($sql);
+		plog('goods.edit', "代理商品同步ID:{$ids}");
 		return 1;
 	}
 
