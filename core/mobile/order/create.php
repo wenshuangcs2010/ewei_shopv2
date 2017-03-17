@@ -998,6 +998,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $marketprice += $goods[$key]['marketprice'];
 
             }
+
             //wsq检查套餐商品是否在同一个仓库中
             foreach ($goods as $key => $value) {
                 $t[$value['depotid']]=$value['depotid'];
@@ -1533,6 +1534,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         }
                    
                 }
+
                 $realprice += $data['ggprice'];
 
                 $allgoods[] = $data;
@@ -1685,6 +1687,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 }
 
             }
+
             //是否合适的优惠券
             $couponcount = com_run('coupon::consumeCouponCount', $openid, $realprice - $seckill_payprice, $merch_array, $goodsdata_coupon);
             if (empty($goodsdata_coupon) || !$allow_sale) {
@@ -1753,7 +1756,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $return_array['taskdiscountprice'] = $taskdiscountprice;
         $return_array['discountprice'] = $discountprice;
         $return_array['isdiscountprice'] = $isdiscountprice;
-
+        //var_dump($realprice);
         $return_array['merch_showenough'] = $merch_saleset['merch_showenough'];
         $return_array['merch_deductenough_money'] = $merch_saleset['merch_enoughdeduct'];
         $return_array['merch_deductenough_enough'] = $merch_saleset['merch_enoughmoney'];
@@ -2236,6 +2239,8 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $data['price2'] = $prices['price2'];
                 $data['buyagainprice'] = $prices['buyagainprice'];
 
+                $goodsprice += $g['ggprice'];
+                
                 $buyagainprice += $prices['buyagainprice'];
                 $taskdiscountprice += $prices['taskdiscountprice'];
 
@@ -2688,18 +2693,21 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $couponprice=$order['couponprice'];//优惠券优惠
         $buyagainprice=$order['buyagainprice'];//重复购买优惠
         $discountprice=$oder['discountprice'];//会员优惠
-        //$isdiscountprice=$order['isdiscountprice'];//促销优惠
+        $isdiscountprice=$order['isdiscountprice'];//促销优惠
         $deductprice=$order['deductprice'];//抵扣
         $seckilldiscountprice=$oder['seckilldiscountprice'];//秒杀优惠
-        $alldeduct=$deductenough+$couponprice+$buyagainprice+$discountprice+$isdiscountprice+$deductprice+$seckilldiscountprice;
+        $alldeduct=$deductenough+$couponprice+$buyagainprice+$discountprice+$deductprice+$seckilldiscountprice;
         //var_dump($allgoods);
         //die();
+        foreach($allgoods as $god){
+            $goodsprice+=$god['ggprice'];
+        }
         $returndata=m("order")->get_tax($allgoods,$dispatch_price,$goodsprice,$alldeduct);//正常算税
         $allgoods=$returndata['order_goods'];
         $order['dpostfee']=$returndata['depostfee'];
         $order['tax_rate']=$returndata['tax_rate'];
         $order['tax_consumption']=$returndata['tax_consumption'];
-        
+
         $disdata=m("order")->get_dis_tax($allgoods,$address);
         if(!empty($disdata)){
             $ordertax=$order['tax_rate']+$order['tax_consumption'];
