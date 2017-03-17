@@ -103,13 +103,12 @@ class Disorder_EweiShopV2Page extends PluginWebPage {
 				);
 			}
 			$depotid=0;
-			if($value['disgoods_id']>0){
-				$depotid=pdo_fetchcolumn("select depotid from ".tablename("ewei_shop_goods")." where id=:gid",array(":gid"=>$value['disgoods_id']));
+			if($value['gid']>0){
+				$depotid=pdo_fetchcolumn("select depotid from ".tablename("ewei_shop_goods")." where id=:gid",array(":gid"=>$value['gid']));
 			}
 			if($depotid>0){
 				$depot=Dispage::getDepot($depotid);
 			}
-			//var_dump($depotid);
 			$list[$key]['depot']=$depot;
 		}
 		$total = pdo_fetchcolumn("SELECT count(1) FROM " . tablename('ewei_shop_groups_order') ." as o
@@ -733,98 +732,5 @@ class Disorder_EweiShopV2Page extends PluginWebPage {
 		$result = empty($totals) ? array() : $totals;
 		show_json(1,$result);
 	}
-	function send_order(){
-		global $_W,$_GPC;
-		$bool=false;
-		$orderid=$_GPC['id'];
-		$rerundata=m("kjb2c")->send_order($orderid,"ewei_shop_groups_order");
-		//var_dump($rerundata);
-		$mft=(array)$rerundata['Body']['Mft'];
-		$MftInfos=(array)$mft['MftInfos'];
-		$MftInfo=(array)$MftInfos['MftInfo'];
-		$array=array();
-		foreach ($MftInfo as $key=>$value) {
-				$newval=(array)$value;
-				if(!empty($newval)){
-					$array[$key]=$newval;
-				}
-				if($newval['Status']==22){
-					$bool=ture;
-					$LogisticsName=$mft['LogisticsName'];
-					$LogisticsNo=$mft['LogisticsNo'];
-				}
-		}
-		if($bool){
-			$change_data = array();
-			$express=$LogisticsName;
-			$expresscom=$LogisticsName;
-			$expresssn=$LogisticsNo;
-			if($express=="北仑军通"){
-				$express="yuantong";
-				$expresscom="圆通速递";
-			}
-			$change_data['express'] = $express;
-			$change_data['expresscom'] = $expresscom;
-			$change_data['expresssn'] = $expresssn;
-			$change_data['status']=2;
-			$change_data['sendtime'] = time();
-			pdo_update('ewei_shop_groups_order', $change_data, array('id' => $orderid));
-			$this->model->sendTeamMessage($orderid);
-			plog('groups.order.send', "订单发货 ID: {$orderid} 订单号: {$orderid} <br/>快递公司: {$express} 快递单号: {$expresssn}");
-			show_json(1);
-		}
-		include $this->template("order/message");
-	}
-	function to_declare(){
-		global $_W,$_GPC;
-		$orderid=$_GPC['id'];
-		m("kjb2c")->to_declare($orderid,'ewei_shop_groups_order');
-	}
-	function to_customs(){
-		global $_W, $_GPC;
-		$orderid=$_GPC['id'];
-		$sql="SELECT o.*,g.gid from ".tablename("ewei_shop_groups_order")." as o "
-		."left join ".tablename('ewei_shop_groups_goods')." as g on g.id = o.goodid"
-		." where o.id=:id";
-		$order=pdo_fetch($sql,array(":id"=>$orderid));
-		$customs=m("kjb2c")->check_if_customs($order['depotid']);
-		if(!$customs){
-			show_json(0,"订单无需报关");
-		}
-		$_W['uniacid']=$order['uniacid'];
-		$APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$_W['uniacid']));
-		$depot=m("kjb2c")->get_depot($order['depotid']);
-		$params=array(
-		 	'out_trade_no'=>$order['orderno'],
-		 	'transaction_id'=>$order['paymentno'],
-		 	'customs'=>$customs,
-		 	'mch_customs_no'=>$depot['customs_code'],
-		 );
-		load()->model('payment');
-        $setting = uni_setting($_W['uniacid'], array('payment'));
-        if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
-                $config=array(
-                    	"appid"=>$APPID,
-                    	'mch_id'=>$setting['payment']['wechat']['mchid'],
-                    	'apikey'=>$setting['payment']['wechat']['apikey'],
-                    	);
-                $retrundata=m("kjb2c")->to_customs($params,$config,'wx');
-                if($retrundata['return_code']=="FAIL"){
-                	show_json(0,$retrundata['return_msg']);
-                }else{
-                	if($retrundata['result_code']=="FAIL"){
-                		show_json(0,$retrundata['err_code_des']);
-                	}
-                	show_json(1,$retrundata['return_msg']);
-                }
-                if(isset($retrundata['errno'])){
-		 			show_json(0,$retrundata['message']);
-		 		}
-        }else{
-           	show_json(0,"微信支付已经关闭请重新开启");
-       }
-
-	}
-
 }
 

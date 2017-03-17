@@ -152,7 +152,7 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
 
                 }
             }
-            
+
             $g['totalmaxbuy'] = $totalmaxbuy;
             $newlist[$g['depotid']]['totalmaxbuy']+=$totalmaxbuy;
             $newlist[$g['depotid']]['depotid']=$g['depotid'];

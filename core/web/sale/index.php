@@ -48,7 +48,9 @@ class Index_EweiShopV2Page extends ComWebPage {
 
     function deduct() {
         global $_W, $_GPC;
-       
+        if( !function_exists("redis") || is_error(redis())){
+            $this->message('请联系系统管理员设置 Redis 才能使用抵扣!','','error');
+        }
 
         if ($_W['ispost']) {
 

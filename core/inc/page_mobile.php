@@ -295,7 +295,6 @@ class MobilePage extends Page {
                 'desc' => empty($set['share']['desc']) ? $set['shop']['description'] : $set['share']['desc'],
                 'link' => empty($set['share']['url']) ? mobileUrl('',null,true) : $set['share']['url']
             );
-            //var_dump(mobileUrl('',null,true));
             $plugin_commission = p('commission');
             if ($plugin_commission) {
                 $set = $plugin_commission->getSet();
@@ -342,9 +341,7 @@ class MobilePage extends Page {
         }
         return $trigger;
     }
-    public function get_share_data(){
-            
-    }
+
     public function diyPage($type) {
         global $_W, $_GPC;
 

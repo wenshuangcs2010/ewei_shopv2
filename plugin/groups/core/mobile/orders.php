@@ -566,7 +566,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 					'dprice'=>$dprice,
 					'disprice'=>$disprice,
 					'depotid'=>$depotid,
-					'isdisorder'=>empty($disordergoods) ? 0:1,
+					'isdisorder'=>$goods['disgoods_id']>0 ? 1:0,
 				);
 				$order_insert = pdo_insert('ewei_shop_groups_order', $data);
 				if(!$order_insert){

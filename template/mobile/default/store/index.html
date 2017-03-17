@@ -1,87 +1,38 @@
 {template '_header'}
-
-<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/static/css/font-awesome.min.css?v=4.4.0" class="__web-inspector-hide-shortcut__">
-<style type="text/css" media="screen">
-.radio_head{
-  height: auto;
-    border-bottom: 1px solid #e7e7e7;
-    background: #fff;
-    overflow: hidden;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    position: relative;
-    margin-top: 10px;
-}
-.radio{
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-}
-.radio_head div{
-  height:100%;
-  width: 100%;
-}
-.radio .image{
-      height: 4rem;
-    width: 4rem;
-    float: left;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-.textshow{
-  font-size: 0.7rem;
-}
-.classp{
-  padding-left: 10%;
-}
-</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=uvlCwUWyIK4zr4Umk6oqk27U"></script>
 <div class='fui-page  fui-page-current store-map-page' >
 
     <div class="fui-header">
 	<div class="fui-header-left">
 	    <a class="back"></a>
-	</div><div class="title">门店列表</div> </div>
-    <div style="position: absolute;top:2.2rem" >
-
-  <img width="100%" style="max-height:160px" src="{$store_thumb}" alt="">
-  </div>
-    <div class='fui-content' style="top:10.5rem" id="container">
-
+	</div>
+	<div class="title">门店列表</div> 
+	<div class="fui-header-right">&nbsp;</div>
     </div>
+    <div class='fui-content' id="container"> </div>
     <div style="display: none" id="bpmap"></div>   
+    
 </div>
  <script type='text/html' id='tpl_store_list'>
      <%each list as g%>
-      <div  data-id="<%g.id%>" data-href="<%g.locationurl%>" class="radio_head radio">
-        <a class="radio clickbut"  data-id="<%g.id%>" data-href="<%g.locationurl%>" style="width: 40%;">
-          <div>
-            <img data-lazyloaded="true" width="100%" height="100%" src="<%g.logo%>" alt="">
-          </div>
+    <div class="fui-goods-item" data-goodsid="" data-type="1">
+      <a href="{php echo mobileUrl('store/map')}&id=<%g.id%>))">
+      <div class="image" data-lazyloaded="true" style="background-image: url('<%g.logo%>');">
+         
+      </div>
         </a>
-        <div class="detail" style="padding-left: 3%;">
-               <div><strong class="clickbut"  data-id="<%g.id%>" data-href="<%g.locationurl%>"><%g.storename%></strong>
-               <p class="textshow clickbut" data-id="<%g.id%>" data-href="<%g.locationurl%>"><%g.address%></p>
-               <p class="textshow" >
-               <span><i class="fa fa-clock-o" aria-hidden="true"></i>营业时间:<span><%g.saletime%></span></span>
-               <a href="tel:<%g.tel%>"><span class="classp"><i class="fa fa-phone" aria-hidden="true"></i><%g.tel%></span></a>
-               </p>
-                <br/>
-                <p class="textshow">
-                <a href="{php echo mobileUrl('store/map')}&id=<%g.id%>"><span><i class="fa fa-map-marker" aria-hidden="true"></i>距离:<span><%g.distance%>KM</span></span></a>
-                <span class="classp clickbut" data-id="<%g.id%>" data-href="<%g.locationurl%>"><i class="fa fa-eye" aria-hidden="true"></i>阅读量:<span><%g.defaultchick%></span></span>
-                </p>
+    <div class="detail">
+       <a href="">
+               <div class="name"><%g.storename%>
+
+               <div>营业时间:<span><%g.saletime%></span></div>
+                <div>距离:<span><%g.distance%></span></div>
                </div>
-        </div>
-        <%if g.gametype==1 %>
-        <a class="radio" href="{php echo mobileUrl('sale/nsign')}" >
-          <div><img width="100%" height="100%" data-lazyloaded="true" src="../addons/ewei_shopv2/static/images/qd/gameicon.png" alt="">
+       </a>
+               <div class="price">
+           <span class="text"><%g.address%></span>
           </div>
-        </a>
-        <%/if%>
+        </div>
     </div>
     <%/each%>
     </script>
@@ -89,18 +40,7 @@ border-bottom-right-radius: 10px;
 
 
  <script language='javascript'>
-    $(document).ready(function(){ 
             require(['biz/store/index'], function (modal) {
                 modal.init({store: {php echo json_encode($storelist)}});
-                 $("#container").on('click',".clickbut", function(event) {
-                      var href=$(this).data("href");
-                      var id=$(this).data("id");
-                      $.post('{php echo mobileUrl("store/index/updatenum");}',{id:id},function (data) {
-                        // console.log(data);
-                     },'json')
-                      window.location.href=href;
-                 });
-             });
-            })
-            </script>
+            });</script>
 {template '_footer'}

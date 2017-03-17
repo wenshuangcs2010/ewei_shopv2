@@ -27,8 +27,8 @@
 			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('distorder/kjb2c/to_declare', array('id' => $item['id']))}">申报1</a><br/>
 			<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/kjb2c/send_order', array('id' => $item['id']))}">货物放行</a>
 			{else}
-			<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('distorder/op/send', array('id' => $item['id']))}">确认发货</a><br/>
-			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('distorder/kjb2c/cnbuersapi', array('id' => $item['id']))}">保税推单</a>
+			<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('disorder/op/send', array('id' => $item['id']))}">确认发货</a><br/>
+			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('disorder/kjb2c/cnbuersapi', array('id' => $item['id']))}">保税推单</a>
 		{/if}
 	{else}
 		<span class="text-default">等待代理结算</span>

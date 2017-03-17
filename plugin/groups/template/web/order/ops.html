@@ -10,10 +10,10 @@
 {ifp 'groups.order.send'}
   
         {if $item['depot']['if_customs']==1}
-        <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/order/to_customs', array('id' => $item['id']))}">报关</a><br />
+        <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/to_customs', array('id' => $item['id']))}">报关</a><br />
         {/if}
         {if $item['depot']['if_declare']==1 && empty($item['mftno'])}
-        <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/order/to_declare', array('id' => $item['id']))}">申报</a><br />
+        <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/to_declare', array('id' => $item['id']))}">申报</a><br />
         {else if $item['depot']['if_declare']==1 && !empty($item['mftno'])}
              <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send_order', array('id' => $item['id']))}">货物放行</a><br />
         {else}

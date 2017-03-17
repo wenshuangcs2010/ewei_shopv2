@@ -57,7 +57,7 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         //商品
         $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
-        
+       
         $merchid = $goods['merchid'];
         $labelname = json_decode($goods['labelname'],true);
         $stock=m("httputil")->getGoods($goods['goodssn']);
@@ -275,9 +275,11 @@ class Detail_EweiShopV2Page extends MobilePage {
         } else {
             $gflag = 0;
         }
+
         //营销活动
-       
+
         $enoughs = com_run('sale::getEnoughs'); //立减
+
         $goods_nofree = com_run('sale::getEnoughsGoods');
 
         if (empty($is_task_goods)) {
@@ -367,26 +369,9 @@ class Detail_EweiShopV2Page extends MobilePage {
                 $maxprice = $task_goods['marketprice'];
             }
         }
-        $log_id=0;
+
         $goods['minprice'] = $minprice; $goods['maxprice'] =$maxprice;
-        if($_GPC['log_id']>0){
-            $log_id=$_GPC['log_id'];
-            $lotterygoods=m("lottery")->show_goods($openid,$id,$_GPC['log_id']);
-            if(!empty($lotterygoods)){
-                
-               // var_dump($lotterygoods['marketprice']);
-                $goods['marketprice']=$lotterygoods['marketprice'];
-                $goods['minprice']=$lotterygoods['marketprice'];
-                $goods['maxprice']=$lotterygoods['marketprice'];
-                $goods['productprice']=$lotterygoods['marketprice'];
-                if($order_goodscount>=$lotterygoods['total']){
-                    $goods['userbuy'] = 0;
-                    $goods['canbuy']  = false;
-                }
-                $canAddCart = false;
-            }
-        }
-        
+
         //是否显示商品评论
         $getComments = empty($_W['shopset']['trade']['closecommentshow']);
 

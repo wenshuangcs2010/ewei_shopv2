@@ -27,14 +27,14 @@ class Category_EweiShopV2Page extends MobilePage {
     }
     function suxin(){
         global $_W,$_GPC;
-        $url="http://www.shuxinbaobei.com/newshuxin/link.php?openid=".$_W['openid'];
+        $url="http://www.softsea.cn/weixing/babywx/weixing/index.php?openid=".$_W['openid'];
         Header("Location: $url");
     }
 
     function suxinpost(){
         global $_W,$_GPC;
 
-        $url="http://www.shuxinbaobei.com/newshuxin/link.php?openid=".$_W['openid']."&url=".urlencode($_GPC['url']);
+        $url="http://www.softsea.cn/weixing/babywx/weixing/link.php?openid=".$_W['openid']."&url=".urlencode($_GPC['url']);
         Header("Location: $url");
     }
 

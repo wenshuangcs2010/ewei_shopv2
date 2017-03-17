@@ -107,8 +107,6 @@ class Log_EweiShopV2Page extends ComWebPage {
                 $row['gettypestr'] = "口令优惠券";
             }else if ($row['gettype'] == 6) {
                 $row['gettypestr'] = "任务发送";
-            }else if ($row['gettype'] == 8) {
-                $row['gettypestr'] = "抽奖发送";
             }
         }
         unset($row);

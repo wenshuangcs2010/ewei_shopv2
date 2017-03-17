@@ -431,5 +431,10 @@ class Dispage{
 		return $prefix . $billno;
 	}
 
+	//那些公众号需要使用主站 申报的
+	public static function getDisaccountArray(){
+		return array(5);
+	}
+
 
 }

@@ -19,12 +19,6 @@
                 <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
                 {/loop}
             </select>
-
-             <select name="disstatus" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="代理状态">
-                <option value="0" {if empty($_GPC['disstatus'])}selected{/if}  >全部</option>
-                <option value="1" {if $_GPC['disstatus']==2}selected{/if} >未代理</option>
-               
-            </select>
             <div class="input-group">				 
                 <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="ID/名称/编号/条码{if $merch_plugin}/商户名称{/if}"> <span class="input-group-btn">
                     <button class="btn btn-sm btn-primary" type="submit"> 搜索</button> </span>

@@ -14,7 +14,6 @@ class NINGBO_Api extends ningboData{
 		}else{
 			$this->setOperation("1");
 		}
-
 		$this->setMftNo($order['mftno']);
 		$this->setOrderNo($order['ordersn']);
 		$this->setPostFee($order['dpostfee']);
@@ -28,11 +27,6 @@ class NINGBO_Api extends ningboData{
 		$this->setPaymentNo($order['paymentno']);
 		$this->setOrderSeqNo($order['paymentno']);
 		$this->setSource($order['paytype']);
-		
-		if(!empty($order['remark'])){
-			$remark=$order['remark'];
-			$this->setDefault01($remark);
-		}
 		$this->setIdnum($order['imid']);
 		$this->setName($order['realname']);
 		$this->setLogisticsName($expressname);
@@ -62,7 +56,6 @@ class NINGBO_Api extends ningboData{
                  &xmlstr=".urlencode($this->xml).'
                  &msgtype='.$this->_cnec_jh_order.'
                  &customs=3105';
-                 //WeUtility::logging('contetn', var_export($this->xml,true));
         $resp = ihttp_request($this->_api,$posturl);
        return (array)$resp['content'];
 	}

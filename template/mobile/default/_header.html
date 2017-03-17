@@ -17,8 +17,7 @@
 <!--   <script src="../addons/ewei_shopv2/static/js/dist/foxui/js/foxui.min.js"></script>-->
         <script src="{php echo EWEI_SHOPV2_LOCAL}static/js/require.js"></script>
         <script src="{php echo EWEI_SHOPV2_LOCAL}static/js/myconfig-app.js"></script>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=uvlCwUWyIK4zr4Umk6oqk27U"></script>
-        <script language="javascript">require(['core',],function(modal){modal.init({siteUrl: "{$_W['siteroot']}",baseUrl: "{php echo mobileUrl('ROUTES')}"})});</script>
+        <script language="javascript">require(['core'],function(modal){modal.init({siteUrl: "{$_W['siteroot']}",baseUrl: "{php echo mobileUrl('ROUTES')}"})});</script>
 
 
         {if !empty($_W['shopset']['shop']['loading'])}
