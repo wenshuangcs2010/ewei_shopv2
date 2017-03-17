@@ -49,3 +49,4 @@ data
 poster
 qrcode
 *.jpg
+/defines.php
