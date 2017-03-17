@@ -13,7 +13,7 @@ class Index_EweiShopV2Page extends WebPage
 	function to_customs(){
 		 global $_W,$_GPC;
 		 $orderid=$_GPC['id'];
-		 $order=pdo_fetch("SELECT zhan_order_sn,zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		 $order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);
 		if(!$customs){
@@ -27,10 +27,10 @@ class Index_EweiShopV2Page extends WebPage
 		 	'mch_customs_no'=>$depot['customs_code'],
 		 	);
 		 if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
-			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['zhan_order_sn']));
+			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
 			if($sporder['pay_code']=="shenfupay"){
 				$params = array(
-				"order_sn" => $order['zhan_order_sn'],
+				"order_sn" => $order['ordersn'],
 				"customs_place" => $customs,//报关地点
 				"businessMode" => 'BONDED',
 				"trade_num"	=>$sporder['paymentno'],
@@ -165,7 +165,7 @@ class Index_EweiShopV2Page extends WebPage
 		if(empty($item['realname'])|| empty($item['imid'])){
 			show_json(0,'未找到身份证信息,请注意');
 		}
-		$order_sn=Dispage::createNO("shop_zpay_log","id","CGFX");
+		$order_sn=$item['ordersn']
 		$pay_fee=$item['price'];
 		$realname=$item['realname'];
 		$imid=$item['imid'];
@@ -180,6 +180,6 @@ class Index_EweiShopV2Page extends WebPage
 		pdo_insert("ewei_shop_zpay_log",$data);
 		require EWEI_SHOPV2_TAX_CORE. '/Transfer/Transfer.php';
         $payment=Transfer::getPayment("shenfupay");
-        pdo_update("ewei_shop_order",array("zhuan_status"=>1,'zhan_order_sn'=>$order_sn),array("id"=>$orderid));
+        pdo_update("ewei_shop_order",array("zhuan_status"=>1),array("id"=>$orderid));
 	}
 }
