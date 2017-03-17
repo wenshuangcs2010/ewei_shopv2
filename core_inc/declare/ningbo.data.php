@@ -61,7 +61,12 @@ class NINGBOData extends declareUtil{
 	function setMftNo($MftNo=""){
 		$this->params['Body']['Order']['MftNo']=$MftNo;
 	}
-	
+	//物流备注
+	function setDefault01($default=""){
+		if(!empty($default)){
+			$this->params['Body']['Logistics']['Default01'] = $default;
+		}
+	}
 	//订单号
 	function setOrderNo($OrderNo){
 		$this->params['Body']['Order']['OrderNo']=$OrderNo;

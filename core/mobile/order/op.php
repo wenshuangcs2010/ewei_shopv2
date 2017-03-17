@@ -48,6 +48,7 @@ class Op_EweiShopV2Page extends MobileLoginPage {
         if (com('coupon') && !empty($order['couponid'])) {
             com('coupon')->returnConsumeCoupon($orderid); //手机关闭订单
         }
+
         pdo_update('ewei_shop_order', array('status' => -1, 'canceltime' => time(), 'closereason' => trim($_GPC['remark'])), array('id' => $order['id'], 'uniacid' => $_W['uniacid']));
 
         //模板消息

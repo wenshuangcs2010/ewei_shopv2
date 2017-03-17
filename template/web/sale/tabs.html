@@ -5,13 +5,19 @@
 
    {ifp 'sale.enough'}<li {if $_W['routes']=='sale.enough'}class="active"{/if}><a href="{php echo webUrl('sale/enough')}">满额立减</a></li>{/if}
    {ifp 'sale.enoughfree'}<li {if $_W['routes']=='sale.enoughfree'}class="active"{/if}><a href="{php echo webUrl('sale/enoughfree')}">满额包邮</a></li>{/if}
-    {if function_exists('redis') && !is_error(redis())}
+   
         {ifp 'sale.deduct'}<li {if $_W['routes']=='sale.deduct' || $_W['action']=='sale'}class="active"{/if}><a href="{php echo webUrl('sale/deduct')}">抵扣设置</a></li>{/if}
-    {/if}
+ 
    {ifp 'sale.recharge'}<li {if $_W['routes']=='sale.recharge'}class="active"{/if}><a href="{php echo webUrl('sale/recharge')}">充值优惠</a></li>{/if}
     {ifp 'sale.credit1'}<li {if $_W['routes']=='sale.credit1'}class="active"{/if}><a href="{php echo webUrl('sale/credit1')}">积分优惠</a></li>{/if}
     {ifp 'sale.package'}<li {if $_W['routes']=='sale.package'}class="active"{/if}><a href="{php echo webUrl('sale/package')}">套餐管理</a></li>{/if}
     {ifp 'sale.gift'}<li {if $_W['routes']=='sale.gift'}class="active"{/if}><a href="{php echo webUrl('sale/gift')}">赠品管理</a></li>{/if}
+  
+    {ifp 'sale.sign'}<li {if $_W['routes']=='sale.sign'}class="active"{/if}><a href="{php echo webUrl('sale/sign')}">签到管理(测试中)</a></li>
+<li {if $_W['routes']=='sale.sign.log'}class="active"{/if}><a href="{php echo webUrl('sale/sign/log')}">签到记录(测试中)</a></li>
+ 
+    {ifp 'sale.bigwheel'}<li {if $_W['routes']=='sale.bigwheel'}class="active"{/if}><a href="{php echo webUrl('sale/bigwheel')}">大转盘管理(测试中)</a></li>{/if}
+    {/if}
  </ul>
 {/if}
 {/if}

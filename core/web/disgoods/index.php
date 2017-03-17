@@ -44,6 +44,10 @@ class Index_EweiShopV2Page extends WebPage {
             $_GPC['cate'] = intval($_GPC['cate']);
             $condition .= " AND FIND_IN_SET({$_GPC['cate']},cates)<>0 ";
         }
+         if (!empty($_GPC['disstatus']) && $_GPC['disstatus']!=0) {
+            $condition .= " AND g.id not in(SELECT disgoods_id from ims_ewei_shop_goods AS g1 WHERE g1.`uniacid` = :guniacid) ";
+             $params[':guniacid'] = $_W['uniacid'];
+         }
         $condition.=" AND g.status > 0 and g.checked=0 and g.deleted=0 and g.total>0 and  g.isdis=1 ";
         //var_dump($condition);
         $sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
@@ -111,8 +115,20 @@ class Index_EweiShopV2Page extends WebPage {
                 $goods['status']=0;
                 $goods['uniacid']=$_W['uniacid'];
                 $goods['costprice']=0;
+
                 //$goods['cate']="";
                 unset($goods['id']);
+                unset($goods['nocommission']);
+                unset($goods['hascommission']);
+                unset($goods['hidecommission']);
+                unset($goods['commission1_rate']);
+                unset($goods['commission2_rate']);
+                unset($goods['commission3_rate']);
+                unset($goods['commission1_pay']);
+                unset($goods['commission2_pay']);
+                unset($goods['commission3_pay']);
+                unset($goods['commission_thumb']);
+                unset($goods['discounts']);
                 pdo_insert("ewei_shop_goods",$goods);
                 $insertgoodsid=pdo_insertid();
                

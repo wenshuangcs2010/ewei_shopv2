@@ -5,7 +5,7 @@
             <div  class="swiper-wrapper fui-tab fui-tab-danger tabcheck" style="background-color: {$diyitem['style']['background']}">
             	{php $url='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];}
 				 {loop $diyitem['data'] $key $item}
-                    
+
                 <a href="{$item['linkurl']}"  class="tab swiper-slide 
 {if $item['linkurl']==$url}active{/if} {if $key=='C1483495700486'}active{/if}">
 

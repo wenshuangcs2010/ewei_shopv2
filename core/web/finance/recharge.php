@@ -16,7 +16,6 @@ class Recharge_EweiShopV2Page extends WebPage {
         global $_W,$_GPC;
         $type = trim($_GPC['type']);
 
-        
         if(!cv('finance.recharge.'.$type)){
             $this->message("你没有相应的权限查看");
         }

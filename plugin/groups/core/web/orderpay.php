@@ -143,8 +143,12 @@ class Orderpay_EweiShopV2Page extends PluginWebPage {
 	        	//}
 			}
 			$payment=paybase::getPayment($paymentcode[$disInfo['secondpaytype']],$config);
-			$payment->buildRequestForm($order);
-			
+			$retrundata=$payment->buildRequestForm($order);
+			if($retrundata['status']==0){
+				show_json(1,"ok");
+			}else{
+				show_json(0,$retrundata['message']);
+			}
 		}else{
 			show_json(0,"未设置代理结算");
 		}

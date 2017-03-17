@@ -541,7 +541,11 @@
 </div>
 
 <script language="javascript">
-    require(['jquery.ui'],function(){
-        $('.multi-img-details').sortable();
+   require(['jquery.ui'],function(){
+        $('.multi-img-details').sortable({scroll:'false'});
+        $('.multi-img-details').sortable('option', 'scroll', false);
+        /*$('.multi-img-details').sortable({zIndex: 50 });
+
+        $('.multi-img-details').sortable('option','zIndex', 50);*/
     })
 </script>

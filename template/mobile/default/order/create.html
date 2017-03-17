@@ -90,7 +90,12 @@
             <a href="{php echo mobileUrl('goods/detail',array('id'=>$g['goodsid']))}">
                 <div class="text">
                     {if $g['seckillinfo'] && $g['seckillinfo']['status']==0}<span class='fui-label fui-label-danger'>{$g['seckillinfo']['tag']}</span>{/if}
-                    {if empty($g['isnodiscount']) && !empty($g['dflag'])}<span class='fui-label fui-label-danger'>折扣</span>{/if}
+                    {if $log_id>0 }
+                     <span class='fui-label fui-label-danger'>特惠商品</span>
+                    {/if}
+                    {if empty($g['isnodiscount']) && !empty($g['dflag'])}
+                   <span class='fui-label fui-label-danger'>折扣</span>
+                    {/if}
                     {$g['title']}
                 </div>
                 {if !empty($g['optionid'])}
@@ -101,7 +106,13 @@
             </a>
         </div>
         <div class='fui-list-angle'>
-            <span class="price ">&yen; <span class='marketprice'>{if $g['packageprice'] > $g['unitprice']}{$g['packageprice']}{else if $g['marketprice'] > $g['unitprice']}{$g['marketprice']}{else}{$g['unitprice']}{/if}</span></span>
+            <span class="price ">&yen; <span class='marketprice'>
+            {if $g['packageprice'] > $g['unitprice']}
+            {$g['packageprice']}
+            {else if $g['marketprice'] > 
+            $g['unitprice']}{$g['marketprice']}
+            {else}
+            {$g['unitprice']}{/if}</span></span>
                 <span class="total">
                     {if $changenum && !$isgift}
                     <div class="fui-number small"

@@ -1,4 +1,4 @@
-define(['core', 'tpl'], function (core, tpl) {
+define(['core', 'tpl','BMap'], function (core, tpl) {
         var modal = {
             store: false
         };
@@ -6,9 +6,9 @@ define(['core', 'tpl'], function (core, tpl) {
         var lat=0;
 
         var bool=false;
-        var map = new BMap.Map("bpmap");
+       
         modal.init = function (params) {
-
+            var map = new BMap.Map("bpmap");
             modal.store = storelist= params.store;
             var geolocation = new BMap.Geolocation();
                 geolocation.getCurrentPosition(function(r){
@@ -17,10 +17,11 @@ define(['core', 'tpl'], function (core, tpl) {
                     lat=r.point.lat;
                     $("#container").html("");
                     var pointA = new BMap.Point(lng,lat);  //
-                //console.log(pointA);
+                //console.log(lng,lat);
                     $.each(storelist, function(index, val) {
                        var pointB = new BMap.Point(val.lng,val.lat);
                        var distance=(map.getDistance(pointA,pointB)).toFixed(2);
+                       distance=(distance/1000).toFixed(2);
                       // console.log(map.getDistance(pointA,pointB));
                        storelist[index]['distance']=distance;
                     });

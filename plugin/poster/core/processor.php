@@ -24,7 +24,7 @@ class PosterProcessor extends PluginProcessor {
 	
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
-
+	WeUtility::logging('rule>检查',$event);
 		//更新用户信息
 		$obj->member = $this->model->checkMember($message['from']);
 	

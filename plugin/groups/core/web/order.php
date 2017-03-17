@@ -743,10 +743,12 @@ class Order_EweiShopV2Page extends PluginWebPage {
 		if(!$customs){
 			show_json(0,"订单无需报关");
 		}
+		$depot=m("kjb2c")->get_depot($order['depotid']);
 		$params=array(
 		 	'out_trade_no'=>$order['orderno'],
 		 	'transaction_id'=>$order['paymentno'],
 		 	'customs'=>$customs,
+		 	'mch_customs_no'=>$depot['customs_code'],
 		 );
 		load()->model('payment');
         $setting = uni_setting($_W['uniacid'], array('payment'));
@@ -760,6 +762,9 @@ class Order_EweiShopV2Page extends PluginWebPage {
                 if($retrundata['return_code']=="FAIL"){
                 	show_json(0,$retrundata['return_msg']);
                 }else{
+                	if($retrundata['result_code']=="FAIL"){
+                		show_json(0,$retrundata['err_code_des']);
+                	}
                 	show_json(1,$retrundata['return_msg']);
                 }
                 if(isset($retrundata['errno'])){
@@ -782,6 +787,7 @@ class Order_EweiShopV2Page extends PluginWebPage {
 		$bool=false;
 		$orderid=$_GPC['id'];
 		$rerundata=m("kjb2c")->send_order($orderid,"ewei_shop_groups_order");
+		//var_dump($rerundata);
 		$mft=(array)$rerundata['Body']['Mft'];
 		$MftInfos=(array)$mft['MftInfos'];
 		$MftInfo=(array)$MftInfos['MftInfo'];

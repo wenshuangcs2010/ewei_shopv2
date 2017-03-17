@@ -328,6 +328,7 @@ class EweiShopWechatPay
         if ($this->is_jie){
             pdo_update('ewei_shop_groups_order', array('isborrow'=>'1','borrowopenid'=>$this->get['openid'],'paymentno'=>$this->get['transaction_id']), array('orderno'=>$orderno, 'uniacid' => $_W['uniacid']));
         }
+         pdo_update('ewei_shop_groups_order', array('paymentno'=>$this->get['transaction_id']), array('orderno'=>$orderno, 'uniacid' => $_W['uniacid']));
         if(p('groups')){
             p('groups')->payResult($orderno,'wechat', $this->isapp?true:false);
         }

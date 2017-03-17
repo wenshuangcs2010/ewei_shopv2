@@ -85,16 +85,11 @@ class Kjb2c_EweiShopV2Model {
 			$order['dpostfee']=$order['depostfee'];
 			$order['tax_rate']=empty($order['vat_rate']) ?0 : $order['vat_rate'];
 			$order['tax_consumption']=empty($order['consumption_tax']) ?0 : $order['consumption_tax'];
-<<<<<<< HEAD
 			if($order['pay_type']=="wechat"){
 				$order['paytype']=21;
 			}
 			$order['price']=$order['price']+$order['freight'];
 			//$order['dpostfee']="00";
-=======
-			//var_Dump($order['tax_rate']);
-			//die();
->>>>>>> parent of a2d1a35... 修改很多东西
 			$expressname=pdo_fetchcolumn("select `name` from ".tablename("ewei_shop_express")." where express=:express",array(":express"=>$dispatch_data['express']));
 			$order_goods[]=array(
 				'goodssn'=>$order['goodssn'],
@@ -128,7 +123,7 @@ class Kjb2c_EweiShopV2Model {
                 $return_data[$key] = $value;
             }
         }
-       
+       	 WeUtility::logging('申报结果结果', var_export($return_data, true));
         if($return_data['Header']['Result'] == 'F'){
                	show_json(0,$return_data['Header']['ResultMsg']);
         }else{
@@ -202,7 +197,7 @@ class Kjb2c_EweiShopV2Model {
 	function pay_disorder_wx($orderid,$uniacid){
 		
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
-		$disInfo=m("kjb2c")->getDisInfo($uniacid);
+		$disInfo=Dispage::getDisInfo($uniacid);
 
 		 if($disInfo['secondpaytype']==0 && $disInfo['autoretainage']==1 && $disInfo['secondpay']==1){//需要二次支付和自动付款
 		 	$payfee=$order['disorderamount'];

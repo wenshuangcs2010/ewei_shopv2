@@ -37,7 +37,7 @@ class List_EweiShopV2Page extends WebPage {
         }
 
         $sendtype = !isset($_GPC['sendtype']) ? 0 : $_GPC['sendtype'];
-        $condition = " o.uniacid <> ".DIS_ACCOUNT." and o.ismr=0 and o.deleted=0 and o.isparent=0";
+        $condition = " o.isdisorder=1 and o.uniacid <> ".DIS_ACCOUNT." and o.ismr=0 and o.deleted=0 and o.isparent=0";
 
         $uniacid = DIS_ACCOUNT;
         $paras = $paras1 = array();

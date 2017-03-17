@@ -26,6 +26,7 @@ class paybase{
     }
 
     public function updateorder($ordersn,$partner_trade_no=""){
+
         $orderinfo=pdo_fetch("select * from ".tablename("ewei_shop_order_dispay")." where order_sn=:ordersn",array(":ordersn"=>$ordersn));
         if(!empty($orderinfo)){
              $data=array(

@@ -2,6 +2,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
     var modal = {
         goodsid: 0,
         goods: [],
+        log_id:0,
         option: false,
         specs: [],
         options: [],
@@ -21,7 +22,8 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         modal.params = $.extend(modal.params, params || {});
         if (modal.goodsid != params.goodsid) {
             modal.goodsid = params.goodsid;
-            core.json('goods/picker', {id: params.goodsid}, function (ret) {
+            modal.log_id=params.log_id;
+            core.json('goods/picker', {id: params.goodsid,log_id:params.log_id}, function (ret) {
                 if (ret.status == 0) {
                     FoxUI.toast.show('未找到商品!');
                     return

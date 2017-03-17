@@ -12,6 +12,7 @@ if (!defined('IN_IA')) {
 class Index_EweiShopV2Page extends WebPage {
 
 	function main() {
+		
 		if(cv('finance.recharge.view')){
 			header('location: '.webUrl('finance/log/recharge'));
 		} else if(cv('finance.withdraw.view')){
@@ -21,6 +22,5 @@ class Index_EweiShopV2Page extends WebPage {
 		}else{
 			header('location: '.webUrl());
 		}
-
 	}
 }

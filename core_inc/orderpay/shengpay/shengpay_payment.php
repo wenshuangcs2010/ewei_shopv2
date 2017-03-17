@@ -43,8 +43,8 @@ class Shengpay_payment extends paybase{
         $this->params['OrderTime']  = date('YmdHis');
         $this->params['PayType'] = '';
         $this->params['InstCode']   = '';
-        $this->params['PageUrl']    = "http://".$_SERVER['HTTP_HOST']."/addons/ewei_shopv2/return_url.php";
-        $this->params['NotifyUrl']  = "http://".$_SERVER['HTTP_HOST']."/addons/ewei_shopv2/shengpaynotify_url.php";
+        $this->params['PageUrl']    = "http://www.baidu.com";
+        $this->params['NotifyUrl']  = "http://www.baidu.com";
         $this->params['ProductName']= $para_temp['subject'];
 
     }

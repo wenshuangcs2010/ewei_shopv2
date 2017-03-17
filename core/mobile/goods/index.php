@@ -26,7 +26,6 @@ class Index_EweiShopV2Page extends MobilePage {
 				}
 			}
 		}
-		//var_dump($_W['shopshare']);
 		include $this->template();
 	}
 	function gift(){

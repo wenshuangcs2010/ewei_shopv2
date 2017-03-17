@@ -9,7 +9,6 @@ error_reporting(0);
 define('IN_MOBILE', true);
 require dirname(__FILE__).'/../../../../framework/bootstrap.inc.php';
 require IA_ROOT.'/addons/ewei_shopv2/defines.php';
-require IA_ROOT.'/addons/ewei_shopv2/dispage.php';
 require IA_ROOT.'/addons/ewei_shopv2/core/inc/functions.php';
 require IA_ROOT.'/addons/ewei_shopv2/core/inc/plugin_model.php';
 require IA_ROOT.'/addons/ewei_shopv2/core/inc/com_model.php';

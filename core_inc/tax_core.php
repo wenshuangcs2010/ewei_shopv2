@@ -98,13 +98,22 @@ class Taxcore
 				foreach($v as $goods){
 						$goods_amount+=$goods['dprice']*$goods['total'];//每种税率申报商品总价
 				}
-				$tax_all[$k]=array("ratio"=>$goods_amount/$before_tax_price,'goods_amount'=>$goods_amount);//求出每种税率所占全部金额的比例
+				if($before_tax_price!=0){
+					$tax_all[$k]=array("ratio"=>$goods_amount/$before_tax_price,'goods_amount'=>$goods_amount);
+					//求出每种税率所占全部金额的比例
+				}else{
+					$tax_all[$k]=array("ratio"=>0,'goods_amount'=>$goods_amount);
+				}
 			}
 			foreach ($tax_all as $key => $value) {
 				$test+=(1+$key)*$value['ratio'];
 			}
-
-			$shengbao_shping_fee=$shipping_fee/$test;//申报总运费
+			if($test==0){
+				$shengbao_shping_fee=0;
+			}else{
+				$shengbao_shping_fee=$shipping_fee/$test;//申报总运费
+			}
+			
 
 			foreach ($tax_all as $key => $value) {
 				$shping_fee_tax[$key]=$shengbao_shping_fee*$value['ratio'];//每种税率分配的总运费
