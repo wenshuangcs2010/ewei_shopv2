@@ -12,11 +12,3 @@ $config['shenfupay']["b"]['Payeskey'] = 'zjcof85779999hjs';
 $config['shenfupay']['MachineName']="202.107.203.24";
 $config['shenfupay']['Machine']="www.cnbuyers.cn";
 $config['shenfupay']['Summary']="宁波畅购天下";
-
-
-
-
-
-
-
-
