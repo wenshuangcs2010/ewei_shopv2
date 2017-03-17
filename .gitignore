@@ -49,4 +49,3 @@ data
 poster
 qrcode
 *.jpg
-/core_inc/transfer/Transfer.config.php
