@@ -46,7 +46,7 @@ class Kjb2c_EweiShopV2Model {
 			}
 			$order['paytype']=21;
 			if($order['if_customs_z']==1 && $order['zhuan_status']==1){
-				$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['zhan_order_sn']));
+				$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
 				$order['paytype']=23;
 				$order['paymentno']=$sporder['paymentno'];
 			}
