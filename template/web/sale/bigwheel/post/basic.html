@@ -1,0 +1,144 @@
+<div class="form-group">
+	<label class="col-sm-2 control-label">排序</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.bigwheel' $item}
+		<input type="text" name="displayorder" class="form-control" value="{$item['displayorder']}"  />
+		<span class='help-block'>数字越大越靠前</span>
+		{else}
+		<div class='form-control-static'>{$item['displayorder']}</div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label must"> 活动名称</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.bigwheel' $item}
+		<input type="text" name="activityname" class="form-control" value="{$item['activityname']}" data-rule-required="true"  />
+		{else}
+		<div class='form-control-static'>{$item['activityname']}</div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">活动详情页背景图</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'sale.bigwheel' $item}
+		{php echo tpl_form_field_image('thumb', $item['thumb'])}
+		{else}
+		<input type="hidden" name="thumb" value="{$item['thumb']}"/>
+		{if !empty($item['thumb'])}
+		<a href='{php echo tomedia($item['thumb'])}' target='_blank'>
+		   <img src="{php echo tomedia($item['thumb'])}" style='width:100px;border:1px solid #ccc;padding:1px' />
+		</a>
+		{/if}
+		{/if}
+	</div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label must">活动期限</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'lottery.edit'}
+        {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+        <span class='help-block'>活动进行时间段</span>
+        {else}
+        <div class='form-control-static'>{php echo date('Y-m-d H:i', $starttime).'-'.date('Y-m-d H:i', $endtime);}</div>
+        {/if}
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">场景设置</label>
+    {ifp 'lottery.edit'}
+    <div class="col-sm-4 col-xs-12">
+        <select class="input-sm form-control input-s-sm inline" name="task_type" id="task_select">
+            <option value="0">请选择场景</option>
+            <option value="1" {if $item['task_type']==1}selected{/if}>签到场景</option>
+            <option value="2" {if $item['task_type']==2}selected{/if}>独立使用</option>
+        </select>
+    </div>
+    {/if}
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">使用条件1</label>
+	<div class="col-sm-9 col-xs-12">
+		<input type="text" name="usecreditcondition" class="form-control" value="{$item['usecreditcondition']}"  />
+		<span class='help-block' >消费多少积分抽奖设置(-1 或者 0禁止积分抽奖)</span>
+	</div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">使用条件2</label>
+  <div class="col-sm-9 col-xs-12">
+    <input type="text" name="usegivecondition" class="form-control" value="{$item['usegivecondition']}"  />
+    <span class='help-block' >每天赠送抽奖次数</span>
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">奖励说明链接</label>
+  <div class="col-sm-9 col-xs-12">
+    <input type="text" name="link_url" class="form-control" value="{$item['link_url']}"  />
+    <span class='help-block' >奖励说明的链接</span>
+  </div>
+</div>
+<div class="form-group">
+                <label class="col-sm-2 control-label must">重复抽奖信息</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="lottery_cannot" class="form-control" value="{$item['lottery_cannot']}"  />
+                    <span class='help-block' >如果设置只允许抽一次奖的，可写：你已经玩过了，下次再来。 如果设置可多次抽奖，请写：继续努力哦！</span>
+        		</div>
+</div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label must">用户活动最多抽奖次数</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="total_cannot" class="form-control" value="{$item['total_cannot']}"  />
+                    <span class='help-block' >抽奖总次数限制,-1为不限制</span>
+        		</div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label must">用户每天最多获得抽奖次数</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="todaytotal" class="form-control" value="{$item['todaytotal']}"  />
+                    <span class='help-block' >用户每天每天额外获得抽奖次数-1 不限制</span>
+   				</div>
+   		</div>
+   		<div class="form-group">
+                <label class="col-sm-2 control-label must">用户最多中奖次数</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="prizetotal" class="form-control" value="{$item['prizetotal']}"  />
+                    <span class='help-block' >单个用户最多共享几个奖项，-1为不限制，推荐设置为1次!</span>
+   				</div>
+   		</div>
+   		<div class="form-group">
+                <label class="col-sm-2 control-label must">每人每天最多抽奖次数</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="todayusetotal" class="form-control" value="{$item['todayusetotal']}"  />
+                    <span class='help-block' >必须小于总抽奖次数！ -1 为不限制 抽完总数就不能抽了! 可以抽奖天数 = 总数/每天抽奖次数!</span>
+   				</div>
+   		</div>
+        {if !empty($item)}
+        <div class="form-group">
+                <label class="col-sm-2 control-label must">首次抽奖必中设置</label>
+                <div class="col-sm-9 col-xs-12">
+                    <select class="input-sm form-control input-s-sm inline" name="firstprize" id="firstprize">
+                        <option value="-1" {if $item['firstprize']==-1}selected{/if}>不设置</option>
+                         {loop $reward $rank $value}
+                        <option value="{$rank}"  {if $item['firstprize']==$rank}selected{/if}>{$value['title']}({$value['probability']}%)</option>
+                        {/loop}
+                    </select>
+                    <span class='help-block' ></span>
+                </div>
+        </div>
+        {/if}
+   		<div class="form-group">
+    <label class="col-sm-2 control-label must">开启活动</label>
+    <div class="col-sm-9 col-xs-12" >
+        <label class="radio-inline">
+            <input type="radio" name="status" value="0" {if $item['status']==0}checked{/if}  /> 否
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="status" value="1" {if $item['status']==1}checked{/if} /> 是
+        </label>
+        <span class='help-block'>活动开始每次只能开启一次活动</span>
+    </div>
+</div>
+
