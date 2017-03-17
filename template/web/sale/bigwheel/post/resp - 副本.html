@@ -1,0 +1,130 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label must">转盘选择</label>
+    <div class="col-sm-9 col-xs-12" >
+     <label class="radio-inline">
+            <input type="radio" name="selectbigwheel" value="0"  {if $item['selectbigwheel']==0}checked{/if}  /> 9格转盘
+        </label>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">转盘</label>
+        <div class="col-sm-9 col-xs-12">
+                        {ife 'sale.coupon' $item}
+                        {php echo tpl_form_field_image('bigwheelthumb', $item['bigwheelthumb'],'../attachment/demoimg/big_bg.png',$options)}
+                        {else}
+                        <input type="hidden" name="bigwheelthumb" value="{$item['bigwheelthumb']}"/>
+                        {if !empty($item['thumb'])}
+                        <a href='{php echo tomedia($item['bigwheelthumb'])}' target='_blank'>
+                           <img src="{php echo tomedia($item['bigwheelthumb'])}" style='width:100px;border:1px solid #ccc;padding:1px' />
+                        </a>
+                        {/if}
+                        {/if}
+                        <span class='help-block' >转盘请和奖品条数对应</span>
+
+                    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">抽奖图标</label>
+        <div class="col-sm-9 col-xs-12">
+                        {ife 'sale.coupon' $item}
+                        {php echo tpl_form_field_image('selectthumb', $item['selectthumb'],"../attachment/demoimg/small_bg.png")}
+                        {else}
+                        <input type="hidden" name="selectthumb" value="{$item['selectthumb']}"/>
+                        {if !empty($item['thumb'])}
+                        <a href='{php echo tomedia($item['selectthumb'])}' target='_blank'>
+                           <img src="{php echo tomedia($item['selectthumb'])}" style='width:100px;border:1px solid #ccc;padding:1px' />
+                        </a>
+                        {/if}
+                        {/if}
+                    </div>
+</div>
+    <div class="form-group">
+    <label class="col-sm-2 control-label">奖品列表</label>
+    <div class="col-sm-12">
+        <div class='recharge-items' id="prizelist" >
+            {loop $prize $key $it}
+            <div class="input-group recharge-item" style="margin-top:5px">
+                <span class="input-group-addon">奖品名称</span>
+                <input type="text" class="form-control" name='prize[name][]' value='{$it['prize_name']}' />
+                <span class="input-group-addon">类型</span>
+                <span class="input-group-addon">
+                <input type="radio"   value="0" {if $it['prize_selecttype']==0}checked{/if} name="prize[selecttype][{$key}]">积分
+                <input type="radio" data-input="prize_coupon" data-toggle="selectCoupon"   value="1" {if $it['prize_selecttype']==1}checked{/if} name="prize[selecttype][{$key}]">优惠劵
+                <input type="hidden" class="form-control" data-thisname="prize_coupon" name='prize[coupon][]' value='{$it['prize_coupon']}' />
+                <input type="radio" value="2" {if $it['prize_selecttype']==2}checked{/if} name="prize[selecttype][{$key}]">实物
+                </span>
+                <span class="input-group-addon">奖品数量</span>
+                <input type="text" class="form-control"  name='prize[unm][]' value='{$it['prize_unm']}' />
+                <span class="input-group-addon">获得积分</span>
+                <input type="text" class="form-control"  name='prize[jifen][]' value='{$it['prize_jifen']}' />
+                <span class="input-group-addon">中奖概率(%)</span>
+                 <input type="text" class="form-control"  name='prize[rate][]' value='{$it['prize_rate']}' />
+                <div class='input-group-btn'>
+                    <button class='btn btn-danger' type='button' onclick="$(this).parents('.recharge-item').remove()"><i class='fa fa-remove'></i></button>
+                </div>
+            </div>
+            {/loop}
+        </div>
+        <div style="margin-top:5px">
+            <button type='button' class="btn btn-default" onclick='addConsumeItem(this)' style="margin-bottom:5px"><i class='fa fa-plus'></i> 增加奖品</button>
+        </div>
+        <span class="help-block">请严格按顺序填写奖品</span>
+    </div>
+</div>
+
+{if !empty($item)}
+<div class="form-group">
+    <label class="col-sm-2 control-label must">首次必中设置</label>
+    <div class="col-sm-9 col-xs-12" >
+     <label class="radio-inline">
+            <input type="radio" name="firstprize"   value="0"  {if $item['firstprize']==0}checked{/if}  /> 关闭
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="firstprize" onclick="showfirstprize()" value="1" {if $item['firstprize']==1}checked{/if}  /> 开启
+        </label>
+        <span class='help-block'>积分兑换方式</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">选择必中奖品</label>
+     <div class="col-sm-9 col-xs-12">
+	                    <div class="input-group form-group" style="margin: 0;">
+	                    	<input type="text" name="respurl" class="form-control" value="{$item['selectprize']}" id="firstPrize" />
+			            	<span data-input="#firstPrize" data-toggle="selectPrize" class="input-group-addon btn btn-default" data-full="true">选择奖品</span>
+			            </div>
+						<span class='help-block'>消息推送点击的链接，为空默认为优惠券详情</span>
+                    
+                </div>
+    </div>	
+{/if}
+            <script type="text/javascript">
+               function addConsumeItem(obj){
+            var $this = $(obj).parent().prev();
+            var size=$("#prizelist .recharge-item").size();
+            console.log(size);
+            var html= '<div class="input-group recharge-item"  style="margin-top:5px">';
+            html+='<span class="input-group-addon">奖品名称</span>';
+            html+='<input type="text" class="form-control" name="prize[name][]"  />';
+            html+='<span class="input-group-addon">类型</span>';
+             html+='<span class="input-group-addon">';
+            html+='<input type="radio" value="0" name="prize[selecttype]['+(size+1)+']">积分';
+            html+='<input type="radio" value="1" data-input="prize_coupon"  data-toggle="selectCoupon"  name="prize[selecttype]['+(size+1)+']">优惠劵';
+            html+='<input type="hidden" class="form-control" name="prize[coupon][]" />';
+            html+='<input type="radio" value="2" name="prize[selecttype]['+(size+1)+']">实物';
+            html+='</span>';
+            html+='<span class="input-group-addon">奖品数量</span>';
+            html+='<input type="text" class="form-control"  name="prize[unm][]"  />';
+            html+='<span class="input-group-addon">获得积分</span>';
+            html+='<input type="text" class="form-control"  name='prize[jifen][]'  />';
+            html+='<span class="input-group-addon">中奖概率(%)</span>';
+            html+='<input type="text" class="form-control"  name="prize[rate][]"  />';
+            html+='<div class="input-group-btn"><button type="button" class="btn btn-danger" onclick="$(this).parents(\'.recharge-item\').remove()"><i class="fa fa-remove"></i></button></div>';
+            html+='</div>';
+            $this.append(html);
+        }
+        function removeConsumeItem(obj){
+            $(obj).closest('.recharge-item').remove();
+        }
+
+        
+            </script>
