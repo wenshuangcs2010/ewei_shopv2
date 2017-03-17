@@ -165,7 +165,7 @@ class Index_EweiShopV2Page extends WebPage
 		if(empty($item['realname'])|| empty($item['imid'])){
 			show_json(0,'未找到身份证信息,请注意');
 		}
-		$order_sn=$item['ordersn']
+		$order_sn=$item['ordersn'];
 		$pay_fee=$item['price'];
 		$realname=$item['realname'];
 		$imid=$item['imid'];
