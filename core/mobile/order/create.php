@@ -2688,7 +2688,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $couponprice=$order['couponprice'];//优惠券优惠
         $buyagainprice=$order['buyagainprice'];//重复购买优惠
         $discountprice=$oder['discountprice'];//会员优惠
-        $isdiscountprice=$order['isdiscountprice'];//促销优惠
+        //$isdiscountprice=$order['isdiscountprice'];//促销优惠
         $deductprice=$order['deductprice'];//抵扣
         $seckilldiscountprice=$oder['seckilldiscountprice'];//秒杀优惠
         $alldeduct=$deductenough+$couponprice+$buyagainprice+$discountprice+$isdiscountprice+$deductprice+$seckilldiscountprice;
