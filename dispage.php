@@ -433,6 +433,7 @@ class Dispage{
 
 
 	public static function getDisaccountArray(){
+		return array(37);
 	}
 
 
