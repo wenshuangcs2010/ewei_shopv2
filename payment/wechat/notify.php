@@ -179,6 +179,7 @@ class EweiShopWechatPay
                     $ret['user'] = $log['openid'];
                     $ret['fee'] = $log['fee'];
                     $ret['tag'] = $log['tag'];
+                    $ret['paytype'] = 21;
                     $ret['paymentno']=$this->get['transaction_id'];
                     $result = $site->$method($ret);
                     if ($result) {

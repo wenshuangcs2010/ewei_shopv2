@@ -90,25 +90,29 @@ class Order_EweiShopV2Model
                         if($customs){
                             $depot=m("kjb2c")->get_depot($order['depotid']);
                            
-                            $params=array(
+                            $customsparams=array(
                                 'out_trade_no'=>$order['ordersn'],
                                 'transaction_id'=>$params['paymentno'],
                                 'customs'=>$customs,
                                 'mch_customs_no'=>$depot['customs_code'],
                             );
-                           
-                            //if($order['paytype']==21){
+                            $jearray=Dispage::getDisaccountArray();
+                            if($params['paytype']==21){
                                 load()->model('payment');
-                                $setting = uni_setting($_W['uniacid'], array('payment'));
+                                $uniacid=$_W['uniacid'];
+                                if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                                    $uniacid=DIS_ACCOUNT;
+                                }
+                                $setting = uni_setting($uniacid, array('payment'));
                                 if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
-                                    $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$_W['uniacid']));
+                                    $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
                                         $config=array(
                                             "appid"=>$APPID,
                                             'mch_id'=>$setting['payment']['wechat']['mchid'],
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
-                                      
-                                    $returndatatemp=m("kjb2c")->to_customs($params,$config,'wx'); 
+                                
+                                    $returndatatemp=m("kjb2c")->to_customs($customsparams,$config,'wx');
                                     WeUtility::logging('自动报关结果', var_export($returndatatemp, true));
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
@@ -120,9 +124,9 @@ class Order_EweiShopV2Model
                                          m("kjb2c")->to_declare($orderid);
                                     }
                                  }
-                            //}elseif($order['paytype']==22){
+                            }elseif($params['paytype']==22){
 
-                           // }
+                            }
                         }
                         if($order['isdisorder']==1){
                              m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
@@ -1546,10 +1550,13 @@ class Order_EweiShopV2Model
             $out_goods[$key]['vat_rate']=$goods['vat_rate'];
             $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
         }
+
         $retrundata=$tax->get_dprice_order($out_goods,$dispatch_price,$goodsprice,$alldeduct);
+
         $out_goods=$retrundata['order_goods'];
         $depostfee=$retrundata['depostfee'];//总运费
         $out_goods=$tax->get_tax($out_goods);
+
         $rate=0;
         $consumption_tax=0;
         foreach ($out_goods as $goods) {
@@ -1562,6 +1569,7 @@ class Order_EweiShopV2Model
            $goods['shipping_fee']=$r[$goods['goodsid']]['shipping_fee'];
            $goods['dprice']=$r[$goods['goodsid']]['dprice'];
         }
+        
         unset($goods);
         return array('order_goods'=>$order_goods,'depostfee'=>$depostfee,'tax_rate'=>$rate,'tax_consumption'=>$consumption_tax);
     }

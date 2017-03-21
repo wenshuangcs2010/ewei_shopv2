@@ -109,7 +109,10 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             $params['user'] = $openid;
             $params['fee'] = $order['price'];
             $params['title'] = $param_title;
-
+            $jearray=Dispage::getDisaccountArray();
+            if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                $jie = 1;
+            }
             if (isset($set['pay']) && $set['pay']['weixin'] == 1 && $jie !== 1) {
                 //如果开启微信支付
                 $options = array();
@@ -142,6 +145,23 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 $options['appid'] = $sec['appid'];
                 $options['mchid'] = $sec['mchid'];
                 $options['apikey'] = $sec['apikey'];
+                if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                    load()->model('payment');
+                    $setting = uni_setting(DIS_ACCOUNT, array('payment'));
+                    if (is_array($setting['payment'])) {
+                         $jieweipay = $setting['payment']['wechat'];
+                    }
+                    $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>DIS_ACCOUNT));
+                    $secret = pdo_fetchcolumn('SELECT `secret` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>DIS_ACCOUNT));
+                    $sec['appid']=$APPID;
+                    $sec['secret']=$secret;
+                    $sec['sub_appid_jie_sub']=$APPID;
+                    $set['pay']['weixin_jie_sub']=1;
+                    $sec['sub_secret_jie_sub']=$secret;
+                    $options['appid'] = $sec['appid'];
+                    $options['mchid'] = $jieweipay['mchid'];
+                    $options['apikey'] = $jieweipay['apikey'];
+                }
                 if (!empty($set['pay']['weixin_jie_sub']) && !empty($sec['sub_secret_jie_sub'])){
                     $wxuser = m('member')->wxuser($sec['sub_appid_jie_sub'],$sec['sub_secret_jie_sub']);
                     $params['openid'] = $wxuser['openid'];
