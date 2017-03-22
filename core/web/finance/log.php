@@ -351,4 +351,217 @@ class Log_EweiShopV2Page extends WebPage {
         include $this->template();
     }
 
+    function diswithdraw(){
+       
+        global $_W, $_GPC;
+        $pindex = max(1, intval($_GPC['page']));
+        $psize = 20;
+        $condition = ' where uniacid=:uniacid ';
+        $params = array(':uniacid' => $_W['uniacid']);
+        
+        if (isset($_GPC['status']) && !empty($_GPC['status'])) {
+            $condition .= 'and status = :status ';
+            $_GPC['status'] = trim($_GPC['status']);
+            $params[':status'] =  $_GPC['status'];
+        }
+     
+        if (!empty($_GPC['keyword'])) {
+            $condition .= 'and order_sn like :keyword ';
+            $_GPC['keyword'] = trim($_GPC['keyword']);
+            $params[':keyword'] = '%' . $_GPC['keyword'] . '%';
+        }
+        if (empty($starttime) || empty($endtime)) {
+            $starttime = strtotime('-1 month');
+            $endtime = time();
+        }
+         if (!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])) {
+            $starttime = strtotime($_GPC['time']['start']);
+            $endtime = strtotime($_GPC['time']['end']);
+
+            $condition .= " AND add_time >= :starttime AND add_time <= :endtime ";
+            $params[':starttime'] = $starttime;
+            $params[':endtime'] = $endtime;
+        }
+        $sql="SELECT * FROM ".tablename("ewei_shop_order_tix").$condition;
+        $total=pdo_fetchcolumn("select count(*) from ".tablename("ewei_shop_order_tix").$condition,$params);
+         if (empty($_GPC['export'])) {
+            $sql.=" order by add_time desc LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+        }
+        $pager = pagination($total, $pindex, $psize);
+        $list=pdo_fetchall($sql,$params);
+        include $this->template();
+    }
+    function diswithdrawbase(){
+        global $_W, $_GPC;
+        $pindex = max(1, intval($_GPC['page']));
+        $psize = 20;
+        $condition = ' where od.uniacid=:uniacid and od.status=3 and od.isdisorder=1';
+         //$condition = ' where od.uniacid=:uniacid and  od.isdisorder=1 ';
+        $params = array(':uniacid' => $_W['uniacid']);
+        if (isset($_GPC['paystatus']) && $_GPC['paystatus']!=-1) {
+            $condition .= 'and od.paystatus = :paystatus ';
+            $_GPC['paystatus'] = trim($_GPC['paystatus']);
+            $params[':paystatus'] =  $_GPC['paystatus'];
+        }
+       
+        if (!empty($_GPC['keyword'])) {
+            $condition .= 'and od.ordersn like :keyword ';
+            $_GPC['keyword'] = trim($_GPC['keyword']);
+            $params[':keyword'] = '%' . $_GPC['keyword'] . '%';
+        }
+        if (empty($starttime) || empty($endtime)) {
+            $starttime = strtotime('-1 month');
+            $endtime = time();
+        }
+         if (!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])) {
+            $starttime = strtotime($_GPC['time']['start']);
+            $endtime = strtotime($_GPC['time']['end']);
+
+            $condition .= " AND od.createtime >= :starttime AND od.createtime <= :endtime ";
+            $params[':starttime'] = $starttime;
+            $params[':endtime'] = $endtime;
+        }
+         $sql="select od.*  from ".tablename("ewei_shop_order")." as od"
+        .$condition;
+        $total=pdo_fetchcolumn("select count(*) from ".tablename("ewei_shop_order")." as od"
+        .$condition,$params);
+        if (empty($_GPC['export'])) {
+            $sql.=" order by createtime desc LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+        }
+        $pager = pagination($total, $pindex, $psize);
+        $list=pdo_fetchall($sql,$params);
+        include $this->template("finance/log/withdraworderlist");
+    }
+
+    function adddiswith(){
+        global $_W, $_GPC;
+
+        $condition = ' where od.uniacid=:uniacid and od.paystatus=0 and status=3 and od.isdisorder=1';
+        $sql="select od.*  from ".tablename("ewei_shop_order")." as od".$condition;
+        $params = array(':uniacid' => $_W['uniacid']);
+        $list=pdo_fetchall($sql,$params);
+        $order_ids="";
+        $orderamount=0;
+        foreach($list as $order){
+            $orderamount+=$order['price']-$order['disorderamount'];
+            $order_ids[]=$order['id'];
+        }
+        $orderamount=strval($orderamount);
+        if(!empty($list)){
+            $order_ids=implode(",", $order_ids);
+        }
+        
+        
+        if($_W['ispost']){
+           $order_ids=$_GPC['order_ids'];
+           $postorderamount= strval($_GPC['orderamount']);
+           if($postorderamount>$orderamount){
+             show_json(0,"提现金额错误{$postorderamount}--{$orderamount}");
+           }
+           if($postorderamount<=0){
+             show_json(0,'提现金额错误');
+           }
+           $order_sn= m('common')->createNO('order_tix', 'order_sn',"DISTX");
+           $data=array(
+            'pay_fee'=>$orderamount,
+            'status'=>1,
+            'order_ids'=>$order_ids,
+            'add_time'=>time(),
+            'order_sn'=>$order_sn,
+            'uniacid'=>$_W['uniacid'],
+            );
+           $sql="update ".tablename("ewei_shop_order")." set paystatus=1 where id in ({$order_ids})";
+          $ret=pdo_query($sql);
+          if($ret){
+             pdo_insert("ewei_shop_order_tix",$data);
+             plog('finance.log.manual', "代理利润余额提现:{$order_sn}");
+             show_json(1,"申请提现成功请等待处理");
+          }
+        };
+        include $this->template();
+    }
+
+
+    function distix(){
+ global $_W, $_GPC;
+        $pindex = max(1, intval($_GPC['page']));
+        $psize = 20;
+        $condition = ' where 1 ';
+        $params = array();
+        
+        if (isset($_GPC['status']) && !empty($_GPC['status'])) {
+            $condition .= 'and status = :status ';
+            $_GPC['status'] = trim($_GPC['status']);
+            $params[':status'] =  $_GPC['status'];
+        }
+       
+        if (!empty($_GPC['keyword'])) {
+            $condition .= 'and ot.order_sn like :keyword ';
+            $_GPC['keyword'] = trim($_GPC['keyword']);
+            $params[':keyword'] = '%' . $_GPC['keyword'] . '%';
+        }
+        if (empty($starttime) || empty($endtime)) {
+            $starttime = strtotime('-1 month');
+            $endtime = time();
+        }
+         if (!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])) {
+            $starttime = strtotime($_GPC['time']['start']);
+            $endtime = strtotime($_GPC['time']['end']);
+
+            $condition .= " AND add_time >= :starttime AND add_time <= :endtime ";
+            $params[':starttime'] = $starttime;
+            $params[':endtime'] = $endtime;
+        }
+        $sql="SELECT ot.*,a.name FROM ".tablename("ewei_shop_order_tix")." as ot"
+        ." LEFT JOIN ".tablename("uni_account")." as a on ot.uniacid=a.uniacid"
+        .$condition;
+        $total=pdo_fetchcolumn("select count(*) from ".tablename("ewei_shop_order_tix").$condition,$params);
+         if (empty($_GPC['export'])) {
+            $sql.=" order by ot.add_time desc LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+        }
+        $pager = pagination($total, $pindex, $psize);
+        $list=pdo_fetchall($sql,$params);
+        include $this->template();
+    }
+    function okdist(){
+        global $_W, $_GPC;
+        $id=$_GPC['id'];
+        $ret=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_tix")." where id=:id",array(":id"=>$id));
+        if(empty($ret)){
+            show_json(0,"订单未找到");
+        }
+        if($_W['uniacid']!=DIS_ACCOUNT){
+             show_json(0,"非法访问");
+        }
+        $order_ids=$ret['order_ids'];
+        $sql="update ".tablename("ewei_shop_order")." set paystatus=2 where id in ({$order_ids})";
+        $retstatus=pdo_query($sql);
+
+        if( $retstatus){
+            pdo_update("ewei_shop_order_tix",array("status"=>2),array("id"=>$id));
+            plog('finance.log.manual', "代理利润余额提现提现成功:{$id}");
+            show_json(1,'成功');
+        }
+        show_json(0,'更新余额失败');
+    }
+    function notokdis(){
+        global $_W, $_GPC;
+        $id=$_GPC['id'];
+        $ret=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_tix")." where id=:id",array(":id"=>$id));
+        if(empty($ret)){
+            show_json(0,"订单未找到");
+        }
+        if($_W['uniacid']!=DIS_ACCOUNT){
+             show_json(0,"非法访问");
+        }
+        $order_ids=$ret['order_ids'];
+        $sql="update ".tablename("ewei_shop_order")." set paystatus=0 where id in ({$order_ids})";
+        $retstatus=pdo_query($sql);
+        if( $retstatus){
+            pdo_update("ewei_shop_order_tix",array("status="=>-1),array("id"=>$id));
+            plog('finance.log.manual', "代理利润余额提现失败:{$id}");
+            show_json(1,'成功');
+        }
+        show_json(0,'更新余额失败');
+    }
 }

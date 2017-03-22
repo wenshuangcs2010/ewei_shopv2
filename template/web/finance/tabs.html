@@ -6,7 +6,14 @@
     {if $_W['uniacid']!=DISACCOUNT && $_W['if_secondpay_type']==1 && $_W['if_pay_type']==0}
 		<li {if $_W['routes']=='finance.log.secondpay'} class="active" {/if}><a href="{php echo webUrl('finance/log/secondpay')}">代理结算明细</a></li>
     {/if}
-  
+  {php $uniacidlist=Dispage::getDisaccountArray()}
+  {if in_array($_W['uniacid'],$uniacidlist)}
+  		<li {if $_W['routes']=='finance.log.diswithdraw'} class="active" {/if}><a href="{php echo webUrl('finance/log/diswithdraw')}">代理提现明细</a></li>
+  		<li {if $_W['routes']=='finance.log.diswithdrawbase'} class="active" {/if}><a href="{php echo webUrl('finance/log/diswithdrawbase')}">代理提现详情明细</a></li>
+  {/if}
+  {if $_W['uniacid']==DIS_ACCOUNT}
+  	<li {if $_W['routes']=='finance.log.distix'} class="active" {/if}><a href="{php echo webUrl('finance/log/distix')}">代理商提现申请</a></li>
+  {/if}
     {ifp 'finance.downloadbill'}<li {if $_W['routes'] == 'finance.downloadbill' } class="active" {/if}><a href="{php echo webUrl('finance/downloadbill')}">下载对账单</a></li>{/if}
 </ul>
 {/if}
