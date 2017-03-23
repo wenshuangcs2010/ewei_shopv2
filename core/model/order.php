@@ -24,7 +24,7 @@ class Order_EweiShopV2Model
         $data = array('status' => $params['result'] == 'success' ? 1 : 0);
       
         $ordersn = $params['tid'];
-        $order = pdo_fetch('select id,ordersn,depotid,isdisorder,disorderamount, price,openid,dispatchtype,addressid,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':ordersn' => $ordersn));
+        $order = pdo_fetch('select id,ordersn,depotid,zhuan_status,realname,imid,isdisorder,disorderamount, price,openid,dispatchtype,addressid,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':ordersn' => $ordersn));
 
         $orderid = $order['id'];
 
@@ -88,8 +88,27 @@ class Order_EweiShopV2Model
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
                        
                         if($customs){
+
+
+                            // if($order['if_customs_z']==1){//盛付通 处理
+                            //     //自动转账的订单
+                            //     if($order['zhuan_status']!=1){
+                            //         $order_sn=$order['ordersn'];
+                            //         $data=array(
+                            //             'pay_fee'=>$order['price'],
+                            //             'realname'=>$order['realname'],
+                            //             'imid'=>$order['imid'],
+                            //             'order_sn'=>$order_sn,
+                            //             'orderid'=>$orderid,
+                            //             'add_time'=>time(),
+                            //             );
+                            //         pdo_insert("ewei_shop_zpay_log",$data);
+                            //         require EWEI_SHOPV2_TAX_CORE. '/Transfer/Transfer.php';
+                            //         $payment=Transfer::getPayment("shenfupay");
+                            //     }
+                            //     $params['paytype']=37;
+                            // }
                             $depot=m("kjb2c")->get_depot($order['depotid']);
-                           
                             $customsparams=array(
                                 'out_trade_no'=>$order['ordersn'],
                                 'transaction_id'=>$params['paymentno'],
@@ -125,6 +144,8 @@ class Order_EweiShopV2Model
                                     }
                                  }
                             }elseif($params['paytype']==22){
+
+                            }elseif($params['paytype']==37){
 
                             }
                         }
