@@ -46,10 +46,16 @@ class Index_EweiShopV2Page extends WebPage
 		}
 		 if($order['paytype']==21){
 		 	load()->model('payment');
-        	$setting = uni_setting($_W['uniacid'], array('payment'));
+		 	$jearray=Dispage::getDisaccountArray();
+		 	$uniacid=$_W['uniacid'];
+		 	if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                 $uniacid=DIS_ACCOUNT;
+            }
+        	$setting = uni_setting($uniacid, array('payment'));
         	if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
+        		 $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
                     $config=array(
-                    	"appid"=>$_W['account']['key'],
+                    	"appid"=>$APPID,
                     	'mch_id'=>$setting['payment']['wechat']['mchid'],
                     	'apikey'=>$setting['payment']['wechat']['apikey'],
                     	);
