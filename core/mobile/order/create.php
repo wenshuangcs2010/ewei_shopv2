@@ -812,7 +812,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 }
             }
-
+            //var_dump($deductcredit2);
             //商品数据
             $goodsdata = array();
             $goodsdata_temp = array();
@@ -1729,15 +1729,28 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 //余额抵扣
                  if (!empty($saleset['moneydeduct'])) {
-
-                     $deductcredit2 = $member['credit2'];
+                    $deductcredit2 = $member['credit2'];
+                            if ($g['deduct2'] == 0) {
+                                //全额抵扣
+                                $deductprice2 += $g['ggprice'];
+                            } else if ($g['deduct2'] > 0) {
+                                //最多抵扣
+                                if ($g['deduct2'] > $g['ggprice']) {
+                                    $deductprice2 += $g['ggprice'];
+                                } else {
+                                    $deductprice2 += $g['deduct2'];
+                                }
+                            }
+                     
                      if ($deductcredit2 > $realprice - $seckill_payprice) {  //减掉秒杀抵扣的金额
                          $deductcredit2 = $realprice - $seckill_payprice;
                      }
                      if ($deductcredit2 > $deductprice2) {
                          $deductcredit2 = $deductprice2;
                      }
+
                  }
+                 //var_dump($deductcredit2);
             }
         }
         if ($is_openmerch == 1) {
@@ -2342,6 +2355,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
             $allgoods[] = $data;
         }
+
         $grprice = $totalprice;
 
 
@@ -2689,19 +2703,29 @@ class Create_EweiShopV2Page extends MobileLoginPage
         if($member['showifidentity']==1){
             $order['if_customs_z']=1;
         }
+        
         $deductenough=$order['deductenough'];//满额立减优惠
         $couponprice=$order['couponprice'];//优惠券优惠
         $buyagainprice=$order['buyagainprice'];//重复购买优惠
-        $discountprice=$oder['discountprice'];//会员优惠
+        $discountprice=$order['discountprice'];//会员优惠
         $isdiscountprice=$order['isdiscountprice'];//促销优惠
-        $deductprice=$order['deductprice'];//抵扣
+        $deductprice=$order['deductprice'];//积分抵扣
+        //余额抵扣
+
+        
+        $deductcredit2=$order['deductcredit2'];
+        
         $seckilldiscountprice=$oder['seckilldiscountprice'];//秒杀优惠
-        $alldeduct=$deductenough+$couponprice+$buyagainprice+$discountprice+$deductprice+$seckilldiscountprice;
-        //var_dump($allgoods);
+        $alldeduct=$deductenough+$couponprice+$buyagainprice+$deductcredit2+$deductprice+$seckilldiscountprice;
+        //var_dump("all=".$allgoods);
         //die();
+         //var_dump('抵扣'.$deductmoney);
+          //var_dump("dectue".$deductcredit2);
+        $goodsprice=0;
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
+       
         $returndata=m("order")->get_tax($allgoods,$dispatch_price,$goodsprice,$alldeduct);//正常算税
         $allgoods=$returndata['order_goods'];
         $order['dpostfee']=$returndata['depostfee'];
