@@ -10,7 +10,7 @@ class Index_EweiShopV2Page extends WebPage
 	function to_customs(){
 		 global $_W,$_GPC;
 		 $orderid=$_GPC['id'];
-		 $order=pdo_fetch("SELECT paymentno,uniacid,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		  $order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);
 		if(!$customs){
@@ -24,18 +24,39 @@ class Index_EweiShopV2Page extends WebPage
 		 	'customs'=>$customs,
 		 	'mch_customs_no'=>$depot['customs_code'],
 		 	);
-
+		  if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
+			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
+			if($sporder['pay_code']=="shenfupay"){
+				$params = array(
+				"order_sn" => $order['ordersn'],
+				"customs_place" => $customs,//报关地点
+				"businessMode" => 'BONDED',
+				"trade_num"	=>$sporder['paymentno'],
+				"amount" =>$sporder['pay_fee'],
+				"shipping_fee"	=> 0,
+				"amount_tariff"	=> 0,
+				"memo" => '',
+				'mch_customs_no'=>$depot['customs_code'],
+				);
+			}
+			$retrundata=m("kjb2c")->to_customs($params,array(),$sporder['pay_code']);
+			show_json(0,$retrundata['message']);
+		}
 		 if($order['paytype']==21){
 		 	load()->model('payment');
-        	$setting = uni_setting($_W['uniacid'], array('payment'));
+        	$jearray=Dispage::getDisaccountArray();
+		 	$uniacid=$_W['uniacid'];
+		 	if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                 $uniacid=DIS_ACCOUNT;
+            }
+        	$setting = uni_setting($uniacid, array('payment'));
         	if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
-        		 $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$_W['uniacid']));
+        		 $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
                     $config=array(
                     	"appid"=>$APPID,
                     	'mch_id'=>$setting['payment']['wechat']['mchid'],
                     	'apikey'=>$setting['payment']['wechat']['apikey'],
                     	);
-                  
                 $retrundata=m("kjb2c")->to_customs($params,$config,'wx');
 
                 if($retrundata['return_code']=="FAIL"){
