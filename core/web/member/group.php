@@ -50,12 +50,22 @@ class Group_EweiShopV2Page extends WebPage {
     protected function post() {
         global $_W, $_GPC;
         $id = intval($_GPC['id']);
+        $condition = " and uniacid=:uniacid";
+        $params = array(':uniacid' => $_W['uniacid']);
+        $alllist = pdo_fetchall("SELECT * FROM " . tablename('ewei_shop_member_group') . " WHERE 1 {$condition} ORDER BY id asc", $params);
+        $levels=m('member')->getLevels();
+
         $group = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_member_group') . " WHERE id =:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
         if ($_W['ispost']) {
 
             $data = array(
                 'uniacid' => $_W['uniacid'],
                 'groupname' => trim($_GPC['groupname']),
+                'entrytext'=>trim($_GPC['entrytext']),
+                'isgroup'=>trim($_GPC['isgroup']),
+                'updategroupid'=>$_GPC['updategroupid'],
+                'isupmember'=>$_GPC['isupmember'],
+                'levelsid'=>$_GPC['levelsid'],
             );
 
             if (!empty($id)) {

@@ -151,7 +151,22 @@ class PosterProcessor extends PluginProcessor {
 		}
 		//推荐者
 		$qrmember = m('member')->getMember($qr['openid']);
-
+		if($qrmember['groupid']!=0){
+			$membergroup=pdo_fetch("SELECT * from ".tablename("ewei_shop_member_group")." where id=:id",array(":id"=>$qrmember['groupid']));
+			$data=array();
+			if($membergroup['isgroup']==1){
+				$data['groupid']=$membergroup['updategroupid'];
+			}//自动分组
+			if($membergroup['isupmember']==1){
+				$data['level']=$membergroup['levelsid'];
+			}//自动升级会员
+			if(!empty($data)){
+				pdo_update("ewei_shop_member",$data,array("openid"=>$openid,'uniacid'=>$_W['uniacid']));
+			}
+			if(!empty($membergroup['entrytext'])){
+				$poster['entrytext']=$membergroup['entrytext'];//拦截分组消息
+			}
+		}
 		//检测日志
 		$log = pdo_fetch('select * from ' . tablename('ewei_shop_poster_log') . ' where openid=:openid and posterid=:posterid and uniacid=:uniacid limit 1', array(':openid' => $openid, ':posterid' => $poster['id'], ':uniacid' => $_W['uniacid']));
 		if (empty($log) && $openid != $qr['openid']) {
@@ -250,8 +265,10 @@ class PosterProcessor extends PluginProcessor {
 			}
 
 			if (!empty($poster['entrytext'])) {
+
 				//关注者奖励通知
 				$entrytext = $poster['entrytext'];
+				
 				$entrytext = str_replace("[nickname]", $qrmember['nickname'], $entrytext);
 				$entrytext = str_replace("[credit]", $poster['subcredit'], $entrytext);
 				$entrytext = str_replace("[money]", $poster['submoney'], $entrytext);
