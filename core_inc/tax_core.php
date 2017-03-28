@@ -59,6 +59,7 @@ class Taxcore
 	 	* @return [type] [description]
 	 	*/
 		private function get_price($unitprice,$total,$alldeduct,$goodsprice){
+
 			if($alldeduct>0){
 				$alldeduct=$alldeduct;
 				return $unitprice-$unitprice*$total/$goodsprice*$alldeduct/$total;
