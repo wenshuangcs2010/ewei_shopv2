@@ -87,6 +87,7 @@ class Taxcore
 	  		foreach($ordergoods as &$goods){
 	  			//$goods['price']=$goods['realprice']/$goods['total'];
 	  			$newprice=$this->get_price($goods['price'],$goods['total'],$alldeduct,$goodsprice);//申报单价
+
 	  			$goods['dprice']=$this->get_taxprice($newprice,$goods['vat_rate'],$goods['consumption_tax']);
 	  			$before_tax_price+=$goods['dprice']*$goods['total'];
 	  			$goods['tax']=$this->get_compositetaxrate($goods['vat_rate'],$goods['consumption_tax']);
