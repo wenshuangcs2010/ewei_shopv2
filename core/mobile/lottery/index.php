@@ -331,9 +331,10 @@ class index_EweiShopV2Page extends MobilePage {
                         echo json_encode($data);
                         exit();
                     }
-                    m('member')->setCredit($_W['openid'],'credit1',-$lottery['usecreditcondition']);
+                   
                     $sy=$s['credit1']-$lottery['usecreditcondition'];
                     $msg="抽奖消耗:".$lottery['usecreditcondition']."积分"."总积分:".$sy;
+                    m('member')->setCredit($_W['openid'],'credit1',-$lottery['usecreditcondition'],"抽奖消耗:".$lottery['usecreditcondition']."积分");
                     m("nsignutil")->sendmassage($_W['openid'],$msg);
                 }else{
                     $data = array(
