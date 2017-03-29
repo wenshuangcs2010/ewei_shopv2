@@ -47,9 +47,13 @@ class Down_EweiShopV2Page extends WebPage {
 				}else{
 					$qrimg=$qr['qrimg'];
 				}
+
 		 	$qr['current_qrimg'] = $qrimg;
 
 		 	$filepath=EWEI_SHOPV2_DATA.'/qrcode/'.$_W['uniacid'].'/'.basename($qrimg);//原图片地址
+		 	if(!file_exists($filepath)){
+		 		$qrimg = m('qrcode')->createGoodsQrcode($value, $goodsid, $_W['uniacid']);
+		 	}
 			$filename=$goodsid.'_';
 			$filename.=empty($member['realname']) ?$member['nickname'] :  $member['realname'];
 			$filename.=".png";
