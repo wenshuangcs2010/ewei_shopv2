@@ -54,6 +54,7 @@
     {/if}
 </ul>
 {/if}
+
 {if $_W['uniacid']==DIS_ACCOUNT}
 <div class='menu-header' >代理商订单</div>
 <ul class='order-list' id="disorder" >
@@ -104,7 +105,7 @@
 
   {ifp 'order.list.status4|order.list.status5'}
 <div class='menu-header'>维权</div>
-<ul class='order-list'>
+<ul class='order-list' id="weq">
     {ifp 'order.list.status4'}
     <li {if $_W['routes']=='order.list.status4'}class="active"{/if}>
         <a href="{php echo webUrl('order/list/status4')}">维权申请 <span class='text-danger status4'>--</span></a>
@@ -139,12 +140,13 @@
     $(function () {
         $.ajax({type: "GET",url: "{php echo webUrl('order/list/ajaxgettotals')}",dataType:"json",success: function(data){
                 var res = data.result;
+               
                 $("#order li span.status0").text(res.status0);
                 $("#order li span.status1").text(res.status1);
                 $("#order li span.status2").text(res.status2);
                 $("#order li span.status3").text(res.status3);
-                $("#order li span.status4").text(res.status4);
-                $("#order li span.status5").text(res.status5);
+                $("#weq  li span.status4").text(res.status4);
+                $("#weq  li span.status5").text(res.status5);
                 $("#order li span.status_1").text(res.status_1);
                 $("#order li span.all").text(res.all);
             }
@@ -156,8 +158,8 @@
                 $("#disorder li span.status1").text(res.status1);
                 $("#disorder li span.status2").text(res.status2);
                 $("#disorder li span.status3").text(res.status3);
-                $("#disorder li span.status4").text(res.status4);
-                $("#disorder li span.status5").text(res.status5);
+                //$("#disorder li span.status4").text(res.status4);
+                //$("#disorder li span.status5").text(res.status5);
                 $("#disorder li span.status_1").text(res.status_1);
                 $("#disorder li span.all").text(res.all);
             }
