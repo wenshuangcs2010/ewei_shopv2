@@ -176,7 +176,7 @@
 
 
 
-    {if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
+    {if $goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() &&  $goods['isdiscount_time']>=time()}
     <div class="row row-time">
         <div id='discount-container' class='fui-labeltext fui-labeltext-danger'
              data-now="{php echo date('Y-m-d H:i:s')}"

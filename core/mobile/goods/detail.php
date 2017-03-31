@@ -302,9 +302,10 @@ class Detail_EweiShopV2Page extends MobilePage {
             $memberprice = m('goods')->getMemberPrice($goods, $level);
         }
 
-        if($goods['isdiscount'] && $goods['isdiscount_time']>=time()){
+        if($goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
             $goods['oldmaxprice'] = $maxprice;
             $prices = array();
+          
             $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
             if (!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])) {
                 //统一促销
@@ -318,6 +319,7 @@ class Detail_EweiShopV2Page extends MobilePage {
             $minprice = min($prices);
             $maxprice = max($prices);
         }else{
+
             if ( isset($options) && count($options) > 0 && $goods['hasoption']) {
                 $optionids = array();
                 foreach ($options as $val){

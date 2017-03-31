@@ -8,7 +8,7 @@
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
+set_time_limit(0);
 class Transfer_EweiShopV2Page extends SystemPage {
 
 	function main() {
@@ -86,12 +86,15 @@ class Transfer_EweiShopV2Page extends SystemPage {
 						pdo_query('delete from  ' . tablename('ewei_shop_goods_spec_item') . " where 1 {$condition1}");
 						pdo_query('delete from  ' . tablename('ewei_shop_category') . " where 1 {$condition1}");
 
-
-						$goods = pdo_fetchall('select * from ' . tablename('ewei_shop_goods') . " where uniacid=:uniacid", array(':uniacid' => $wechatid));
+						
+						$goods = pdo_fetchall('select * from ' . tablename('ewei_shop_goods') . " where uniacid=:uniacid and isdis=1", array(':uniacid' => $wechatid));
+						//pdo_debug();
+						
 						foreach ($goods as $g) {
 							$goodsid = $g['id'];
 							unset($g['id']);
 							$g['uniacid'] = $wechatid1;
+							$g['disgoods_id'] = $goodsid;
 							pdo_insert('ewei_shop_goods', $g);
 							$newgoodsid = pdo_insertid();
 
