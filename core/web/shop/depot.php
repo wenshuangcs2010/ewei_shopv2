@@ -38,7 +38,58 @@ class Depot_EweiShopV2Page extends WebPage {
     function edit() {
         $this->post();
     }
-
+    function test(){
+        set_time_limit(0);
+         require_once(EWEI_SHOPV2_TAX_CORE."toerp/erphttp.php");
+        $n=new ErpHttp();
+        $n->test();
+        //ob_end_clean();
+       // ob_implicit_flush(1);
+       /*
+       
+        $exportlist = array();
+        $list=$n->getStoreRoom();
+        $columns=array(
+            array('title' => '商品编号', 'field' => 'goodssn', 'width' => 24),
+            array('title' => '商品类型', 'field' => 'sizeGroup', 'width' => 24),
+            array('title' => '仓库', 'field' => 'cname', 'width' => 24),
+            array('title' => '仓库ID', 'field' => 'storeroomId', 'width' => 24),
+            array('title' => '库存', 'field' => 'stock', 'width' => 24),
+            );
+      
+        $c1="20170210DZAC";
+        $c1n="江浙5仓";
+        $c2="BYXSC20160830";
+        $c2n="江浙3仓";
+        $c3='hzfxc150717';
+        $c3n="杭州1仓";
+        $c4="hznew";
+        $c4n="杭州新仓";
+        //foreach ($list['storeroomList'] as $key => $value){
+            $i=1;
+            while (true) {
+                $res=$n->getGoodsStock($c1,$i,'',100);
+                if(empty($res['storeroomStock'])){
+                   break;
+                }
+                foreach($res['storeroomStock'] as $key=>$Stock ){
+                   
+                    
+                    // if($res['storeroomStock'][$key-1]['goodsId']==$Stock['goodsId'] && $key !=0){
+                    //     continue;
+                    // }
+                    $exportlist[]=array('goodssn'=>$Stock['goodsId'],'sizeGroup'=>$Stock['sizeGroup'],'cname'=>$c1n,'storeroomId'=>$c1,'stock'=>$Stock['stock']);
+                }                
+                $res['storeroomStock']="";
+                $i++;
+            } 
+       // }
+        m('excel')->export($exportlist, array(
+            "title" => "商品数据-" . date('Y-m-d-H-i', time()),
+            "columns" => $columns
+        ));
+    */
+    }
     protected function post() {
 
         global $_W, $_GPC;
@@ -55,12 +106,17 @@ class Depot_EweiShopV2Page extends WebPage {
             $data['customs_code'] = '';
             $data['customs_name'] = '';
             $data['ifidentity'] = intval($_GPC['ifidentity']);
+            $data['ismygoods']=intval($_GPC['ismygoods']);
             if($data['if_customs']){
                 $data['customs_place'] = trim($_GPC['customs_place']);
                 $data['customs_code'] = trim($_GPC['customs_code']);
                 $data['customs_name'] = trim($_GPC['customs_name']);
             }
-            $data['cnbuyershoping_id']=intval($_GPC['cnbuyershoping_id']);
+            if($data['ismygoods']){
+                $data['updateid'] = intval($_GPC['updateid']);
+                $data['cnbuyershoping_id']=intval($_GPC['cnbuyershoping_id']);
+                $data['storeroomid']=trim($_GPC['storeroomid']);
+            }
             $data['if_declare'] = intval($_GPC['if_declare']);
             $data['api_url'] = trim($_GPC['api_url']);
             $data['test_api'] = trim($_GPC['test_api']);
