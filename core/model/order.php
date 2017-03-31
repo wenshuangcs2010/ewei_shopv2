@@ -592,6 +592,7 @@ class Order_EweiShopV2Model
         $totals['status4'] = pdo_fetchcolumn(
             'SELECT COUNT(1) FROM ' . tablename('ewei_shop_order') . ""
             . " WHERE uniacid = :uniacid {$condition} and ismr=0  and refundstate>0 and refundid<>0 and deleted=0", $paras);
+     
         $totals['status5'] = pdo_fetchcolumn(
             'SELECT COUNT(1) FROM ' . tablename('ewei_shop_order') . ""
             . " WHERE uniacid = :uniacid {$condition} and ismr=0 and refundtime<>0 and deleted=0", $paras);

@@ -129,8 +129,9 @@ class Index_EweiShopV2Page extends WebPage {
             $t[$resel['goods_id']]=unserialize($resel['disprice']);
         }
         if($_GPC['export']==1){
+
             $categorys = m('shop')->getFullCategory(true);
-            $sql = 'SELECT g.id,g.unit,g.title,g.goodssn,g.marketprice,g.discounts,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.marketprice,g.discounts,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
             $goodslist=pdo_fetchall($sql,$params);
             $categorystemp=array();
             foreach ($categorys as $r) {
@@ -150,48 +151,60 @@ class Index_EweiShopV2Page extends WebPage {
                     'levelname'=>empty($_W['shopset']['shop']['levelname'])?'默认会员':$_W['shopset']['shop']['levelname']
                 )
             ),$levels);
-           
-            foreach($goodslist as $key=> $goodstemp){
-                //if($goodstemp['cates']){
-                  // $cates= explode(',', $goodstemp['cates']);
-                  // foreach ($cates as $v) {
-                    // var_dump($categorystemp);
-                    // $catesstr[]=$categorystemp[$v];
-                  // }
-                  // $catesstr=implode(",", $catesstr);
-               // }
-            $discounts=(array)json_decode($goodslist[$key]['discounts']);
-               foreach($levels as $l){
-                $goodslist[$key][$l['key']]=$discounts[$l['key'].'_pay'];
-                //var_dump($l['key']);
-               // var_dump($goodslist[$key][$l['key']]);
-               }
-               //var_dump($discounts);
-              
-               $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
-               //$goodslist[$key]['category']=$catesstr;
-               if($_W['uniacid']!=DIS_ACCOUNT){
-                 $goodslist[$key]['disprice']=$t[$goodstemp['disgoods_id']][$disinfo['resellerid']];
-               }
-            }
-      //die();
-             plog('order.op.export', "导出商品");
-             $columns = array(
+            $columns = array(
                 array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
                 array('title' => '商品名称', 'field' => 'title', 'width' => 24),
                 array('title' => '单位', 'field' => 'unit', 'width' => 12),
                 array('title' => '商品单价', 'field' => 'marketprice', 'width' => 12),
+              
+                array('title' => '代理状态', 'field' => 'isdis', 'width' => 12),
             );
-             foreach($levels as $l){
-                
+            if($_W['uniacid']!=DIS_ACCOUNT){
+                 $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
+            }else{
+                foreach ($reseller as $key => $value) {
+                    $columns[]=array('title' => $value['name'], 'field' => "dis".$value['id'], 'width' => 24);
+                }
+            }
+            foreach($levels as $l){
                 $columns[]=array(
                     'title' => $l['levelname'],
                     'field' => $l['key'],
                     'width' => 24);
-             }
-              if($_W['uniacid']!=DIS_ACCOUNT){
-                 $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
+            }
+            
+            foreach($goodslist as $key=> $goodstemp){
+            $discounts=(array)json_decode($goodslist[$key]['discounts']);
+               foreach($levels as $l){
+                $goodslist[$key][$l['key']]=$discounts[$l['key'].'_pay'];
                }
+                $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
+               if($_W['uniacid']!=DIS_ACCOUNT){
+                 $goodslist[$key]['disprice']=$t[$goodstemp['disgoods_id']][$disinfo['resellerid']];
+               }
+               foreach ($reseller as $k => $value) {
+                    if(empty($t[$goodstemp['id']])){
+                        $goodslist[$key]['dis'.$value['id']]=0;
+                    }else{
+                        $goodslist[$key]['dis'.$value['id']]=$t[$goodstemp['id']][$value['id']];
+                    }
+               }
+               switch ($goodstemp['isdis']) {
+                   case '0':
+                        $goodslist[$key]['isdis']="非代理";
+                   break;
+                   case '1':
+                       $goodslist[$key]['isdis']="代理商品";
+                       break;
+                   default:
+                       # code...
+                       break;
+               }
+            }
+      //die();
+             plog('order.op.export', "导出商品");
+           
+              
 
               
               m('excel')->export($goodslist, array(
