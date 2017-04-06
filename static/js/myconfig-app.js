@@ -3,7 +3,7 @@ require.config({
     urlArgs: 'v=' + version, 
     baseUrl: '../addons/ewei_shopv2/static/js/app',
     paths: {
-        'jquery': '../dist/jquery/jquery-1.11.1.min',
+        'jquery': 'https://cdn.bootcss.com/jquery/1.11.1/jquery.min',
         'jquery.gcjs': '../dist/jquery/jquery.gcjs',
         'tpl':'../dist/tmodjs',
         'foxui':'../dist/foxui/js/foxui.min',
