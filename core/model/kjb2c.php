@@ -6,12 +6,141 @@ if (!defined('IN_IA')) {
 require_once EWEI_SHOPV2_TAX_CORE. '/customs/customs.php';
 require_once EWEI_SHOPV2_TAX_CORE. '/declare/declare.php';
 class Kjb2c_EweiShopV2Model {
+
+
+
+
+
 	function to_customs($param,$config,$paytype="wx"){
+
 		$coustoms=customs::getObject($paytype,$config);
 		$retdata=(array)$coustoms->to_customs($param,$config);
 		//var_Dump($retdata);
 		return $retdata;
 	}
+
+	function to_customs_new($orderid){
+		global $_W,$_GPC;
+			$order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		
+		$customs=m("kjb2c")->check_if_customs($order['depotid']);
+		if(!$customs){
+			show_json(0,"订单无需报关");
+		}
+		$depot=m("kjb2c")->get_depot($order['depotid']);
+		 $params=array(
+		 	'out_trade_no'=>$order['ordersn'],
+		 	'transaction_id'=>$order['paymentno'],
+		 	'customs'=>$customs,
+		 	'mch_customs_no'=>$depot['customs_code'],
+		 	);
+		 if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
+			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
+			if($sporder['pay_code']=="shenfupay"){
+				$params = array(
+				"order_sn" => $order['ordersn'],
+				"customs_place" => $customs,//报关地点
+				"businessMode" => 'BONDED',
+				"trade_num"	=>$sporder['paymentno'],
+				"amount" =>$sporder['pay_fee'],
+				"shipping_fee"	=> 0,
+				"amount_tariff"	=> 0,
+				"memo" => '',
+				'mch_customs_no'=>$depot['customs_code'],
+				);
+			}
+			$config=array();
+			$paytype=$sporder['pay_code'];
+			//$retrundata=m("kjb2c")->to_customs($params,array(),$sporder['pay_code']);
+			show_json(0,$retrundata['message']);
+		}
+		if($order['paytype']==21){
+		 	load()->model('payment');
+		 	$jearray=Dispage::getDisaccountArray();
+		 	$uniacid=$_W['uniacid'];
+		 	if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                 $uniacid=DIS_ACCOUNT;
+                 $params['order_sn']=$params['order_sn']."_borrow";
+            }
+        	$setting = uni_setting($uniacid, array('payment'));
+        	if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
+        		 $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
+                    $config=array(
+                    	"appid"=>$APPID,
+                    	'mch_id'=>$setting['payment']['wechat']['mchid'],
+                    	'apikey'=>$setting['payment']['wechat']['apikey'],
+                    	);
+                    $paytype="wx";
+              
+               
+            }else{
+            	show_json(0,"微信支付已经关闭请重新开启");
+            }
+		}elseif($order['paytype']==22){
+			load()->model('payment');
+			$paytype="alipay";
+			$uniacid=$_W['uniacid'];
+			$setting = uni_setting($uniacid, array('payment'));
+			if (is_array($setting['payment']['alipay']) && $setting['payment']['wechat']['switch']) {
+				$config=array(
+					'partner'=>$setting['payment']['alipay']['partner'],
+					'key'=>$setting['payment']['alipay']['secret']
+					);
+			}
+
+			$params=array(
+				"order_sn" => $order['ordersn'],
+				"customs_place" => $customs,//报关地点
+				"trade_num"	=>$order['paymentno'],
+				"amount" =>$order['price'],
+				'customs'=>$customs,
+				'merchant_customs_name'=>$depot['customs_name'],
+				'mch_customs_no'=>$depot['customs_code'],
+				);
+
+		}else{
+			show_json(0,"特殊支付方式请联系管理员");
+		}
+
+		$coustoms=customs::getObject($paytype,$config);
+		$retrundata=(array)$coustoms->to_customs($params);
+		switch ($paytype) {
+			case 'wx':
+			if($retrundata['return_code']=="FAIL"){
+                	show_json(0,$retrundata['return_msg']);
+             }else{
+                	if($retrundata['result_code']=="FAIL"){
+						show_json(0,$retrundata['err_code_des']);
+                	}
+					show_json(1,$retrundata['return_msg']);
+                }
+                if(isset($retrundata['errno'])){
+		 			show_json(0,$retrundata['message']);
+		 		}
+				break;
+			case 'shenfupay':
+				
+				break;
+
+			case "alipay":
+
+				break;
+			default:
+				# code...
+				break;
+		}
+		 
+	}
+
+
+
+
+
+
+
+
+
+
 	function get_depot($id){
 		return pdo_fetch("SELECT * from ".tablename("ewei_shop_depot")." where id=:id",array(":id"=>$id));
 	}

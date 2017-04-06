@@ -28,6 +28,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
         if(empty($template['status'])){
             return $template;
         }
+
         $params = $this->sms_data($template['type'], $data, $replace, $template);
 
         if($template['type']=='juhe'){
@@ -37,6 +38,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
                 'tpl_value'=>$params,
                 'key'=>$smsset['juhe_key']
             );
+
             $result = $this->http_post('http://v.juhe.cn/sms/send', $data);
             if(empty($result) || $result['error_code']>0){
                 return array('status'=>0, 'message'=>"短信发送失败(".$result['error_code'].")：".$result['reason']);
@@ -192,7 +194,6 @@ class Sms_EweiShopV2ComModel extends ComModel {
 
     //  获得DATA
     protected function sms_data($type, $data, $replace, $template) {
-
         // 如果 $replace=true $data 替换模板数据 否则 直接使用$data
         if($replace){
             if($type=='emay'){
@@ -202,7 +203,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
                 }
                 $data = $tempdata;
             }else{
-                $tempdata = iunserializer($template['data']); 
+                $tempdata = iunserializer($template['data']);
                 foreach ($tempdata as &$td){
                     foreach ($data as $key=>$value) {
                         $td['data_shop']  = str_replace("[".$key."]", $value, $td['data_shop']);
@@ -221,13 +222,15 @@ class Sms_EweiShopV2ComModel extends ComModel {
             $result = "";
             $count = count($data);
             $i = 0;
+
             foreach ($data as $key=>$value){
                 if($i>0 && $i<$count){
                     $result .= "&";
                 }
-                $result .= "#".$key."#=".$value;
+                $result .= $key."=".$value;
                 $i++;
             }
+
         }
         elseif($type=='dayu'){
             $result = json_encode($data);

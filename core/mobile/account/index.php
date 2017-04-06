@@ -242,6 +242,7 @@ class Index_EweiShopV2Page extends MobilePage
         @session_start();
         $code = random(5,true);
         $shopname = $_W['shopset']['shop']['name'];
+      
         $ret = com('sms')->send($mobile, $sms_id, array('验证码'=>$code,'商城名称'=>!empty($shopname) ? $shopname : "商城名称"));
         if($ret['status']){
             $_SESSION[$key] = $code;

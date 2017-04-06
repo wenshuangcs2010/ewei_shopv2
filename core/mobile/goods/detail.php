@@ -57,7 +57,11 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         //商品
         $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
-        
+        if($goods['disgoods_id']>0){
+            $goodstotal = pdo_fetchcolumn("select total from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
+            $goods['total']=$goodstotal;
+        }
+
         $merchid = $goods['merchid'];
         $labelname = json_decode($goods['labelname'],true);
 
@@ -174,7 +178,12 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
 
         //规格specs
-        $specs = pdo_fetchall('select * from ' . tablename('ewei_shop_goods_spec') . " where goodsid=:goodsid and  uniacid=:uniacid order by displayorder asc", array(':goodsid' => $id, ':uniacid' => $_W['uniacid']));
+        $spcgoodsid=$goods['id'];
+        // if($goods['disgoods_id']>0){
+        //     $spcgoodsid=$goods['disgoods_id'];
+        //     $uniacid=DIS_ACCOUNT;
+        // }
+        $specs = pdo_fetchall('select * from ' . tablename('ewei_shop_goods_spec') . " where goodsid=:goodsid and  uniacid=:uniacid order by displayorder asc", array(':goodsid' => $spcgoodsid, ':uniacid' => $uniacid));
         $spec_titles = array();
         foreach ($specs as $key => $spec) {
             if ($key >= 2) {
@@ -185,14 +194,14 @@ class Detail_EweiShopV2Page extends MobilePage {
         $spec_titles = implode('、', $spec_titles);
 
         //参数
-        $params = pdo_fetchall("SELECT * FROM " . tablename('ewei_shop_goods_param') . " WHERE uniacid=:uniacid and goodsid=:goodsid order by displayorder asc", array(':uniacid' => $uniacid, ":goodsid" => $goods['id']));
+        $params = pdo_fetchall("SELECT * FROM " . tablename('ewei_shop_goods_param') . " WHERE uniacid=:uniacid and goodsid=:goodsid order by displayorder asc", array(':uniacid' => $uniacid, ":goodsid" => $spcgoodsid));
 
         $goods = set_medias($goods, 'thumb');
         //$goods['canbuy'] = !empty($goods['status']) && empty($goods['deleted']);
         $goods['canbuy'] = $goods['status'] == 1 && empty($goods['deleted']);
 
         if (!empty($goods['hasoption'])){
-            $options = pdo_fetchall('select id,stock from ' . tablename('ewei_shop_goods_option') . ' where goodsid=:goodsid and uniacid=:uniacid order by displayorder asc', array(':goodsid' => $goods['id'], ':uniacid' => $_W['uniacid']),'stock');
+            $options = pdo_fetchall('select id,stock from ' . tablename('ewei_shop_goods_option') . ' where goodsid=:goodsid and uniacid=:uniacid order by displayorder asc', array(':goodsid' => $spcgoodsid, ':uniacid' => $uniacid),'stock');
             $options_stock = array_keys($options);
             if($options_stock){
                 $goods['total'] = max($options_stock);
