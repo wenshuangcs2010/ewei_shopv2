@@ -57,7 +57,7 @@ class Index_EweiShopV2Page extends PluginWebPage {
             if (is_array($data['newtype'])) {
                 $data['newtype'] = implode(",", $data['newtype']);
             }
-            show_json(0,$data['openid']);
+           
             m('common')->updateSysset(array('notice' => $data));
 
             plog('sysset.notice.edit', '修改系统设置-模板消息通知设置');
