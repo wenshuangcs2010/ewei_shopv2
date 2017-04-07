@@ -171,7 +171,13 @@
           {if $_W['uniacid']==DIS_ACCOUNT}
             {if empty($t[$item['id']])}
               {loop $reseller $re}
-               <td><a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'disprice','id'=>$item['id'],'key'=>$re['id']))}" >0.00</a></td>
+              <td>
+                {if $item['hasoption']==1}
+                  <span data-toggle='tooltip' title='多规格不支持快速修改'> 0.00</span>
+                {else}
+               <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'disprice','id'=>$item['id'],'key'=>$re['id']))}" >0.00</a>
+               {/if}
+               </td>
               {/loop}
             {else}
             {loop $reseller $re}
