@@ -409,15 +409,7 @@ if ($_W['ispost']) {
         pdo_update('ewei_shop_goods', $data, array('id' => $id));
         plog('goods.edit', "编辑商品 ID: {$id}<br>".(!empty($data['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
     }
-    //处理代理价
-    /*wsq 更改*/
-    if($_W['uniacid']==DIS_ACCOUNT){
-        Dispage::disPrice($id,$_GPC['disprice']);
-            //处理代理商品的税率 和其他的一些数据
-        Dispage::delDisGoods($id,$data,$_W['uniacid']);
-        //wsqend
-       
-    }
+    
     //处理商品参数
     $param_ids = $_POST['param_id'];
     $param_titles = $_POST['param_title'];
@@ -532,13 +524,16 @@ if ($_W['ispost']) {
     $optionArray = json_decode($_POST['optionArray'],true);
     $isdiscountDiscountsArray = json_decode($_POST['isdiscountDiscountsArray'],true);
     $discountArray = json_decode($_POST['discountArray'],true);
+    $dispriceArray = json_decode($_POST['dispriceArray'],true);
     $commissionArrayPost = json_decode($_POST['commissionArray'],true);
     $option_idss = $optionArray['option_ids'];
     $len = count($option_idss);
     $optionids = array();
     $levelArray = array();
+    $dispricearr=array();
     $isDiscountsArray = array();
     $commissionArray = array();
+
     $commissionDefaultArray = array();
     for ($k = 0; $k < $len; $k++) {
         $option_id = "";
@@ -597,6 +592,26 @@ if ($_W['ispost']) {
             }
 
         }
+        foreach ($resellerlist as  $res) {
+            $dispricearr['level'.$res['id']]['option'.$option_id]=$dispriceArray['disprice_'.$res['id']][$k];
+        }
+    }
+    //处理代理价
+    /*wsq 更改*/
+    if($_W['uniacid']==DIS_ACCOUNT){
+
+        $discounts_arr=array();
+        $dispricearr_json=array();
+        if(!empty($dispricearr)){
+
+            $discounts_arr = array_merge($discounts_arr,$dispricearr);
+            $dispricearr_json = json_encode($discounts_arr);
+
+        }
+        Dispage::disPrice($id,$_GPC['disprice'],$data['hasoption'],$dispricearr_json); 
+            //处理代理商品的税率 和其他的一些数据
+        Dispage::delDisGoods($id,$data,$_W['uniacid']);
+        //wsqend
     }
     //更新discounts
     if ((int)$_GPC['discounts']['type'] == 1 && $data['hasoption'])
@@ -604,6 +619,7 @@ if ($_W['ispost']) {
         $discounts_arr = array(
             'type' => (int)$_GPC['discounts']['type'],
         );
+
         $discounts_arr = array_merge($discounts_arr,$levelArray);
         $discounts_json = json_encode($discounts_arr);
     }
@@ -749,7 +765,10 @@ if (!empty($id)) {
     $discounts = json_decode($item['discounts'], true);
 
     $isdiscount_discounts = json_decode($item['isdiscount_discounts'], true);
-
+    if($_W['uniacid']==DIS_ACCOUNT){
+        $reseldata=pdo_fetch("select * from ".tablename("ewei_shop_goodsresel")." where goods_id=:goodsid",array(":goodsid"=>$id));
+        $resellerldatas=json_decode($reseldata['disprice'],true);
+    }
     $allspecs = pdo_fetchall("select * from " . tablename('ewei_shop_goods_spec') . " where goodsid=:id order by displayorder asc", array(":id" => $id));
     foreach ($allspecs as &$s) {
         $s['items'] = pdo_fetchall("select a.id,a.specid,a.title,a.thumb,a.show,a.displayorder,a.valueId,a.virtual,b.title as title2 from " . tablename('ewei_shop_goods_spec_item') . " a left join " . tablename('ewei_shop_virtual_type') . " b on b.id=a.virtual  where a.specid=:specid order by a.displayorder asc", array(":specid" => $s['id']));
@@ -774,6 +793,7 @@ if (!empty($id)) {
     $discounts_html='';
     $commission_html='';
     $isdiscount_discounts_html='';
+    $resellerlisthtml="";
     $options = pdo_fetchall("select * from " . tablename('ewei_shop_goods_option') . " where goodsid=:id order by id asc", array(':id' => $id));
     //排序好的specs
     $specs = array();
@@ -798,6 +818,9 @@ if (!empty($id)) {
         $discounts_html .= '<table class="table table-bordered table-condensed">';
         $discounts_html .= '<thead>';
         $discounts_html .= '<tr class="active">';
+        $resellerlisthtml .= '<table class="table table-bordered table-condensed">';
+        $resellerlisthtml .= '<thead>';
+        $resellerlisthtml .= '<tr class="active">';
         $commission_html .= '<table class="table table-bordered table-condensed">';
         $commission_html .= '<thead>';
         $commission_html .= '<tr class="active">';
@@ -812,6 +835,7 @@ if (!empty($id)) {
             //表头
             $html .= "<th>" . $specs[$i]['title'] . "</th>";
             $discounts_html .= "<th>" . $specs[$i]['title'] . "</th>";
+            $resellerlisthtml .="<th>" . $specs[$i]['title'] . "</th>";
             $commission_html .= "<th>" . $specs[$i]['title'] . "</th>";
             $isdiscount_discounts_html .= "<th>" . $specs[$i]['title'] . "</th>";
             //计算多种组合
@@ -833,15 +857,18 @@ if (!empty($id)) {
             }
         }
         $canedit = ce('goods',$item);
+
         if($canedit){
 
             foreach ($levels as $level) {
                 $discounts_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div><div class="input-group"><input type="text" class="form-control  input-sm discount_'.$level['key'].'_all" VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'discount_'.$level['key'].'\');"></a></span></div></div></th>';
                 $isdiscount_discounts_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div><div class="input-group"><input type="text" class="form-control  input-sm isdiscount_discounts_'.$level['key'].'_all" VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'isdiscount_discounts_'.$level['key'].'\');"></a></span></div></div></th>';
             }
+            foreach($resellerlist as $le){
+                $resellerlisthtml.='<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$le['name'].'</div><div class="input-group"><input type="text" class="form-control  input-sm disprice_'.$le['id'].'_all" VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'disprice_'.$le['id'].'\');"></a></span></div></div></th>';
+            }
 
             foreach ($commission_level as $level) {
-//					$commission_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div><div class="input-group"><input type="text" class="form-control  input-sm discount_level'.$level['id'].'_all" VALUE="" style="display:inline;width: 30%;"/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'discount_level'.$level['id'].'\');"></a></span><input type="text" class="form-control  input-sm discount_level'.$level['id'].'_all" VALUE="" style="display:inline;width: 30%;"/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'discount_level'.$level['id'].'\');"></a></span><input type="text" class="form-control  input-sm discount_level'.$level['id'].'_all" VALUE="" style="display:inline;width: 30%;"/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'discount_level'.$level['id'].'\');"></a></span></div></div></th>';
                 $commission_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div></div></th>';
             }
 
@@ -859,7 +886,9 @@ if (!empty($id)) {
                 $discounts_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div></div></th>';
                 $isdiscount_discounts_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div></div></th>';
             }
-
+            foreach($resellerlist as $le){
+                $resellerlisthtml.='<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$le['name'].'</div></div></th>';
+            }
             foreach ($commission_level as $level) {
                 $commission_html .= '<th><div class=""><div style="padding-bottom:10px;text-align:center;">'.$level['levelname'].'</div></div></th>';
             }
@@ -874,6 +903,7 @@ if (!empty($id)) {
         }
         $html .= '</tr></thead>';
         $discounts_html .= '</tr></thead>';
+        $resellerlisthtml.='</tr></thead>';
         $isdiscount_discounts_html .= '</tr></thead>';
         $commission_html .= '</tr></thead>';
 
@@ -900,11 +930,13 @@ if (!empty($id)) {
         }
         $hh = "";
         $dd = "";
+        $disre = "";
         $isdd = "";
         $cc = "";
         for ($i = 0; $i < $newlen; $i++) {
             $hh.="<tr>";
             $dd.="<tr>";
+            $disre.="<tr>";
             $isdd.="<tr>";
             $cc.="<tr>";
             $ids = array();
@@ -912,12 +944,14 @@ if (!empty($id)) {
                 $hh.=$h[$j][$i]['html'];
                 $dd.=$h[$j][$i]['html'];
                 $isdd.=$h[$j][$i]['html'];
+                $disre.=$h[$j][$i]['html'];
                 $cc.=$h[$j][$i]['html'];
                 $ids[] = $h[$j][$i]['id'];
             }
             $ids = implode("_", $ids);
             $val = array("id" => "", "title" => "", "stock" => "", "costprice" => "", "productprice" => "", "marketprice" => "", "weight" => "",'virtual'=>'');
             $discounts_val = array("id" => "", "title" => "", "level" => "", "costprice" => "", "productprice" => "", "marketprice" => "", "weight" => "",'virtual'=>'');
+            $disprice_val = array("id" => "", "title" => "", "level" => "", "costprice" => "", "productprice" => "", "marketprice" => "", "weight" => "",'virtual'=>'');
             $isdiscounts_val = array("id" => "", "title" => "", "level" => "", "costprice" => "", "productprice" => "", "marketprice" => "", "weight" => "",'virtual'=>'');
             $commission_val = array("id" => "", "title" => "", "level" => "", "costprice" => "", "productprice" => "", "marketprice" => "", "weight" => "",'virtual'=>'');
             foreach ($levels as $level) {
@@ -950,11 +984,12 @@ if (!empty($id)) {
                         $discounts_val[$level['key']] = is_string($discounts[$level['key']]) ? '' : $discounts[$level['key']]['option'.$o['id']];
                         $isdiscounts_val[$level['key']] = is_string($isdiscount_discounts[$level['key']]) ? '' : $isdiscount_discounts[$level['key']]['option'.$o['id']];
                     }
-
+                    foreach ($resellerlist as $v) {
+                        $disprice_val['level'.$v['id']]=is_string($resellerldatas['level'.$v['id']]) ? "" :$resellerldatas['level'.$v['id']]['option'.$o['id']];
+                    }
                     $commission_val = array();
                     foreach ($commission_level as $level) {
                         $temp = is_string($commission[$level['key']]) ? '' : $commission[$level['key']]['option'.$o['id']];
-
                         if (is_array($temp))
                         {
                             foreach ($temp as $t_val)
@@ -984,11 +1019,24 @@ if (!empty($id)) {
                     $dd .= '</td>';
                     $isdd .= '</td>';
                 }
+                foreach($resellerlist as $le){
+                    $disre.='<td>';
+                    $disre .= '<input data-name="disprice_level_'.$le['id'].'_' . $ids . '"  type="text" class="form-control disprice_'.$le['id'].' disprice_'.$level['id'].'_' . $ids . '" value="' . $disprice_val['level'.$le['id']] . '"/> ';
+                    $disre.='</td>';
+                }
+                //var_dump($disprice_val);
+               // var_dump($disre);
                 $dd .= '<input data-name="discount_id_' . $ids . '"  type="hidden" class="form-control discount_id discount_id_' . $ids . '" value="' . $discounts_val['id'] . '"/>';
                 $dd .= '<input data-name="discount_ids"  type="hidden" class="form-control discount_ids discount_ids_' . $ids . '" value="' . $ids . '"/>';
                 $dd .= '<input data-name="discount_title_' . $ids . '"  type="hidden" class="form-control discount_title discount_title_' . $ids . '" value="' . $discounts_val['title'] . '"/>';
                 $dd .= '<input data-name="discount_virtual_' . $ids . '"  type="hidden" class="form-control discount_title discount_virtual_' . $ids . '" value="' . $discounts_val['virtual'] . '"/>';
                 $dd .= "</tr>";
+
+                $disre .= '<input data-name="discount_id_' . $ids . '"  type="hidden" class="form-control disprice_id discount_id_' . $ids . '" value="' . $disprice_val['id'] . '"/>';
+                $disre .= '<input data-name="disprice_ids"  type="hidden" class="form-control disprice_ids disprice_ids_' . $ids . '" value="' . $ids . '"/>';
+                $disre .= '<input data-name="disprice_title_' . $ids . '"  type="hidden" class="form-control disprice_title disprice_title_' . $ids . '" value="' . $disprice_val['title'] . '"/>';
+                $disre .= '<input data-name="disprice_virtual_' . $ids . '"  type="hidden" class="form-control disprice_title disprice_virtual_' . $ids . '" value="' . $disprice_val['virtual'] . '"/>';
+                $disre .= "</tr>";
 
                 $isdd .= '<input data-name="isdiscount_discounts_id_' . $ids . '"  type="hidden" class="form-control isdiscount_discounts_id isdiscount_discounts_id_' . $ids . '" value="' . $isdiscounts_val['id'] . '"/>';
                 $isdd .= '<input data-name="isdiscount_discounts_ids"  type="hidden" class="form-control isdiscount_discounts_ids isdiscount_discounts_ids_' . $ids . '" value="' . $ids . '"/>';
@@ -1072,8 +1120,11 @@ if (!empty($id)) {
                 $hh .= '</tr>';
             }
         }
+
         $discounts_html .= $dd;
         $discounts_html .= "</table>";
+        $resellerlisthtml .=$disre;
+        $resellerlisthtml .="</table>";
         $isdiscount_discounts_html .= $isdd;
         $isdiscount_discounts_html .= "</table>";
         $html .= $hh;

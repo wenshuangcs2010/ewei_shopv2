@@ -24,12 +24,44 @@
 
         </div>
     </div>
+    
     <div class="form-group">
+        <label class="col-sm-2 control-label must">是否是自营仓库</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class='radio-inline'>
+                <input type='radio' onclick="hidemygoods()" name='ismygoods' id="ismygoods" value='0' {if $item['ismygoods']==0}checked{/if} /> 是
+            </label>
+            <label class='radio-inline'>
+                <input type='radio' onclick="showmygoods()" name='ismygoods' id="ismygoods" value='1' {if $item['ismygoods']==1}checked{/if}/> 否
+            </label>
+            <span class="help-block">是否是自营仓库</span>
+        </div>
+    </div>
+    
+    <div class="form-group mygoodsdiv">
+        <label class="col-sm-2 control-label must">仓库商品来源</label>
+        <div class="col-sm-9 col-xs-12" >
+           <select class="form-control tpl-category-parent select2"  id="updateid" name="updateid" style="width:300px;">
+                <option value="0" {if $item['updateid'] == '0'}selected="true"{/if}>请选择</option>
+                <option value="1" {if $item['updateid'] == '1'}selected="true"{/if}>保税超市</option>
+                <option value="2" {if $item['updateid'] == '2'}selected="true"{/if}>阿迪达斯代理</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group mygoodsdiv">
+        <label class="col-sm-2 control-label">仓库ID</label>
+        <div class="col-sm-9 col-xs-12">
+                <input type="text" id='storeroomid' name="storeroomid" class="form-control" value="{$item['storeroomid']}" style="width:300px;"/>
+        </div>
+    </div>
+    <div class="form-group mygoodsdiv">
         <label class="col-sm-2 control-label must">保税配送ID</label>
         <div class="col-sm-9 col-xs-12">
                 <input type="text" id='cnbuyershoping_id' name="cnbuyershoping_id" class="form-control" value="{$item['cnbuyershoping_id']}" style="width:300px;"/>
         </div>
     </div>
+
+    
     <div class="form-group">
         <label class="col-sm-2 control-label must">实名购买</label>
         <div class="col-sm-9 col-xs-12">
@@ -233,15 +265,29 @@
 
         return true;
     }
-	
 	$(function(){
-		var if_customs=$('input:radio[name="if_customs"]:checked').val();	
-		if(if_customs == 1){
-			showDiscount();
-		}else{
-			hideDiscount();
-		}	   
-	})
+        var ismygoods=$('input:radio[name="ismygoods"]:checked').val();
+        console.log(ismygoods);
+        if(ismygoods == 1){
+             showmygoods();
+        }else{
+             hidemygoods();
+        }
+        var if_customs=$('input:radio[name="if_customs"]:checked').val();   
+        if(if_customs == 1){
+             showDiscount();
+        }else{
+         
+            hideDiscount();
+        }
+    })
+	
+    function showmygoods(){
+        $(".mygoodsdiv").show();
+    }
+    function hidemygoods(){
+        $(".mygoodsdiv").hide();
+    }
     $(function(){
         var if_customs=$('input:radio[name="if_declare"]:checked').val();   
         if(if_customs == 1){

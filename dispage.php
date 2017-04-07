@@ -72,28 +72,44 @@ class Dispage{
 	 * @param  [type] $data     [description]
 	 * @return [type]           [description]
 	 */
-	public static function disPrice($goods_id,$data){
+	public static function disPrice($goods_id,$data,$hasoptions=0,$disPricearr){
 		if($goods_id==0){
 			return ;
 		}
-		$disprice=serialize($data);
 		$reseldata=pdo_fetch("select * from ".tablename("ewei_shop_goodsresel")." where goods_id=:goodsid",array(":goodsid"=>$goods_id));
-		if(empty($reseldata)){
-			$reseldata['goods_id']=$goods_id;
+		$reseldata['goods_id']=$goods_id;
+		$reseldata['status']=$data['isdis'];
+		if($hasoptions){
+			$reseldata['disprice']=$disPricearr;
+			$reseldata['hasoptions']=1;
+			if(empty($reseldata)){
+				plog('goods.add', "新曾商品代理价 ID: {$reseldataid}<br>");
+				pdo_insert('ewei_shop_goodsresel',$reseldata);
+			}
+			if(!empty($reseldata)){
+				$reseldataid=$reseldata['id'];
+				unset($reseldata['id']);
+				$reseldata['disprice']=$disPricearr;
+				plog('goods.edit', "更新商品代理价 ID: {$reseldataid}<br>");
+				pdo_update('ewei_shop_goodsresel',$reseldata,array('id'=>$reseldataid));
+			}
+		}else{
+			$disprice=serialize($data);
 			$reseldata['disprice']=$disprice;
-			$reseldata['status']=$data['isdis'];
-			plog('goods.add', "新曾商品代理价 ID: {$reseldataid}<br>");
-			pdo_insert('ewei_shop_goodsresel',$reseldata);
+			$reseldata['hasoptions']=0;
+			if(empty($reseldata)){
+				plog('goods.add', "新曾商品代理价 ID: {$reseldataid}<br>");
+				pdo_insert('ewei_shop_goodsresel',$reseldata);
+			}
+			if(!empty($reseldata)){
+				$reseldataid=$reseldata['id'];
+				unset($reseldata['id']);
+				$reseldata['disprice']=$disprice;
+				plog('goods.edit', "更新商品代理价 ID: {$reseldataid}<br>");
+				pdo_update('ewei_shop_goodsresel',$reseldata,array('id'=>$reseldataid));
+			}
 		}
-		if(!empty($reseldata)){
-			$reseldataid=$reseldata['id'];
-			unset($reseldata['id']);
-			$reseldata['goods_id']=$goods_id;
-			$reseldata['disprice']=$disprice;
-			$reseldata['status']=$data['isdis'];
-			plog('goods.edit', "更新商品代理价 ID: {$reseldataid}<br>");
-			pdo_update('ewei_shop_goodsresel',$reseldata,array('id'=>$reseldataid));
-		}
+		
 	}
 	/**
 	 * 获取用户的代理详细信息
@@ -277,14 +293,14 @@ class Dispage{
 	 * @param  [type] $uniacid [description]
 	 * @return [type]          [description]
 	 */
-	public static function get_disprice($goodsid,$uniacid){
+	public static function get_disprice($goodsid,$uniacid,$optionid=0){
 		$disgoods_id=pdo_fetchcolumn("select disgoods_id from ".tablename("ewei_shop_goods")." where id =:id",array(":id"=>$goodsid));
 		$bool=Dispage::get_disType($disgoods_id,$uniacid);
 		if($bool){
 			$disinfo=Dispage::getDisInfo($uniacid);
 			$resellerid=$disinfo['resellerid'];
 
-			return Dispage::get_goods_disprice($disgoods_id,$resellerid);
+			return Dispage::get_goods_disprice($disgoods_id,$resellerid,$optionid);
 		}
 		return 0;
 	}
@@ -293,22 +309,47 @@ class Dispage{
 	 * @param  [type] $goodsid [description]
 	 * @return [type]          [description]
 	 */
-	public static function get_goods_disprice($goodsid,$resellerid){
+	public static function get_goods_disprice($goodsid,$resellerid,$optionid=0){
 		$resel=pdo_fetch("SELECT * from ".tablename("ewei_shop_goodsresel")." WHERE goods_id=:goodsid",array(":goodsid"=>$goodsid));
 		if(!empty($resel)){
+			if($resel['hasoptions']){
+				$disprice=json_decode($resel['disprice'],true);
+                $disprice=$disprice['level'.$resellerid];
+                  if(empty($disprice)){
+                  	return 0;
+                  }
+                  if($optionid){
+                  	$disoptionid=pdo_fetchcolumn("SELECT disoptionid from ".tablename("ewei_shop_goods_option")." where id=:optod",array(":optod"=>$optionid));
+                  	if(empty($disoptionid)){
+                  		return 0;
+                  	}
+                  	$dispricekey="option".$disoptionid;
+                  }else{
+					$dispricekey = array_search(max($disprice),$disprice);
+                  }
+                return $disprice[$dispricekey];
+			}else{
+				$disprice=unserialize($resel['disprice']);
+			}
 			
-			$disprice=unserialize($resel['disprice']);
 			return $disprice[$resellerid];
 		}
 		return 0;
 	}
 
-	public static function get_disprice_order($orderid,$type=0){
-		switch ($type) {
-			default:
-				
-				break;
+	public static function get_disprice_order($goodsid,$resellerid){
+		$resel=pdo_fetch("SELECT * from ".tablename("ewei_shop_goodsresel")." WHERE goods_id=:goodsid",array(":goodsid"=>$goodsid));
+		if(!empty($resel)){
+			if($resel['hasoptions']){
+				$disprice=json_decode($resel['disprice'],true);
+                $disprice=$disprice['level'.$resellerid];
+			}else{
+				$disprice=unserialize($resel['disprice']);
+				$disprice=$disprice[$resellerid];
+			}
+			return $disprice;
 		}
+		return 0;
 	}
 
 	public static function get_goods_commission_price($goodsid,$openid){

@@ -51,6 +51,9 @@
                 {if p('diyform')}
                 <li {if $_GPC['tab']=='diyform'}class="active"{/if}><a href="#tab_diyform">自定义表单</a></li>
                 {/if}
+                {if $_W['uniacid']==DIS_ACCOUNT}
+                <li {if $_GPC['tab']=='diyform'}class="active"{/if}><a href="#tab_account">代理价格</a></li>
+                {/if}
 
                 {if $merchid == 0}
                 <li {if $_GPC['tab']=='detaildiy'}class="active"{/if}><a href="#tab_detaildiy">店铺信息</a></li>
@@ -75,6 +78,8 @@
                 <div class="tab-pane {if $_GPC['tab']=='discount'}active{/if}" id="tab_discount"> <div class="panel-body">{template 'goods/tab/discount'}</div></div>
                 <div class="tab-pane {if $_GPC['tab']=='share'}active{/if}" id="tab_share"> <div class="panel-body">{template 'goods/tab/share'}</div></div>
                 <div class="tab-pane  {if $_GPC['tab']=='notice'}active{/if}" id="tab_notice"> <div class="panel-body">{template 'goods/tab/notice'}</div></div>
+
+                <div class="tab-pane  {if $_GPC['tab']=='account'}active{/if}" id="tab_account"> <div class="panel-body">{template 'goods/tab/account'}</div></div>
 
                 {if p('commission') && !empty($com_set['level'])}
                 <div class="tab-pane {if $_GPC['tab']=='sell'}active{/if}" id="tab_sell"> <div class="panel-body">
@@ -309,6 +314,7 @@
 		isdiscountDiscountsArray();
 		discountArray();
 		commissionArray();
+		dispriceArray();
 		$('form').removeAttr('stop');
 		return true;
 	});
@@ -427,7 +433,44 @@
 		};
 		$("input[name='isdiscountDiscountsArray']").val(JSON.stringify(options));
 	}
+	function dispriceArray(){
+		{loop $resellerlist $c}
+			var disprice_{$c['id']} = new Array();
+			$(".disprice_{$c['id']}").each(function (index,item) {
+				disprice_{$c['id']}.push($(item).val());
+			});
+		{/loop}
+	
+		var disprice_id = new Array();
 
+		// $('.disprice_id').each(function (index,item) {
+
+		// 	discount_id.push($(item).val());
+		// });
+		
+		var disprice_ids = new Array();
+		$('.disprice_ids').each(function (index,item) {
+			disprice_ids.push($(item).val());
+		});
+		var disprice_title = new Array();
+		$('.disprice_title').each(function (index,item) {
+			disprice_title.push($(item).val());
+		});
+		var disprice_virtual = new Array();
+		$('.disprice_virtual').each(function (index,item) {
+			disprice_virtual.push($(item).val());
+		});
+		var options = {
+			{loop $resellerlist $c}
+			disprice_{$c['id']} : disprice_{$c['id']},
+			{/loop}
+			disprice_id : disprice_id,
+			disprice_ids : disprice_ids,
+			disprice_title : disprice_title,
+			disprice_virtual : disprice_virtual
+		};
+		$("input[name='dispriceArray']").val(JSON.stringify(options));
+	}
 	function discountArray()
 	{
 
@@ -442,7 +485,7 @@
 		$('.discount_id').each(function (index,item) {
 			discount_id.push($(item).val());
 		});
-
+		
 		var discount_ids = new Array();
 		$('.discount_ids').each(function (index,item) {
 			discount_ids.push($(item).val());
@@ -466,7 +509,7 @@
 			discount_ids : discount_ids,
 			discount_title : discount_title,
 			discount_virtual : discount_virtual
-	};
+		};
 		$("input[name='discountArray']").val(JSON.stringify(options));
 	}
 

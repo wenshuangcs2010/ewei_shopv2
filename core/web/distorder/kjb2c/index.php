@@ -10,6 +10,9 @@ class Index_EweiShopV2Page extends WebPage
 	function to_customs(){
 		 global $_W,$_GPC;
 		 $orderid=$_GPC['id'];
+
+$returndata=m("kjb2c")->to_customs_new($orderid);
+die();
 		  $order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);

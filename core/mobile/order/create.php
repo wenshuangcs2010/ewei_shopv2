@@ -2817,7 +2817,8 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $order_goods['price'] = $goods['marketprice'] * $goods['total'];
                 $order_goods['total'] = $goods['total'];
                 $order_goods['optionid'] = $goods['optionid'];
-                $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid']);
+                $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
+               
                 $order_goods['disprice']=$disprice==0?$goods['ggprice']:$disprice;
                 $order_goods['createtime'] = time();
                 $order_goods['optionname'] = $goods['optiontitle'];
@@ -2958,7 +2959,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $order_goods['merchid'] = $goods['merchid'];
                 $order_goods['merchsale'] = $goods['merchsale'];
                 $order_goods['orderid'] = $og_array[$goodsid];
-                $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid']);
+                $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
                 $order_goods['disprice']=$disprice==0?$goods['ggprice']:$disprice;
                 $order_goods['uniacid'] = $uniacid;
                 $order_goods['goodsid'] = $goodsid;

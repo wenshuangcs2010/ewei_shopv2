@@ -1526,7 +1526,7 @@ class Distorder_EweiShopV2Model
             $out_goods[$key]['vat_rate']=$goods['vat_rate'];
             $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
             $type=Dispage::get_disType($goods['disgoods_id'],$_W['uniacid']);
-            $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid']);
+            $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
             $out_goods[$key]['price']=$disprice;
             $dispriceamount+=$disprice*$goods['total'];
             if($goods['dispatchid']!=0){

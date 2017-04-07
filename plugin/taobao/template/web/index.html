@@ -27,6 +27,19 @@
 
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-2 control-label">设置仓库</label>
+
+                    <div class="col-sm-9">
+                           <select class="form-control tpl-category-parent"  name="depotid" >
+                                <option value="0">默认仓库</option>
+                                {loop $depostlist  $depot}
+                                <option value="{$depot['id']}">{$depot['title']}</option>
+                                {/loop}
+                         </select>
+                    </div>
+
+                </div>
+                <div class="form-group">
                     <label class="col-sm-2 control-label"> </label>
                     <div class="col-sm-9">
                         <span class="help-block">此分类读取的是商城的商品分类, 设置默认抓取商品的分类</span>
@@ -68,10 +81,12 @@
         var postdata =  {
                     url: urls[len],
                     pcate: $("select[name='category[parentid]']").val(),
-                    ccate: $("select[name='category[childid]']").val()
+                    ccate: $("select[name='category[childid]']").val(),
+                    depotid:$("select[name='depotid']").val(),
                 };
+               
                {if $shopset['catlevel']==3}
-                  postdata.tcate = $("select[name='category[thirdid]']").val();
+                  postdata.tcate = $("select[name='depostid[thirdid]']").val();
                {/if}
         $.post("{php echo webUrl('taobao/fetch')}",
                postdata,

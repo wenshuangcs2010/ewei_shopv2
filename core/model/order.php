@@ -121,6 +121,7 @@ class Order_EweiShopV2Model
                                 $uniacid=$_W['uniacid'];
                                 if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
                                     $uniacid=DIS_ACCOUNT;
+                                    $customsparams['out_trade_no']=$order['ordersn']."_borrow";
                                 }
                                 $setting = uni_setting($uniacid, array('payment'));
                                 if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
@@ -461,6 +462,14 @@ class Order_EweiShopV2Model
                         }
                         if ($stock != -1) {
                             pdo_update('ewei_shop_goods_option', array('stock' => $stock), array('uniacid' => $uniacid, 'goodsid' => $g['goodsid'], 'id' => $g['optionid']));
+                            if($option['disoptionid']>0){
+                                $sql="SELECT id from ".tablename("ewei_shop_goods_option")." where disoptionid=:disoptionid";
+                                $optionlist=pdo_fetchall($sql,array(":disoptionid"=>$option['disoptionid']));
+                                foreach ($optionlist as $value) {
+                                     pdo_update('ewei_shop_goods_option', array('stock' => $stock), array('id' => $value));//代理库存更新
+                                }
+                                pdo_update('ewei_shop_goods_option', array('stock' => $stock), array('id' => $option['disoptionid']));//主库存更新
+                            }
                         }
                     }
                 }
@@ -542,6 +551,7 @@ class Order_EweiShopV2Model
             }
         }
     }
+
     //代理库存更新
     function updatestock($goods_sn,$stock){
         $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where goodssn=:goodssn and uniacid=:uniacid limit 1", array(':goodssn' => $goods_sn, ':uniacid' => DIS_ACCOUNT));
@@ -1610,7 +1620,7 @@ class Order_EweiShopV2Model
             $out_goods[$key]['vat_rate']=$goods['vat_rate'];
             $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
             $type=Dispage::get_disType($goods['disgoods_id'],$_W['uniacid']);
-            $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid']);
+           $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
             $out_goods[$key]['price']=$disprice;
             $dispriceamount+=$disprice*$goods['total'];
             if($goods['dispatchid']!=0){

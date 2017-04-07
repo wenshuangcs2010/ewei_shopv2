@@ -132,6 +132,7 @@ class EweiShopWechatPay
      */
     public function order()
     {
+        
         if (!$this->publicMethod()){
             exit(__FUNCTION__);
         }
@@ -426,13 +427,38 @@ class EweiShopWechatPay
     public function publicMethod()
     {
         global $_W;
+        
         $this->set = m('common')->getSysset(array('shop', 'pay'));
         $this->setting = uni_setting($_W['uniacid'], array('payment'));
+        $isdisorder=0;
         if (is_array($this->setting['payment']) || $this->set['pay']['weixin_jie'] == 1 || $this->set['pay']['weixin_sub'] ==1 || $this->set['pay']['weixin_jie_sub'] ==1 || $this->get['trade_type']=='APP') {
-
-            $this->is_jie = strpos($this->get['out_trade_no'],'_B')!==false || strpos($this->get['out_trade_no'],'_borrow')!==false;
+            
+            $this->is_jie =strpos($this->get['out_trade_no'],'_B')!==false || strpos($this->get['out_trade_no'],'_borrow')!==false;
             $sec_yuan = m('common')->getSec();
             $this->sec =iunserializer($sec_yuan['sec']);
+
+          
+            $tid = $this->get['out_trade_no'];
+            
+            $jearray=Dispage::getDisaccountArray();
+
+            if(in_array($_W['uniacid'], $jearray)){
+                if($this->is_jie){
+                    $tid = str_replace('_borrow','',$tid);
+                }
+                $isdisorder=pdo_fetchcolumn("SELECT isdisorder FROM ".tablename("ewei_shop_order")." where ordersn=:ordersn",array(":ordersn"=>$tid));
+                if($isdisorder==1){
+                    $setting = uni_setting(DIS_ACCOUNT, array('payment'));
+                    if (is_array($setting['payment'])) {
+                         $jieweipay = $setting['payment']['wechat'];
+                    }
+                    $this->set['pay']['weixin_jie']=1;
+                    $this->set['pay']['weixin_jie_sub']=1;
+                    $this->sec['apikey']=$jieweipay['apikey'];
+                    $this->sec['apikey_jie_sub']=$jieweipay['apikey'];
+                }
+            }
+            
             if (($this->set['pay']['weixin_jie'] == 1 && $this->is_jie) || $this->set['pay']['weixin_sub'] ==1 || ($this->set['pay']['weixin_jie_sub'] ==1 && $this->is_jie)){
 
                 if($this->set['pay']['weixin_sub'] ==1){
@@ -472,6 +498,7 @@ class EweiShopWechatPay
                     'mchid'=>$this->sec['app_wechat']['merchid']
                 );
             }
+            
             if (!empty($wechat)) {
                 ksort($this->get);
                 $string1 = '';
@@ -482,6 +509,7 @@ class EweiShopWechatPay
                 }
                 $wechat['signkey'] = ($wechat['version'] == 1) ? $wechat['key'] : $wechat['signkey'];
                 $this->sign = strtoupper(md5($string1 . "key={$wechat['signkey']}"));
+                
                 $this->get['openid'] = isset($this->get['sub_openid']) ? $this->get['sub_openid'] : $this->get['openid'];
                 if ( $this->sign ==  $this->get['sign']) {
                     return true;

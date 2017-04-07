@@ -527,13 +527,16 @@ if (!class_exists('CommissionModel')) {
                     $level1_commissions = pdo_fetchall('select og.commission1,og.commissions  from ' . tablename('ewei_shop_order_goods') . ' og '
                         . ' left join  ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid'
                         . " where o.agentid=:agentid and o.status>=3 and og.nocommission=0 and ({$time} - o.finishtime > {$day_times}) and og.status1=0  and o.uniacid=:uniacid and o.isparent=0", array(':uniacid' => $_W['uniacid'], ':agentid' => $member['id']));
+
                     foreach ($level1_commissions as $c) {
                         $commissions = iunserializer($c['commissions']);
                         $commission = iunserializer($c['commission1']);
+                       
                         if (empty($commissions)) {
                             $commission_ok += isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default'];
                         } else {
                             $commission_ok += isset($commissions['level1']) ? $commissions['level1'] : 0;
+
                         }
                     }
                 }

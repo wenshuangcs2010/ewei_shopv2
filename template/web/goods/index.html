@@ -175,7 +175,15 @@
               {/loop}
             {else}
             {loop $reseller $re}
-                    <td><a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'disprice','id'=>$item['id'],'key'=>$re['id']))}" >{if empty($t[$item['id']][$re['id']])}0.00{else}{$t[$item['id']][$re['id']]}{/if}</a></td>
+                    <td>
+                    {if $item['hasoption']==1}
+                     <span data-toggle='tooltip' title='多规格不支持快速修改'> {if empty($t[$item['id']][$re['id']])}0.00{else}{$t[$item['id']][$re['id']]}{/if}</span>
+                    {else}
+                    <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'disprice','id'=>$item['id'],'key'=>$re['id']))}" >
+                    {if empty($t[$item['id']][$re['id']])}0.00{else}{$t[$item['id']][$re['id']]}{/if}
+                    </a>
+                    {/if}
+                    </td>
                  {/loop}
             {/if}
            

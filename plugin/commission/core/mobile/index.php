@@ -21,6 +21,7 @@ class Index_EweiShopV2Page extends CommissionMobileLoginPage
         $this->diypage('commission');
 
         $member = $this->model->getInfo($_W['openid'], array('total', 'ordercount0', 'ok', 'ordercount', 'wait', 'pay'));
+       
         $cansettle = $member['commission_ok'] >= 1 && $member['commission_ok'] >= floatval($this->set['withdraw']);
 
         //下线人数

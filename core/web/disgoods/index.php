@@ -55,7 +55,7 @@ class Index_EweiShopV2Page extends WebPage {
         $total = count($total_all);
         unset($total_all);
         if (!empty($total)) {
-            $sql = 'SELECT g.*,gr.disprice FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC,
+            $sql = 'SELECT g.*,gr.disprice,gr.hasoptions as g1hasoption FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC,
                 g.`id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
                 //var_dump($sql);
                 //die();
@@ -80,9 +80,20 @@ class Index_EweiShopV2Page extends WebPage {
         }
        	if(!empty($list)){
        		foreach ($list as &$goods) {
-        		$disprice=unserialize($goods['disprice']);
-        		$goods['disprice']=$disprice[$disleve];
-        		$goods['zprice']=$goods['marketprice']-$disprice[$disleve];
+                if($goods['g1hasoption']){
+                    $disprice=json_decode($goods['disprice'],true);
+                    $disprice=$disprice['level'.$disleve];
+                     //var_dump($disprice);
+                    $dispricekey = array_search(min($disprice),$disprice);
+                   
+                    $goods['disprice']=$disprice[$dispricekey];
+                    $goods['zprice']=$goods['marketprice']-$disprice[$dispricekey];
+                }else{
+                    $disprice=unserialize($goods['disprice']);
+                    $goods['disprice']=$disprice[$disleve];
+                    $goods['zprice']=$goods['marketprice']-$disprice[$disleve];
+                }
+        		
         	}
         	unset($goods);
        	}
@@ -129,10 +140,16 @@ class Index_EweiShopV2Page extends WebPage {
                 unset($goods['commission3_pay']);
                 unset($goods['commission_thumb']);
                 unset($goods['discounts']);
+                unset($goods['isdiscount']);
                 pdo_insert("ewei_shop_goods",$goods);
-                $insertgoodsid=pdo_insertid();
+                $insertgoodsid=pdo_insertid();//商品ID
                
                 $goods_goods_spec=pdo_fetchall("SELECT * FROM ".tablename("ewei_shop_goods_spec")." WHERE goodsid=:id",array(":id"=>$_GPC['goods_id']));
+                $speclist=array();
+                if(empty($goods_goods_spec)){
+                     plog('goods.edit', "复制一个代理商品到当前公众号<br/>ID: {$goods['id']}<br/>商品名称: {$goods['title']}");
+                     return false;
+                }
                 foreach ($goods_goods_spec as $spec) {
                 	$oldspecid=$spec['id'];
                 	unset($spec['id']);
@@ -145,23 +162,59 @@ class Index_EweiShopV2Page extends WebPage {
 					$t=array();
 					foreach ($shop_goods_spec_item as $spec_item) {
 						$oldspec_itemid=$spec_item['id'];
-						 unset($spec_item['id']);
-						 $spec_item['specid']=$specid;
-						 $spec_item['uniacid']=$_W['uniacid'];
-						 pdo_insert("ewei_shop_goods_spec_item",$spec_item);
-						 $newspecid=pdo_insertid();
-						 $t[]=$newspecid;
-						  //复制商品规格
-	                	$goodsoption=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_goods_option")." WHERE goodsid=:id and specs=:specs",array(":id"=>$_GPC['goods_id'],":specs"=>$oldspec_itemid));
-	                	unset($goodsoption['id']);
-	                	$goodsoption['goodsid']=$insertgoodsid;
-	                	$goodsoption['uniacid']=$_W['uniacid'];
-	                	$goodsoption['specs']=$newspecid;
-	                	pdo_insert("ewei_shop_goods_option",$goodsoption);
+						unset($spec_item['id']);
+						$spec_item['specid']=$specid;
+						$spec_item['uniacid']=$_W['uniacid'];
+                        pdo_insert("ewei_shop_goods_spec_item",$spec_item);
+                        $specitemid=pdo_insertid();
+                        $speclist[$specid][]=array('new'=>$specitemid,'old'=>$oldspec_itemid);
+                        $t[]=$specitemid;
 					}
 					$spec['content']=serialize($t);
 					pdo_update("ewei_shop_goods_spec",$spec,array("id"=>$specid));
                 }
+
+                $shop_goods_option=pdo_fetchall("SELECT * FROM ".tablename("ewei_shop_goods_option")." WHERE goodsid=:id",array(":id"=>$_GPC['goods_id']));
+                $oldgoods=array();
+                foreach ($shop_goods_option as $key => $value) {
+                    $oldgoods[$value['specs']]=$value;
+                }
+                $oldspec_item=array();
+                $newspec_item=array();
+                foreach ($speclist as $key => $o) {
+                    $old=array();
+                    $new=array();
+                    foreach ($o as  $v) {
+                        $old[]=$v['old'];
+                        $new[]=$v['new'];
+                    }
+                    $oldspec_item[$key][]=$old;
+                    $newspec_item[$key][]=$new;
+                }
+                $old1arr=reset($oldspec_item);
+                $old2arr=end($oldspec_item);
+                $new1arr=reset($newspec_item);
+                $new2arr=end($newspec_item);
+                $dikae=$this->combineDika($old1arr[0],$old2arr[0]);
+                $dikae2=$this->combineDika($new1arr[0],$new2arr[0]);
+                $disprice=Dispage::get_disprice_order($_GPC['goods_id'],$resellerid);
+                //var_dump($disprice);
+               foreach ($dikae as $key => $value) {
+                  $l= implode("_", $value);
+                  $l2=implode("_", $dikae2[$key]);//新增加
+                  $disgoodsprice=$disprice['option'.$oldgoods[$l]['id']];
+                  $goods=$oldgoods[$l];
+                  
+                  $goods['goodsid']=$insertgoodsid;
+                  $goods['specs']=$l2;
+                  $goods['disoptionid']=$goods['id'];
+                  $goods['costprice']=$disgoodsprice;
+                  $goods['uniacid']=$_W['uniacid'];
+                  unset($goods['id']);
+                  pdo_insert("ewei_shop_goods_option",$goods);
+                  //var_dump($oldgoods[$l]);
+               }
+                //die();
                 plog('goods.edit', "复制一个代理商品到当前公众号<br/>ID: {$goods['id']}<br/>商品名称: {$goods['title']}");
             }
         }
@@ -169,8 +222,18 @@ class Index_EweiShopV2Page extends WebPage {
         if($_GPC['checked']==0){
         $id = intval($_GPC['goods_id']);
         $goods=pdo_fetch("select * from ".tablename("ewei_shop_goods")." WHERE disgoods_id=:disgoods_id and uniacid=:uniacid",array(":disgoods_id"=>$id,':uniacid'=>$_W['uniacid']));
+        //var_dump($goods);
+        if($goods['hasoption']==1){
+            pdo_delete("ewei_shop_goods_option",array("goodsid"=>$goods['id'],"uniacid"=>$_W['unaicid']));
+            $goodsspeclist=pdo_fetchall("select id from ".tablename("ewei_shop_goods_spec")." where goodsid=:goodsid and uniacid=:uniacid",array(":goodsid"=>$goods['id'],":uniacid"=>$_W['uniacid']));
+            foreach ($goodsspeclist as $value) {
+                pdo_delete("ewei_shop_goods_spec_item",array("specid"=>$value['id'],"uniacid"=>$_W['uniacid']));
+            }
+            pdo_delete("ewei_shop_goods_spec",array("goodsid"=>$goods['id'],"uniacid"=>$_W['uniacid']));
 
+        }
         pdo_delete('ewei_shop_goods', array('id' => $goods['id']));
+
         plog('goods.edit', "从回收站彻底删除商品<br/>ID: {$goods['id']}<br/>商品名称: {$goods['title']}");
     
         }
@@ -277,5 +340,41 @@ class Index_EweiShopV2Page extends WebPage {
              $this->message("文件不存在");
         }
         include $this->template();
+    }
+
+
+    /** 
+     * 所有数组的笛卡尔积 
+     * 
+     * @param unknown_type $data 
+     */  
+    function combineDika() {
+        $data = func_get_args();
+        $cnt = count($data);
+        $result = array();
+        foreach($data[0] as $item) {
+            $result[] = array($item);
+        }
+        for($i = 1; $i < $cnt; $i++) {
+            $result = $this->combineArray($result,$data[$i]);
+        }
+        return $result;
+    }
+    /**
+     * 两个数组的笛卡尔积
+     *
+     * @param unknown_type $arr1
+     * @param unknown_type $arr2
+     */
+    function combineArray($arr1,$arr2) {
+        $result = array();  
+        foreach ($arr1 as $item1) {
+            foreach ($arr2 as $item2) {
+                $temp = $item1;
+                $temp[] = $item2;
+                $result[] = $temp;
+            }
+        }
+        return $result;  
     }
 }

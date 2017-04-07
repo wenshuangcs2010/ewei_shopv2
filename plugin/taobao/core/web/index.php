@@ -26,6 +26,8 @@ class Index_EweiShopV2Page extends PluginWebPage {
 					}
 				}
 			}
+			$sql='SELECT * FROM ' . tablename('ewei_shop_depot') . ' WHERE `uniacid` = :uniacid ';
+			$depostlist = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'id');
 			$shopset = $_W['shopset']['shop'];
 			load()->func('tpl');
 			include $this->template();
@@ -49,6 +51,8 @@ class Index_EweiShopV2Page extends PluginWebPage {
 		$pcate = intval($_GPC['pcate']);
 		$ccate = intval($_GPC['ccate']);
 		$tcate = intval($_GPC['tcate']);
+		$depotid = intval($_GPC['depotid']);
+		
 		if (is_numeric($url)) {
 			$itemid = $url;
 		} else {
@@ -60,7 +64,7 @@ class Index_EweiShopV2Page extends PluginWebPage {
 		if (empty($itemid)) {
 			die(json_encode(array("result" => 0, "error" => "未获取到 itemid!")));
 		}
-		$ret = $this->model->get_item_taobao($itemid, $_GPC['url'], $pcate, $ccate, $tcate);
+		$ret = $this->model->get_item_taobao($itemid, $_GPC['url'], $pcate, $ccate, $tcate,$depotid);
 		plog('taobao.main', '淘宝抓取宝贝 淘宝id:' . $itemid);
 		die(json_encode($ret));
 	}

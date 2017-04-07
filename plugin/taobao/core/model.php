@@ -12,7 +12,7 @@ if (!defined('IN_IA')) {
 class TaobaoModel extends PluginModel {
 
 	//获取一个淘宝宝贝 $itemid
-	function get_item_taobao($itemid = '', $taobaourl = '', $pcate = 0, $ccate = 0, $tcate = 0, $merchid = 0) {
+	function get_item_taobao($itemid = '', $taobaourl = '', $pcate = 0, $ccate = 0, $tcate = 0,$depotid=0, $merchid = 0) {
 
 		global $_W;
 		$g = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where uniacid=:uniacid and merchid=:merchid and catch_id=:catch_id and catch_source='taobao' limit 1", array(':uniacid' => $_W['uniacid'], ':merchid'=>$merchid, ":catch_id" => $itemid));
@@ -22,6 +22,7 @@ class TaobaoModel extends PluginModel {
 
 		//连接
 		$url = $this->get_taobao_info_url($itemid);
+		
 		load()->func('communication');
 		$response = ihttp_get($url);
 		if (!isset($response['content'])) {
@@ -36,6 +37,7 @@ class TaobaoModel extends PluginModel {
 		$arr = json_decode($content, true);
 		$data = $arr['data'];
 		$itemInfoModel = $data['itemInfoModel'];
+
 		$item = array();
 		$item['id'] = $g['id'];
 		$item['merchid'] = $merchid;
@@ -46,6 +48,8 @@ class TaobaoModel extends PluginModel {
                 $item['checked'] = 0;
             }
         }
+        $item['depotid']=$depotid;
+       
 		$item['pcate'] = $pcate;
 		$item['ccate'] = $ccate;
 		$item['tcate'] = $tcate;
@@ -174,15 +178,23 @@ class TaobaoModel extends PluginModel {
 		$item['content'] = array();
 		//详情
 		$url = $this->get_taobao_detail_url($itemid);
+		
 		load()->func('communication');
 		$response = ihttp_get($url);
-
+	
+		/*
+		$response=json_decode($response['content'],true);
+		$response=$response['data']['pages'];
+		$contentresponse="";
+		foreach ($response as $key => $value) {
+			$contentresponse.=$value;
+		}*/
 		$response = preg_replace('/ (?:width)=(\'|").*?\\1/',' width="100%"',$response);
 		$response = preg_replace('/ (?:height)=(\'|").*?\\1/',' ',$response);
-
+		
 		$item['content'] = $response;
 
-
+		
 		return $this->save_taobao_goods($item ,$taobaourl);
 	}
 
@@ -515,6 +527,8 @@ class TaobaoModel extends PluginModel {
 	function save_taobao_goods($item = array(), $catch_url = '') {
 
 		global $_W;
+
+
 		$data = array(
 			"uniacid" => $_W['uniacid'],
 			"merchid" => $item['merchid'],
@@ -530,6 +544,7 @@ class TaobaoModel extends PluginModel {
 			"tcate" => $item['tcate'],
 			"cates" => $item['cates'],
 			"sales" => $item['sales'],
+			'depotid'=>$item['depotid'],
 			"createtime" => time(),
 			"updatetime" => time(),
 			'hasoption' => count($item['options']) > 0 ? 1 : 0,
@@ -750,6 +765,7 @@ class TaobaoModel extends PluginModel {
 
 
 		preg_match_all("/<img.*?src=[\\\'| \\\"](.*?(?:[\.gif|\.jpg]?))[\\\'|\\\"].*?[\/]?>/", $content, $imgs);
+		 //preg_match_all('/<img>(.*?(?:[\.gif|\.jpg]?))<\/img>/', $content, $imgs);
 
 		if (isset($imgs[1])) {
 
@@ -1261,6 +1277,8 @@ class TaobaoModel extends PluginModel {
 
 	//获取淘宝宝贝详情页连接
 	function get_taobao_detail_url($itemid) {
+		//return 'http://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?data=%7B"item_num_id"%3A"'.$itemid.'"%7D';
+
 		return 'http://hws.m.taobao.com/cache/wdesc/5.0/?id=' . $itemid;
 	}
 
