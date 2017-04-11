@@ -37,7 +37,7 @@ class Picker_EweiShopV2Page extends MobilePage {
 
 
         //商品
-        $goods = pdo_fetch('select id,thumb,title,marketprice,total,maxbuy,minbuy,unit,hasoption,showtotal,diyformid,diyformtype,diyfields,isdiscount,isdiscount_time,isdiscount_discounts, needfollow, followtip, followurl, type, isverify, maxprice, minprice, merchsale from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        $goods = pdo_fetch('select id,thumb,title,marketprice,isdiscount_stat_time,total,maxbuy,minbuy,unit,hasoption,showtotal,diyformid,diyformtype,diyfields,isdiscount,isdiscount_time,isdiscount_discounts, needfollow, followtip, followurl, type, isverify, maxprice, minprice, merchsale from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
         if (empty($goods)) {
             show_json(0);
         }
@@ -70,7 +70,7 @@ class Picker_EweiShopV2Page extends MobilePage {
         }
 
 
-        if($goods['isdiscount'] && $goods['isdiscount_time']>=time()){
+        if($goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
             //有促销
             $isdiscount = true;
             $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);

@@ -162,7 +162,7 @@
         <div class="fui-cell-text price">
 			<span class="text-danger">
 			￥{if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}
-			{if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
+			{if $goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() &&  $goods['isdiscount_time']>=time()}
 			     <span class="original">￥{$goods['productprice']}</span>
 			{else}
 			{if $goods['productprice']>0}<span  class="original">￥{$goods['productprice']}</span>{/if}
@@ -264,7 +264,7 @@
 </div>
 {/if}
 
-{if empty($goods['isdiscount']) || (!empty($goods['isdiscount']) &&$goods['isdiscount_time']<time())}
+{if empty($goods['isdiscount']) || (!empty($goods['isdiscount'])  && ($goods['isdiscount_time']<time() || $goods['isdiscount_stat_time']>time() ))}
 {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
 <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
     <div class="fui-cell">

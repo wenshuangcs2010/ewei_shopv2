@@ -395,7 +395,7 @@ class Log_EweiShopV2Page extends WebPage {
         global $_W, $_GPC;
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
-        $condition = ' where od.uniacid=:uniacid and od.status=3 and od.isdisorder=1';
+        $condition = ' where od.uniacid=:uniacid and od.status=3 and od.isdisorder=1 ';
          //$condition = ' where od.uniacid=:uniacid and  od.isdisorder=1 ';
         $params = array(':uniacid' => $_W['uniacid']);
         if (isset($_GPC['paystatus']) && $_GPC['paystatus']!=-1) {
@@ -436,7 +436,7 @@ class Log_EweiShopV2Page extends WebPage {
     function adddiswith(){
         global $_W, $_GPC;
 
-        $condition = ' where od.uniacid=:uniacid and od.paystatus=0 and status=3 and od.isdisorder=1';
+        $condition = ' where od.uniacid=:uniacid and od.paystatus=0 and status=3 and od.isdisorder=1 ';
         $sql="select od.*  from ".tablename("ewei_shop_order")." as od".$condition;
         $params = array(':uniacid' => $_W['uniacid']);
         $list=pdo_fetchall($sql,$params);

@@ -120,7 +120,6 @@ if ($_W['ispost']) {
 //            show_json(0,array('message'=>'替换模式只试用于虚拟物品类型，实体物品无效！请重新选择！'));
 //        }
 //    }
-
     $data = array(
         'uniacid' => intval($_W['uniacid']),
         'displayorder' => intval($_GPC['displayorder']),
@@ -136,8 +135,8 @@ if ($_W['ispost']) {
         'isnew' => intval($_GPC['isnew']),
         'isdiscount' => intval($_GPC['isdiscount']),
         'isdiscount_title' => trim(mb_substr($_GPC['isdiscount_title'],0,5,'UTF-8')),
-        'isdiscount_time' => strtotime($_GPC['stat_time']['start']),
-        'isdiscount_stat_time' => strtotime($_GPC['stat_time']['end']),
+        'isdiscount_time' =>  strtotime($_GPC['stat_time']['end']),
+        'isdiscount_stat_time' =>strtotime($_GPC['stat_time']['start']),
         'issendfree' => intval($_GPC['issendfree']),
         'isnodiscount' => intval($_GPC['isnodiscount']),
         'istime' => intval($_GPC['istime']),

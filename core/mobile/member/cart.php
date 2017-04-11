@@ -38,7 +38,7 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
         $level = m('member')->getLevel($openid);
 
         $sql = 'SELECT f.id,f.total,f.goodsid,g.total as stock,f.depotid, o.stock as optionstock, g.maxbuy,g.title,g.thumb,ifnull(o.marketprice, g.marketprice) as marketprice,'
-            . ' g.productprice,o.title as optiontitle,f.optionid,o.specs,g.minbuy,g.maxbuy,g.unit,f.merchid,g.checked,g.isdiscount_discounts,g.isdiscount,g.isdiscount_time,g.isnodiscount,g.discounts,g.merchsale'
+            . ' g.productprice,o.title as optiontitle,f.optionid,o.specs,g.isdiscount_stat_time,g.minbuy,g.maxbuy,g.unit,f.merchid,g.checked,g.isdiscount_discounts,g.isdiscount,g.isdiscount_time,g.isnodiscount,g.discounts,g.merchsale'
             . ' ,f.selected FROM ' . tablename('ewei_shop_member_cart') . ' f '
             . ' left join ' . tablename('ewei_shop_goods') . ' g on f.goodsid = g.id '
             . ' left join ' . tablename('ewei_shop_goods_option') . ' o on f.optionid = o.id '
@@ -62,9 +62,10 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
                 }
             }
             if($g['selected']){
-
+                
                 //促销或会员折扣
                 $prices = m('order')->getGoodsDiscountPrice($g, $level, 1);
+
                 $total+=$g['total'];
                 $g['marketprice'] = $g['ggprice'] = $prices['price'];
 

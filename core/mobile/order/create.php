@@ -176,7 +176,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     . ',g.weight,o.weight as optionweight,g.title,g.disgoods_id,g.thumb,ifnull(o.marketprice, g.marketprice) as marketprice,o.title as optiontitle,c.optionid,'
                     . ' g.storeids,g.isverify,g.deduct,g.manydeduct,g.virtual,o.virtual as optionvirtual,discounts,'
                     . ' g.deduct2,g.ednum,g.edmoney,g.edareas,g.diyformtype,g.diyformid,diymode,g.dispatchtype,g.dispatchid,g.dispatchprice,g.minbuy '
-                    . ' ,g.isdiscount,g.isdiscount_time,g.isdiscount_discounts,g.cates, '
+                    . ' ,g.isdiscount,g.isdiscount_time,g.isdiscount_stat_time,g.isdiscount_discounts,g.cates, '
                     . ' g.virtualsend,invoice,o.specs,g.merchid,g.checked,g.merchsale,'
                     . ' g.buyagain,g.buyagain_islong,g.buyagain_condition, g.buyagain_sale, g.hasoption'
                     . ' FROM ' . tablename('ewei_shop_member_cart') . ' c '
@@ -240,7 +240,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     . ' manydeduct,`virtual`,maxbuy,usermaxbuy,discounts,total as stock,deduct2,showlevels,'
                     . ' ednum,edmoney,edareas,'
                     . ' diyformtype,diyformid,diymode,dispatchtype,dispatchid,dispatchprice,cates,minbuy, '
-                    . ' isdiscount,isdiscount_time,isdiscount_discounts, '
+                    . ' isdiscount,isdiscount_time,isdiscount_stat_time,isdiscount_discounts, '
                     . ' virtualsend,invoice,needfollow,followtip,followurl,merchid,checked,merchsale, '
                     . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale'
                     . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
@@ -1410,7 +1410,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $sql = 'SELECT id as goodsid,title,type, weight,total,issendfree,isnodiscount,disgoods_id, thumb,marketprice,cash,isverify,goodssn,productsn,sales,istime,'
                     . ' timestart,timeend,usermaxbuy,maxbuy,unit,buylevels,buygroups,deleted,status,deduct,manydeduct,`virtual`,'
                     . ' discounts,deduct2,ednum,edmoney,edareas,diyformid,diyformtype,diymode,dispatchtype,dispatchid,dispatchprice,'
-                    . ' isdiscount,isdiscount_time,isdiscount_discounts ,virtualsend,merchid,merchsale,'
+                    . ' isdiscount,isdiscount_time,isdiscount_stat_time,isdiscount_discounts ,virtualsend,merchid,merchsale,'
                     . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale,bargain'
                     . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
                 $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));
@@ -1979,7 +1979,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 . ' usermaxbuy,minbuy,maxbuy,unit,buylevels,buygroups,deleted,'
                 . ' status,deduct,manydeduct,`virtual`,discounts,deduct2,ednum,edmoney,edareas,diyformtype,diyformid,diymode,'
                 . ' dispatchtype,dispatchid,dispatchprice,merchid,merchsale,cates,'
-                . ' isdiscount,isdiscount_time,isdiscount_discounts, virtualsend,'
+                . ' isdiscount,isdiscount_time,isdiscount_stat_time,isdiscount_discounts, virtualsend,'
                 . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale'
                 . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
             $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));

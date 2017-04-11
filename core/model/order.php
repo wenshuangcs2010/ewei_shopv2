@@ -737,9 +737,9 @@ class Order_EweiShopV2Model
         $isCdiscount = 0;
         //判断是否有会员折扣
         $isHdiscount = 0;
-
+        //var_dump($g['isdiscount_stat_time']);
         //是否有促销
-        if ($g['isdiscount'] && $g['isdiscount_time'] >= time() && $buyagain_sale) {
+        if ($g['isdiscount'] &&  $g['isdiscount_stat_time']<=time() && $g['isdiscount_time'] >= time() && $buyagain_sale) {
 
             if (is_array($isdiscount_discounts)) {
                 $key = !empty($level['id']) ? 'level' . $level['id'] : 'default';

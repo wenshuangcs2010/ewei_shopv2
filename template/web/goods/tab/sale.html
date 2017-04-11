@@ -104,10 +104,9 @@
             </label>
             {ife 'goods' $item}
             <div class="col-sm-4 col-xs-6">
-            {php echo tpl_form_field_daterange('stat_time', array('starttime'=>date('Y-m-d H:i', $item['isdiscount_stat_time']),'isdiscount_time'=>date('Y-m-d H:i', $item['isdiscount_time'])),true);}
+            {php echo tpl_form_field_daterange('stat_time', array('starttime'=>date('Y-m-d H:i', $item['isdiscount_stat_time']),'endtime'=>date('Y-m-d H:i', $item['isdiscount_time'])),true);}
             </div>
 
-           
             {else}
             <div class="col-sm-4 col-xs-6">
                 <div class='form-control-static'>

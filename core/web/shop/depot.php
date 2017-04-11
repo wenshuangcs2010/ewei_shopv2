@@ -34,7 +34,22 @@ class Depot_EweiShopV2Page extends WebPage {
     function add() {
         $this->post();
     }
-
+    function updatastock(){
+        global $_W, $_GPC;
+        if($_W['uniacid']!=DIS_ACCOUNT){
+            show_json(0,"非法访问");
+        }
+        $depot=Dispage::getDepot($_GPC['id']);
+        if($depot['updateid']==1){
+            m("httpUtil")->updatecnbuyerStock($_GPC['id'],$depot['storeroomid']);
+            show_json(1);
+        }
+        elseif($depot['updateid']==2){
+            m("httpUtil")->updateAdStock($_GPC['id'],$depot['storeroomid']);
+            show_json(1);
+        }
+        show_json(0,'此仓库无法更新');
+    }
     function edit() {
         $this->post();
     }
