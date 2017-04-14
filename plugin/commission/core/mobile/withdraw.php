@@ -27,7 +27,9 @@ class Withdraw_EweiShopV2Page extends CommissionMobileLoginPage
         } else {
             $member['commission_charge'] = 0;
         }
-
+        if($_W['uniacid']==FX_ACCOUNT){
+            
+        }
         include $this->template();
     }
 

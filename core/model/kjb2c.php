@@ -324,7 +324,7 @@ class Kjb2c_EweiShopV2Model {
 
 	//wx代理支付
 	function pay_disorder_wx($orderid,$uniacid){
-		
+		global $_W;
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		$disInfo=Dispage::getDisInfo($uniacid);
 

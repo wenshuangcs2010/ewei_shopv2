@@ -76,17 +76,21 @@ class Dispage{
 		if($goods_id==0){
 			return ;
 		}
+		$updatestatus=0;
 		$reseldata=pdo_fetch("select * from ".tablename("ewei_shop_goodsresel")." where goods_id=:goodsid",array(":goodsid"=>$goods_id));
+		if(!empty($reseldata)){
+			$updatestatus=1;
+		}
 		$reseldata['goods_id']=$goods_id;
 		$reseldata['status']=$data['isdis'];
 		if($hasoptions){
 			$reseldata['disprice']=$disPricearr;
 			$reseldata['hasoptions']=1;
-			if(empty($reseldata)){
+			if(empty($updatestatus)){
 				plog('goods.add', "新曾商品代理价 ID: {$reseldataid}<br>");
 				pdo_insert('ewei_shop_goodsresel',$reseldata);
 			}
-			if(!empty($reseldata)){
+			if(!empty($updatestatus)){
 				$reseldataid=$reseldata['id'];
 				unset($reseldata['id']);
 				$reseldata['disprice']=$disPricearr;
@@ -97,11 +101,11 @@ class Dispage{
 			$disprice=serialize($data);
 			$reseldata['disprice']=$disprice;
 			$reseldata['hasoptions']=0;
-			if(empty($reseldata)){
+			if(empty($updatestatus)){
 				plog('goods.add', "新曾商品代理价 ID: {$reseldataid}<br>");
 				pdo_insert('ewei_shop_goodsresel',$reseldata);
 			}
-			if(!empty($reseldata)){
+			if(!empty($updatestatus)){
 				$reseldataid=$reseldata['id'];
 				unset($reseldata['id']);
 				$reseldata['disprice']=$disprice;

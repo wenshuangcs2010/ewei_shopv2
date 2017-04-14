@@ -99,14 +99,6 @@ class ErpHttp{
 		$this->postdata['mobile']=$order['mobile'];//手机
 		$this->postdata['phone']=$order['phone'];//电话
 		$this->postdata['orderDetail']=json();//JOSN
-
-
-
-
-
-
-		//$payParssword=strtoupper(md5($_config['erp']['payParssword']));
-		//$payParssword=md5_4($payParssword));
 	}
 	public function test(){
 		var_dump(md5_4(123));

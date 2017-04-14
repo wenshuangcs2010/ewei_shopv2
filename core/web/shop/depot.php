@@ -40,6 +40,12 @@ class Depot_EweiShopV2Page extends WebPage {
             show_json(0,"非法访问");
         }
         $depot=Dispage::getDepot($_GPC['id']);
+        if($depot['ismygoods']==0){
+            show_json(0,"仓库无需更新库存");
+        }
+        if(empty($depot['storeroomid'])){
+             show_json(0,"仓库ID错误未填写");
+        }
         if($depot['updateid']==1){
             m("httpUtil")->updatecnbuyerStock($_GPC['id'],$depot['storeroomid']);
             show_json(1);
@@ -54,56 +60,9 @@ class Depot_EweiShopV2Page extends WebPage {
         $this->post();
     }
     function test(){
-        set_time_limit(0);
-         require_once(EWEI_SHOPV2_TAX_CORE."toerp/erphttp.php");
-        $n=new ErpHttp();
-        $n->test();
-        //ob_end_clean();
-       // ob_implicit_flush(1);
-       /*
-       
-        $exportlist = array();
-        $list=$n->getStoreRoom();
-        $columns=array(
-            array('title' => '商品编号', 'field' => 'goodssn', 'width' => 24),
-            array('title' => '商品类型', 'field' => 'sizeGroup', 'width' => 24),
-            array('title' => '仓库', 'field' => 'cname', 'width' => 24),
-            array('title' => '仓库ID', 'field' => 'storeroomId', 'width' => 24),
-            array('title' => '库存', 'field' => 'stock', 'width' => 24),
-            );
-      
-        $c1="20170210DZAC";
-        $c1n="江浙5仓";
-        $c2="BYXSC20160830";
-        $c2n="江浙3仓";
-        $c3='hzfxc150717';
-        $c3n="杭州1仓";
-        $c4="hznew";
-        $c4n="杭州新仓";
-        //foreach ($list['storeroomList'] as $key => $value){
-            $i=1;
-            while (true) {
-                $res=$n->getGoodsStock($c1,$i,'',100);
-                if(empty($res['storeroomStock'])){
-                   break;
-                }
-                foreach($res['storeroomStock'] as $key=>$Stock ){
-                   
-                    
-                    // if($res['storeroomStock'][$key-1]['goodsId']==$Stock['goodsId'] && $key !=0){
-                    //     continue;
-                    // }
-                    $exportlist[]=array('goodssn'=>$Stock['goodsId'],'sizeGroup'=>$Stock['sizeGroup'],'cname'=>$c1n,'storeroomId'=>$c1,'stock'=>$Stock['stock']);
-                }                
-                $res['storeroomStock']="";
-                $i++;
-            } 
-       // }
-        m('excel')->export($exportlist, array(
-            "title" => "商品数据-" . date('Y-m-d-H-i', time()),
-            "columns" => $columns
-        ));
-    */
+        //echo "111";
+       $res=m("cnbuyerdb")->updateCnbuyerStock("310516625460004342",-1);
+       //var_dump($res);
     }
     protected function post() {
 

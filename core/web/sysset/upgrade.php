@@ -157,7 +157,6 @@ if ($op == 'display') {
 	
 	file_put_contents(IA_ROOT . "/addons/ewei_shopv2/version.php", "<?php if(!defined('IN_IA')) {exit('Access Denied');}if(!defined('EWEI_SHOPV2_VERSION')) {define('EWEI_SHOPV2_VERSION', '1.0');}");
 	header('location: '.webUrl('upgrade'));
-	exit;	 
-	
+	exit;
 }
 include $this->template('web/sysset/upgrade');

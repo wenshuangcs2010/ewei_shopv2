@@ -27,3 +27,4 @@ define('EWEI_SHOPV2_DEBUG',true);
 //!defined('EWEI_SHOPV2_AUTH_URL') && define('EWEI_SHOPV2_AUTH_URL','http://upgrade.we7shop.com/api/');
 define('EWEI_SHOPV2_PLACEHOLDER','../addons/ewei_shopv2/static/images/placeholder.png');
 define('DIS_ACCOUNT',5);
+define('FX_ACCOUNT',5);

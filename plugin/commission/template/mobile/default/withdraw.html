@@ -111,6 +111,9 @@
 	    </div>
 	</div>
 	  <a {if $cansettle }href="{php echo mobileUrl('commission/apply')}"{/if} class="btn btn-danger block{if !$cansettle } disabled{/if}">我要提现</a>
+	  {if $_W['uniacid']==FX_ACCOUNT}
+		<a href="{php echo mobileUrl('commission/apply')}" class="btn btn-danger block">团队佣金提现</a>
+	  {/if}
 
 	</div>
     </div>

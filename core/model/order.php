@@ -479,10 +479,12 @@ class Order_EweiShopV2Model
                     if ($stocktype == 1) {
                         //增加库存
                         $totalstock = $g['goodstotal'] + $g['total'];
+                        m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],$g['total']);//原始保税库存更新
                     } else if ($stocktype == -1) {
                         //减少库存
                         $totalstock = $g['goodstotal'] - $g['total'];
                         $totalstock <= 0 && $totalstock = 0;
+                        m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],- $g['total']);//原始保税库存更新
                     }
                     if ($totalstock != -1) {
                         pdo_update('ewei_shop_goods', array('total' => $totalstock), array('uniacid' => $uniacid, 'id' => $g['goodsid']));

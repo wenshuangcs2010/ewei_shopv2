@@ -55,6 +55,11 @@
                 <td>{if $item['if_customs']} 是 {else} 否 {/if}</td>
                 <td>{if $item['enabled']} 是 {else} 否 {/if}</td>
                 <td style="text-align:left;">
+                {if $_W['uniacid']==DIS_ACCOUNT}
+                <a data-toggle="ajaxPost" data-confirm='此操作会占用大量内存与带宽，在获取过程中，请不要进行任何操作!' href="{php echo webUrl('shop/depot/updatastock', array('id' => $item['id']))}" class="btn btn-default btn-sm">
+                    <i class='fa fa-globe'></i>更新库存
+                </a>
+                {/if}
                     {ifp 'shop.depot.view|shop.depot.edit'}
                     	<a href="{php echo webUrl('shop/depot/edit', array('id' => $item['id']))}" class="btn btn-default btn-sm">
                     		<i class='fa fa-edit'></i> {ifp 'shop.depot.edit'}修改{else}查看{/if}

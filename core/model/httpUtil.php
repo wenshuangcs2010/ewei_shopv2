@@ -149,6 +149,160 @@ class HttpUtil_EweiShopV2Model
 		
 	}
 
+	function updateAdStock($depotid,$storeroomid){
+		global $_W;
+		$sql="SELECT id from ".tablename("ewei_shop_goods")." where depotid=:depotid";
+		$goodslist=pdo_fetchall($sql,array(":depotid"=>$depotid));
+		$ids=array();
+		if(empty($goodslist)){
+			return 0;
+		}
 
+		foreach ($goodslist as $key => $goods) {
+			$goodsoption=pdo_fetchall("SELECT id,goodssn,specs from ".tablename("ewei_shop_goods_option")." where goodsid=:gid and uniacid=:uniacid",array(":gid"=>$goods['id'],":uniacid"=>$_W['uniacid']));
+			foreach ($goodsoption as $value) {
+				$goodssn=trim($value['goodssn']);
+				$specs=explode("_", $value['specs']);
+				$specs=reset($specs);
+				$ids[$goodssn]['optionid_'.$value['id']]=array('optionid'=>$value['id'],'specid'=>$specs);
+			}
+		}
+		$stockgoods=array();//当前货号库存和尺寸
+		foreach ($ids as $key => $value) {
+			$storeroom=$this->updateGoodsOption($key,$storeroomid);
+			$arr=array();
+			foreach($storeroom as $v){
+				$size=$v['size'];
+				$arr[$key."_".$size]=$v['stock'];
+			}
+			$stockgoods[$key]=$arr;
+		}
+		$specsids=array();
+		foreach ($ids as $key => $value) {
+			foreach ($value as $k => $v) {
+				$specsids[]=$v['specid'];
+			}
+			//var_dump($value);
+		}
+		
+		$specsids=array_unique($specsids);
+		$specsids=implode(",", $specsids);
+
+		$sql="SELECT id,title from ".tablename("ewei_shop_goods_spec_item")." where id in($specsids) and uniacid=:uniacid";
+		$goodsspecsize=pdo_fetchall($sql,array(":uniacid"=>$_W['uniacid']));
+		$specs=array();
+		foreach ($goodsspecsize as $key => $value) {
+			$specs[$value['id']]=$value['title'];
+		}
+		foreach ($ids as $key => &$value) {
+			foreach ($value as $k => &$v) {
+				$v['specid']=$specs[$v['specid']];
+			}
+			unset($v);
+		}
+		unset($value);
+		
+		//var_dump($stockgoods);
+		foreach ($ids as $key => &$value) {
+			if(!empty($stockgoods[$key])){
+				$sql=" update ".tablename("ewei_shop_goods_option")." set stock= CASE id ";
+				$updateids=array();
+					foreach ($value as $k => &$v) {
+						$stock=$stockgoods[$key][$key."_".$v['specid']];
+						if(!empty($stock)){
+							$sql.=" WHEN {$v['optionid']} THEN {$stock} ";
+							$v['stock']=$stock;
+						}else{
+							$sql.=" WHEN {$v['optionid']} THEN 0 ";
+							$v['stock']=0;
+						}
+						$updateids[]=$v['optionid'];
+					}
+					unset($v);
+				$updateids=implode(",", $updateids);
+				$sql.=" END where id in ($updateids)";
+				//pdo_query($sql);
+			}else{
+				foreach ($value as $k => &$v) {
+					$deupdateid[]=$v['optionid'];
+					$v['stock']=0;
+				}
+				unset($v);
+			}
+		}
+		unset($value);
+		//var_dump($ids['S98775']['optionid_425']['stock']);
+		//die();
+		if(!empty($deupdateid)){
+			$deupdateids=implode(",", $deupdateid);
+			$sql=" update ".tablename("ewei_shop_goods_option")." set stock= 0 where id in($deupdateids) ";
+			pdo_query($sql);//主站更新完毕
+		}
+		//分销站点
+		foreach ($ids as $key => $value) {//分销站点更新完毕
+			$goodsoption=pdo_fetchall("SELECT id,disoptionid from ".tablename("ewei_shop_goods_option")." where goodssn=:goodssn and uniacid<>:uniacid and disoptionid!=0",array(":goodssn"=>$key,":uniacid"=>$_W['uniacid']));
+			//var_dump($goodsoption);
+			if(empty($goodsoption)){
+				continue;
+			}
+			$disoptionid=array();
+			$sql=" update ".tablename("ewei_shop_goods_option")." set stock= CASE id ";
+			foreach ($goodsoption as $option) {
+				$stock=$value['optionid_'.$option['disoptionid']]['stock'];
+				$disoptionid[]=$option['id'];//需要更新的ID
+				$sql.=" WHEN {$option['id']} THEN {$stock} ";
+			}
+			$disoptionid=implode(",", $disoptionid);
+			$sql.=" END where id in ($disoptionid)";
+			//var_dump($sql) ;
+			pdo_query($sql);
+		}
+	    return 1;
+	}
+
+	function updatecnbuyerStock($depostid,$storeroomid){
+		global $_W;
+		$sql="SELECT id,goodssn from ".tablename("ewei_shop_goods")." where depotid =:depotid and uniacid=:uniacid";
+		$goodslist=pdo_fetchall($sql,array(":depotid"=>$depostid,":uniacid"=>$_W['uniacid']));
+		if(empty($goodslist)){
+			return 0;
+		}
+		$cnbuyergoodslist=m("cnbuyerdb")->getgoodslist($storeroomid);
+		$goodssplist=array();
+		foreach ($cnbuyergoodslist as $goods) {
+			if($goods['if_show']==0){
+				$goods['stock']=0;
+			}
+			$goodssplist["sku_".$goods['only_sku']]=$goods['stock'];
+		}
+		unset($cnbuyergoodslist);
+		$sql="update ".tablename("ewei_shop_goods")." set total= CASE id  ";
+		$updateids=array();
+		$goodsstock=array();
+		foreach ($goodslist as $goods) {
+			$stock=$goodssplist['sku_'.$goods['goodssn']];
+			if(isset($stock)){
+				$sql.=" WHEN {$goods['id']} THEN {$stock} ";
+				$updateids[]=$goods['id'];
+				$goodsstock['goodsid_'.$goods['id']]=$stock;
+			}
+			//知道 某个商品ID的库存	
+		}
+		$goodsids=implode(",", $updateids);
+		$sql.=" END where id in ($goodsids)";
+
+		pdo_query($sql);
+		$updatesql="insert into ".tablename("ewei_shop_goods")."  (id,total) values ";
+		$sql=" SELECT id,disgoods_id FROM ".tablename("ewei_shop_goods")." where uniacid <> {$_W[uniacid]} and disgoods_id in ($goodsids)";
+			$disgoodslist=pdo_fetchall($sql,array(":disgoods_id"=>$g));
+			foreach ($disgoodslist as $goods) {
+				$stock=$goodsstock['goodsid_'.$goods['disgoods_id']];
+				$updatesql.="({$goods[id]},{$stock}),";
+			}
+		$updatesql=substr($updatesql,0,strlen($updatesql)-1);
+		$updatesql.=" on duplicate key update total=values(total)";
+		pdo_query($sql);
+		
+	}
 
 }
