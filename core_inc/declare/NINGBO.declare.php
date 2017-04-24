@@ -33,6 +33,9 @@ class NINGBO_Api extends ningboData{
 			$remark=$order['remark'];
 			$this->setDefault01($remark);
 		}
+		// $this->setBuyerIdnum($order['imid']);
+		// $this->setBuyerName($order['realname']);
+		// $this->setBuyerIsPayer();
 		$this->setIdnum($order['imid']);
 		$this->setName($order['realname']);
 		$this->setLogisticsName($expressname);

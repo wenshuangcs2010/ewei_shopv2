@@ -143,10 +143,16 @@ class Team_EweiShopV2Page extends PluginMobileLoginPage {
 		/*团是否过期*/
 		//团长订单
 		$tuan_first_order = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_groups_order') . " WHERE teamid = {$teamid} and heads = 1");
+
 		$hours = $tuan_first_order['endtime'];
+		//var_dump($hours);
+		
 		$time = time();
 		$date = date('Y-m-d H:i:s',$tuan_first_order['starttime']); //团长开团时间
+		//var_dump($date);
 		$endtime = date('Y-m-d H:i:s',strtotime(" $date + $hours hour"));
+		//var_dump($endtime);
+		//die();
 		$date1 = date('Y-m-d H:i:s',$time); /*当前时间*/
 		$lasttime2 = strtotime($endtime)-strtotime($date1);//剩余时间（秒数）
 

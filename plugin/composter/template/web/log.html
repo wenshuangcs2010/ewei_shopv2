@@ -1,0 +1,53 @@
+{template '_header'}
+
+
+<div class="page-heading"> <h2>二维码 <small>个数: <span class='text-danger'>{$total}</span></small></h2> </div>
+	
+  
+<form action="" method="post" onsubmit="return formcheck(this)">
+  
+   {if count($list)>0}
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th style='width:80px;'>ID</th>
+                       
+                        <th style='width:180px;'>关联会员组</th>
+                        
+                        <th style='width:80px;'>场景ID</th>
+                        <th  style='width:190px;'>URl</th>
+                    
+                        <th style='width:80px;'>类型</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead> 
+                <tbody>  
+                 {loop $list $row}
+                    <tr>
+                        <td>{$row['id']}</td>
+                      
+                        <td>{$row['groupname']}</td>
+                        <td>{$row['scentid']}</td>
+                        <td>https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={$row['ticket']}</td>
+                        <td>{if $row['qrtype']==1}临时{else}永久{/if}</td>
+                         
+                        <td>{php echo date('Y-m-d H:i',$row['createtimes'])}</td>
+                        <td><a href="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={$row['ticket']}" target="_blank" class="__web-inspector-hide-shortcut__">查看</a>
+                        
+                        </td>
+                    </tr>
+                    {/loop}
+                </tbody>
+            </table>
+  {$pager}
+     {else}
+     <div class='panel panel-default'>
+	<div class='panel-body' style='text-align: center;padding:30px;'>
+		 暂时没有任何二维码!
+	</div>
+</div>
+     
+     {/if}
+         </form>
+{template '_footer'}

@@ -279,7 +279,14 @@
 {/if}
 
 <!--联系填写-->
+
 <div class="fui-cell-group sm" id="realnamecheck" {if !$ifidentity && !$ifidentity}style="display:none"{/if}>
+
+<div class="fui-cell">
+        <div class="fui-cell-label" style="font-size: 0.6rem;color: red" >海关总署:</div>
+        <div class="fui-cell-remark noremark" style="font-size: 0.6rem;color: red;text-align: left;">订购人信息必须和支付人开户身份信息一致</div>
+</div>
+
 <div class="fui-cell">
     <div class="fui-cell-label sm">姓名</div>
     <div class="fui-cell-info"><input type="text" placeholder="请输入姓名" name='realname' id="realname" class="fui-input" value=""/></div>

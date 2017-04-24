@@ -1,0 +1,37 @@
+<script type="text/javascript" src="../addons/ewei_shopv2/static/js/dist/area/cascade.js"></script>
+
+<form class="form-horizontal form-validate" action="{php echo webUrl('order/op/editimid')}" method="post" enctype="multipart/form-data">
+	<input type='hidden' name='id' value='{$id}' />
+
+	<div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">编辑身份证信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">身份证姓名 :</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <input type="text" name="realname" class="form-control" value="{$item['realname']}" data-rule-required='true' />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">身份证号码:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <input type="text" name="imid" class="form-control" value="{$item['imid']}" data-rule-required='true' />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">保存</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+            </div>
+        </div>
+        </div>
+</form>
+
+
+

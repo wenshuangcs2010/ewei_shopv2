@@ -172,6 +172,16 @@ class NINGBOData extends declareUtil{
 			}
 		$this->params['Body']['Order']['Goods']=$goods_detail;
 	}
+	function setBuyerIdnum($BuyerIdnum){//订购人订购人身份证号码
+		$this->params['Body']['Order']['BuyerIdnum']=$BuyerIdnum;
+	}
+	function setBuyerName($BuyerName){//订购人姓名
+		$this->params['Body']['Order']['BuyerName']=$BuyerName;
+	}
+	function setBuyerIsPayer($BuyerIsPayer=1){//订购人支付人是否一致（0=不一致，1=一致）
+
+		$this->params['Body']['Order']['BuyerIsPayer']=$BuyerIsPayer;
+	}
 
 
 }

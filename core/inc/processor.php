@@ -22,7 +22,7 @@ class Processor extends WeModuleProcessor {
  		$names = explode(':', $rule['name']);
 		$plugin = isset($names[1]) ? $names[1] : '';
 		$processname  = $plugin;
-		
+		//WeUtility::logging('rule>检查',var_export($names,true));
 		if (!empty($plugin)) {
 			if ($plugin == 'com') {
 				$com = isset($names[2]) ? $names[2] : '';

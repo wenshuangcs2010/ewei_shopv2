@@ -664,4 +664,21 @@ class Op_EweiShopV2Page extends WebPage {
         }
         include $this->template();
     }
+    function editimid(){
+        global $_W, $_GPC;
+        $opdata = $this->opData();
+        extract($opdata);
+        if($_W['ispost']){
+           $imid=trim($_GPC['imid']);
+           $realname=trim($_GPC['realname']);
+           $id=$_GPC['id'];
+           $ret=pdo_update("ewei_shop_order",array("imid"=>$imid,"realname"=>$realname),array("id"=>$id));
+           if($ret){
+            show_json(1,'修改成功');
+           }else{
+            show_json(0,"修改失败");
+           }
+        }
+        include $this->template();
+    }
 }

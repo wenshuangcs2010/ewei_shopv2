@@ -14,8 +14,7 @@ class Cnbuyerdb_EweiShopV2Model {
 		try{
 			$this->db = new PDO($dsn, $this->dbusername, $this->dbpass);
 		}catch(Exception $e){
-			echo $e->getMessage()."\n";
-			exit;
+			$this->db="";
 		}
 	}
 	public function __construct() {
@@ -25,17 +24,35 @@ class Cnbuyerdb_EweiShopV2Model {
 		$sql="select g.only_sku,gp.stock,g.if_show from cs_goods as g ".
 		" LEFT JOIN cs_goods_spec as gp ON g.goods_id=gp.goods_id".
 		" where g.type='material' and g.store_id ={$storeroomid}";
+		if(!$this->db){
+			return false;
+		}
 		$ret=$this->db->query($sql);
 		$result=$ret->fetchAll(PDO::FETCH_ASSOC);
 		return $result;
 	}
 
-
+	public function get_stock($goodssn){
+		$sql="select g.only_sku,gp.stock,g.if_show from cs_goods as g ".
+		" LEFT JOIN cs_goods_spec as gp ON g.goods_id=gp.goods_id".
+		" where g.type='material' and g.only_sku='{$goodssn}'  LIMIT 0,1 ";
+		if(!$this->db){
+			return false;
+		}
+		$result=$this->db->query($sql);
+		if(!empty($result)){
+			$result=$result->fetch(PDO::FETCH_ASSOC);
+		}
+		//
+		return $result;
+	}
 	public function updateCnbuyerStock($goodssn,$num){
 		$sql="select gp.spec_id,g.only_sku,gp.stock,g.if_show from cs_goods as g ".
 		" LEFT JOIN cs_goods_spec as gp ON g.goods_id=gp.goods_id".
 		" where  g.only_sku ='{$goodssn}'";
-		
+		if(!$this->db){
+			return false;
+		}
 		$ret=$this->db->query($sql);
 		$result=$ret->fetch(PDO::FETCH_ASSOC);
 	

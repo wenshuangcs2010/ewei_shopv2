@@ -12,13 +12,16 @@ if (!defined('IN_IA')) {
 class Index_EweiShopV2Page extends WebPage {
 
 
-    function testorder(){
-         $pluginc = p('commission');
-        if ($pluginc) {
-            //分销订单检测
-            $pluginc->checkOrderConfirm(62);
-        }
-    }
+   function test11(){
+     global $_W, $_GPC;
+     $name=$_GPC['name'];
+    
+     $sql="select * from ".tablename("ewei_shop_goods")." where title={$name}";
+     $s=pdo_fetch($sql);
+     var_dump($s);
+     die();
+   }
+
     function main() {
 
         global $_W, $_GPC;

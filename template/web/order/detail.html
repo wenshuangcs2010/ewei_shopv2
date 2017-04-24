@@ -454,6 +454,10 @@
                             {$item['imid']} 
                             </td>
                         </tr>
+                        <tr>
+                         <td style='width:80px'></td>
+                         <td style='word-break: break-all;white-space: normal'>{if $item['merchid'] == 0}<a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('order/op/editimid', array('id' => $item['id']))}">编辑身份证信息</a>{/if}</td>
+                        </tr>
                         {/if}
                     </table>
 

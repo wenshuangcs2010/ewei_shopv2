@@ -40,7 +40,7 @@ class index_EweiShopV2Page extends MobilePage {
             }
             if($lottery['share_unm_total']==0){
                 $arr['status']=-1;
-                $arr['message']="没有获得机会";
+                $arr['message']="感谢您的分享";
                 echo json_encode($arr);
                 exit;
             }
@@ -384,9 +384,8 @@ class index_EweiShopV2Page extends MobilePage {
                     if($val['count']>=$val['total']){
                         $pass = 1;
                     }
-                    
+
                 }
-              
                 if($pass==1){
                     $temreward[$key]=$value['probability'];
                 }

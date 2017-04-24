@@ -478,6 +478,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 					}
 				}
 			}
+
 			$sql="SELECT * FROM ".tablename("ewei_shop_goods")." WHERE id=:gid";
 			$goods_info=pdo_fetch($sql,array(":gid"=>$goods['gid']));
 			//var_dump($goods_info);
@@ -490,6 +491,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 			//生成订单号
 			$ordersn = m('common')->createNO('groups_order', 'orderno', 'PT');
 			if ($_W['ispost']) {
+
 				if(empty($_GPC['aid']) && !$isverify){
 					header('location: '.mobileUrl('groups/address/post'));
 					exit;
@@ -511,11 +513,11 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 
 				$depostfee=$ordergoods['depostfee'];
 				$disordergoods=p('groups')->get_disprice($dispatch_price,$goodid);//代理订单
-				foreach($ordergoods['order_goods'] as $goods){
-					$consumption_tax=$goods['tax']['consumption_tax']*$goods['total'];
-					$rate=$goods['tax']['rate']*$goods['total'];
-					$consolidated=$goods['tax']['consolidated']*$goods['total'];
-					$dprice=$goods['dprice'];
+				foreach($ordergoods['order_goods'] as $tempgoods){
+					$consumption_tax=$tempgoods['tax']['consumption_tax']*$tempgoods['total'];
+					$rate=$tempgoods['tax']['rate']*$tempgoods['total'];
+					$consolidated=$tempgoods['tax']['consolidated']*$tempgoods['total'];
+					$dprice=$tempgoods['dprice'];
 				}
 				if(!empty($disordergoods)){
 					foreach($disordergoods['order_goods'] as $goods){
@@ -524,13 +526,13 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 					}
 					$disamount=$disordergoods['disamount'];
 					$dff_fee=$consolidated-$disconsolidated;//差额计算
-					
 					if($dff_fee>0){
 						$disamount=$disamount+$dispatch_price+$dff_fee;
 					}else{
 						$disamount=$disamount+$dispatch_price;
 					}
 				}
+
 				$data = array(
 					'uniacid' => $_W['uniacid'],
 					'groupnum' => $groupnum,

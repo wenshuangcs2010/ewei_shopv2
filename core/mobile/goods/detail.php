@@ -57,9 +57,28 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         //商品
         $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
-        if($goods['disgoods_id']>0){
-            $goodstotal = pdo_fetchcolumn("select total from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
-            $goods['total']=$goodstotal;
+        if($_W['uniacid']==DIS_ACCOUNT && !empty($goods['goodssn'])){
+
+            $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
+           if(!empty($ret)){
+                if($ret['if_show']==0){
+                    $goods['total']=0;
+                }else{
+                  $goods['total']=$ret['stock'];
+                }
+           }
+        }
+        if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
+            //$goodstotal = pdo_fetchcolumn("select total from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
+           // $goods['total']=$goodstotal;
+            $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
+            if(!empty($ret)){
+                if($ret['if_show']==0){
+                    $goods['total']=0;
+                }else{
+                    $goods['total']=$ret['stock'];
+                }
+            }
         }
 
         $merchid = $goods['merchid'];

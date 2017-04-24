@@ -327,8 +327,12 @@ class Kjb2c_EweiShopV2Model {
 		global $_W;
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		$disInfo=Dispage::getDisInfo($uniacid);
-
+		if($uniacid==26){
+			WeUtility::logging('自动支付', var_export($disInfo, true));
+			WeUtility::logging('自动支付', $orderid);
+		}
 		 if($disInfo['secondpaytype']==0 && $disInfo['autoretainage']==1 && $disInfo['secondpay']==1){//需要二次支付和自动付款
+		 	
 		 	$payfee=$order['disorderamount'];
 		 	$disorder_sn=Dispage::createNO("shop_order_dispay","id","dis");//生成订单号
 		 	$orderinfo=pdo_fetch("SELECT * from ".tablename("ewei_shop_order_dispay")." where order_id=:orderid ",array(":orderid"=>$orderid));

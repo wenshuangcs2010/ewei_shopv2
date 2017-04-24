@@ -95,6 +95,7 @@
 			<div class="title">{$plugin_author_set['texts']['center']}</div>
 			<div class="text"></div>
 		</a>
+
 		{if $team_money>0}
 		<a class="fui-block-child">
 			<div class="icon text-blue"><i class="icon icon-money"></i></div>
@@ -140,6 +141,14 @@
 		  <a class="fui-block-child" href="{php echo mobileUrl('commission/rank');}">
 			    <div class="icon text-orange"><i class="icon icon-rank"></i></div>
 			    <div class="title">{php echo $this->set['texts']['commission']}排名</div>
+			    <div class="text"></div>
+		 </a>
+	    {/if}
+
+	    {if !empty($this->set['rank']['status'])}
+		  <a class="fui-block-child" href="{php echo mobileUrl('commission/rank');}">
+			    <div class="icon text-orange"><i class="icon icon-rank"></i></div>
+			    <div class="title">分销订单</div>
 			    <div class="text"></div>
 		 </a>
 	    {/if}

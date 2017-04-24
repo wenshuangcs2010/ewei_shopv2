@@ -1,0 +1,41 @@
+
+<form class="form-horizontal form-validate" action="{php echo webUrl('composter/scan/update')}" method="post" enctype="multipart/form-data">
+  <input type='hidden' name='composterid' value='{$id}' />
+    <div class="modal-dialog">
+           <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">新曾二维码</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                <label class="col-sm-2 control-label">所在分组</label>
+                  <div class="col-sm-8 col-xs-12">
+                  <select name="groupid" class="form-control valid" aria-invalid="false">
+                      {loop $grouplist $c}
+                        <option value="{$c['id']}" {if $c['id']==$item['id']} selected="" {/if} >{$c['groupname']}</option>
+                      {/loop}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label must">海报类型</label>
+                  <div class="col-sm-9 col-xs-12">
+                     
+                      <label class="radio-inline">
+                          <input type="radio" name="qrtype" value="0" {if $item['qrtype']==0}checked{/if} /> 永久二维码
+                         
+                      </label>
+                      <label class="radio-inline">
+                           <input type="radio" name="qrtype" value="1" {if $item['qrtype']==1}checked{/if} /> 临时二维码(默认30天)
+                      </label>
+                  </div> 
+              </div> 
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-primary" type="submit">提交</button>
+              <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+          </div>
+        </div>
+    </div>
+    </form>
