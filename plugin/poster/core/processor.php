@@ -163,7 +163,7 @@ class PosterProcessor extends PluginProcessor {
 			if(!empty($data)){
 				pdo_update("ewei_shop_member",$data,array("openid"=>$openid,'uniacid'=>$_W['uniacid']));
 			}
-
+			
 			if(!empty($membergroup['entrytext'])){
 				$poster['entrytext']=$membergroup['entrytext'];//拦截分组消息
 			}
@@ -223,7 +223,7 @@ class PosterProcessor extends PluginProcessor {
                     m('finance')->pay($qr['openid'], $poster['paytype'], $pay, '', $recpaycontent,false);
                 }
             }
-
+            
 			//赠送优惠券
 			$cansendreccoupon =false;
 			$cansendsubcoupon =false;

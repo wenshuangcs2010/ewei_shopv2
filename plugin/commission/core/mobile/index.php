@@ -86,9 +86,11 @@ class Index_EweiShopV2Page extends CommissionMobileLoginPage
                 $team_money = $plugin_author->getTeamPay($member['id']);
             }
         }
-       
+        
         //var_dump($plugin_author_set);
         include $this->template();
     }
+
+   
 
 }

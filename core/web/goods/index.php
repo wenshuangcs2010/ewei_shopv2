@@ -132,14 +132,21 @@ class Index_EweiShopV2Page extends WebPage {
             $t[$resel['goods_id']]=unserialize($resel['disprice']);
         }
         if($_GPC['export']==1){
-
+            //获取全部仓库
+            $depotsql="SELECT * from ".tablename("ewei_shop_depot");
+            $depostlist=pdo_fetchall($depotsql);
+            $de=array();
+            foreach ($depostlist as $key => $value) {
+                $de[$value['id']]=$value['title'];
+            }
             $categorys = m('shop')->getFullCategory(true);
-            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.marketprice,g.discounts,g.disgoods_id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.subtitle,g.keywords,g.displayorder FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
             $goodslist=pdo_fetchall($sql,$params);
             $categorystemp=array();
             foreach ($categorys as $r) {
                $categorystemp[$r['id']]=$r['name'];
             }
+            //var_dump($categorystemp);
             $disinfo=Dispage::getDisInfo($_W['uniacid']);
            $levels = m('member')->getLevels();
 
@@ -155,12 +162,18 @@ class Index_EweiShopV2Page extends WebPage {
                 )
             ),$levels);
             $columns = array(
+                array('title' => '排序', 'field' => 'displayorder', 'width' => 24),
                 array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
-                array('title' => '商品名称', 'field' => 'title', 'width' => 24),
+                array('title' => '商品名称', 'field' => 'title', 'width' => 124),
+                array('title' => '副标题', 'field' => 'subtitle', 'width' => 12),
+                array('title' => '关键字', 'field' => 'keywords', 'width' => 12),
                 array('title' => '单位', 'field' => 'unit', 'width' => 12),
                 array('title' => '商品单价', 'field' => 'marketprice', 'width' => 12),
-              
+                array("title"=>'仓库','field' => 'depot', 'width' => 12),
                 array('title' => '代理状态', 'field' => 'isdis', 'width' => 12),
+                array('title' => '销量', 'field' => 'sales', 'width' => 12),
+                array('title' => '库存', 'field' => 'total', 'width' => 12),
+                array('title' => '首图链接', 'field' => 'imgthumb', 'width' => 12),
             );
             if($_W['uniacid']!=DIS_ACCOUNT){
                  $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
@@ -177,11 +190,14 @@ class Index_EweiShopV2Page extends WebPage {
             }
             
             foreach($goodslist as $key=> $goodstemp){
+               // var_dump($goodstemp['ccates']);
             $discounts=(array)json_decode($goodslist[$key]['discounts']);
                foreach($levels as $l){
                 $goodslist[$key][$l['key']]=$discounts[$l['key'].'_pay'];
                }
                 $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
+                $goodslist[$key]['depot']=empty($goodstemp['depotid'])?"默认仓库" :$de[$goodstemp['depotid']];
+                $goodslist[$key]['imgthumb']="http://wx.lylife.com.cn/attachment/".$goodstemp['thumb'];
                if($_W['uniacid']!=DIS_ACCOUNT){
                  $goodslist[$key]['disprice']=$t[$goodstemp['disgoods_id']][$disinfo['resellerid']];
                }
