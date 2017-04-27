@@ -84,8 +84,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $allow_sale = true;
         $ifidentity=Dispage::check_readname($depotid);//wsq
 
-        
-
+        //获取上一次用户购买的身份信息
+        $lastsql="SELECT id,imid,realname FROM ".tablename("ewei_shop_order")." where uniacid=:uniacid  and openid=:openid order by createtime desc";
+        $lastorder=pdo_fetch($lastsql,array(":uniacid"=>$_W['uniacid'],":openid"=>$_W['openid']));
+       // var_dump($lastorder);
 
         //是否为套餐订单
         $packageid = intval($_GPC['packageid']);
