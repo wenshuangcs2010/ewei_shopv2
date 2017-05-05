@@ -1573,35 +1573,93 @@ class Order_EweiShopV2Model
 
 
     function  get_tax($order_goods,$dispatch_price,$goodsprice,$alldeduct){
+         global $_W;
         require_once EWEI_SHOPV2_TAX_CORE. '/tax_core.php';
         $tax=new Taxcore();
         $out_goods=array();
-       // var_dump($order_goods);
-        foreach($order_goods as $key=>$goods){
-            $out_goods[$key]['id']=$goods['goodsid'];
-            $out_goods[$key]['price']=$goods['ggprice']/$goods['total'];
-            $out_goods[$key]['total']=$goods['total'];
-            $out_goods[$key]['vat_rate']=$goods['vat_rate'];
-            $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
-        }
+        //拆分组合
 
+        foreach($order_goods as $key=>$goods){
+           
+            if($goods['type']==4){
+                $packgoods=Dispage::getPackgoods($goods['goodsid'],$_W['uniacid']);
+                $packgoodsprice=$goods['ggprice']/$goods['total'];//组合商品单价
+                foreach ($packgoods as $key => $value) {
+                    $packemarketprice+=$value['marketprice']*$value['number'];
+                }
+                $oneprice=$goods['ggprice']/$goods['total'];//单件商品卖价
+                foreach ($packgoods as $key => $value) {
+                    //
+                   
+                  
+                    $oldrate=$value['marketprice']*$value['number']/$packemarketprice;//组合中单件商品比例
+
+                    $price=$oneprice*$oldrate/$value['number'];//组合中单件商品卖价
+                    //var_dump($price);
+                    
+                    $tempgoods=array(
+                        'id'=>$value['id'],
+                        'price'=>$price,
+                        'total'=>$value['number']*$goods['total'],
+                        'vat_rate'=>$value['vat_rate'],
+                        'consumption_tax'=>$value['consumption_tax'],
+                        'parentid'=>$goods['goodsid'],
+                        'type'=>$value['type'],
+                        'goodssn'=>$value['goodssn'],
+                        'title'=>$value['title'],
+                        'unit'=>$value['unit'],
+                        'disgoods_id'=>$value['disgoods_id'],
+                        );
+                    $out_goods[]=$tempgoods;
+                }
+                continue;
+            }
+            $out_goods[]=array(
+                        'id'=>$goods['goodsid'],
+                        'price'=>$goods['ggprice']/$goods['total'],
+                        'total'=>$goods['total'],
+                        'vat_rate'=>$goods['vat_rate'],
+                        'consumption_tax'=>$goods['consumption_tax'],
+                        'parentid'=>$goods['goodsid'],
+                        'type'=>$goods['type'],
+                        'goodssn'=>$goods['goodssn'],
+                        'title'=>$goods['title'],
+                        'unit'=>$goods['unit'],
+                        'disgoods_id'=>$goods['disgoods_id'],
+                        );
+            // $out_goods[$key]['id']=$goods['goodsid'];
+            // $out_goods[$key]['price']=$goods['ggprice']/$goods['total'];
+            // $out_goods[$key]['total']=$goods['total'];
+            // $out_goods[$key]['vat_rate']=$goods['vat_rate'];
+            // $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
+        }
+       
         $retrundata=$tax->get_dprice_order($out_goods,$dispatch_price,$goodsprice,$alldeduct);
 
         $out_goods=$retrundata['order_goods'];
+
         $depostfee=$retrundata['depostfee'];//总运费
         $out_goods=$tax->get_tax($out_goods);
 
         $rate=0;
         $consumption_tax=0;
         foreach ($out_goods as $goods) {
-            $r[$goods['id']]=$goods;
+            $r[$goods['parentid']][]=$goods;
             $consumption_tax+=$goods['tax']['consumption_tax']*$goods['total'];
             $rate+=$goods['tax']['rate']*$goods['total'];
         }
+
         foreach($order_goods as &$goods){
-           $goods['tax']= $r[$goods['goodsid']]['tax'];
-           $goods['shipping_fee']=$r[$goods['goodsid']]['shipping_fee'];
-           $goods['dprice']=$r[$goods['goodsid']]['dprice'];
+            if($goods['type']==4){
+                foreach ($r[$goods['goodsid']] as $key => $value) {
+                    $goods['childrengoods'][]=$value;
+
+                }
+                  continue;
+            }
+           $goods['tax']= $r[$goods['goodsid']][0]['tax'];
+           $goods['shipping_fee']=$r[$goods['goodsid']][0]['shipping_fee'];
+           $goods['dprice']=$r[$goods['goodsid']][0]['dprice'];
         }
         
         unset($goods);
@@ -1613,7 +1671,22 @@ class Order_EweiShopV2Model
         $tax=new Taxcore();
         $out_goods=array();
         //var_dump($order_goods);\
-        
+        //重新组装order_goods
+        foreach ($order_goods as $key => $value) {
+           if($value['type']==4){
+            $packgoods=Dispage::getPackgoods($value['goodsid'],$_W['uniacid']);
+            foreach ($packgoods as $k => $v) {
+                $v['goodsid']=$v['id'];
+                $v['total']=$v['number']*$value['total'];
+                unset($v['id']);
+                 $order_goods[]=$v;
+            }
+            unset($order_goods[$key]);
+           }else{
+            $order_goods[]=$value;
+           }
+        }
+       
         $dispriceamount=0;
         $dispatch_array=array();
         $disprice_dispatch_price=0;
@@ -1622,7 +1695,7 @@ class Order_EweiShopV2Model
             $out_goods[$key]['vat_rate']=$goods['vat_rate'];
             $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
             $type=Dispage::get_disType($goods['disgoods_id'],$_W['uniacid']);
-           $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
+            $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
             $out_goods[$key]['price']=$disprice;
             $dispriceamount+=$disprice*$goods['total'];
             if($goods['dispatchid']!=0){
@@ -1630,7 +1703,7 @@ class Order_EweiShopV2Model
             }else{
                 $dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//
             }
-          
+            
             if ($dispatch_data['calculatetype'] == 1) {
                             //按件计费
                 $param = $goods['total'];

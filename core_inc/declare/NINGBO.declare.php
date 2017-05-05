@@ -33,9 +33,9 @@ class NINGBO_Api extends ningboData{
 			$remark=$order['remark'];
 			$this->setDefault01($remark);
 		}
-		// $this->setBuyerIdnum($order['imid']);
-		// $this->setBuyerName($order['realname']);
-		// $this->setBuyerIsPayer();
+		$this->setBuyerIdnum($order['imid']);
+		$this->setBuyerName($order['realname']);
+		$this->setBuyerIsPayer();
 		$this->setIdnum($order['imid']);
 		$this->setName($order['realname']);
 		$this->setLogisticsName($expressname);
@@ -46,6 +46,7 @@ class NINGBO_Api extends ningboData{
 		$this->setDistrict($address['area']);
 		$this->setConsigneeAddr($address['address']);
 		$this->setConsigneeTel($address['mobile']);
+		
 		$this->setGoods($order_goods);
 		$this->init_prams();
 	}

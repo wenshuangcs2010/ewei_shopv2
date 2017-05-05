@@ -1,0 +1,107 @@
+<div style='max-height:500px;overflow:auto;min-width:850px;'>
+<style type="text/css">
+    .popover{z-index:10000;}
+    .alert{margin-top:10px;}
+</style>
+<div class="alert alert-danger">
+    <p class="alert-link">以下商品不能参加优惠套餐活动：</p>
+    <p>虚拟商品、限时购商品、促销商品、核销商品、会员权限商品、多商户商品；以及参加积分商城/拼团的商品。</p>
+</div>
+    <table class="table table-hover" style="min-width:850px;">
+        <thead>
+        <th style='width:40px;'></th>
+        <th>售价</th>
+        <th>库存</th>
+        <th>选择规格</th>
+        <th>组合数量</th>
+      
+        <th>操作</th>
+        </thead>
+        <tbody>
+        {loop $list $row}
+        <tr>
+            <td><img src='{php echo tomedia($row['thumb'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> </td>
+            <td>{$row['title']}</td>
+            <td id="marketprice_{$row['id']}">{$row['marketprice']}</td>
+            <td id="total_{$row['id']}">{php echo intval($row['total'])}</td>
+            <td>{if $row['spc']!=''}
+            <select class="form-control" id="spc_{$row['id']}" onchange="spcselect(this);">{loop $row['spc'] $r}<option data-id="{$row['id']}" data-specs="{php  echo $r['id'];}" data-marketprice="{$r['marketprice']}" data-stock="{$r['stock']}" data-title="{php echo $r['title']}" >{php echo $r['title']}</option>{/loop}</select>
+            {else}无规格{/if}
+            </td>
+            
+            <td><input type="number" value="1" class="form-control" name="total_goods_{$row['id']}" placeholder="组合数量"  ></td>
+            
+            <td id="select_{$row['id']}">
+            {if $row['type'] != 1 || $row['isdiscount'] > 0 || $row['istime'] > 0 || $row['isverify'] > 1 || $row['groupstype'] >0 || $row['total'] <= 0 }
+                <span>不支持</span>&nbsp;&nbsp;
+
+                <a data-toggle='popover' data-html='true' data-placement='right' data-content="<table style='width:100%;'>
+                {if $row['isverify'] > 1}<tr><td  style='border:none;'>核销商品</td></tr>{/if}
+                {if $row['type'] == 2}<tr><td  style='border:none;'>虚拟商品</td></tr>{/if}
+                {if $row['type'] == 3}<tr><td  style='border:none;'>虚拟物品（卡密）</td></tr>{/if}
+                {if $row['type'] == 10}<tr><td  style='border:none;'>话费流量充值</td></tr>{/if}
+                {if $row['isdiscount'] > 0}<tr><td  style='border:none;'>促销商品</td></tr>{/if}
+                {if $row['istime'] > 0}<tr><td  style='border:none;'>限时卖商品</td></tr>{/if}
+                {if $row['total'] <= 0}<tr><td  style='border:none;'>库存不足</td></tr>{/if}
+                {if $row['groupstype'] > 0}<tr><td  style='border:none;'>拼团商品</td></tr>{/if}
+                </table>"><i class='fa fa-question-circle'></i></a>
+
+                {else}
+                <a href="javascript:;" class="label label-primary" onclick='biz.selector_new.setpack(this, {php echo json_encode($row);})'>选择</a>
+                {/if}
+            </td>
+        </tr>
+        {/loop}
+        {if $total<=0}
+        <tr>
+            <td colspan='5' align='center'>抱歉！未查询到{if !empty($title)}与“{$title}”{/if}相关的商品，请更换关键字后重试。</td>
+        </tr>
+        {else}
+        <tr>
+            <td colspan="9" class="text-center">
+                {$pager}
+            </td>
+        </tr>
+        {/if}
+        </tbody>
+    </table>
+    <script type="text/javascript">
+    require(['bootstrap'], function ($) {
+        $('[data-toggle="tooltip"]').tooltip({
+            container: $(document.body)
+        });
+        $('[data-toggle="popover"]').popover({
+            container: $(document.body)
+        });
+    });
+    //分页函数
+    var type = '';
+    function select_page(url,pindex,obj) {
+        if(pindex==''||pindex==0){
+            return;
+        }
+        var keyword = $.trim($("#goodsid_input").val());
+        $("#goodsid_input").html('<div class="tip">正在进行搜索...</div>');
+
+        $.ajax({
+            url:"{php echo webUrl('goods/select/query')}",
+            type:'get',
+            data:{keyword:keyword,page:pindex,psize:10},
+            async : false, //默认为true 异步
+            success:function(data){
+                $(".content").html(data);
+            }
+        });
+    }
+    function spcselect(obj){
+        var specobj=$(obj).find("option:selected");
+        var goodsid=specobj.attr('data-id');
+       
+        var total=specobj.attr('data-stock');
+        var marketprice=specobj.attr('data-marketprice');
+        $("#total_"+goodsid).text(total);
+        $("#marketprice_"+goodsid).text(marketprice);
+        
+    }
+    </script>
+</div>

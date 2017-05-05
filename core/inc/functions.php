@@ -612,9 +612,11 @@ if (!function_exists('tpl_selector_new')) {
         $options['preview'] = isset($options['preview']) ? $options['preview'] : true;
         $options['type'] = isset($options['type']) ? $options['type'] : 'image';
         $options['input'] = isset($options['input']) ? $options['input'] : true;
+        $options['optiontype']=isset($options['optiontype']) ? $options['optiontype'] : 1;
         $options['required'] = isset($options['required']) ? $options['required'] : false;
         $options['nokeywords'] = isset($options['nokeywords']) ? $options['nokeywords'] : 0;
         $options['placeholder'] = isset($options['placeholder']) ? $options['placeholder'] : '请输入关键词';
+        $options['text'] = isset($options['text']) ? $options['text'] : '价格/分销佣金';
         $options['autosearch'] = isset($options['autosearch']) ? $options['autosearch'] : 0;
         $options['optionurl'] = isset($options['optionurl']) ? $options['optionurl'] : '';
         $options['selectorid'] = isset($options['selectorid']) ? $options['selectorid'] : '';
@@ -678,7 +680,7 @@ if (!function_exists('tpl_selector_new')) {
                         <tr>
                             <th style='width:80px;'>商品名称</th>
                             <th style='width:220px;'></th>
-                            <th>价格/分销佣金</th>
+                            <th>".$options['text']."</th>
                             <th style='width:50px;'>操作</th>
                         </tr>
                     </thead>
@@ -711,26 +713,31 @@ if (!function_exists('tpl_selector_new')) {
                         <td>";
                 $optionurl = empty($options['optionurl']) ? 'sale/package/hasoption' : str_replace(".", "/", $options['optionurl']);
                 if ($item['optiontitle']) {
+                            $html .= "<a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" . webUrl($optionurl,
+                                array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . "' id='{$options['selectorid']}optiontitle" . $item['goodsid'] . "'>" . $optiontitle . "</a>
+                                <input type='hidden' id='{$options['selectorid']}packagegoods" . $item['goodsid'] . "' value='" . $item['option'] . "' name='{$options['selectorid']}packagegoods[" . $item['goodsid'] . "]'>";
+                        foreach ($item['optiontitle'] as $option) {
+                            $total = isset($option['total']) ? "," . $option['total'] : '';
+                            $maxbuy = isset($option['maxbuy']) ? "," . $option['maxbuy'] : '';
+                            $totalmaxbuy = isset($option['totalmaxbuy']) ? "," . $option['totalmaxbuy'] : '';
 
-                    $html .= "<a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" . webUrl($optionurl,
-                            array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . "' id='{$options['selectorid']}optiontitle" . $item['goodsid'] . "'>" . $optiontitle . "</a>
-                            <input type='hidden' id='{$options['selectorid']}packagegoods" . $item['goodsid'] . "' value='" . $item['option'] . "' name='{$options['selectorid']}packagegoods[" . $item['goodsid'] . "]'>";
-                    foreach ($item['optiontitle'] as $option) {
-                        $total = isset($option['total']) ? "," . $option['total'] : '';
-                        $maxbuy = isset($option['maxbuy']) ? "," . $option['maxbuy'] : '';
-                        $totalmaxbuy = isset($option['totalmaxbuy']) ? "," . $option['totalmaxbuy'] : '';
-
-                        $html .= "<input type='hidden' value='" . $option['packageprice'] . "," . $option['commission1'] . "," . $option['commission2'] . "," . $option['commission3'] . "{$total}{$maxbuy}{$totalmaxbuy}'
-                        name='{$options['selectorid']}packagegoodsoption" . $option['optionid'] . "' >";
-                    }
+                            $html .= "<input type='hidden' value='" . $option['packageprice'] . "," . $option['commission1'] . "," . $option['commission2'] . "," . $option['commission3'] . "{$total}{$maxbuy}{$totalmaxbuy}'
+                            name='{$options['selectorid']}packagegoodsoption" . $option['optionid'] . "' >";
+                        }
                 } else {
+
                     $total = isset($item['total']) ? "," . $item['total'] : '';
                     $maxbuy = isset($item['maxbuy']) ? "," . $item['maxbuy'] : '';
                     $totalmaxbuy = isset($item['totalmaxbuy']) ? "," . $item['totalmaxbuy'] : '';
-                    $html .= "<a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" . webUrl($optionurl,
-                            array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . "' id='{$options['selectorid']}optiontitle" . $item['goodsid'] . "'>&yen;" . $item['packageprice'] . "</a>
-                            <input type='hidden' id='{$options['selectorid']}packagegoods" . $item['goodsid'] . "' value='' name='{$options['selectorid']}packagegoods[" . $item['goodsid'] . "]'>
-                    <input type='hidden' value='" . $item['packageprice'] . "," . $item['commission1'] . "," . $item['commission2'] . "," . $item['commission3'] . "{$total}{$maxbuy}{$totalmaxbuy}' name='{$options['selectorid']}packgoods" . $item['goodsid'] . "' >";
+                     if($options['optiontype']==1){
+                        $html .= "<a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" . webUrl($optionurl,
+                                array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . "' id='{$options['selectorid']}optiontitle" . $item['goodsid'] . "'>&yen;" . $item['packageprice'] . "</a>
+                                <input type='hidden' id='{$options['selectorid']}packagegoods" . $item['goodsid'] . "' value='' name='{$options['selectorid']}packagegoods[" . $item['goodsid'] . "]'>
+                        <input type='hidden' value='" . $item['packageprice'] . "," . $item['commission1'] . "," . $item['commission2'] . "," . $item['commission3'] . "{$total}{$maxbuy}{$totalmaxbuy}' name='{$options['selectorid']}packgoods" . $item['goodsid'] . "' >";
+                    }elseif($options['optiontype']==2){
+                        $html .= "{$item['num']}<input type='hidden' id='{$options['selectorid']}packagegoods" . $item['goodsid'] . "' value='{$item['value']}' name='{$options['selectorid']}packagegoods[" . $item['goodsid'] . "]'>
+                        ";
+                    }
                 }
                 $html .= "
                         </td>

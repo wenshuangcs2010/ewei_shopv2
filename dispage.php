@@ -480,6 +480,21 @@ class Dispage{
 	public static function getDisaccountArray(){
 		return array(37);
 	}
+	//获取组合中的商品
+	public static function getPackgoods($goodsid,$uniacid){
+		$sql="SELECT * from ".tablename("ewei_shop_goodspacks")." where goodsid=:goodsid and uniacid=:uniacid";
+		$pa[':goodsid']=$goodsid;
+		$pa[':uniacid']=$uniacid;
+		$pack=pdo_fetch($sql,$pa);
+		
+		$package_goods=json_decode($pack['packgoods'],true);
+		$packgoods=array();
+		foreach ($package_goods as $key => $v) {
+			$goods=pdo_fetch('SELECT * FROM '.tablename("ewei_shop_goods")." WHERE id=:id",array(":id"=>$v['goodsid']));
+			$goods['number']=$v['num'];
+			$packgoods[]=$goods;
+		}
 
-
+		return $packgoods;
+	}
 }

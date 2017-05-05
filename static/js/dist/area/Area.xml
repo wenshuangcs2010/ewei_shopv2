@@ -24,13 +24,13 @@
   <county name="怀柔区" /> 
   <county name="平谷区" /> 
   </city>
- <city name="北京辖县">
+ <city name="北京市">
   <county name="密云县" /> 
   <county name="延庆县" />  
   </city>
   </province>
  <province name="天津市">
- <city name="天津辖区">
+ <city name="天津市">
   <county name="和平区" /> 
   <county name="河东区" /> 
   <county name="河西区" /> 
@@ -81,7 +81,7 @@
   <county name="鹿泉市" /> 
   </city>
  <city name="唐山市">
-  <county name="市辖区" /> 
+  <county name="唐山市" /> 
   <county name="路南区" /> 
   <county name="路北区" /> 
   <county name="古冶区" /> 
@@ -98,7 +98,7 @@
   <county name="迁安市" /> 
   </city>
  <city name="秦皇岛市">
-  <county name="市辖区" /> 
+  <county name="秦皇岛市" /> 
   <county name="海港区" /> 
   <county name="山海关区" /> 
   <county name="北戴河区" /> 
@@ -108,7 +108,7 @@
   <county name="卢龙县" /> 
   </city>
  <city name="邯郸市">
-  <county name="市辖区" /> 
+  <county name="邯郸市" /> 
   <county name="邯山区" /> 
   <county name="丛台区" /> 
   <county name="复兴区" /> 
@@ -130,7 +130,7 @@
   <county name="武安市" /> 
   </city>
  <city name="邢台市">
-  <county name="市辖区" /> 
+  <county name="邢台市" /> 
   <county name="桥东区" /> 
   <county name="桥西区" /> 
   <county name="邢台县" /> 
@@ -152,7 +152,7 @@
   <county name="沙河市" /> 
   </city>
  <city name="保定市">
-  <county name="市辖区" /> 
+  <county name="保定市" /> 
   <county name="新市区" /> 
   <county name="北市区" /> 
   <county name="南市区" /> 
@@ -180,7 +180,7 @@
   <county name="高碑店市" /> 
   </city>
  <city name="张家口市">
-  <county name="市辖区" /> 
+  <county name="张家口市" /> 
   <county name="桥东区" /> 
   <county name="桥西区" /> 
   <county name="宣化区" /> 
@@ -200,7 +200,7 @@
   <county name="崇礼县" /> 
   </city>
  <city name="承德市">
-  <county name="市辖区" /> 
+  <county name="承德市" /> 
   <county name="双桥区" /> 
   <county name="双滦区" /> 
   <county name="鹰手营子矿区" /> 
@@ -214,7 +214,7 @@
   <county name="围场满族蒙古族自治县" /> 
   </city>
  <city name="沧州市">
-  <county name="市辖区" /> 
+  <county name="沧州市" /> 
   <county name="新华区" /> 
   <county name="运河区" /> 
   <county name="沧县" /> 
@@ -233,7 +233,7 @@
   <county name="河间市" /> 
   </city>
  <city name="廊坊市">
-  <county name="市辖区" /> 
+  <county name="廊坊市" /> 
   <county name="安次区" /> 
   <county name="广阳区" /> 
   <county name="固安县" /> 
@@ -246,7 +246,7 @@
   <county name="三河市" /> 
   </city>
  <city name="衡水市">
-  <county name="市辖区" /> 
+  <county name="衡水市" /> 
   <county name="桃城区" /> 
   <county name="枣强县" /> 
   <county name="武邑县" /> 
@@ -262,7 +262,7 @@
   </province>
  <province name="山西省">
  <city name="太原市">
-  <county name="市辖区" /> 
+  <county name="太原市" /> 
   <county name="小店区" /> 
   <county name="迎泽区" /> 
   <county name="杏花岭区" /> 
@@ -275,7 +275,7 @@
   <county name="古交市" /> 
   </city>
  <city name="大同市">
-  <county name="市辖区" /> 
+  <county name="大同市" /> 
   <county name="城区" /> 
   <county name="矿区" /> 
   <county name="南郊区" /> 
@@ -289,7 +289,7 @@
   <county name="大同县" /> 
   </city>
  <city name="阳泉市">
-  <county name="市辖区" /> 
+  <county name="阳泉市" /> 
   <county name="城区" /> 
   <county name="矿区" /> 
   <county name="郊区" /> 
@@ -297,7 +297,7 @@
   <county name="盂县" /> 
   </city>
  <city name="长治市">
-  <county name="市辖区" /> 
+  <county name="长治市" /> 
   <county name="城区" /> 
   <county name="郊区" /> 
   <county name="长治县" /> 
@@ -313,7 +313,7 @@
   <county name="潞城市" /> 
   </city>
  <city name="晋城市">
-  <county name="市辖区" /> 
+  <county name="晋城市" /> 
   <county name="城区" /> 
   <county name="沁水县" /> 
   <county name="阳城县" /> 
@@ -322,7 +322,7 @@
   <county name="高平市" /> 
   </city>
  <city name="朔州市">
-  <county name="市辖区" /> 
+  <county name="朔州市" /> 
   <county name="朔城区" /> 
   <county name="平鲁区" /> 
   <county name="山阴县" /> 
@@ -331,7 +331,7 @@
   <county name="怀仁县" /> 
   </city>
  <city name="晋中市">
-  <county name="市辖区" /> 
+  <county name="晋中市" /> 
   <county name="榆次区" /> 
   <county name="榆社县" /> 
   <county name="左权县" /> 
@@ -345,7 +345,7 @@
   <county name="介休市" /> 
   </city>
  <city name="运城市">
-  <county name="市辖区" /> 
+  <county name="运城市" /> 
   <county name="盐湖区" /> 
   <county name="临猗县" /> 
   <county name="万荣县" /> 
@@ -361,7 +361,7 @@
   <county name="河津市" /> 
   </city>
  <city name="忻州市">
-  <county name="市辖区" /> 
+  <county name="忻州市" /> 
   <county name="忻府区" /> 
   <county name="定襄县" /> 
   <county name="五台县" /> 
@@ -378,7 +378,7 @@
   <county name="原平市" /> 
   </city>
  <city name="临汾市">
-  <county name="市辖区" /> 
+  <county name="临汾市" /> 
   <county name="尧都区" /> 
   <county name="曲沃县" /> 
   <county name="翼城县" /> 
@@ -398,7 +398,7 @@
   <county name="霍州市" /> 
   </city>
  <city name="吕梁市">
-  <county name="市辖区" /> 
+  <county name="吕梁市" /> 
   <county name="离石区" /> 
   <county name="文水县" /> 
   <county name="交城县" /> 
@@ -416,7 +416,7 @@
   </province>
  <province name="内蒙古自治区">
  <city name="呼和浩特市">
-  <county name="市辖区" /> 
+  <county name="呼和浩特市" /> 
   <county name="新城区" /> 
   <county name="回民区" /> 
   <county name="玉泉区" /> 
@@ -2589,7 +2589,7 @@
   <county name="罗定市" /> 
   </city>
   </province>
- <province name="广西区">
+ <province name="广西">
  <city name="南宁市">
   <county name="市辖区" /> 
   <county name="兴宁区" /> 
@@ -3024,7 +3024,7 @@
   <county name="若尔盖县" /> 
   <county name="红原县" /> 
   </city>
- <city name="甘孜自治州">
+ <city name="甘孜藏族自治州">
   <county name="康定县" /> 
   <county name="泸定县" /> 
   <county name="丹巴县" /> 
@@ -3347,7 +3347,7 @@
   <county name="维西傈僳族自治县" /> 
   </city>
   </province>
- <province name="西藏区">
+ <province name="西藏">
  <city name="拉萨市">
   <county name="市辖区" /> 
   <county name="城关区" /> 
@@ -3766,7 +3766,7 @@
   <county name="天峻县" /> 
   </city>
   </province>
- <province name="宁夏区">
+ <province name="宁夏">
  <city name="银川市">
   <county name="市辖区" /> 
   <county name="兴庆区" /> 
@@ -3804,7 +3804,7 @@
   <county name="海原县" /> 
   </city>
   </province>
- <province name="新疆区">
+ <province name="新疆">
  <city name="乌鲁木齐市">
   <county name="市辖区" /> 
   <county name="天山区" /> 

@@ -183,7 +183,19 @@ class Detail_EweiShopV2Page extends MobilePage {
                     WHERE uniacid = ".$uniacid." and pid = ".$package_goods['pid']."  ORDER BY id DESC");
             $packages = set_medias($packages,array('thumb'));
         }
+        if($goods['type']==4){//组合商品
+            $packg=Dispage::getPackgoods($goods['id'],$_W['uniacid']);
+            foreach ($packg as  $vg) {
+                $weight+=$vg['weight']*$vg['number'];
+                //检查商品库存是否足够
+                if($vg['total']<$vg['number']){//组合中可购买数量
+                    $goods['total']=0;
 
+                }
+                $decountprice+=$vg['minprice']*$vg['number'];
+            }
+            $goods['weight']=$weight;
+        }
         //运费
         $goods['dispatchprice'] = $this->getGoodsDispatchPrice($goods);
 

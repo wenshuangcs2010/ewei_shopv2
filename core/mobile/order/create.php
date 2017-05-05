@@ -820,9 +820,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $goodsdata_temp = array();
             foreach ($goods as $g) {
 
-
+               
                 $goodsdata[] = array('goodsid' => $g['goodsid'], 'total' => $g['total'], 'optionid' => $g['optionid'], 'marketprice' => $g['marketprice']
-                , 'merchid' => $g['merchid'], 'cates' => $g['cates'], 'discounttype' => $g['discounttype'], 'isdiscountprice' => $g['isdiscountprice']
+                , 'merchid' => $g['merchid'], 'cates' => $g['cates'], 'discounttype' => $g['discounttype'], 'isdiscountprice' => $g['isdiscountprice'],'type'=>$g['type']
                 , 'discountprice' => $g['discountprice'], 'isdiscountunitprice' => $g['isdiscountunitprice'], 'discountunitprice' => $g['discountunitprice']);
                 if ($g['seckillinfo'] && $g['seckillinfo']['status'] == 0) {
                     //秒杀不管二次购买
@@ -972,7 +972,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $marketprice = 0;
 
             foreach ($g as $key => $value) {
-                $goods[$key] = pdo_fetch("select id,title,thumb,marketprice,disgoods_id,depotid from " . tablename('ewei_shop_goods') . "
+                $goods[$key] = pdo_fetch("select id,title,thumb,marketprice,type,disgoods_id,depotid from " . tablename('ewei_shop_goods') . "
                             where id = " . $value['goodsid'] . " and uniacid = " . $uniacid . " ");
                 $option = array();
                 $packagegoods = array();
@@ -1402,7 +1402,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $optionid = $g['optionid'];
                 $goodstotal = $g['total'];
 
-
+             
                 if ($goodstotal < 1) {
                     $goodstotal = 1;
                 }
@@ -1458,7 +1458,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         }
                     }
                 }
-
+                
                 if ($data['seckillinfo'] && $data['seckillinfo']['status'] == 0) {
                     $data['ggprice'] = $data['seckillinfo']['price'] * $g['total'];
 
@@ -2658,7 +2658,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $order = array();
         $order['ismerch'] = $ismerch;
         $order['parentid'] = 0;
-        $order['isdisorder']=$isdisorder;
+        
         $order['uniacid'] = $uniacid;
         $order['openid'] = $openid;
         $order['ordersn'] = $ordersn;
@@ -2727,25 +2727,29 @@ class Create_EweiShopV2Page extends MobileLoginPage
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
-       
+
         $returndata=m("order")->get_tax($allgoods,$dispatch_price,$goodsprice,$alldeduct);//正常算税
+
         $allgoods=$returndata['order_goods'];
+       
         $order['dpostfee']=$returndata['depostfee'];
         $order['tax_rate']=$returndata['tax_rate'];
         $order['tax_consumption']=$returndata['tax_consumption'];
 
         $disdata=m("order")->get_dis_tax($allgoods,$address);
+         
         if(!empty($disdata)){
             $ordertax=$order['tax_rate']+$order['tax_consumption'];
             $diff_fee=$ordertax-$disdata['alltax'];
             $order['disorderamount']=$disdata['disprice'];
-            if($diff_fee>0){
+            if($order['price']>$disdata['disprice']){
                 $order['disorderamount']=$disdata['disprice']+$diff_fee;
                 $order['dff_fee']=$diff_fee;
             }
             $order['dis_shipping_fee']=$disdata['dis_shoping_fee'];
+            $order['isdisorder']=1;
         }
-       
+
         //创始人字段
         $author = p('author');
         if ($author) {
@@ -2810,7 +2814,22 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 if (!empty($bargain_act) && p('bargain')) {
                     $goods['total'] = 1;
                 }
+                if($goods['type']==4){
+                    foreach ($goods['childrengoods'] as $childrengoods) {
+                        $r[]=array(
+                            'goodssn'=>$childrengoods['goodssn'],
+                            'goodsid'=>$childrengoods['id'],
+                            'price'=>number_format($childrengoods['price'], 2, '.', ''),
+                            'dprice'=>number_format($childrengoods['dprice'], 2, '.', ''),
+                            'unit'=>$childrengoods['unit'],
+                            'title'=>$childrengoods['title'],
+                            'total'=>$childrengoods['total'],
+                            );
+                    }
 
+                    $order_goods['content3'] = json_encode($r);
+                }
+                $order_goods['goodstype'] = $goods['type'];
                 $order_goods['merchid'] = $goods['merchid'];
                 $order_goods['merchsale'] = $goods['merchsale'];
                 $order_goods['uniacid'] = $uniacid;

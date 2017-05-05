@@ -161,7 +161,15 @@
     <div class="fui-cell">
         <div class="fui-cell-text price">
 			<span class="text-danger">
-			￥{if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}
+			&yen;{if $goods['minprice']==$goods['maxprice']}
+                    {if $goods['type']==4}
+                    {$goods['minprice']}(组合)<span>&yen;<del class='marketprice'>{$decountprice}</del></span>
+                    {else}
+                        {$goods['minprice']}
+                    {/if} 
+            {else}
+                {$goods['minprice']}~{$goods['maxprice']}
+            {/if}
 			{if $goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() &&  $goods['isdiscount_time']>=time()}
 			     <span class="original">￥{$goods['productprice']}</span>
 			{else}
@@ -173,6 +181,8 @@
                    分销佣金:￥{$commissionprice}
          {/if}
     </div>
+    
+   
 
 
 
@@ -219,11 +229,11 @@
 <div class="fui-cell">
     <div class="fui-cell-text flex">
         {if is_array($goods['dispatchprice'])}
-        {if $goods['type']==1}
+        {if $goods['type']==1 || $goods['type']==4}
         <span>快递:  {php echo number_format($goods['dispatchprice']['min'],2)} ~ {php echo number_format($goods['dispatchprice']['max'],2)}</span>
         {/if}
         {else}
-        {if $goods['type']==1}
+        {if $goods['type']==1 || $goods['type']==4}
         <span>快递:  {php echo $goods['dispatchprice'] == 0 ? '包邮' : number_format($goods['dispatchprice'],2)}</span>
         {/if}
         {/if}
@@ -251,6 +261,7 @@
     </div>
 </div>
 {/if}
+
 {if empty($seckillinfo)}
 {if floatval($goods['buyagain'])>0}
 <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
@@ -452,7 +463,97 @@
 </div>
 
 {/if}
-
+{if $goods['type']==4}
+{if count($packg)<=3}
+ <style>
+    .package-goods{padding:0.2rem 1rem;}
+</style>
+<div class="fui-cell-group fui-comment-group">
+    <div class="fui-cell fui-cell-click">
+        <div class="fui-cell-text desc">组合商品</div>
+        
+        <div class="fui-cell-remark"></div>
+    </div>
+    <div class="fui-cell">
+        <div class="fui-cell-text comment ">
+            <div class="fui-list package-list">
+                {loop $packg $item}
+                <div class="fui-list-inner package-goods">
+                    <img src="{php echo tomedia($item['thumb'])}" class="package-goods-img" alt="{$item['title']}">
+                    <span>{$item['title']}</span>
+                    <div><strong style="color: red">x{$item['number']}</strong></div>
+                </div>
+              
+                {/loop}
+            </div>
+        </div>
+    </div>
+</div>
+{else}
+<div class="fui-cell-group fui-comment-group">
+    <div class="fui-cell fui-cell-click">
+        <div class="fui-cell-text desc">组合商品</div>
+        <div class="fui-cell-remark"></div>
+    </div>
+    <div id="product" class="fui-list">
+        <span class="prev fui-list-media"><i class="icon icon-left"></i></span>
+        <div id="content" class="fui-list-inner">
+            <div id="content_list">
+                {loop $packg $item}
+                <dl class="package-goods package-goods3">
+                    <dt><img class="package-goods-img" src="{php echo tomedia($item['thumb'])}"/></dt>
+                    <dd>{$item['title']}</dd>
+                    <dd style="color: red">x{$item['number']}</dd>
+                </dl>
+              
+                {/loop}
+            </div>
+        </div>
+        <span class="next fui-list-media"><i class="icon icon-right1"></i></span>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var page = 1;
+        var i = 3; //每版放4个图片
+        //向后 按钮
+        $("span.next").click(function(){    //绑定click事件
+            var content = $("div#content");
+            var content_list = $("div#content_list");
+            var v_width = content.width();
+            var len = content.find("dl").length;
+            var page_count = Math.ceil(len / i) ;   //只要不是整数，就往大的方向取最小的整数
+            if( !content_list.is(":animated") ){    //判断“内容展示区域”是否正在处于动画
+                if( page == page_count ){  //已经到最后一个版面了,如果再向后，必须跳转到第一个版面。
+                    content_list.animate({ left : '0px'}, "slow"); //通过改变left值，跳转到第一个版面
+                    page = 1;
+                }else{
+                    content_list.animate({ left : '-='+v_width }, "slow");  //通过改变left值，达到每次换一个版面
+                    page++;
+                }
+            }
+        });
+        //往前 按钮
+        $("span.prev").click(function(){
+            var content = $("div#content");
+            var content_list = $("div#content_list");
+            var v_width = content.width();
+            var len = content.find("dl").length;
+            var page_count = Math.ceil(len / i) ;   //只要不是整数，就往大的方向取最小的整数
+            if(!content_list.is(":animated") ){    //判断“内容展示区域”是否正在处于动画
+                if(page == 1 ){  //已经到第一个版面了,如果再向前，必须跳转到最后一个版面。
+                    content_list.animate({ left : '-='+v_width*(page_count-1) }, "slow");
+                    page = page_count;
+                }else{
+                    content_list.animate({ left : '+='+v_width }, "slow");
+                    page--;
+                }
+            }
+        });
+    });
+</script>
+{/if}
+{/if}
 {if $packages && $goods['total'] > 0}
 {if count($packages)<=3}
 <style>
@@ -920,11 +1021,16 @@
                 </div>
                 <div class="fui-list-inner alert-content">
                     <h2 class="alert-title">{$goods['title']}</h2>
-                    <span>&yen;{if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}</span>
+                    <span>&yen;
+                    {if $goods['minprice']==$goods['maxprice']}
+                        {$goods['minprice']}
+                    {else}
+                        {$goods['minprice']}~{$goods['maxprice']}
+                    {/if}</span>
                     {if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
                     <del>&yen;{$goods['productprice']}</del>
                     {else}
-                    {if $goods['productprice']>0}<del>&yen;{$goods['productprice']}</del>{/if}
+                        {if $goods['productprice']>0}<del>&yen;{$goods['productprice']}</del>{/if}
                     {/if}
                 </div>
             </div>
@@ -940,7 +1046,12 @@
                 </div>
                 <div class="fui-list-inner">
                     <h2 class="alert2-title">{$goods['title']}</h2>
-                    <span>&yen;{if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}</span>
+                    <span>&yen;
+                    {if $goods['minprice']==$goods['maxprice']}
+                        {$goods['minprice']}
+                    {else}
+                        {$goods['minprice']}~{$goods['maxprice']}
+                    {/if}</span>
                     {if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
                     <del>&yen;{$goods['productprice']}</del>
                     {else}

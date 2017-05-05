@@ -239,6 +239,90 @@ define(['jquery'], function ($) {
 			$(obj).closest(css).remove();
 			biz.selector_new.refresh(name);
 		}
+		, setpack: function (obj, data){
+			var goodsid=data.id;
+			var name = $(obj).closest('.content').data('name');
+			var modalObj =  $('#' +name +"-selector-modal");
+			var selector  =  $('#' +name +"_selector");
+			var hasoption=0;
+			var specid=0;
+			var spc=data.spc;
+			var total_goods_number=0;//组合数量
+
+			if(typeof(spc)!="undefined"){
+				var specobj=$("#spc_"+goodsid).find("option:selected");
+				var total=specobj.attr('data-stock');
+				hasoption=1;
+				specid=specobj.attr('data-specs');
+			}else{
+				var total=$("#total_"+goodsid).text();
+			}
+
+			total_goods_number=$("input[name='total_goods_"+goodsid+"']").val();
+			
+			if(total<=0){
+				alert("库存0无法添加");
+				return false;
+			}
+			var key = selector.data('id') || 'id',
+				text = selector.data('title') || 'title',
+				thumb = selector.data('thumb') || 'thumb',
+				multi = selector.data('multi') || 0,
+				type = selector.data('type') || 'image',
+				callback = selector.data('callback') || '',
+				css = type=='image'?'.multi-item':'.multi-product-item',
+				optionurl =selector.data('optionurl') || '',
+				selectorid =selector.data('selectorid') || '';
+
+			var container = $('.container',selector);
+			
+				
+
+			var spec=$("#spc_"+goodsid);
+			
+			
+			if ($( css + '[data-' +key +'="' + data[key] + '"]',container).length > 0) {
+				if( multi  === 0){
+					modalObj.modal('hide');
+				}
+				return;
+			}
+			//var tojsondata=['id':data[key],'hasoption':hasoption,'num':total_goods_number,'specid':specid];
+			var tojsondata=data[key]+","+hasoption+","+total_goods_number+","+specid;
+			//tojsondata=JSON.stringify(tojsondata);
+
+			var id  = multi===0? name: name+"[]";
+			var html ="";
+			if(type=='product'){
+				var optionurl  = optionurl =='' ? 'sale.package.hasoption': optionurl;
+				var url = "index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=" + optionurl+"&goodsid="+data[key]+"&selectorid=" + selectorid;
+
+				html += '<tr class="multi-product-item" data-' + key+'="' + data[key] + '" data-name="' + name + '">';
+				html += "<input type='hidden' name='" + id  +"' value='" + data[key] +"'> ";
+				html += "<input type='hidden' class='form-control img-textname' value='" +  data[text] +"'>";
+				html +=	'<td style="width:80px;"><img src="' + data[thumb] + '" style="width:70px;border:1px solid #ccc;padding:1px" /></td>';
+				html += '<td style="width:220px;">'+data[text]+'</td>';
+				html += "<td>"+ total_goods_number+
+					"<input type='hidden' id='" + selectorid+"packagegoods"+data[key]+"' value="+tojsondata+" name='" + selectorid+"packagegoods["+data[key]+"]'></td>";
+				html += '<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\'' + name +'\')" title="删除">';
+				html += '<i class="fa fa-times"></i></a></td></tr>';
+			}
+			
+			if(multi===0){
+				container.html(html);
+				modalObj.modal('hide');
+			} else{
+				$("#param-items" + selectorid).append(html);
+			}
+			biz.selector_new.refresh(name);
+
+			if( callback!==''){
+				var callfunc = eval(callback);
+				if(callfunc!==undefined){
+					callfunc(data, obj);
+				}
+			}
+		}
 		, set: function (obj, data) {
 
 			var name = $(obj).closest('.content').data('name');

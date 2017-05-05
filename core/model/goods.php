@@ -128,29 +128,60 @@ class Goods_EweiShopV2Model {
 
         //关键词
         $keywords = !empty($args['keywords']) ? $args['keywords'] : '';
+        if(!$this->checkKeyword($keywords)){
+            $keywords="";
+        };
+        //var_dump($keywords);
         if (!empty($keywords)) {
             
             $keywords=$this->replace_specialChar($keywords);
-            $tmp = str_replace(array(","," ",' '),'', $keywords);
-            $str_length = mb_strlen($tmp,'UTF8');
-            
-            for($i = 0; $i<$str_length; $i++){
-                    $keyword_arr[] = $this->cc_msubstr($tmp, $i, 1);
+          
+          
+            //var_dump($keywords_array);
+            $tmp = str_replace(array(","," ",'  '),' ', $keywords);
+          
+            $keywords_array=explode(" ", $tmp);
+
+            foreach ($keywords_array as $index=> $tmp) {
+             
+                $str_length=$this->abslength($tmp);
+
+               
+                for($i = 0; $i<$str_length; $i++){
+                    $keyword_arr[$index][] = $this->cc_msubstr($tmp, $i, 1);
                 };
-            //$conditions1.=" `title` LIKE '%{$keywords}%' AND ";
-            foreach ($keyword_arr as $word)
-            {
-                $conditions2[] = "`title` LIKE '%{$word}%'";
             }
-            $conditions2 = join(' AND ', $conditions2);
-            $condition.=" AND ({$conditions2})";
-            
+
+           // var_dump($keyword_arr);
+            //$conditions1.=" `title` LIKE '%{$keywords}%' AND ";
+            foreach ($keyword_arr as $index=> $word)
+            {
+                foreach ($word as $value) {
+                    $conditions2[$index][]= "`title` LIKE '%{$value}%'";
+                    $conditions3[$index][]= "`keywords` LIKE '%{$value}%'";
+                }
+                
+               
+            }
+           
+            foreach ($conditions2 as $key => $value) {
+
+                $conditions2sql[]= join(' AND ', $conditions2[$key]);
+                $conditions3sql[]= join(' AND ', $conditions3[$key]);
+               
+              
+            }
+            $conditions2sql= join(' AND ', $conditions2sql);
+            $conditions3sql= join(' AND ', $conditions3sql);
+          
+            $condition.=" AND (({$conditions2sql}) OR ({$conditions3sql}))";
+           // die();
             /*
             $condition .= ' AND (`title` LIKE :keywords OR `keywords` LIKE :keywords)';
             $params[':keywords'] = '%' . trim($keywords) . '%';
             */
         }
-
+        //var_dump($condition);
         //分类
         if(!empty($args['cate'])){
             $category = m('shop')->getAllCategory();
@@ -193,7 +224,10 @@ class Goods_EweiShopV2Model {
 
         if (!$random) {
             $sql = "SELECT id,title,thumb,marketprice,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
-            $total = pdo_fetchcolumn("select count(*) from " . tablename('ewei_shop_goods') . " where 1 {$condition} ",$params);
+           
+            $countsql="select count(*) from " . tablename('ewei_shop_goods') . " where 1 {$condition}";
+          
+            $total = pdo_fetchcolumn($countsql,$params);
         } else {
             $sql = "SELECT id,title,thumb,marketprice,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
             $total  = $pagesize;
@@ -796,9 +830,47 @@ class Goods_EweiShopV2Model {
         $re['gbk']    = "/[/x01-/x7f]|[/x81-/xfe][/x40-/xfe]/";
         $re['big5']   = "/[/x01-/x7f]|[/x81-/xfe]([/x40-/x7e]|/xa1-/xfe])/";
         preg_match_all($re[$charset], $str, $match);
+        
         $slice = join("",array_slice($match[0], $start, $length));
         if($suffix) return $slice."…";
         return $slice;
     }
+    private function checkKeyword($keywords){
+        $args_arr=array(
+'xss'=>"[\\'\\\"\\;\\*\\<\\>].*\\bon[a-zA-Z]{3,15}[\\s\\r\\n\\v\\f]*\\=|\\b(?:expression)\\(|\\<script[\\s\\\\\\/]|\\<\\!\\[cdata\\[|\\b(?:eval|alert|prompt|msgbox)\\s*\\(|url\\((?:\\#|data|javascript)",
 
+'sql'=>"[^\\{\\s]{1}(\\s|\\b)+(?:select\\b|update\\b|insert(?:(\\/\\*.*?\\*\\/)|(\\s)|(\\+))+into\\b).+?(?:from\\b|set\\b)|[^\\{\\s]{1}(\\s|\\b)+(?:create|delete|drop|truncate|rename|desc)(?:(\\/\\*.*?\\*\\/)|(\\s)|(\\+))+(?:table\\b|from\\b|database\\b)|into(?:(\\/\\*.*?\\*\\/)|\\s|\\+)+(?:dump|out)file\\b|\\bsleep\\([\\s]*[\\d]+[\\s]*\\)|benchmark\\(([^\\,]*)\\,([^\\,]*)\\)|(?:declare|set|select)\\b.*@|union\\b.*(?:select|all)\\b|(?:select|update|insert|create|delete|drop|grant|truncate|rename|exec|desc|from|table|database|set|where)\\b.*(charset|ascii|bin|char|uncompress|concat|concat_ws|conv|export_set|hex|instr|left|load_file|locate|mid|sub|substring|oct|reverse|right|unhex)\\(|(?:master\\.\\.sysdatabases|msysaccessobjects|msysqueries|sysmodules|mysql\\.db|sys\\.database_name|information_schema\\.|sysobjects|sp_makewebtask|xp_cmdshell|sp_oamethod|sp_addextendedproc|sp_oacreate|xp_regread|sys\\.dbms_export_extension)",
+
+'other'=>"\\.\\.[\\\\\\/].*\\%00([^0-9a-fA-F]|$)|%00[\\'\\\"\\.]");
+
+        foreach($args_arr as $key=>$value)
+        {
+        if (preg_match("/".$value."/is",$keywords)==1||preg_match("/".$value."/is",urlencode($keywords))==1)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+    * 可以统计中文字符串长度的函数
+    * @param $str 要计算长度的字符串
+    * @param $type 计算长度类型，0(默认)表示一个中文算一个字符，1表示一个中文算两个字符
+    *
+    */
+    function abslength($str)
+    {
+        if($str==""){
+            return 0;
+        }
+        if(function_exists('mb_strlen')){
+            return mb_strlen($str,'utf-8');
+        }
+        else {
+            preg_match_all("/./u", $str, $ar);
+            return count($ar[0]);
+        }
+    }
+
+  
 }

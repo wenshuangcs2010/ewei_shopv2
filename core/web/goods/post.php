@@ -8,6 +8,20 @@ $id = intval($_GPC['id']);
 
 $item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_goods') . " WHERE id = :id and uniacid = :uniacid", array(':id' => $id,':uniacid'=>$_W['uniacid']));
 $labelname = json_decode($item['labelname'],true);
+$packgoods=pdo_fetch("SELECT * from ".tablename("ewei_shop_goodspacks") . " WHERE goodsid = :id and uniacid = :uniacid", array(':id' =>$item['id'],':uniacid'=>$_W['uniacid']));
+if(!empty($packgoods)){
+    $packgs=json_decode($packgoods['packgoods'],true);
+    foreach ($packgs as &$pacgoods) {
+       $sql="SELECT title,thumb from ".tablename("ewei_shop_goods")." where id=:goodsid and uniacid=:uniacid";
+       $packgo=pdo_fetch($sql,array(":goodsid"=>$pacgoods['goodsid'],':uniacid'=>$_W['uniacid']));
+       $pacgoods['数量']=$packgo['title'];
+       $pacgoods['thumb']=$packgo['thumb'];
+    
+       $pacgoods['value']="{$pacgoods['goodsid']},{$pacgoods['hasoptions']},{$pacgoods['num']},{$pacgoods['spacid']}";
+    }
+    unset($pacgoods);
+}
+
 if(empty($labelname)){
     $labelname = array();
 }
@@ -33,7 +47,6 @@ if(!empty($item)){
     }
     if($_W['uniacid']==DIS_ACCOUNT){
           $disprice=pdo_fetch("select * from ".tablename("ewei_shop_goodsresel")." where goods_id=:goodsid",array(":goodsid"=>$id));
-  
          $disprice=unserialize($disprice['disprice']);
     }
 }
@@ -214,7 +227,7 @@ if ($_W['ispost']) {
         $buyagain_commission['type'] = 0;
         $data['buyagain_commission'] = json_encode($buyagain_commission);
     }
-    
+
     if ($merchid == 0) {
         //线下核销
         $data['isverify'] = $_GPC['isverify'];
@@ -408,7 +421,30 @@ if ($_W['ispost']) {
         pdo_update('ewei_shop_goods', $data, array('id' => $id));
         plog('goods.edit', "编辑商品 ID: {$id}<br>".(!empty($data['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
     }
-    
+    //处理组合商品
+    if($data['type']==4){
+        $gpcpackgoods=$_GPC['packagegoods'];
+        foreach ($gpcpackgoods as $key => $value) {
+             $goodstmp=explode(",", $value);
+             $goods[]=array(
+                    'goodsid'=>$goodstmp[0],
+                    'hasoptions'=>$goodstmp[1],
+                    'num'=>$goodstmp[2],
+                    'spacid'=>$goodstmp[3]);
+             $tempgoodsid=$goodstmp[0];// 获取一个临时的ID
+        }
+        $packsdata['goodsid']=$id;
+        $packsdata['packgoods']=json_encode($goods);
+        $packsdata['uniacid']=$_W['uniacid'];
+
+        if(empty($packgoods)){
+            pdo_insert("ewei_shop_goodspacks",$packsdata);
+        }else{
+            pdo_update("ewei_shop_goodspacks",$packsdata,array("id"=>$packgoods['id'],"uniacid"=>$_W['uniacid']));
+        }
+       $tedepotid=pdo_fetchcolumn("SELECT depotid from ".tablename("ewei_shop_goods")." where id=:tempid",array(":tempid"=>$tempgoodsid));
+         pdo_update("ewei_shop_goods", array("depotid" => $tedepotid), array("id" => $id));//更新商品所在仓库
+    }
     //处理商品参数
     $param_ids = $_POST['param_id'];
     $param_titles = $_POST['param_title'];

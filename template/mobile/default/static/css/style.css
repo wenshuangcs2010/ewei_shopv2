@@ -3400,7 +3400,7 @@ color:#fd5555;}
 #product div#content {
     position:relative;
     width:100%;
-    height:7rem;
+    height:9rem;
     display:inline-block;
     overflow:hidden;
     float:left;
@@ -3425,9 +3425,10 @@ color:#fd5555;}
 #product dl dd {
     text-align:center;
     font-size:0.6rem;
-    height:1.4rem;
+    height:2.0rem;
     line-height: 0.7rem;
-    overflow: hidden;;
+    overflow: hidden;
+    display:block;
 }
 #product span.prev{
     cursor:pointer;

@@ -73,7 +73,9 @@
         {if com('virtual')}
         <label class="radio-inline"><input type="radio" name="type" value="3" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 3}checked="true"{/if}  onclick="type_change(3);" /> 虚拟物品(卡密)</label>
         {/if}
-
+    
+        <label class="radio-inline"><input type="radio" name="type" value="4" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 4}checked="true"{/if}  onclick="type_change(4);" /> 组合商品</label>
+     
         {if p('mr')}
         <label class="radio-inline"><input type="radio" name="type" value="10" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 10}checked="true"{/if}  onclick="type_change(10);" /> 话费流量充值</label>
         {/if}
@@ -96,6 +98,65 @@
     </div>
 </div>
 
+
+   <div class="form-group" id="type_pack" style="{if $item['type'] != 4}display: none;{/if}">
+                        <label class="col-sm-2 control-label">选择商品</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ife 'goods.edit' $item}
+                            <div>
+                                <?php echo tpl_selector_new('goodsids',array('preview'=>true,
+                                'readonly'=>true,
+                                'multi'=>1,
+                                'type'=>'product',
+                                'value'=>$packgs['title'],
+                                'url'=>webUrl('goods/select/query'),
+                                'optionurl'=>'sale.package.hasoption',
+                                'items'=>$packgs,
+                                'nokeywords'=>1,
+                                'text'=>"数量",
+                                'optiontype'=>2,
+                                'autosearch'=>1,
+                                'buttontext'=>'选择商品',
+                                'placeholder'=>'请选择商品')
+                                )
+                                ?>
+
+                            </div>
+                            {else}
+                            {if !empty($packgs)}
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th style='width:80px;'>商品名称</th>
+                                    <th style='width:220px;'></th>
+                                    <th>数量</th>
+                                </tr>
+                                </thead>
+                                <tbody id="param-items" class="ui-sortable">
+                                {loop $packgs $index $item}
+                                <tr class="multi-product-item" data-id="{$item['goodsid']}">
+                                    <input type="hidden" class="form-control img-textname" readonly="" value="{$item['title']}">
+                                    <input type="hidden" value="{$item['goodsid']}" name="goodsid[]">
+                                    <td style="width:80px;">
+                                        <img src="{php echo tomedia($item['thumb'])}" style="width:70px;border:1px solid #ccc;padding:1px">
+                                    </td>
+                                    <td style="width:220px;">{$item['title']}111</td>
+                                    <td>
+                                        <input type="hidden" id="packagegoods{$item['goodsid']}" value="" name="packagegoods[{$item['goodsid']}]">
+                                        <input type="hidden" value="{$item['packageprice']},{$item['commission1']},{$item['commission2']},{$item['commission3']}" name="packgoods{$item['goodsid']}">
+                                    </td>
+                                </tr>
+                                {/loop}
+                                </tbody>
+                            </table>
+                            {else}
+                            暂无商品
+                            {/if}
+                            {/if}
+                            <span class="help-block image-block" style="display: block;color:red">请注意！商品必须在同一个仓库,否则用户不能购买</span>
+                        </div>
+
+                    </div>
 
 <div class="form-group send-group" style="{if $item['type'] != 2}display: none;{/if}">
     <label class="col-sm-2 control-label">自动发货</label>

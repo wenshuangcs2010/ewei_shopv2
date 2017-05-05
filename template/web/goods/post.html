@@ -689,19 +689,28 @@
         if(type == 1) {
             $('#product').show();
             $('#type_virtual').hide();
+            $('#type_pack').hide();
             $('.entity').show();
         } else if(type == 2) {
             $('#product').hide();
+            $('#type_pack').hide();
             $('#type_virtual').hide();
             $('.entity').hide();
         } else if(type == 3) {
+        	$('#type_pack').hide();
             $('#type_virtual').show();
             $('.entity').hide();
+        } else if(type == 4) {
+        	$('#type_pack').show();
+          	$('#type_virtual').hide();
+            $('.entity').hide();
         } else if(type == 10) {
+        	$('#type_pack').hide();
             $('#type_virtual').hide();
             $('#product').hide();
             $('.entity').hide();
         } else if(type == 20) {
+        	$('#type_pack').hide();
             $('#type_virtual').hide();
             $('#product').hide();
             $('.entity').hide();
