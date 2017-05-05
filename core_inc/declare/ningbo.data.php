@@ -160,16 +160,47 @@ class NINGBOData extends declareUtil{
 	}
 
 	function setGoods($goods_list){
+
 		foreach($goods_list as $rec_id => $goods)
 		{
-			$goods_detail[$rec_id]['Detail']['ProductId'] = $goods['goodssn'];
-			$goods_detail[$rec_id]['Detail']['GoodsName'] = $this->replace_specialChar($goods['title']);
-			$goods_detail[$rec_id]['Detail']['Qty'] = $goods['total'];
-			if(empty($goods['unit'])) $goods['unit'] = '件';
-				$goods_detail[$rec_id]['Detail']['Unit'] = $goods['unit'];
-				$goods_detail[$rec_id]['Detail']['Price'] = $goods['dprice'];
-				$goods_detail[$rec_id]['Detail']['Amount'] = $goods['total'] * $goods['dprice'];
+			if($goods['goodstype']==4){
+				
+				$packgoods=json_decode($goods['content3'],true);
+				
+				foreach ($packgoods as $key => $value) {
+					$goods_detail[]=array(
+						"Detail"=>
+						array(
+							'ProductId'=>$value['goodssn'],
+							'GoodsName'=>$this->replace_specialChar($value['title']),
+							'Qty'=> $value['total'],
+							'Unit'=>$value['unit'],
+							'Price'=>$value['dprice'],
+							'Amount'=>$value['dprice']*$value['total'],
+							));
+				}
+				continue;
 			}
+			$goods_detail[]=array(
+						"Detail"=>
+						array(
+							'ProductId'=>$goods['goodssn'],
+							'GoodsName'=>$this->replace_specialChar($goods['title']),
+							'Qty'=> $goods['total'],
+							'Unit'=>$goods['unit'],
+							'Price'=>$goods['dprice'],
+							'Amount'=>$goods['dprice']*$goods['total'],
+							));
+			// $goods_detail[$rec_id]['Detail']['ProductId'] = $goods['goodssn'];
+			// $goods_detail[$rec_id]['Detail']['GoodsName'] = $this->replace_specialChar($goods['title']);
+			// $goods_detail[$rec_id]['Detail']['Qty'] = $goods['total'];
+			// if(empty($goods['unit'])) $goods['unit'] = '件';
+			// 	$goods_detail[$rec_id]['Detail']['Unit'] = $goods['unit'];
+			// 	$goods_detail[$rec_id]['Detail']['Price'] = $goods['dprice'];
+			// 	$goods_detail[$rec_id]['Detail']['Amount'] = $goods['total'] * $goods['dprice'];
+			
+			}
+			
 		$this->params['Body']['Order']['Goods']=$goods_detail;
 	}
 	function setBuyerIdnum($BuyerIdnum){//订购人订购人身份证号码
