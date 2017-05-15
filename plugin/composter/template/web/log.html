@@ -34,6 +34,8 @@
                          
                         <td>{php echo date('Y-m-d H:i',$row['createtimes'])}</td>
                         <td><a href="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={$row['ticket']}" target="_blank" class="__web-inspector-hide-shortcut__">查看</a>
+
+                        <a class="btn btn-default btn-sm" href="{php echo webUrl('composter/log/order',array('groupid'=>$row['mgid'],'compostid'=>$row['composterid']))}" target="_blank" class="__web-inspector-hide-shortcut__">订单</a>
                         
                         </td>
                     </tr>

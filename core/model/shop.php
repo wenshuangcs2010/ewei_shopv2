@@ -58,7 +58,7 @@ class Shop_EweiShopV2Model {
 		if(empty($category)){
 			return array();
 		}
-		
+		//var_dump()
 		foreach ($category as &$c) {
 
 

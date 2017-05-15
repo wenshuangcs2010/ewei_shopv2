@@ -412,7 +412,7 @@ class Order_EweiShopV2Model
             $param[':orderid'] = $orderid;
         }
 
-        $goods = pdo_fetchall("select og.goodsid,og.total,g.totalcnf,og.realprice,g.credit,og.optionid,g.total as goodstotal,og.optionid,g.sales,g.salesreal,g.goodssn from " . tablename('ewei_shop_order_goods') . " og "
+        $goods = pdo_fetchall("select og.goodsid,og.goodstype,og.content3,og.total,g.totalcnf,og.realprice,g.credit,og.optionid,g.total as goodstotal,og.optionid,g.sales,g.salesreal,g.goodssn from " . tablename('ewei_shop_order_goods') . " og "
             . " left join " . tablename('ewei_shop_goods') . " g on g.id=og.goodsid "
             . " where $condition and og.uniacid=:uniacid ", $param);
 
@@ -479,17 +479,42 @@ class Order_EweiShopV2Model
                     if ($stocktype == 1) {
                         //增加库存
                         $totalstock = $g['goodstotal'] + $g['total'];
-                        m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],$g['total']);//原始保税库存更新
+                        if(!empty($g['goodssn'])){
+                            if($g['goodstype']==4){
+                                $packgoods=json_decode($g['content3'],true);
+                                foreach ($packgoods as $key => $value) {
+                                    if(empty($value['goodssn'])){
+                                        continue;
+                                    }
+                                    m("cnbuyerdb")->updateCnbuyerStock($value['goodssn'],$value['total']);//原始保税库存更新
+                                }
+                            }else{
+                                m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],$g['total']);//原始保税库存更新
+                            }
+                        }
                     } else if ($stocktype == -1) {
                         //减少库存
                         $totalstock = $g['goodstotal'] - $g['total'];
                         $totalstock <= 0 && $totalstock = 0;
-                        m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],- $g['total']);//原始保税库存更新
+                        if(!empty($g['goodssn'])){
+                            if($g['goodstype']==4){
+                                $packgoods=json_decode($g['content3'],true);
+                                foreach ($packgoods as $key => $value) {
+                                    if(empty($value['goodssn'])){
+                                        continue;
+                                    }
+                                    m("cnbuyerdb")->updateCnbuyerStock($value['goodssn'],-$value['total']);//原始保税库存更新
+                                }
+                            }else{
+                                m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],-$g['total']);//原始保税库存更新
+                            }
+                        }
                     }
                     if ($totalstock != -1) {
                         pdo_update('ewei_shop_goods', array('total' => $totalstock), array('uniacid' => $uniacid, 'id' => $g['goodsid']));
-                        m("order")->updatestock($g['goodssn'],$totalstock);//代理库存更新
-
+                        if(!empty($g['goodssn'])){
+                            m("order")->updatestock($g['goodssn'],$totalstock);//代理库存更新
+                        }
                     }
                 }
             }
@@ -1674,23 +1699,23 @@ class Order_EweiShopV2Model
         //重新组装order_goods
         foreach ($order_goods as $key => $value) {
            if($value['type']==4){
-            $packgoods=Dispage::getPackgoods($value['goodsid'],$_W['uniacid']);
-            foreach ($packgoods as $k => $v) {
-                $v['goodsid']=$v['id'];
-                $v['total']=$v['number']*$value['total'];
-                unset($v['id']);
-                 $order_goods[]=$v;
-            }
-            unset($order_goods[$key]);
-           }else{
-            $order_goods[]=$value;
+                $packgoods=Dispage::getPackgoods($value['goodsid'],$_W['uniacid']);
+                foreach ($packgoods as $k => $v) {
+                    $v['goodsid']=$v['id'];
+                    $v['total']=$v['number']*$value['total'];
+                    unset($v['id']);
+                     $out_goods[]=$v;
+                }
+                unset($order_goods[$key]);
+                continue;
            }
+            $out_goods[]=$value;
         }
-       
         $dispriceamount=0;
         $dispatch_array=array();
         $disprice_dispatch_price=0;
-        foreach($order_goods as $key=>$goods){
+
+        foreach($out_goods as $key=>$goods){
             $out_goods[$key]['total']=$goods['total'];
             $out_goods[$key]['vat_rate']=$goods['vat_rate'];
             $out_goods[$key]['consumption_tax']=$goods['consumption_tax'];
@@ -1698,6 +1723,7 @@ class Order_EweiShopV2Model
             $disprice=Dispage::get_disprice($goods['goodsid'],$_W['uniacid'],$goods['optionid']);
             $out_goods[$key]['price']=$disprice;
             $dispriceamount+=$disprice*$goods['total'];
+
             if($goods['dispatchid']!=0){
                 $dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq  
             }else{
@@ -1743,7 +1769,7 @@ class Order_EweiShopV2Model
             }
             $disprice_dispatch_price+=$dprice;
         }
-      
+
         //var_dump($disprice_dispatch_price);
         //die();
         if($type){

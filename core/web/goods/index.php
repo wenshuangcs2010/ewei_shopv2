@@ -34,7 +34,8 @@ class Index_EweiShopV2Page extends WebPage {
         } else {
             $is_openmerch = 0;
         }
-       
+        $depotsql="SELECT * from ".tablename("ewei_shop_depot")." where uniacid=:uniacid";
+        $depotlist=pdo_fetchall($depotsql,array(":uniacid"=>$_W['uniacid']));
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
         $sqlcondition = $groupcondition = '';

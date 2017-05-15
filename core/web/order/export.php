@@ -65,6 +65,8 @@ class Export_EweiShopV2Page extends WebPage {
             array('title' => '三级佣金', 'field' => 'commission3', 'width' => 12),
             array('title' => '扣除佣金后利润', 'field' => 'commission4', 'width' => 12),
             array('title' => '扣除佣金及运费后利润', 'field' => 'profit', 'width' => 12),
+            array('title' => '上级分销商姓名', 'field' => 'fxrealname', 'width' => 12),
+            array('title' => '上级分销商昵称', 'field' => 'fxnickname', 'width' => 12),
         );
     }
 
@@ -100,6 +102,7 @@ class Export_EweiShopV2Page extends WebPage {
                 $columns = $default_columns;
             }
         }
+
         foreach ($default_columns as &$dc) {
             $dc['select'] = false;
             foreach ($columns as $c) {
@@ -266,20 +269,20 @@ class Export_EweiShopV2Page extends WebPage {
                 }
             }
 
-            $sql = "select o.* , a.realname as arealname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername from " . tablename('ewei_shop_order') . " o"
+            $sql = "select o.* , a.realname as arealname,ag.realname as fxrealname,ag.nickname as fxnickname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername from " . tablename('ewei_shop_order') . " o"
                 . " left join " . tablename('ewei_shop_order_refund') . " r on r.id =o.refundid "
                 . " left join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid "
                 . " left join " . tablename('ewei_shop_member_address') . " a on a.id=o.addressid "
                 . " left join " . tablename('ewei_shop_dispatch') . " d on d.id = o.dispatchid "
                 . " left join " . tablename('ewei_shop_member') . " sm on sm.openid = o.verifyopenid and sm.uniacid=o.uniacid"
+                . " left join " . tablename('ewei_shop_member') . " ag on o.agentid = ag.id and ag.uniacid=o.uniacid"
                 . " left join " . tablename('ewei_shop_saler') . " s on s.openid = o.verifyopenid and s.uniacid=o.uniacid"
                 . " where $condition $statuscondition ORDER BY o.createtime DESC,o.status DESC  ";
 
             $list = pdo_fetchall($sql, $paras);
-
+           
             $goodscount = 0;
             foreach ($list as &$value) {
-
                 $agentid = $value['agentid'];
                 $s = $value['status'];
                 $pt = $value['paytype'];

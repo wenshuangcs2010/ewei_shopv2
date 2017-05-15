@@ -245,7 +245,7 @@
                         {loop $verifyinfo $v}
                         <div class='fui-cell verify-cell' data-verifycode="{$v['verifycode']}">
                             <div class='fui-cell-label' style='width:auto'>
-                                {$v['verifycode']}
+                            {$v['verifycode']}<span style="color: red">(十分钟更换一次)</span>
                             </div>
                             <div class='fui-cell-info'></div>
                             <div class='fui-cell-remark noremark'>

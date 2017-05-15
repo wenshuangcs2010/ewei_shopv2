@@ -5,6 +5,7 @@ if (!defined('IN_IA')) {
 
 require_once EWEI_SHOPV2_TAX_CORE. '/customs/customs.php';
 require_once EWEI_SHOPV2_TAX_CORE. '/declare/declare.php';
+require_once EWEI_SHOPV2_TAX_CORE. '/orderpay/paybase.php';
 class Kjb2c_EweiShopV2Model {
 
 
@@ -21,13 +22,14 @@ class Kjb2c_EweiShopV2Model {
 
 	function to_customs_new($orderid){
 		global $_W,$_GPC;
-			$order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+			$order=pdo_fetch("SELECT zhuan_status,paymentno,uniacid,if_customs_z,isdisorder,isborrow,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);
 		if(!$customs){
 			show_json(0,"订单无需报关");
 		}
 		$depot=m("kjb2c")->get_depot($order['depotid']);
+
 		 $params=array(
 		 	'out_trade_no'=>$order['ordersn'],
 		 	'transaction_id'=>$order['paymentno'],
@@ -57,11 +59,14 @@ class Kjb2c_EweiShopV2Model {
 		if($order['paytype']==21){
 		 	load()->model('payment');
 		 	$jearray=Dispage::getDisaccountArray();
-		 	$uniacid=$_W['uniacid'];
-		 	if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+		 	$uniacid=$order['uniacid'];
+		 	if(in_array($uniacid, $jearray) && $order['isdisorder']==1 && $order['isborrow']==1){
                  $uniacid=DIS_ACCOUNT;
-                 $params['order_sn']=$params['order_sn']."_borrow";
+                 //$params['order_sn']=$params['out_trade_no']."_borrow";
+                 $params['out_trade_no']=$params['out_trade_no']."_borrow";
+
             }
+
         	$setting = uni_setting($uniacid, array('payment'));
         	if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
         		 $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
@@ -371,6 +376,7 @@ class Kjb2c_EweiShopV2Model {
                    );
                 $payment=paybase::getPayment('wx',$config);
                 $returncode=$payment->buildRequestForm($orderpay);
+               
                 WeUtility::logging('支付结果', var_export($returncode, true));
                 if($returncode['status']==0){
                     m("kjb2c")->to_declare($orderid);

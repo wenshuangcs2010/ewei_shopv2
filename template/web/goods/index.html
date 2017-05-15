@@ -88,7 +88,12 @@
                 <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
                 {/loop}
             </select>
-
+            <select name="deposid" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="商品分类">
+                <option value="" {if empty($_GPC['deposid'])}selected{/if} >仓库选择</option>
+                {loop $depotlist $c}
+                <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
+                {/loop}
+            </select>
             <div class="input-group">				 
                 <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="ID/名称/编号/条码{if $merch_plugin}/商户名称{/if}"> <span class="input-group-btn">
                     		

@@ -63,7 +63,7 @@ class Qrcode_EweiShopV2Model {
         return  $_W['siteroot'].'addons/ewei_shopv2/data/qrcode/'.$_W['uniacid'].'/'.$file;
     }
   
-    public function createQrcode($url) {
+    public function createQrcode($url,$times=0) {
         global $_W,$_GPC;
         $path = IA_ROOT."/addons/ewei_shopv2/data/qrcode/".$_W['uniacid']."/";
         if (!is_dir($path)) {

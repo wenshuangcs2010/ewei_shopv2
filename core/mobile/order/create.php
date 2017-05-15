@@ -1053,7 +1053,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $goodsprice = $_GPC['goodsprice'];
         $discountprice = $_GPC['discountprice'];
         $isdiscountprice = $_GPC['isdiscountprice'];
-
         $result = $this->caculatecoupon($couponid, $goodsarr, $goodsprice, $discountprice, $isdiscountprice);
 
         if (empty($result)) {
@@ -2737,7 +2736,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $order['tax_consumption']=$returndata['tax_consumption'];
 
         $disdata=m("order")->get_dis_tax($allgoods,$address);
-         
+        
         if(!empty($disdata)){
             $ordertax=$order['tax_rate']+$order['tax_consumption'];
             $diff_fee=$ordertax-$disdata['alltax'];

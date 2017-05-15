@@ -38,7 +38,7 @@ class Dispage{
 			$goodslist=pdo_fetchall("SELECT id FROM ".tablename('ewei_shop_goods')." where disgoods_id=:goods_id",array(":goods_id"=>$goods_id));
 			if(!empty($goodslist)){
 				foreach ($goodslist as $value) {
-					pdo_delete("ewei_shop_goods",array("id"=>$value['id']));
+					pdo_update("ewei_shop_goods",array("status"=>0,"deleted"=>1),array("id"=>$value['id']));
 				}
 				plog('goods.delete', "删除代理商品 主代理ID: {$goods_id}<br>");
 			}
@@ -142,7 +142,7 @@ class Dispage{
 		}
 		if($disgoods_id!=0 && $isdis==1 && $uniacid!=DIS_ACCOUNT && $status==1){//非主号商品的上架
 			 $goods=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_goods")." WHERE id=:goodsid",array(":goodsid"=>$disgoods_id));
-			 if($goods['status']==0){
+			 if($goods['status']==0||$goods['isdis']==0){
 			 	return false;
 			 }
 		}

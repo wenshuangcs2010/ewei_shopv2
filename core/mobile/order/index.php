@@ -502,6 +502,7 @@ paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdelet
 
                 if ($order['verifytype'] == 0 || $order['verifytype'] == 1) {
                     $vs = iunserializer($order['verifyinfo']);
+                 
                     $verifyinfo = array(
                         array(
                             'verifycode' => $order['verifycode'],

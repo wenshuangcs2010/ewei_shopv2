@@ -46,6 +46,9 @@ class Depot_EweiShopV2Page extends WebPage {
         if(empty($depot['storeroomid'])){
              show_json(0,"仓库ID错误未填写");
         }
+        // $s=m("httpUtil")->updateGoodsPrice($_GPC['id'],$depot['storeroomid']);
+        //  show_json($s,'更新');
+        // die();
         if($depot['updateid']==1){
             m("httpUtil")->updatecnbuyerStock($_GPC['id'],$depot['storeroomid']);
             show_json(1);

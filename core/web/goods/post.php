@@ -88,8 +88,8 @@ if ($ccard_plugin) {
 }
 
 $category = m('shop')->getFullCategory(true,false);
-$levels = m('member')->getLevels();
 
+$levels = m('member')->getLevels();
 foreach($levels as &$l){
     $l['key'] ='level'.$l['id'];
 }
@@ -781,7 +781,9 @@ if (!empty($id)) {
 
 
     $noticetype = explode(',', $item['noticetype']);
+
     $cates = explode(',', $item['cates']);
+
 
     //佣金设置
     $commission = json_decode($item['commission'], true);

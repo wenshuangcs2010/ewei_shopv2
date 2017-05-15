@@ -14,12 +14,94 @@ class Index_EweiShopV2Page extends MobilePage {
 	function qrcode() {
 		global $_W, $_GPC;
 		$orderid = intval($_GPC['id']);
-		$verifycode = $_GPC['verifycode'];
-		$query = array('id' => $orderid, 'verifycode' => $verifycode);
+		
+		$order=pdo_fetch("SELECT sendtime,verifytype,verifycode,isverify,dispatchtype from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		$verifycode = $order['verifycode'];
+		$sendtime=$order['sendtime'];
+		if(!empty($order['sendtime'])){
+			if(time()-$sendtime>600){
+				$query = array('id' => $orderid, 'verifycode' => $order['verifycode'],'createtime'=>$order['sendtime']);
+				$url = mobileUrl('verify/detail', $query, true);
+				
+				$file = md5( base64_encode($url) ).".jpg";
+				//var_dump($file);
+				$dirfiles=IA_ROOT.'/addons/ewei_shopv2/data/qrcode/'.$_W['uniacid'].'/'.$file;
+				if (file_exists($dirfiles)) {
+					unlink($dirfiles);
+				}
+			
+				$verify=$this->createverifycode($order);
+				$verifycode=$verify['verifycode'];
+				$verifyinfo=iserializer($verify['verifyinfo']);
+				//die();
+				$sendtime=time();
+				
+				$verifycodes=implode('', $verify['verifycodes']);
+				$updatedata=array("sendtime"=>$sendtime,'verifycode'=>$verifycode,'verifycodes'=>$verifycodes,'verifyinfo'=>$verifyinfo);
+				pdo_update("ewei_shop_order",$updatedata,array("id"=>$orderid));
+			}
+		}else{
+			$sendtime=time();
+			pdo_update("ewei_shop_order",array("sendtime"=>$sendtime),array("id"=>$orderid));
+		}
+		$query = array('id' => $orderid, 'verifycode' => $verifycode,'createtime'=>$sendtime);
+		//var_dump($query);
 		$url = mobileUrl('verify/detail', $query, true);
+		
 		show_json(1, array('url' => m('qrcode')->createQrcode($url)));
 	}
+	function createverifycode($order){
+		global $_W, $_GPC;
+		extract($order);
+		 if ($isverify) {
+                if ($verifytype == 0 || $verifytype == 1) {
+                    //一次核销+ 按次核销（一个码 )
+                    $verifycode = random(8, true);
+                    while (1) {
+                        $count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' where verifycode=:verifycode and uniacid=:uniacid limit 1', array(':verifycode' => $verifycode, ':uniacid' => $_W['uniacid']));
+                        if ($count <= 0) {
+                            break;
+                        }
+                        $verifycode = random(8, true);
+                    }
+                } else if ($verifytype == 2) {
+                    //按码核销
+                    $totaltimes = intval($allgoods[0]['total']);
+                    if ($totaltimes <= 0) {
+                        $totaltimes = 1;
+                    }
+                    for ($i = 1; $i <= $totaltimes; $i++) {
 
+                        $verifycode = random(8, true);
+                        while (1) {
+                            $count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' where concat(verifycodes,\'|\' + verifycode +\'|\' ) like :verifycodes and uniacid=:uniacid limit 1', array(':verifycodes' => "%{$verifycode}%", ':uniacid' => $_W['uniacid']));
+                            if ($count <= 0) {
+                                break;
+                            }
+                            $verifycode = random(8, true);
+                        }
+                        $verifycodes[] = "|" . $verifycode . "|";
+                        $verifyinfo[] = array(
+                            'verifycode' => $verifycode,
+                            'verifyopenid' => '',
+                            'verifytime' => 0,
+                            'verifystoreid' => 0
+                        );
+                    }
+                }
+            } else if ($dispatchtype) {
+                //自提码
+                $verifycode = random(8, true);
+                while (1) {
+                    $count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' where verifycode=:verifycode and uniacid=:uniacid limit 1', array(':verifycode' => $verifycode, ':uniacid' => $_W['uniacid']));
+                    if ($count <= 0) {
+                        break;
+                    }
+                    $verifycode = random(8, true);
+                }
+            }
+            return array('verifycode'=>$verifycode,'verifycodes'=>$verifycodes,"verifyinfo"=>$verifyinfo);
+	}
 	function select() {
 		global $_W, $_GPC;
 		$orderid = intval($_GPC['id']);
@@ -76,6 +158,10 @@ class Index_EweiShopV2Page extends MobilePage {
 		$openid = $_W['openid'];
 		$uniacid = $_W['uniacid'];
 		$orderid = intval($_GPC['id']);
+		$times=intval($_GPC['createtime']);
+		if(time()-$times>600){
+			$this->message("二维码已经过期");
+		}
 		$data  = com('verify')->allow($orderid);
 		if(is_error($data)){
 			$this->message($data['message']);

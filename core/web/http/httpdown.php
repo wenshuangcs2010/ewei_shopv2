@@ -28,7 +28,8 @@ class Httpdown_EweiShopV2Page extends WebPage {
 			$return=m("httpUtil")->updateGoods($goods['goodssn'],$goods['id']);
 		}elseif($depot['updateid']==2){
 			//同步成本
-			//m("httpUtil")->updateGoodsPrice($goods['goodssn']);
+			//m("httpUtil")->oneupdateGoodsprice($goods['id']);
+
 			$return=m("httpUtil")->updateAdressGoods($goods['goodssn'],$goods['id'],$depot['storeroomid']);
 			//show_json(1,$retdata);
 		}
