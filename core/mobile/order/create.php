@@ -88,7 +88,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $lastsql="SELECT id,imid,realname FROM ".tablename("ewei_shop_order")." where uniacid=:uniacid  and openid=:openid order by createtime desc";
         $lastorder=pdo_fetch($lastsql,array(":uniacid"=>$_W['uniacid'],":openid"=>$_W['openid']));
        // var_dump($lastorder);
-
+        $packageid=0;
         //是否为套餐订单
         $packageid = intval($_GPC['packageid']);
         if (!$packageid) {
@@ -364,8 +364,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
             }
 
             $goods = set_medias($goods, 'thumb');
+
             //$giftgoodstemp = set_medias($giftGood, 'thumb');
-            //var_dump($goods);
+          //  var_dump($goods);
            // die();
             foreach ($goods as &$g) {
 
@@ -936,6 +937,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 'id' => $id,
                 'gdid' => intval($_GPC['gdid']),
                 'fromcart' => $fromcart,
+                'packageid'=>$packageid,
                 'addressid' => !empty($address) && !$isverify && !$isvirtual ? $address['id'] : 0,
                 'storeid' => !empty($carrier_list) && !$isverify && !$isvirtual ? $carrier_list[0]['id'] : 0,
                 'couponcount' => $couponcount,
@@ -970,7 +972,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $goods = array();
             $goodsprice = 0;
             $marketprice = 0;
-
+            $saleset=false;
             foreach ($g as $key => $value) {
                 $goods[$key] = pdo_fetch("select id,title,thumb,marketprice,type,disgoods_id,depotid from " . tablename('ewei_shop_goods') . "
                             where id = " . $value['goodsid'] . " and uniacid = " . $uniacid . " ");
@@ -1000,7 +1002,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $marketprice += $goods[$key]['marketprice'];
 
             }
-
+             //var_dump($goods);
             //wsq检查套餐商品是否在同一个仓库中
             foreach ($goods as $key => $value) {
                 $t[$value['depotid']]=$value['depotid'];
@@ -1020,6 +1022,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $total = count($goods);
             $dispatch_price = $package['freight'];
             $realprice = $goodsprice + $package['freight'];
+            $goods_list[0]['goods'] = $goods;
 
             //订单创建数据
             $createInfo = array(
@@ -1572,7 +1575,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $saleset = $_W['shopset']['sale'];
                 $saleset['enoughs'] = $sale_plugin->getEnoughs();
             }
-
+             if($_GPC['packageid']>0){
+                 $saleset = false;
+            }
             foreach ($allgoods as $g) {
 
                 if ($g['seckillinfo'] && $g['seckillinfo']['status'] == 0) {
@@ -1694,7 +1699,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
             if (empty($goodsdata_coupon) || !$allow_sale) {
                 $couponcount = 0;
             }
-
+            if($_GPC['packageid']>0){
+                $couponcount = 0;
+            }
             $realprice += $dispatch_price +$seckill_dispatchprice;
 
             $deductcredit = 0; //抵扣需要扣除的积分
@@ -2240,7 +2247,11 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $goodsprice += $gprice;
 
                 //成交价格
-                $prices = m('order')->getGoodsDiscountPrice($data, $level);
+                $package_sale=true;
+                if($_GPC['packageid']>0){
+                    $package_sale=false;
+                }
+                $prices = m('order')->getGoodsDiscountPrice($data, $level,0,$package_sale);
                 $data['ggprice'] = $prices['price'];
                 $data['taskdiscountprice'] = $prices['taskdiscountprice'];
                 $data['discountprice'] = $prices['discountprice'];
@@ -2254,7 +2265,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $data['buyagainprice'] = $prices['buyagainprice'];
 
                 $goodsprice += $g['ggprice'];
-                
+               
                 $buyagainprice += $prices['buyagainprice'];
                 $taskdiscountprice += $prices['taskdiscountprice'];
 
@@ -2287,7 +2298,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 }
             }
            
-            
             $merch_array[$merchid]['ggprice'] += $data['ggprice'];
             $totalprice += $data['ggprice'];
 
@@ -2347,7 +2357,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                             $deductprice2 += $data['deduct2'];
                         }
                     }
-                
+                   
 
 
             }
@@ -2726,7 +2736,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
-
+ 
         $returndata=m("order")->get_tax($allgoods,$dispatch_price,$goodsprice,$alldeduct);//正常算税
 
         $allgoods=$returndata['order_goods'];

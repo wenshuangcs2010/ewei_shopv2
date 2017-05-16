@@ -20,7 +20,6 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
         modal.params = $.extend(modal.params, params || {});
         modal.params.couponid = 0;
         modal.params.log_id=params.log_id;
-        console.log(params.log_id);
         $('#coupondiv').find('.fui-cell-label').html('优惠券');
         $('#coupondiv').find('.fui-cell-info').html('');
         var discountprice = core.getNumber($(".discountprice").val());
@@ -229,8 +228,10 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                 modal.params.goods[0].total = parseInt($('.shownum').val())
             }
         }
+
         core.json('order/create/caculate', {
             totalprice: totalprice,
+            packageid:modal.params.packageid,
             addressid: modal.params.addressid,
             dispatchid: modal.params.dispatchid,
             dflag: modal.params.iscarry,

@@ -705,7 +705,7 @@ class Order_EweiShopV2Model
     }
 
     //获得d商品促销或会员折扣价格
-    function getGoodsDiscountPrice($g, $level, $type = 0)
+    function getGoodsDiscountPrice($g, $level, $type = 0,$sale=true)
     {
 
         //商品原价
@@ -721,7 +721,7 @@ class Order_EweiShopV2Model
             $gprice = $g['marketprice'] * $total;
         }
         //重复购买购买是否享受其他折扣
-        $buyagain_sale = true;
+        $buyagain_sale = $sale;
         $buyagainprice = 0;
         $canbuyagain = false;
 
