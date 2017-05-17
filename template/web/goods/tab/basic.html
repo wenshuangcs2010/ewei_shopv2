@@ -113,6 +113,7 @@
                                 'optionurl'=>'sale.package.hasoption',
                                 'items'=>$packgs,
                                 'nokeywords'=>1,
+                                'selectorid'=>"sss",
                                 'text'=>"数量",
                                 'optiontype'=>2,
                                 'autosearch'=>1,
@@ -132,7 +133,6 @@
                                     <th>数量</th>
                                 </tr>
                                 </thead>
-                                <tbody id="param-items" class="ui-sortable">
                                 {loop $packgs $index $item}
                                 <tr class="multi-product-item" data-id="{$item['goodsid']}">
                                     <input type="hidden" class="form-control img-textname" readonly="" value="{$item['title']}">

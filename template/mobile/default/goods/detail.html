@@ -1,7 +1,17 @@
 {template '_header'}
 <style>
+   
     .fui-cell-group{width:100%;}
+    .fullback-title{color:#999999;font-size:0.7rem;padding:0.75rem 0 0.5rem 0;}
+    .fullback-info{}
+    .fullback-info p{height:1rem;line-height: 1rem;font-size:0.625rem;color:#333;display: inline-block;padding:0 0.5rem 0 0;}
+    .fullback-info p i{border:none;height:0.75rem;width:0.75rem;display: inline-block;background: #ff4753;color:#fff;font-size:0.4rem;line-height: 0.8rem;text-align: center;
+        font-style: normal;border-radius: 0.75rem;-webkit-border-radius: 0.75rem;margin-right:0.25rem;}
+    .fullback-remark{line-height: 1rem;font-size:0.6rem;color:#666;padding:0.2rem 0;}
 </style>
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/coupon.css?v=2.0.0">
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/coupon-new.css?v=2017030302">
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/swiper/swiper.min.css">
 <div class='fui-page fui-page-current  page-goods-detail' id='page-goods-detail-index'>
     {php $this->followBar()}
 
@@ -980,11 +990,21 @@
 <script language="javascript">
 
     require(['biz/goods/detail'], function (modal) {
+        /*
         modal.init({
             goodsid:"{$goods['id']}",
             getComments : "{$getComments}",
             seckillinfo: {php echo json_encode($seckillinfo)},
             log_id:"{$log_id}",
+        });*/
+        modal.init({
+            goodsid:"{$goods['id']}",
+            getComments : "{$getComments}",
+            seckillinfo: {php echo json_encode($seckillinfo)},
+            attachurl_local:"{$GLOBALS['_W']['attachurl_local']}",
+            attachurl_remote:"{$GLOBALS['_W']['attachurl_remote']}",
+            coupons: {php echo json_encode($coupons)},
+            new_temp: {$new_temp}
         });
     });</script>
 </div>

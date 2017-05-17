@@ -69,7 +69,10 @@ class Detail_EweiShopV2Page extends MobilePage {
            }
         }
         if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
-            //$goodstotal = pdo_fetchcolumn("select total from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
+            $disgoods = pdo_fetch("select title,thumb,thumb_url,content from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
+            $goods['thumb']=$disgoods['thumb'];
+            $goods['content']=$disgoods['content'];
+            $goods['thumb_url']=$disgoods['thumb_url'];
            // $goods['total']=$goodstotal;
             $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
             if(!empty($ret)){
@@ -148,6 +151,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
 
         $goods['sales'] = $goods['sales'] + $goods['salesreal'];
+
         $goods['content'] = m('ui')->lazy($goods['content']);
 
         $buyshow = 0;
@@ -601,7 +605,11 @@ class Detail_EweiShopV2Page extends MobilePage {
                 }
             }
         }
-
+        $new_temp = !is_mobile()?1:intval($_W['shopset']['template']['detail_temp']);
+        if($new_temp && $getComments){
+            $showComments = pdo_fetchcolumn('select count(*) from '.tablename('ewei_shop_order_comment')." where goodsid=:goodsid and level>=0 and deleted=0 and checked=0 and uniacid=:uniacid", array(':goodsid'=>$id,':uniacid'=>$_W['uniacid']));
+        }
+      
         if(p('diypage')){
             $diypage = p('diypage')->detailPage($goods['diypage']);
             if($diypage){
@@ -684,6 +692,10 @@ class Detail_EweiShopV2Page extends MobilePage {
         global $_W, $_GPC;
         $id = intval($_GPC['id']);
         $goods = pdo_fetch('select * from '.tablename('ewei_shop_goods').' where id=:id and uniacid=:uniacid limit 1',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
+         if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
+              $disgoodscontent = pdo_fetchcolumn("select content from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
+              $goods['content']=$disgoodscontent;
+         }
         die(m('ui')->lazy($goods['content']));
     }
 
