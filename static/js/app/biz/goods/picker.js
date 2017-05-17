@@ -2,7 +2,6 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
     var modal = {
         goodsid: 0,
         goods: [],
-        log_id:0,
         option: false,
         specs: [],
         options: [],
@@ -22,8 +21,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         modal.params = $.extend(modal.params, params || {});
         if (modal.goodsid != params.goodsid) {
             modal.goodsid = params.goodsid;
-            modal.log_id=params.log_id;
-            core.json('goods/picker', {id: params.goodsid,log_id:params.log_id}, function (ret) {
+            core.json('goods/picker', {id: params.goodsid}, function (ret) {
                 if (ret.status == 0) {
                     FoxUI.toast.show('未找到商品!');
                     return
@@ -35,17 +33,23 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
                     modal.followurl = ret.result.followurl;
                     modal.show();
                     return
-                }
+                };
                 if (ret.status == 4) {
                     modal.needlogin = 1;
                     modal.show();
                     return
-                }
+                };
                 if (ret.status == 3) {
                     modal.mustbind = 1;
                     modal.show();
                     return
-                }
+                };
+                //预售
+                if (ret.status == 5) {
+                    FoxUI.toast.show(ret.result.message);
+                    modal.goodsid = '';
+                    return;
+                };
                 modal.containerHTML = tpl('option-picker', ret.result);
                 modal.goods = ret.result.goods;
                 modal.specs = ret.result.specs;
@@ -242,7 +246,16 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         if (modal.params.optionid != '0') {
             modal.initOption()
         }
-        modal.container.show()
+        modal.container.show();
+        //验证规格库存
+        if(modal.specs.length==1){
+            $.each(modal.options, function () {
+                var thisspecs = this.specs;
+                if(this.stock==0){
+                    $(".spec-item"+thisspecs+"").removeClass("spec-item").removeClass("btn-danger").addClass("disabled").off("click");
+                }
+            });
+        }
     };
     modal.initOption = function () {
         $(".spec-item").removeClass('btn-danger');
@@ -274,6 +287,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
     };
     modal.chooseSpec = function (obj, callback) {
         var $this = $(obj);
+
         $this.closest('.spec').find('.spec-item').removeClass('btn-danger'), $this.addClass('btn-danger');
         var thumb = $this.data('thumb') || '';
         if (thumb) {
@@ -281,8 +295,72 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         }
         modal.params.optionthumb = thumb;
         var selected = $(".spec-item.btn-danger", modal.container.container);
-
         var itemids = [];
+        //判断规格库存为0，规格不可选
+        if (selected.length <= modal.specs.length){
+            $.each(modal.options, function () {
+                if((modal.specs.length-selected.length) == 1){
+                    var specid = [];
+                    var specOpion = this.specs;
+                    $.each(selected,function () {
+                        if(specOpion.indexOf(this.getAttribute("data-id"))>=0){
+                            specid.push(this.getAttribute("data-id"))
+                        }
+                    });
+                    if(specid.length==selected.length){
+                        for (var i=0;i<specid.length;i++){
+                            specOpion = specOpion.replace(specid[i],"");
+                        }
+                        specOpion = specOpion.split("_");
+                        var option = [];
+                        $.each(specOpion,function(i,v){
+                            var data = $.trim(v);//$.trim()函数来自jQuery
+                            if('' != data){
+                                option.push(data);
+                            }
+                        });
+                        if(this.stock<=0 && this.stock != -1){
+                            $(".spec-item"+option[0]+"").removeClass("spec-item").removeClass("btn-danger").addClass("disabled").off("click");
+                        }else{
+                            $(".spec-item"+option[0]+"").removeClass("disabled").addClass("spec-item").off("click").on("click",function () {
+                                modal.chooseSpec(this)
+                            });
+                        }
+                    }
+
+                }else if(modal.specs.length==selected.length){
+                    var specid = [];
+                    var specOpion = this.specs;
+                    $.each(selected,function () {
+                        if(specOpion.indexOf(this.getAttribute("data-id"))>=0 && specOpion.indexOf($this.data("id"))>=0){
+                            specid.push(this.getAttribute("data-id"))
+                        }
+                    });
+                    var option = [];
+                    if(specid.length==(modal.specs.length-1)){
+                        for (var i=0;i<specid.length;i++){
+                            specOpion = specOpion.replace(specid[i],"");
+                        }
+                        specOpion = specOpion.split("_");
+                        $.each(specOpion,function(i,v){
+                            var data = $.trim(v);//$.trim()函数来自jQuery
+                            if('' != data){
+                                option.push(data);
+                            }
+                        });
+                        if(this.stock<=0 && this.stock != -1){
+                            $(".spec-item"+option[0]+"").removeClass("spec-item").removeClass("btn-danger").addClass("disabled").off("click");
+                        }else{
+                            $(".spec-item"+option[0]+"").removeClass("disabled").addClass("spec-item").off("click").on("click",function () {
+                                modal.chooseSpec(this)
+                            });
+                        }
+                    }
+                }
+
+
+            });
+        }
         if (selected.length == modal.specs.length) {
             selected.each(function () {
                 itemids.push($(this).data('id'))
@@ -303,7 +381,13 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
                             $('.cartbtn,.buybtn', modal.container).show(), $('.confirmbtn').hide()
                         }
                     }
-                    $('.price', modal.container.container).html(this.marketprice);
+                    var timestamp = Date.parse(new Date()) / 1000;
+                    if(modal.goods.ispresell>0 && (modal.goods.preselltimeend==0 || modal.goods.preselltimeend > timestamp)){
+                        $('.price', modal.container.container).html(this.presellprice);
+                    }else{
+                        $('.price', modal.container.container).html(this.marketprice);
+                    }
+
                     modal.option = this;
                     modal.params.optionid = this.id
                 }

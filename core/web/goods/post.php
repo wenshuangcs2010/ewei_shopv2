@@ -429,7 +429,8 @@ if ($_W['ispost']) {
     }
     //处理组合商品
     if($data['type']==4){
-        $gpcpackgoods=$_GPC['packagegoods'];
+        $gpcpackgoods=$_GPC['ssspackagegoods'];
+       
         foreach ($gpcpackgoods as $key => $value) {
              $goodstmp=explode(",", $value);
              $goods[]=array(

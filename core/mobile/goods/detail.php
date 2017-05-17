@@ -108,7 +108,10 @@ class Detail_EweiShopV2Page extends MobilePage {
 
 
         $member = m('member')->getMember($openid);
-
+        if(com('coupon'))
+        {
+            $coupons =$this->getCouponsbygood($goods['id']);
+        }
         $showgoods = m('goods')->visit($goods, $member);
 
         if (empty($goods) || empty($showgoods)){
@@ -609,7 +612,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         if($new_temp && $getComments){
             $showComments = pdo_fetchcolumn('select count(*) from '.tablename('ewei_shop_order_comment')." where goodsid=:goodsid and level>=0 and deleted=0 and checked=0 and uniacid=:uniacid", array(':goodsid'=>$id,':uniacid'=>$_W['uniacid']));
         }
-      
+
         if(p('diypage')){
             $diypage = p('diypage')->detailPage($goods['diypage']);
             if($diypage){
@@ -762,5 +765,334 @@ class Detail_EweiShopV2Page extends MobilePage {
         $url = $_W['root'];
         show_json(1, array('url' => m('qrcode')->createQrcode($url)));
     }
+     //多商户
+    protected function merchData() {
+        $merch_plugin = p('merch');
+        $merch_data = m('common')->getPluginset('merch');
+        if ($merch_plugin && $merch_data['is_openmerch']) {
+            $is_openmerch = 1;
+        } else {
+            $is_openmerch = 0;
+        }
+
+        return array(
+            'is_openmerch' => $is_openmerch,
+            'merch_plugin' => $merch_plugin,
+            'merch_data' => $merch_data
+        );
+    }
+     //获取当前商品及当前用户组可领取的免费优惠券
+    function getCouponsbygood($goodid){
+        global $_W, $_GPC;
+
+        //多商户
+        $merchdata = $this->merchData();
+        extract($merchdata);
+
+        // 读取 优惠券
+        $time = time();
+
+        $param = array();
+        $param[':uniacid'] = $_W['uniacid'];
+
+        $sql = "select id,timelimit,coupontype,timedays,timestart,timeend,thumb,couponname,enough,backtype,deduct,discount,backmoney,backcredit,backredpack,bgcolor,thumb,credit,money,getmax,merchid,total as t,limitmemberlevels,limitagentlevels,limitpartnerlevels,limitaagentlevels,limitgoodcatetype,limitgoodcateids,limitgoodtype,limitgoodids,tagtitle,settitlecolor,titlecolor from " . tablename('ewei_shop_coupon') . " c ";
+        $sql.=" where uniacid=:uniacid and money=0 and credit = 0 and coupontype=0";
+        if ($is_openmerch == 0) {
+            $sql .= ' and merchid=0';
+        }else {
+            if (!empty($_GPC['merchid'])) {
+                $sql .= ' and merchid=:merchid';
+                $param[':merchid'] = intval($_GPC['merchid']);
+            }else
+            {
+                $sql .= ' and merchid=0';
+            }
+        }
+
+        //分销商限制
+        $hascommission = false;
+        $plugin_com = p('commission');
+        if ($plugin_com) {
+            $plugin_com_set = $plugin_com->getSet();
+            $hascommission = !empty($plugin_com_set['level']);
+            if(empty($plugin_com_set['level']))
+            {
+                $sql .= ' and ( limitagentlevels = "" or  limitagentlevels is null )';
+            }
+        }
+        else
+        {
+            $sql .= ' and ( limitagentlevels = "" or  limitagentlevels is null )';
+        }
+
+        //股东限制
+        $hasglobonus = false;
+        $plugin_globonus = p('globonus');
+        if ($plugin_globonus) {
+            $plugin_globonus_set = $plugin_globonus->getSet();
+            $hasglobonus = !empty($plugin_globonus_set['open']);
+            if(empty($plugin_globonus_set['open']))
+            {
+                $sql .= ' and ( limitpartnerlevels = ""  or  limitpartnerlevels is null )';
+            }
+        }
+        else
+        {
+            $sql .= ' and ( limitpartnerlevels = ""  or  limitpartnerlevels is null )';
+        }
+
+        //区域代理限制
+        $hasabonus = false;
+        $plugin_abonus = p('abonus');
+        if ($plugin_abonus) {
+            $plugin_abonus_set = $plugin_abonus->getSet();
+            $hasabonus = !empty($plugin_abonus_set['open']);
+            if(empty($plugin_abonus_set['open']))
+            {
+                $sql .= ' and ( limitaagentlevels = "" or  limitaagentlevels is null )';
+            }
+        }
+        else
+        {
+            $sql .= ' and ( limitaagentlevels = "" or  limitaagentlevels is null )';
+        }
+
+        $sql.=" and gettype=1 and (total=-1 or total>0) and ( timelimit = 0 or  (timelimit=1 and timeend>unix_timestamp()))";
+        $sql.=" order by displayorder desc, id desc  ";
+
+        $list = set_medias(pdo_fetchall($sql, $param), 'thumb');
+        if(empty($list))
+        {
+            $list=array();
+        }
+
+        if(!empty($goodid))
+        {
+            $goodparam[':uniacid'] = $_W['uniacid'];
+            $goodparam[':id'] = $goodid;
+            $sql = "select id,cates,marketprice,merchid   from " . tablename('ewei_shop_goods') ;
+            $sql.=" where uniacid=:uniacid and id =:id order by id desc LIMIT 1 "; //类型+最低消费+示使用
+            $good = pdo_fetch($sql, $goodparam);
+        }
+
+        $cates = explode(',',$good['cates']);
+
+        if (!empty($list)) {
+            foreach ($list as $key =>&$row) {
+                $row = com('coupon')->setCoupon($row, time());
+
+                $row['thumb'] = tomedia($row['thumb']);
+
+                $row['timestr'] = "永久有效";
+                if (empty($row['timelimit'])) {
+                    if (!empty($row['timedays'])) {
+                        $row['timestr'] = "自领取日后".$row['timedays']."天有效";
+                    }
+                } else {
+                    if ($row['timestart'] >= $time) {
+                        $row['timestr'] = '有效期至:'.date('Y-m-d', $row['timestart']) . '-' . date('Y-m-d', $row['timeend']);
+                    } else {
+                        $row['timestr'] = '有效期至:'.date('Y-m-d', $row['timeend']);
+                    }
+                }
+
+                if ($row['backtype'] == 0) {
+                    $row['backstr'] = '立减';
+                    $row['backmoney'] = $row['deduct'];
+                    $row['backpre'] = true;
+
+                    if($row['enough']=='0')
+                    {
+                        $row['color']='org ';
+                    }
+                    else
+                    {
+                        $row['color']='blue';
+                    }
+                } else if ($row['backtype'] == 1) {
+                    $row['backstr'] = '折';
+                    $row['backmoney'] = $row['discount'];
+                    $row['color']='red ';
+                } else if ($row['backtype'] == 2) {
+                    if($row['coupontype']=='0')
+                    {
+                        $row['color']='red ';
+                    }
+                    else
+                    {
+                        $row['color']='pink ';
+                    }
+
+                    if ($row['backredpack'] > 0) {
+                        $row['backstr'] = '返现';
+                        $row['backmoney'] = $row['backredpack'];
+                        $row['backpre'] = true;
+                    } else if ($row['backmoney'] > 0) {
+                        $row['backstr'] = '返利';
+                        $row['backmoney'] = $row['backmoney'];
+                        $row['backpre'] = true;
+                    } else if (!empty($row['backcredit'])) {
+                        $row['backstr'] = '返积分';
+                        $row['backmoney'] = $row['backcredit'];
+                    }
+                }
+
+
+
+
+                //分类限制
+                $limitmemberlevels =explode(",", $row['limitmemberlevels']);
+                $limitagentlevels =explode(",", $row['limitagentlevels']);
+                $limitpartnerlevels=explode(",", $row['limitpartnerlevels']);
+                $limitaagentlevels=explode(",", $row['limitaagentlevels']);
+
+                $p= 0;
+                if($row['islimitlevel'] ==1) {
+                    $openid = trim($_W['openid']);
+                    $member = m('member')->getMember($openid);
+
+                    if(!empty($row['limitmemberlevels'])||$row['limitmemberlevels']=='0')
+                    {
+                        //会员等级
+                        $level1 = pdo_fetchall('select * from ' . tablename('ewei_shop_member_level') . ' where uniacid=:uniacid and  id in ('.$coupon['limitmemberlevels'].') ', array(':uniacid' => $_W['uniacid']));
+
+                        if (in_array($member['level'],$limitmemberlevels)){
+                            $p= 1;
+                        }
+                    };
+
+                    if((!empty($coupon['limitagentlevels'])||$coupon['limitagentlevels']=='0')&&$hascommission) {
+                        //分销商等级
+                        $level2 = pdo_fetchall('select * from ' . tablename('ewei_shop_commission_level') . ' where uniacid=:uniacid and id  in ('.$coupon['limitagentlevels'].') ', array(':uniacid' => $_W['uniacid']));
+
+                        if($member['isagent']=='1'&&$member['status']=='1')
+                        {
+                            if (in_array($member['agentlevel'],$limitagentlevels)){
+                                $p= 1;
+                            }
+                        }
+                    }
+
+                    if((!empty($coupon['limitpartnerlevels'])||$coupon['limitpartnerlevels']=='0')&&$hasglobonus) {
+                        //股东等级
+                        $level3 = pdo_fetchall('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid and  id in('.$coupon['limitpartnerlevels'].') ', array(':uniacid' => $_W['uniacid']));
+
+                        if($member['ispartner']=='1'&&$member['partnerstatus']=='1')
+                        {
+                            if (in_array($member['partnerlevel'],$limitpartnerlevels)){
+                                $p= 1;
+                            }
+                        }
+                    }
+                    if((!empty($coupon['limitaagentlevels'])||$coupon['limitaagentlevels']=='0')&&$hasabonus) {
+                        //区域代理
+                        $level4 = pdo_fetchall('select * from ' . tablename('ewei_shop_abonus_level') . ' where uniacid=:uniacid and  id in ('.$coupon['limitaagentlevels'].') ', array(':uniacid' => $_W['uniacid']));
+
+                        if($member['isaagent']=='1'&&$member['aagentstatus']=='1')
+                        {
+                            if (in_array($member['aagentlevel'],$limitaagentlevels)){
+                                $p= 1;
+                            }
+                        }
+                    }
+                }else
+                {
+                    $p= 1;
+                }
+
+
+                if($p== 1)
+                {
+                    $p=0;
+                    $limitcateids =explode(',',$row['limitgoodcateids']);
+                    $limitgoodids =explode(',',$row['limitgoodids']);
+                    if($row['limitgoodcatetype']==0&&$row['limitgoodtype']==0)
+                    {
+                        $p= 1;
+                    }
+
+                    if($row['limitgoodcatetype']==1)
+                    {
+                        $result = array_intersect($cates,$limitcateids);
+                        if(count($result)>0)
+                        {
+                            $p= 1;
+                        }
+                    }
+
+                    if($row['limitgoodtype']==1)
+                    {
+                        $isin = in_array($good['id'],$limitgoodids);
+                        if($isin){
+                            $p= 1;
+                        }
+                    }
+
+                    //判断当前优惠券是否有可以生效的商品;
+                    if($p==0)
+                    {
+                        unset($list[$key]);
+                    }
+                }else
+                {
+                    unset($list[$key]);
+                }
+
+            }
+            unset($row);
+        }
+        return array_values($list);
+    }
+    //商品详情页领取可用优惠券
+    public function pay($a=array(), $b=array()){
+        global $_W, $_GPC;
+
+        $openid = $_W['openid'];
+        $id = intval($_GPC['id']);
+        $coupon = pdo_fetch('select * from ' . tablename('ewei_shop_coupon') . ' where id=:id and uniacid=:uniacid  limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        $coupon = com('coupon')->setCoupon($coupon, time());
+        //无法从领券中心领取
+        if (empty($coupon['gettype'])) {
+            show_json(-1, '无法'.$coupon['gettypestr']);
+        }
+
+        if ($coupon['total'] != -1) {
+            if ($coupon['total'] <= 0) {
+                show_json(-1, '优惠券数量不足'); //数量不足
+            }
+        }
+        if (!$coupon['canget']) {
+            show_json(-1, "您已超出{$coupon['gettypestr']}次数限制"); //已经领取完
+        }
+        if($coupon['money'] > 0||$coupon['credit']>0)
+        {
+            show_json(-1, '此优惠券需要前往领卷中心兑换'); //数量不足
+        }
+
+        $logno = m('common')->createNO('coupon_log', 'logno', 'CC');
+
+        //生成日志
+        $log = array(
+            'uniacid' => $_W['uniacid'],
+            'merchid' => $coupon['merchid'],
+            'openid' => $openid,
+            'logno' => $logno,
+            'couponid' => $id,
+            'status' => 0,
+            'paystatus' => -1 ,
+            'creditstatus' => -1 ,
+            'createtime' => time(),
+            'getfrom'=>1
+        );
+        pdo_insert('ewei_shop_coupon_log', $log);
+
+        $result = com('coupon')->payResult($log['logno']);
+        if(is_error($result)){
+            show_json($result['errno'],$result['message']);
+        }
+
+        show_json(1,array('url'=>$result['url'],'dataid'=>$result['dataid'],'coupontype'=>$result['coupontype']));
+    }
+
 
 }

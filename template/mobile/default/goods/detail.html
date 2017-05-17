@@ -284,7 +284,14 @@
     </div>
 </div>
 {/if}
-
+{if com('coupon')&&$coupons}
+<div class="fui-cell-group fui-cell-click">
+    <div class="fui-cell">
+        <div class="fui-cell-text coupon-selector">领取可用优惠券</div>
+        <div class="fui-cell-remark"></div>
+    </div>
+</div>
+{/if}
 {if empty($goods['isdiscount']) || (!empty($goods['isdiscount'])  && ($goods['isdiscount_time']<time() || $goods['isdiscount_stat_time']>time() ))}
 {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
 <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
@@ -762,12 +769,12 @@
         <span class="label">购物车</span>
     </a>
     {if $canAddCart}
-    <a  class="nav-item btn cartbtn">加入购物车</a>
+    <a  class="nav-item btn cartbtn"  data-type="{$goods['type']}">加入购物车</a>
     {/if}
     {if !empty($seckillinfo) && $seckillinfo['status']==1}
     <a  class="nav-item btn buybtn seckill-notstart">原价购买</a>
     {else}
-    <a  class="nav-item btn buybtn">立刻购买</a>
+    <a  class="nav-item btn buybtn"  data-type="{$goods['type']}">立刻购买</a>
     {/if}
 </div>
 {/if}
@@ -986,7 +993,7 @@
     <div class='arrow'></div>
     <div class='content'>请点击右上角<br/>通过【发送给朋友】<br/>邀请好友购买</div>
 </div>
-
+{template 'sale/coupon/util/couponpicker'}
 <script language="javascript">
 
     require(['biz/goods/detail'], function (modal) {

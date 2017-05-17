@@ -124,16 +124,19 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
         });
         $(".bottom-buttons .cartbtn").click(function () {
             var type =$(this).data('type');
+            /*
             if(type == 4){
                 modal.wholesalePicker('cart')
             }
             else
             {
                 modal.optionPicker('cart')
-            }
+            }*/
+             modal.optionPicker('cart')
         });
         $(".bottom-buttons .buybtn").click(function () {
             var type =$(this).data('type');
+            /*
             if(type == 4) {
                 modal.wholesalePicker('buy')
             }
@@ -141,8 +144,8 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
             {
                 modal.optionPicker('buy');
             }
-
-
+        */
+        modal.optionPicker('buy');
 
         });
         if ($('#time-container').length > 0 || $('#discount-container').length > 0) {
@@ -438,8 +441,10 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                         }
                     }
                 } else if (action == 'cart') {
+
                     if ($('.diyform-container').length > 0) {
                         var diyformdata = diyform.getData('.diyform-container');
+
                         if (!diyformdata) {
                             return
                         } else {
