@@ -129,10 +129,17 @@
                         <span class="icon btn-like {if $isFavorite}icon-likefill{else}icon-like{/if}"></span>
                         <span class="label" style="color: {$diypage['navbar']['style']['textcolor']}">关注</span>
                     </a>
+                {else if $navbaritem['type']=='cart' && $cartCount>0}
+                 <a  class="nav-item cart-item" href="{if $navbaritem['type']=='shop'}{php echo !empty($goods['merchid']) ? mobileUrl('merch',array('merchid'=>$goods['merchid'])) : mobileUrl('');}{else}{$navbaritem['linkurl']}{/if}"  id="menucart">
+                        <span  class='badge {if $cartCount<=0}out{else}in{/if}'>{$cartCount}</span>
+                        <span class="icon {$navbaritem['iconclass']}" style="color: {$diypage['navbar']['style']['iconcolor']}"></span>
+                        <span class="label" style="color: {$diypage['navbar']['style']['textcolor']}">{$navbaritem['icontext']}</span>
+                    </a>
                 {else}
+
                     <a  class="nav-item external" href="{if $navbaritem['type']=='shop'}{php echo !empty($goods['merchid']) ? mobileUrl('merch',array('merchid'=>$goods['merchid'])) : mobileUrl('');}{else}{$navbaritem['linkurl']}{/if}">
                         {if $navbaritem['type']=='cart' && $cartCount>0}
-                        <span class='badge {if $cartCount<=0}out{else}in{/if}'>{$cartCount}</span>
+                        <span  class='badge {if $cartCount<=0}out{else}in{/if}'>{$cartCount}</span>
                         {/if}
                         <span class="icon {$navbaritem['iconclass']}" style="color: {$diypage['navbar']['style']['iconcolor']}"></span>
                         <span class="label" style="color: {$diypage['navbar']['style']['textcolor']}">{$navbaritem['icontext']}</span>
@@ -142,10 +149,10 @@
         {/if}
 
         {if $canAddCart && empty($diypage['navbar']['params']['hidecartbtn'])}
-        <a  class="nav-item btn cartbtn" style="background: {$diypage['navbar']['style']['cartcolor']};">加入购物车</a>
+        <a  class="nav-item btn cartbtn" data-type="{$goods['type']}" style="background: {$diypage['navbar']['style']['cartcolor']};">加入购物车</a>
         {/if}
         {if empty($seckillinfo) || $seckillinfo['status']==0 || $seckillinfo['status']==-1}
-        <a  class="nav-item btn buybtn" style="background: {$diypage['navbar']['style']['buycolor']};">{php echo !empty($diypage['navbar']['params']['textbuy'])?$diypage['navbar']['params']['textbuy']:"立刻购买"}</a>
+        <a  class="nav-item btn buybtn" data-type="{$goods['type']}" style="background: {$diypage['navbar']['style']['buycolor']};">{php echo !empty($diypage['navbar']['params']['textbuy'])?$diypage['navbar']['params']['textbuy']:"立刻购买"}</a>
         {else}
 
         <a  class="nav-item btn buybtn" style="color: {$diypage['seckill']['style']['buybtntextwait']};background: {$diypage['seckill']['style']['buybtnbgwait']};">
@@ -349,15 +356,26 @@
     <div class='arrow'></div>
     <div class='content'>请点击右上角<br/>通过【发送给朋友】<br/>邀请好友购买</div>
 </div>
-
+{template 'sale/coupon/util/couponpicker'}
 <script language="javascript">
 
     require(['biz/goods/detail'], function (modal) {
         modal.init({
             goodsid:"{$goods['id']}",
-            getComments : "{$getComments}"
+            getComments : "{$getComments}",
+            seckillinfo: {php echo json_encode($seckillinfo)},
+            attachurl_local:"{$GLOBALS['_W']['attachurl_local']}",
+            attachurl_remote:"{$GLOBALS['_W']['attachurl_remote']}",
+            coupons: {php echo json_encode($coupons)},
+            new_temp: {$new_temp}
         });
-    });</script>
+
+    });
+ require(['../addons/ewei_shopv2/plugin/diypage/static/js/mobile.js'], function(diypagemodal){
+        diypagemodal.init();
+    });
+    </script>
+
 </div>
 
 <div id="alert-picker">

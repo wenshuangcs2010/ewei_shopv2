@@ -10,9 +10,9 @@ if (!defined('IN_IA')) {
 }
 
 class Detail_EweiShopV2Page extends MobilePage {
-
+    
     function main() {
-
+       
         global $_W, $_GPC;
         $openid =$_W['openid'];
         $uniacid = $_W['uniacid'];
@@ -1043,7 +1043,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
         return array_values($list);
     }
-    //商品详情页领取可用优惠券
+     //商品详情页领取可用优惠券
     public function pay($a=array(), $b=array()){
         global $_W, $_GPC;
 
@@ -1093,6 +1093,5 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         show_json(1,array('url'=>$result['url'],'dataid'=>$result['dataid'],'coupontype'=>$result['coupontype']));
     }
-
 
 }

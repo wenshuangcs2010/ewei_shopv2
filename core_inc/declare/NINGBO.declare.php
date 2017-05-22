@@ -19,7 +19,9 @@ class NINGBO_Api extends ningboData{
 		$this->setOrderNo($order['ordersn']);
 		$this->setPostFee($order['dpostfee']);
 		$this->setAmount($order['price']);
-		$this->setTaxAmount($order['tax_rate']+$order['tax_consumption']);
+		$taxAmount=$order['tax_rate']+$order['tax_consumption']>0 ? $order['tax_rate']+$order['tax_consumption']:0;
+
+		$this->setTaxAmount($taxAmount);
 		$this->setAddedValueTaxAmount($order['tax_rate']);
 		$this->setConsumptionDutyAmount($order['tax_consumption']);
 		$this->setGrossWeight($order['weight']);
@@ -53,6 +55,7 @@ class NINGBO_Api extends ningboData{
 	function init(){
 
 		$this->xml=$this->toXml($this->params);
+		
 		//WeUtility::logging('contetn', var_export($this->params,true));
 		//header("Content-Type:XML;charset=utf-8");
 		return $this->cnec_jh_order();

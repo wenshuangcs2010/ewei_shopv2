@@ -228,7 +228,7 @@ class Picker_EweiShopV2Page extends MobilePage {
                 if (empty($flag)) {
                     $f_data = $diyform_plugin->getLastCartData($id);
                 }
-
+              
                 include $this->template('diyform/formfields');
                 $diyformhtml = ob_get_contents();
                 ob_clean();

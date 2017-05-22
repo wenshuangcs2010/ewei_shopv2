@@ -87,14 +87,23 @@ class NINGBOData extends declareUtil{
 	}
 	//税总额
 	function setTaxAmount($TaxAmount){
+		if(empty($TaxAmount)){
+			$TaxAmount='00';
+		}
 		$this->params['Body']['Order']['TaxAmount']=$TaxAmount;
 	}
 	//增值税
 	function setAddedValueTaxAmount($AddedValueTaxAmount){
+		if(empty($AddedValueTaxAmount)){
+			$AddedValueTaxAmount=0;
+		}
 		$this->params['Body']['Order']['AddedValueTaxAmount']=$AddedValueTaxAmount;	
 	}
 	//消费税
 	function setConsumptionDutyAmount($ConsumptionDutyAmount){
+		if(empty($ConsumptionDutyAmount)){
+			$ConsumptionDutyAmount=0;
+		}
 		$this->params['Body']['Order']['ConsumptionDutyAmount']=$ConsumptionDutyAmount;	
 	}
 	//商品重量

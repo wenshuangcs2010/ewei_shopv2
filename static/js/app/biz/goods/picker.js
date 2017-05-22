@@ -68,6 +68,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         modal.container.close()
     };
     modal.init = function () {
+       
         $('.closebtn', modal.container.container).unbind('click').click(function () {
             modal.close()
         });
@@ -93,14 +94,17 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         }
 
         $(".spec-item", modal.container.container).unbind('click').click(function () {
-            modal.chooseSpec(this)
+            modal.chooseSpec(this);
+            
+
         });
         $('.cartbtn', modal.container.container).unbind('click').click(function () {
-
              modal.addToCart();
-
+           
         });
+
         $('.buybtn', modal.container.container).unbind('click').click(function () {
+             
             if ($(this).hasClass('disabled')) {
                 return
             }
@@ -132,7 +136,6 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
                     total: modal.params.total
                 });
             }
-
             if (modal.params.autoClose) {
                 modal.close()
             }
@@ -144,15 +147,20 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
             if (!modal.check()) {
                 return
             }
+           
             if (modal.params.onConfirm) {
                 modal.params.total = parseInt($('.num', modal.container.container).val());
+
                 modal.params.onConfirm(modal.params.total, modal.params.optionid, modal.params.titles, modal.params.optionthumb)
             }
+
             if (modal.params.autoClose) {
                 modal.close()
             }
         });
+
         var height = $(document.body).height();
+
         modal.container.container.find('.option-picker').css('max-height', height - 50);
         modal.container.container.find('.option-picker .option-picker-options').css('max-height', height - 225)
     };
@@ -162,6 +170,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
             FoxUI.toast.show('此商品不可加入购物车<br>请直接点击立刻购买');
             return
         }
+
         if ($(this).hasClass('disabled')) {
             return
         }

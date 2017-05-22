@@ -292,6 +292,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
             backurl: modal.backurl,
             onConfirm: function (buyoptions) {
                 modal.buyoptions=buyoptions;
+
                 if (action == 'buy') {
                     wholesalePicker.close();
                     $.router.load(core.getUrl('order/create', {
@@ -405,6 +406,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                 modal.total = total;
                 modal.optionid = optionid;
                 $('.option-selector').html("已选: 数量x" + total + " " + optiontitle);
+
                 if (action == 'buy') {
                     var giftid = $("#giftid").val();
                     if ($("#giftid") && giftid == '') {
@@ -453,8 +455,10 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                                 diyformdata: diyformdata
                             }, function (ret) {
                                 cart.add(modal.goodsid, modal.optionid, modal.total, diyformdata, function (ret) {
+
                                     $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
                                     window.cartcount = ret.cartcount
+
                                 })
                             }, true, true);
                             picker.close()
@@ -463,6 +467,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                         cart.add(modal.goodsid, modal.optionid, modal.total, false, function (ret) {
                             $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
                             window.cartcount = ret.cartcount
+                            
                         });
                         picker.close()
                     }
