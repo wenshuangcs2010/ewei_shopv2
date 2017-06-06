@@ -231,7 +231,17 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         }
 
                         //秒杀信息
-                        $goods[$k]['seckillinfo'] = plugin_run('seckill::getSeckill', $v['goodsid'], $v['optionid'], true, $_W['openid']);
+                        $seckillinfo=plugin_run('seckill::getSeckill', $v['goodsid'], $v['optionid'], true, $_W['openid']);
+                        if(!empty($seckillinfo)){
+                            $check_buy = plugin_run('seckill::checkBuy', $seckillinfo, $data['title']);
+                            if(is_error($check_buy)){
+                                $seckillinfo="";
+                            }
+                        }
+
+                        $goods[$k]['seckillinfo'] = $seckillinfo;
+
+
                     }
                 }
                 $fromcart = 1;
@@ -255,8 +265,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 }
                 //秒杀信息
                 $data['seckillinfo'] = plugin_run('seckill::getSeckill', $data['goodsid'], $optionid, true, $_W['openid']);
-
-
+                if(!empty($data['seckillinfo'])){
+                    $check_buy = plugin_run('seckill::checkBuy', $data['seckillinfo'], $data['title']);
+                    if(is_error($check_buy)){
+                        $data['seckillinfo']="";
+                    }
+                }
                 if ($data['seckillinfo'] && $data['seckillinfo']['status'] == 0) {
 
                     //秒杀不管赠品
@@ -1394,7 +1408,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
             //所有商品
             $allgoods = array();
-
+             //var_dump($goodsarr);
             foreach ($goodsarr as &$g) {
                 if (empty($g)) {
                     continue;
@@ -1419,7 +1433,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
                 $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));
                 $data['seckillinfo'] = plugin_run('seckill::getSeckill', $goodsid, $optionid, true, $_W['openid']);
-
+                if(!empty($data['seckillinfo'])){
+                    $check_buy = plugin_run('seckill::checkBuy', $data['seckillinfo'], $data['title']);
+                    if(is_error($check_buy)){
+                        $data['seckillinfo']="";
+                    }
+                }
                 if (empty($data)) {
                     $nowsendfree = true;
                 }
@@ -1467,6 +1486,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     $seckill_payprice += $data['ggprice'];
 
                     $seckill_price+= $data['marketprice'] * $g['total'];
+
 
                 } else {
                     //计算折扣或促销后成交价格
@@ -1992,7 +2012,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
             $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));
             $data['seckillinfo'] = plugin_run('seckill::getSeckill', $goodsid, $optionid, true, $_W['openid']);
-           
+            if(!empty($data['seckillinfo'])){
+                $check_buy = plugin_run('seckill::checkBuy', $data['seckillinfo'], $data['title']);
+                if(is_error($check_buy)){
+                    $data['seckillinfo']="";
+                }
+            }
            
 
             

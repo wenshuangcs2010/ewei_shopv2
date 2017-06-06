@@ -118,26 +118,24 @@
 
 {if !empty($seckillinfo) }
 <div class="seckill-container {if $seckillinfo['status']==1}notstart{/if}"
-     data-starttime="{$seckillinfo['starttime']}"
-     data-endtime="{$seckillinfo['endtime']}"
+     data-starttime="{php echo $seckillinfo['starttime']-time();}"
+     data-endtime="{php echo $seckillinfo['endtime']-time();}"
      data-status="{$seckillinfo['status']}">
     <div class="fui-list seckill-list" style="" >
         <div class="fui-list-media seckill-price">
             &yen;<span>{$seckillinfo['price']}</span>
         </div>
         <div class="fui-list-inner">
-            <div class="text"><span class="stitle">{$seckillinfo['tag']}</span></div>
+            <div class="text"><span class="stitle" style="white-space:nowrap; overflow:hidden; width:3.9rem;">{$seckillinfo['tag']}</span></div>
             <div class="text"><span class="oldprice">&yen;{$goods['minprice']}</span></div>
         </div>
     </div>
-
-    <div class="fui-list seckill-list1" style="" >
+    <div class="fui-list seckill-list1" >
         <div class="fui-list-inner">
             <div class="text ">{if $seckillinfo['status']==0}已出售 {$seckillinfo['percent']}%{/if}</div>
             <div class="text ">{if $seckillinfo['status']==0}<span class="process"><div class="inner" style="width:{$seckillinfo['percent']}%"></div></span>{/if}</div>
         </div>
     </div>
-
     <div class="fui-list seckill-list2" style="" >
         <div class="fui-list-inner">
             <div class="text ">距{if $seckillinfo['status']==1}开始{else}结束{/if}还有</div>
@@ -145,10 +143,7 @@
                 <span class="time-hour">-</span>&nbsp;:&nbsp;<span class="time-min">-</span>&nbsp;:&nbsp;<span class="time-sec">-</span>
             </div>
         </div>
-
     </div>
-
-
 </div>
 {/if}
 
@@ -768,7 +763,7 @@
         <span class="icon icon-cart"></span>
         <span class="label">购物车</span>
     </a>
-    {if $canAddCart}
+     {if $canAddCart}
     <a  class="nav-item btn cartbtn"  data-type="{$goods['type']}">加入购物车</a>
     {/if}
     {if !empty($seckillinfo) && $seckillinfo['status']==1}

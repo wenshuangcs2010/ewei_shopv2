@@ -1,0 +1,33 @@
+<style type='text/css'>
+	.clearing-list a {
+		position: relative;
+	}
+	.clearing-list span  {
+		float:right;margin-right:20px;
+	}
+</style>
+
+<div class="menu-header">满减活动</div>
+<ul>
+	{ifp 'bargain.main'}<li {if $_GPC['r'] == 'bargain' or $_GPC['r'] == 'bargain.index'}class="active"{/if}><a href="{php echo webUrl('bargain')}">满件立减活动</a></li>{/if}
+    {ifp 'bargain.notstart'}<li {if $_GPC['r'] == 'bargain.notstart'}class="active"{/if}><a href="{php echo webUrl('bargain/notstart')}">未开始</a></li>{/if}
+     {ifp 'bargain.notstart'}<li {if $_GPC['r'] == 'bargain.notstart'}class="active"{/if}><a href="{php echo webUrl('bargain/notstart')}">进行中</a></li>{/if}
+    {ifp 'bargain.complete'}<li {if $_GPC['r'] == 'bargain.complete'}class="active"{/if}><a href="{php echo webUrl('bargain/complete')}">已结束</a></li>{/if}
+   
+    {ifp 'bargain.recycle'}<li {if $_GPC['r'] == 'bargain.recycle'}class="active"{/if}><a href="{php echo webUrl('bargain/recycle')}">回收站</a></li>{/if}
+    {ifp 'bargain.warehouse'}<li {if $_GPC['r'] == 'bargain.warehouse'}class="active"{/if}><a href="{php echo webUrl('bargain/warehouse')}"><i class="fa fa-plus"></i> 添加</a></li>{/if}
+
+</ul>
+
+
+<script>
+	$(function () {
+		$.ajax({type: "GET",url: "{php echo webUrl('pstore/ajaxcleartotle')}",dataType:"json",success: function(data){
+			var res = data.result;
+			$("span.status0").text(res.status0);
+			$("span.status1").text(res.status1);
+			$("span.status2").text(res.status2);
+		}
+		});
+	});
+</script>

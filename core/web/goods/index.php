@@ -589,8 +589,11 @@ class Index_EweiShopV2Page extends WebPage {
             $params[':type'] = $type;
         }
 
-        $ds = pdo_fetchall('SELECT id,title,thumb,marketprice,productprice,share_title,share_icon,description,minprice,costprice,total,content
+        $ds = pdo_fetchall('SELECT id,title,thumb,marketprice,productprice,share_title,share_icon,description,minprice,costprice,total
               FROM ' . tablename('ewei_shop_goods') . " WHERE 1 {$condition} order by createtime desc", $params);
+        foreach ($ds as $key=> $value) {
+            $ds[$key]['title']=$str = str_replace('#', '', $value['title']);
+        }
         $ds = set_medias($ds,array('thumb','share_icon'));
         if($_GPC['suggest']){
             die(json_encode(array('value'=>$ds)));

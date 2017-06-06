@@ -119,23 +119,30 @@ class Detail_EweiShopV2Page extends MobilePage {
             include $this->template();
             exit;
         }
-
         $seckillinfo = false;
         $seckill  = p('seckill');
         if( $seckill){
-              $time = time();
-              $seckillinfo = $seckill->getSeckill($goods['id'],0,false);
+            $time = time();
+           
+            $seckillinfo = $seckill->getSeckill($goods['id'],0,false);
 
-              if(!empty($seckillinfo)){
-
-                  if($time >= $seckillinfo['starttime'] && $time<$seckillinfo['endtime']){
-                      $seckillinfo['status'] = 0;
-                  }elseif( $time < $seckillinfo['starttime'] ){
-                      $seckillinfo['status'] = 1;
-                  }else {
-                      $seckillinfo['status'] = -1;
-                  }
-              }
+            if(!empty($seckillinfo)){
+                $check_buy = $seckill->checkBuy($seckillinfo,$goods['title']);
+                if(!is_error($check_buy)){
+                    if($time >= $seckillinfo['starttime'] && $time<$seckillinfo['endtime']){
+                        $seckillinfo['status'] = 0;
+                        unset($_SESSION[$id . '_log_id']);
+                        unset($_SESSION[$id . '_task_id']);
+                        unset($log_id);
+                    }elseif( $time < $seckillinfo['starttime'] ){
+                        $seckillinfo['status'] = 1;
+                    }else {
+                        $seckillinfo['status'] = -1;
+                    }
+                }else{
+                    $seckillinfo="";
+                }
+            }
         }
 
 
@@ -205,7 +212,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
         //运费
         $goods['dispatchprice'] = $this->getGoodsDispatchPrice($goods);
-
+        //var_dump($goods['dispatchprice']);
         //幻灯片
         $thumbs = iunserializer($goods['thumb_url']);
         if(empty($thumbs)){
@@ -307,7 +314,9 @@ class Detail_EweiShopV2Page extends MobilePage {
         if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund']) || !empty($is_task_goods) || !empty($gifts)) {
             $canAddCart = false;
         }
-
+         if(!empty($seckillinfo)){//秒杀商品禁止加入购物车
+            $canAddCart = false;
+         }
         if ($goods['type'] == 2 && empty($specs)) {
             $gflag = 1;
         } else {
@@ -652,6 +661,7 @@ class Detail_EweiShopV2Page extends MobilePage {
             //虚拟物品或虚拟卡密
             return 0;
         }
+
         if ($goods['dispatchtype'] == 1) {
             //统一运费
             return $goods['dispatchprice'];
@@ -660,7 +670,8 @@ class Detail_EweiShopV2Page extends MobilePage {
 
             if (empty($goods['dispatchid'])) {
                 //默认快递
-                $dispatch = m('dispatch')->getDefaultDispatch($goods['merchid']);
+                $dispatch = m('dispatch')->getDefaultDispatch($goods['merchid'],$goods['disgoods_id'],$goods['id']);
+                //var_dump($dispatch);
             } else {
                 $dispatch = m('dispatch')->getOneDispatch($goods['dispatchid']);
             }
@@ -683,10 +694,13 @@ class Detail_EweiShopV2Page extends MobilePage {
                     'max' => round(max($firstprice),2)
                 );
             }
+
             else
             {
+
                 $ret = m('dispatch')->getDispatchPrice(1, $dispatch);
             }
+
             return $ret;
         }
     }

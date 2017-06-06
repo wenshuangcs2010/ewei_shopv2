@@ -49,7 +49,12 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
 
             $g['thumb'] = tomedia($g['thumb']);
             $seckillinfo = plugin_run('seckill::getSeckill',$g['goodsid'] ,$g['optionid'] ,true, $_W['openid']);
-
+            if(!empty($seckillinfo)){
+                $check_buy = plugin_run('seckill::checkBuy', $seckillinfo, $g['title']);
+                if(is_error($check_buy)){
+                    $seckillinfo="";
+                }
+            }
             if (!empty($g['optionid'])) {
                 $g['stock'] = $g['optionstock'];
 
@@ -111,6 +116,7 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
                 if($g['total']>$totalmaxbuy){
                     $g['total'] = $totalmaxbuy;
                 }
+
                 $g['minbuy'] = 0;
             } else {
 
@@ -167,12 +173,7 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
 
         }
         unset($g);
-
-
-
-
         $list = set_medias($list, 'thumb');
-
         $merch_user = array();
         $merch = array();
         $merch_plugin = p('merch');
@@ -184,7 +185,6 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
             $merch = $getListUser['merch'];
 
         }
-       
         if(empty($newlist)){
 
             $newlist = array();
@@ -249,6 +249,12 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
         pdo_update('ewei_shop_member_cart', array('total' => $goodstotal,'optionid'=>$optionid), array('id' => $id, 'uniacid' => $_W['uniacid'],'openid'=>$_W['openid']));
 
         $seckillinfo  =  plugin_run('seckill::getSeckill',$data['goodsid'] ,$data['optionid'] ,true, $_W['openid']);
+        if(!empty($seckillinfo)){
+            $check_buy = plugin_run('seckill::checkBuy', $seckillinfo, $data['title']);
+            if(is_error($check_buy)){
+                $seckillinfo="";
+            }
+        }
         if( $seckillinfo && $seckillinfo['status']==0) {
             $g =array();
             $g['seckillmaxbuy'] = $seckillinfo['maxbuy'];
@@ -269,11 +275,30 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
 
         $total <= 0 && $total = 1;
         $optionid = intval($_GPC['optionid']);
-        $goods = pdo_fetch('select id,marketprice,diyformid,diyformtype,depotid,diyfields, isverify, `type`,merchid, cannotrefund from '.tablename('ewei_shop_goods').' where id=:id and uniacid=:uniacid limit 1',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
+        $goods = pdo_fetch('select id,marketprice,diyformid,diyformtype,depotid,diyfields, isverify, `type`,merchid, cannotrefund,maxbuy from '.tablename('ewei_shop_goods').' where id=:id and uniacid=:uniacid limit 1',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
         if (empty($goods)) {
             show_json(0, '商品未找到');
         }
-
+        $seckillinfo = false;
+        $seckill  = p('seckill');
+        if( $seckill){
+            $time = time();
+            $seckillinfo = $seckill->getSeckill($id);
+            if(!empty($seckillinfo)){
+                $check_buy = plugin_run('seckill::checkBuy', $seckillinfo, $data['title']);
+                if(is_error($check_buy)){
+                    $seckillinfo="";
+                }else{
+                    if($time >= $seckillinfo['starttime'] && $time<$seckillinfo['endtime']){
+                    $seckillinfo['status'] = 0;
+                    }elseif( $time < $seckillinfo['starttime'] ){
+                        $seckillinfo['status'] = 1;
+                    }else {
+                        $seckillinfo['status'] = -1;
+                    }
+                }
+            }
+        }
         $member = m('member')->getMember($_W['openid']);
         if(!empty($_W['shopset']['wap']['open']) && !empty($_W['shopset']['wap']['mustbind']) && empty($member['mobileverify'])){
             show_json(0, array('message'=>"请先绑定手机", 'url'=>mobileUrl('member/bind', null, true)));
@@ -350,6 +375,22 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
             pdo_insert('ewei_shop_member_cart', $data);
 
         } else {
+
+            if(!empty($seckillinfo)){
+                if(count($seckillinfo['options'])==1){
+                    $seckillmaxbuy=$seckillinfo['options'][0]['maxbuy'];//商品限购
+
+                    if($data['total']>=$seckillmaxbuy){
+                        show_json(0, '秒杀商品限购'.$seckillmaxbuy.'件');
+                        exit;
+                    }
+                    
+                }
+            }else{
+                if($data['total']>=$goods['maxbuy'] && $goods['maxbuy']!=0){
+                     show_json(0, '商品限购'.$goods['maxbuy'].'件');
+                }
+            }
             $data['diyformid'] = $diyformid;
             $data['diyformdata'] = $diyformdata;
             $data['diyformfields'] = $diyformfields;
@@ -442,10 +483,16 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
             }
 
             $seckillinfo = plugin_run('seckill::getSeckill',$g['goodsid'] ,$g['optionid'] ,true, $_W['openid']);
-
+            if(!empty($seckillinfo)){
+                $check_buy = plugin_run('seckill::checkBuy', $seckillinfo, $g['title']);
+                if(is_error($check_buy)){
+                    $seckillinfo="";
+                }
+            }
             if (!empty($g['optionid'])) {
                 $g['stock'] = $g['optionstock'];
             }
+
             if( $seckillinfo && $seckillinfo['status']==0){
 
                 $check_buy = plugin_run('seckill::checkBuy',  $seckillinfo , $g['title'] ,$g['unit']);

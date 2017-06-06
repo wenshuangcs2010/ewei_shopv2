@@ -191,6 +191,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
             })
         } else {
             cart.add(modal.goodsid, modal.params.optionid, modal.params.total, false, function (ret) {
+                
                 FoxUI.toast.show('添加成功');
                 modal.changeCartcount(ret.cartcount)
             })

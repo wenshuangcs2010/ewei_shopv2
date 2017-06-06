@@ -17,7 +17,7 @@ class Disorder_EweiShopV2Page extends PluginWebPage {
 		$status = $_GPC['status'];
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 10;
-		$condition = " and o.uniacid !=:uniacid ";
+		$condition = " and o.uniacid !=:uniacid and o.isdisorder=1 and o.uniacid <> ".DIS_ACCOUNT;
 		$params = array(':uniacid' => DIS_ACCOUNT);
 
 		if(intval($status)==1){//待发货

@@ -8,10 +8,23 @@
 {if $item['isverify'] == 1}
 {else}
 {ifp 'groups.order.send'}
-    {if $item['paystatus']!=2}
+
+    {if $_W['uniacid']== DIS_ACCOUNT}
+
+        {if $item['depot']['if_customs']==1}
+            <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/disorder/to_customs', array('id' => $item['id']))}">报关</a><br />
+            {/if}
+            {if $item['depot']['if_declare']==1}
+            <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/disorder/to_declare', array('id' => $item['id']))}">申报</a><br />
+            <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/disorder/send_order', array('id' => $item['id']))}">货物放行</a><br />
+            {else}
+                <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/disorder/send', array('id' => $item['id']))}">确认发货</a><br />
+        {/if}
+    {else}
+    {if  $item['paystatus']!=2 }
         <span class="text-default">等待结算</span><br />
     {/if}
-    {if $item['disgoods_id']>0 && $item['paystatus']==2}
+    {if $item['disgoods_id']>0 && $item['paystatus']==2 }
         {if $item['depot']['if_customs']==1}
         <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/disorder/to_customs', array('id' => $item['id']))}">报关</a><br />
         {/if}
@@ -23,6 +36,7 @@
         {/if}
     {else}
          <span class="text-default">非代理商品</span><br />
+    {/if}
     {/if}
 {/if}
 {ifp 'groups.order.sendcancel'}

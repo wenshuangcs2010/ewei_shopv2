@@ -54,7 +54,7 @@ class Order_EweiShopV2Page extends WebPage {
             $sql.="LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
         }
         $list = pdo_fetchall($sql, $params);
-
+       // var_dump($list);
         foreach ($list as &$row) {
             $row['ordersn'] = $row['ordersn'] . " ";
             $row['goods'] = pdo_fetchall("SELECT g.thumb,og.price,og.total,og.realprice,g.title,og.optionname from " . tablename('ewei_shop_order_goods') . " og"

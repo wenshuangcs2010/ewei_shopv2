@@ -220,6 +220,21 @@
                 {if $item['freight']>0}
                 <br/>(含运费:¥ {php echo number_format( $item['freight'],2)})
                 {/if}
+                    {if $item['disamount']>0}
+                </br>
+                <span style="height: 10px;display: block;"></span>
+                ￥{php echo number_format($item['disamount'],2)}
+            <a data-toggle='popover' data-html='true' data-placement='top'
+                data-content="<table style='width:100%;'>
+          
+                <tr>
+                    <td  style='border:none;text-align:right;'>代理总值：</td>
+                    <td  style='border:none;text-align:right;;'>￥{php echo number_format( $item['disorderamount'] ,2)}</td>
+                </tr>
+                </table>"
+            ><i class='fa fa-question-circle'></i></a>
+            {/if}
+               
             </td>
             <td style='text-align:center' >
                 {php echo date('Y-m-d',$item['createtime'])}<br/>{php echo date('H:i:s',$item['createtime'])}

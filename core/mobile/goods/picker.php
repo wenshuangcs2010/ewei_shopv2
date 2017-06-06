@@ -25,12 +25,20 @@ class Picker_EweiShopV2Page extends MobilePage {
             $seckillinfo = $seckill->getSeckill($id);
 
             if(!empty($seckillinfo)){
-                if($time >= $seckillinfo['starttime'] && $time<$seckillinfo['endtime']){
-                    $seckillinfo['status'] = 0;
-                }elseif( $time < $seckillinfo['starttime'] ){
-                    $seckillinfo['status'] = 1;
-                }else {
-                    $seckillinfo['status'] = -1;
+                $check_buy = $seckill->checkBuy($seckillinfo,$goods['title']);
+                if(!is_error($check_buy)){
+                    if($time >= $seckillinfo['starttime'] && $time<$seckillinfo['endtime']){
+                        $seckillinfo['status'] = 0;
+                        unset($_SESSION[$id . '_log_id']);
+                        unset($_SESSION[$id . '_task_id']);
+                        unset($log_id);
+                    }elseif( $time < $seckillinfo['starttime'] ){
+                        $seckillinfo['status'] = 1;
+                    }else {
+                        $seckillinfo['status'] = -1;
+                    }
+                }else{
+                    $seckillinfo="";
                 }
             }
         }
@@ -104,8 +112,8 @@ class Picker_EweiShopV2Page extends MobilePage {
         if( $seckillinfo && $seckillinfo['status']==0){
 
             $minprice = $maxprice = $goods['marketprice'] = $seckillinfo['price'];
-            if(count($seckillinfo['options'])>0){
-
+              if(count($seckillinfo['options'])>0 && !empty($options)){
+                
                 foreach($options as &$option){
 
 

@@ -73,6 +73,7 @@
                         <tr><th>余额抵扣</th><td>{if $row['deductcredit2']>0}-{$row['deductcredit2']}{/if}</td></tr>
                         <tr><th>满额立减</th><td>{if $row['deductenough']>0}-{$row['deductenough']}{/if}</td></tr>
                         <tr><th>优惠券优惠</th><td>{if $row['couponprice']>0}-{$row['couponprice']}{/if}</td></tr>
+                        <tr><th>促销优惠</th><td>{if $row['isdiscountprice']>0}-{$row['isdiscountprice']}{/if}</td></tr>
                         <tr><th>卖家改价</th><td>{if 0<$item['changeprice']}+{else}-{/if}{php echo number_format(abs($item['changeprice']),2)}</td></tr>
                         <tr><th>卖家改运费</th><td>{if 0<$item['changedipatchpriceprice']}+{else}-{/if}{php echo number_format(abs($item['changedipatchpriceprice']),2)}</td></tr>
                         </table>"></i></a></td>

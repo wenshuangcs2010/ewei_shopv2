@@ -431,7 +431,7 @@ class Apply_EweiShopV2Page extends PluginWebPage {
         }
 
 
-        $list = pdo_fetchall("select id,agentid, ordersn,price,goodsprice, dispatchprice,createtime, paytype from " . tablename('ewei_shop_order') . " where  id in ( " . implode(",", $ids) . " );");
+        $list = pdo_fetchall("select id,agentid,discountprice ,ordersn,price,goodsprice, dispatchprice,createtime, paytype from " . tablename('ewei_shop_order') . " where  id in ( " . implode(",", $ids) . " );");
         $totalcommission = 0;
         $totalpay = 0;
         foreach ($list as &$row) {
