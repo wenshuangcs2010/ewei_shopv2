@@ -127,7 +127,7 @@ class Detail_EweiShopV2Page extends MobilePage {
             $seckillinfo = $seckill->getSeckill($goods['id'],0,false);
 
             if(!empty($seckillinfo)){
-                $check_buy = $seckill->checkBuy($seckillinfo,$goods['title']);
+                $check_buy  = plugin_run('seckill::checkBuy', $seckillinfo, $goods['title']);
                 if(!is_error($check_buy)){
                     if($time >= $seckillinfo['starttime'] && $time<$seckillinfo['endtime']){
                         $seckillinfo['status'] = 0;
@@ -144,8 +144,6 @@ class Detail_EweiShopV2Page extends MobilePage {
                 }
             }
         }
-
-
 
         //任务活动购买商品
         $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $join_id);

@@ -265,6 +265,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 }
                 //秒杀信息
                 $data['seckillinfo'] = plugin_run('seckill::getSeckill', $data['goodsid'], $optionid, true, $_W['openid']);
+
                 if(!empty($data['seckillinfo'])){
                     $check_buy = plugin_run('seckill::checkBuy', $data['seckillinfo'], $data['title']);
                     if(is_error($check_buy)){
@@ -2761,8 +2762,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
- 
-        $returndata=m("order")->get_tax($allgoods,$dispatch_price,$goodsprice,$alldeduct);//正常算税
+        $returndata=m("order")->get_tax($allgoods,$order['dispatchprice'],$goodsprice,$alldeduct);//正常算税
 
         $allgoods=$returndata['order_goods'];
        
