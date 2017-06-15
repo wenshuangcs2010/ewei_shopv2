@@ -1657,18 +1657,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
             }
 
-            //多商户满减
-            if ($is_openmerch == 1) {
-                $merch_enough = m('order')->getMerchEnough($merch_array);
-                $merch_array = $merch_enough['merch_array'];
-                $merch_enough_total = $merch_enough['merch_enough_total'];
-                $merch_saleset = $merch_enough['merch_saleset'];
-
-                if ($merch_enough_total > 0) {
-                    $realprice -= $merch_enough_total;
-                }
-            }
-
             if ($saleset) {
                 //满额减 (减掉秒杀金额)
                 foreach ($saleset['enoughs'] as $e) {

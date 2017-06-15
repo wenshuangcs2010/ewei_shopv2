@@ -109,8 +109,9 @@ class Index_EweiShopV2Page extends ComWebPage {
 
 
             $data = is_array($_GPC['data']) ? $_GPC['data'] : array();
-            $data['enoughfree'] = intval($data['enoughfree']);
-            $data['enoughorder'] = round(floatval($data['enoughorder']), 2);
+            $data['enoughfree'] = $data['enoughfree'];
+            $data['enoughorder'] = $data['enoughorder'];
+           
             $data['goodsids'] = $_GPC['goodsids'];
             plog('sale.enough', '修改满额包邮优惠');
             m('common')->updatePluginset(array('sale' => $data));

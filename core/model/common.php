@@ -106,17 +106,19 @@ class Common_EweiShopV2Model {
 		}
 
 		$setdata = pdo_fetch("select id, plugins from " . tablename('ewei_shop_sysset') . ' where uniacid=:uniacid limit 1', array(':uniacid' => $uniacid));
+
 		if (empty($setdata)) {
 			pdo_insert('ewei_shop_sysset', array('plugins' => iserializer($values), 'uniacid' => $uniacid));
 		} else {
 
 			$plugins = iunserializer($setdata['plugins']);
-
+        
 			foreach ($values as $key => $value) {
 
 				foreach ($value as $k => $v) {
 					$plugins[$key][$k] = $v;
 				}
+    
 			}
 
 			pdo_update('ewei_shop_sysset', array('plugins' => iserializer($plugins)), array('id' => $setdata['id']));

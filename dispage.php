@@ -488,6 +488,7 @@ class Dispage{
 		$pack=pdo_fetch($sql,$pa);
 		
 		$package_goods=json_decode($pack['packgoods'],true);
+
 		$packgoods=array();
 		foreach ($package_goods as $key => $v) {
 			$goods=pdo_fetch('SELECT * FROM '.tablename("ewei_shop_goods")." WHERE id=:id",array(":id"=>$v['goodsid']));

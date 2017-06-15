@@ -183,7 +183,9 @@
 			</span>
         </div>
          {if $member['isagent']==1 && $member['status']==1 && $goods['hascommission']==1 && $_W['uniacid']!=DIS_ACCOUNT}
+         {if $commissionprice>0}
                    分销佣金:￥{$commissionprice}
+                   {/if}
          {/if}
     </div>
     
@@ -310,7 +312,7 @@
 {if $has_city}
 <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0' id="city-picker">
     <div class='fui-cell'>
-        <div class='fui-cell-text'>不配送区域:
+        <div class='fui-cell-text'>包邮区域:
             {loop $citys $item}
             {$item}
             {/loop}
@@ -344,23 +346,44 @@
 {if $hasSales && empty($seckillinfo)}
 
 <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0' id="sale-picker">
-    <div class='fui-cell'>
-        <div class='fui-cell-text'>优惠
-            {if $enoughfree && $enoughfree==-1}
-            全场包邮
-            {else}
-            {if $goods['ednum']>0}单品满 <span class="text-danger">{$goods['ednum']}</span> {php echo empty($goods['unit'])?'件':$goods['unit']}包邮{/if}
-            {if $goods['edmoney']>0}单品满 <span class="text-danger">￥{$goods['edmoney']}</span> 包邮{/if}
-            {if $enoughfree}全场满 <span class="text-danger">￥{$enoughfree}</span> 包邮{/if}
-            {/if}
-            <!--
-            {if $enoughs && count($enoughs)>0}
-            全场满 <span class="text-danger">￥{$enoughs[0]['enough']}</span> 立减 <span class="text-danger">￥{$enoughs[0]['money']}</span>
-            {/if}-->
+  
+    {if $enoughfree && $enoughfree==-1}
+        <div class='fui-cell'>
+            <div class='fui-cell-text'>优惠 全场包邮
+            </div>
+            <div class='fui-cell-remark'></div>
         </div>
-    
-        <div class='fui-cell-remark'></div>
-    </div>
+        {else}
+         {if $goods['ednum']>0}
+        <div class='fui-cell'>
+            <div class='fui-cell-text'>优惠
+         单品满 <span class="text-danger">{$goods['ednum']}</span> 
+         {php echo empty($goods['unit'])?'件':$goods['unit']}包邮
+         </div>
+            <div class='fui-cell-remark'></div>
+        </div>
+
+         {/if}
+        {if $goods['edmoney']>0}
+        <div class='fui-cell'>
+            <div class='fui-cell-text'>优惠
+        单品满 <span class="text-danger">￥{$goods['edmoney']}</span> 包邮
+            </div>
+            <div class='fui-cell-remark'></div>
+        </div>
+        {/if}
+        {if $enoughfree}
+        {loop $enoughfree $index $itme}
+            <div class='fui-cell'>
+            <div class='fui-cell-text'>优惠
+            全场满 <span class="text-danger">￥{$itme}</span><span>{$goodsprovinces[$index]}</span>包邮
+            </div>
+            <div class='fui-cell-remark'></div>
+        </div>
+        {/loop}
+        {/if}
+    {/if}
+
       {if $enoughs && count($enoughs)>0}
        {loop $enoughs $en}
         <div class='fui-cell'>
@@ -810,9 +833,11 @@
             {else}
 
             {if $enoughfree>0}
+              {loop $enoughfree $index $itme}
             <div class="fui-cell">
-                <div class="fui-cell-text">全场满 <span class="text-danger">￥{$enoughfree}</span> 包邮</div>
+                <div class="fui-cell-text">全场满 <span class="text-danger">￥{$itme}</span><span>{$goodsprovinces[$index]}</span>包邮</div>
             </div>
+            {/loop}
             {/if}
 
             {if $goods['ednum']>0}

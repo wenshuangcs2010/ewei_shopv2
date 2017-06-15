@@ -7,12 +7,7 @@ $shopset_level = intval($_W['shopset']['commission']['level']);
 $id = intval($_GPC['id']);
 
 $item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_goods') . " WHERE id = :id and uniacid = :uniacid", array(':id' => $id,':uniacid'=>$_W['uniacid']));
-if(!empty($item) && $item['disgoods_id']>0 && !empty($item['goodssn'])){
-    $disgoods = pdo_fetch("select title,thumb,thumb_url,content from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $item['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
-    $item['thumb']=$disgoods['thumb'];
-    $item['content']=$disgoods['content'];
-    $item['thumb_url']=$disgoods['thumb_url'];
-}
+
 $labelname = json_decode($item['labelname'],true);
 $packgoods=pdo_fetch("SELECT * from ".tablename("ewei_shop_goodspacks") . " WHERE goodsid = :id and uniacid = :uniacid", array(':id' =>$item['id'],':uniacid'=>$_W['uniacid']));
 if(!empty($packgoods)){

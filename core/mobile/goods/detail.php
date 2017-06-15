@@ -69,11 +69,7 @@ class Detail_EweiShopV2Page extends MobilePage {
            }
         }
         if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
-            $disgoods = pdo_fetch("select title,thumb,thumb_url,content from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
-            $goods['thumb']=$disgoods['thumb'];
-            $goods['content']=$disgoods['content'];
-            $goods['thumb_url']=$disgoods['thumb_url'];
-           // $goods['total']=$goodstotal;
+            
             $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
             if(!empty($ret)){
                 if($ret['if_show']==0){
@@ -327,6 +323,9 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         if (empty($is_task_goods)) {
             $enoughfree = com_run('sale::getEnoughFree'); //满包邮
+            $data = m('common')->getPluginset('sale');
+            $goodsprovinces=$data['enoughprovince'];
+            
         }
 
 //        var_dump($enoughfree);exit;
@@ -707,10 +706,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         global $_W, $_GPC;
         $id = intval($_GPC['id']);
         $goods = pdo_fetch('select * from '.tablename('ewei_shop_goods').' where id=:id and uniacid=:uniacid limit 1',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
-         if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
-              $disgoodscontent = pdo_fetchcolumn("select content from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $goods['disgoods_id'], ':uniacid' => DIS_ACCOUNT));
-              $goods['content']=$disgoodscontent;
-         }
+        
         die(m('ui')->lazy($goods['content']));
     }
 

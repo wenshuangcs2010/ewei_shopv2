@@ -139,7 +139,7 @@ class Index_EweiShopV2Page extends WebPage {
                 unset($goods['commission2_pay']);
                 unset($goods['commission3_pay']);
                 unset($goods['commission_thumb']);
-                unset($goods['discounts']);
+                $goods['discounts']=json_encode(array("type"=>0));
                 unset($goods['isdiscount']);
                 pdo_insert("ewei_shop_goods",$goods);
                 $insertgoodsid=pdo_insertid();//商品ID

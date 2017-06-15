@@ -69,6 +69,7 @@ class Level_EweiShopV2Page extends WebPage {
                 'ordermoney' => 0,
                 'ordercount' => 0
             );
+          
         } else {
             $level = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_member_level') . " WHERE id=:id and uniacid=:uniacid limit 1", array(':uniacid' => $_W['uniacid'], ':id' => intval($id)));
         }
@@ -86,6 +87,7 @@ class Level_EweiShopV2Page extends WebPage {
                 'discount' => trim($_GPC['discount']),
                 'iscommission' => $iscommission,
             );
+            
             if (!empty($id)) {
                 if ($id == 'default') {
                     $updatecontent = "<br/>等级名称: {$set['shop']['levelname']}->{$data['levelname']}"

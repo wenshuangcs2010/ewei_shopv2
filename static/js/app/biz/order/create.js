@@ -190,7 +190,7 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                                 modal.params.couponmerchid = 0;
                                 $('#coupondiv').find('.fui-cell-label').html('优惠券');
                                 $('#coupondiv').find('.fui-cell-info').html('');
-                                modal.calcCouponPrice()
+                                modal.calcCouponPrice();
                             },
                             onSelected: function (data) {
                                 modal.params.couponid = data.id;
@@ -198,7 +198,8 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                                 $('#coupondiv').find('.fui-cell-label').html('已选择');
                                 $('#coupondiv').find('.fui-cell-info').html(data.couponname);
                                 $('#coupondiv').data(data);
-                                modal.calcCouponPrice()
+                                //modal.calcCouponPrice();
+                                modal.caculate();
                             }
                         })
                     })

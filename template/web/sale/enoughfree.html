@@ -22,38 +22,48 @@
                {/if}
         </div>
  </div>  
- 
-                <div id='enoughfree'  {if empty($data['enoughfree'])}style="display:none"{/if}>
+      <div id="enoughfreehtml" {if empty($data['enoughfree'])}style="display:none"{/if}>
+        <div id="appendhtml">
+              {loop $data['enoughorder'] $index $itme}
+                <div class="enoughfreeclass">
+
                   <div class="form-group">
                        <label class="col-sm-2 control-label">单笔订单满</label>
                        <div class="col-sm-9 col-xs-12">
                            {ifp 'sale.enoughfree'}
                           <div class='input-group'>
-                                   <input type="text" name="data[enoughorder]"  value="{$data['enoughorder']}" class="form-control" />
-                                   <span class='input-group-addon'>元</span>
+                                   <input type="text" name="data[enoughorder][{$index}]"  value="{$data['enoughorder'][$index]}" class="form-control" />
+                                   <span class='input-group-addon'>元</span> 
+                                   {if $index>0}
+                                   <div class="input-group-btn"><button class="btn btn-danger" onclick="removeItem(this)"><i class="fa fa-remove"></i></button></div>
+                                   {/if}
                            </div>
                            <span class='help-block'>如果开启满额包邮，设置0为全场包邮</span>
                            {else}
                            <div class='form-control-static'>{if empty($data['enoughmoney'])}全场包邮{else}订单金额满{$data['enoughmoney']}元包邮{/if}</div>
                            {/if}
                        </div>
-                   </div> 
-                
-                
+                   </div>
                   <div class="form-group">
-                       <label class="col-sm-2 control-label">不参加的地区</label>
+                       <label class="col-sm-2 control-label">参加的地区</label>
                        <div class="col-sm-9 col-xs-12">
                            {ifp 'sale.enoughfree'}
-                           <div id="areas" class="form-control-static">{$data['enoughareas']}</div>
-                           <a href="javascript:;" class="btn btn-default" onclick="selectAreas()">选择地区</a>
-                           <input type="hidden" id='selectedareas' name="data[enoughareas]" value="{$data['enoughareas']}" />
+                           <div id="areas" class="form-control-static">{$data['enoughareas'][$index]}</div>
+                           <a href="javascript:;" class="btn btn-default" onclick="selectAreas(this)">选择地区</a>
+                           <input type="hidden" id='selectedareas' name="data[enoughareas][{$index}]" value="{$data['enoughareas'][$index]}" />
+                           <input type="hidden"  name="data[enoughprovince][{$index}]" value="{$data['enoughprovince'][$index]}" />
                            {else}
                            <div class='form-control-static'>{$data['enoughareas']}</div>
                            {/if}
                        </div>
                    </div>
-
-                  <div class="form-group">
+                   
+              </div>
+              {/loop}
+          </div>
+         <button type="button" class="btn btn-default" onclick="addItem()" style="margin-bottom:5px"><i class="fa fa-plus"></i> 增加优惠项</button>
+        
+           <div class="form-group">
                       <label class="col-sm-2 control-label">不参与包邮的商品</label>
                       <div class="col-sm-9">
                           <div class="form-group" style="height: auto; display: block;">
@@ -75,8 +85,9 @@
 
                       </div>
                   </div>
-          </div>
+        </div>          
         </div>
+
 
                    {ifp 'sale.enoughfree'}
                 <div class="form-group"></div>
@@ -93,20 +104,54 @@
     </form>
  
 <script language='javascript'>
-  
+
                 $(function () {
                     $(":checkbox[name='data[enoughfree]']").click(function () {
+                     
                         if ($(this).prop('checked')) {
-                            $("#enoughfree").show();
+                            $("#enoughfreehtml").show();
                         }
                         else {
-                            $("#enoughfree").hide();
+                            $("#enoughfreehtml").hide();
                         }
                     })
                    
 
                 })
-         
+         function addItem(){
+           var count=0;
+           count= $("#appendhtml > .enoughfreeclass").size();
+            var html='<div class="enoughfreeclass">\
+                  <div class="form-group">\
+                       <label class="col-sm-2 control-label">单笔订单满</label>\
+                       <div class="col-sm-9 col-xs-12">\
+                          <div class="input-group">\
+                                   <input type="text" name="data[enoughorder]['+count+']"  value="0"\
+                                    class="form-control" />\
+                                   <span class="input-group-addon">元</span>\
+                                   <div class="input-group-btn"><button class="btn btn-danger" \
+                                   onclick="removeItem(this)"><i class="fa fa-remove"></i></button></div>\
+                           </div>\
+                           <span class="help-block">如果开启满额包邮，设置0为全场包邮</span>\
+                       </div>\
+                   </div>\
+                  <div class="form-group">\
+                       <label class="col-sm-2 control-label">参加的地区</label>\
+                       <div class="col-sm-9 col-xs-12">\
+                           <div id="areas" class="form-control-static"></div>\
+                           <a href="javascript:;" class="btn btn-default" onclick="selectAreas(this)">\
+                           选择地区</a>\
+                           <input type="hidden"  name="data[enoughareas]['+count+']" value="" />\
+                           <input type="hidden"  name="data[enoughprovince]['+count+']" value="" />\
+                       </div>\
+                   </div>\
+              </div>';
+            $("#appendhtml").append("<div class='enoughfreeclass'>"+html+"</div>");
+         }
+         function removeItem(obj){
+          $(obj).closest('.enoughfreeclass').detach();
+          //$(obj).prev('.enoughfreeclass').remove();
+         }
              
 	</script>
 {template 'shop/selectareas'}

@@ -1090,7 +1090,7 @@ class Order_EweiShopV2Model
         } else if (!empty($member['city'])) {
             $user_city = $member['city'];
         }
-
+       
         foreach ($goods as $g) {
             $realprice += $g['ggprice'];
             $dispatch_merch[$g['merchid']] = 0;
@@ -1375,39 +1375,74 @@ class Order_EweiShopV2Model
             if (!empty($saleset['enoughfree'])) {
 
                 //是否满足营销宝满额包邮
-                $saleset_free = 0;
-
+              
                 if ($loop == 0) {
-                    if (floatval($saleset['enoughorder']) <= 0) {
-                        $saleset_free = 1;
-                    } else {
+                    $orderprice=$realprice - $seckill_payprice;
 
-                        if ($realprice - $seckill_payprice >= floatval($saleset['enoughorder'])) {
-                            //订单大于设定的包邮金额
-                            if (empty($saleset['enoughareas'])) {
-                                //如果不限制区域，包邮
-                                $saleset_free = 1;
-                            } else {
-                                //如果限制区域
-                                $areas = explode(";", $saleset['enoughareas']);
-                                if (!empty($address)) {
-                                    if (!in_array($address['city'], $areas)) {
-                                        $saleset_free = 1;
-                                    }
-                                } else if (!empty($member['city'])) {
-                                    //设置了城市需要判断区域设置
-                                    if (!in_array($member['city'], $areas)) {
-                                        $saleset_free = 1;
-                                    }
-                                } else if (empty($member['city'])) {
-                                    //如果会员还未设置城市 ，默认邮费
+                    $areasstr="";
+                    foreach ($saleset['enoughorder'] as $key => $value) {
+                        if($value<=$orderprice){
+                            $areasstr.=$saleset['enoughareas'][$key];
+                        }
+                        if($value<=0){
+                            $saleset_free = 1;
+                        }
+                    }
+
+                   if(empty($saleset_free)){
+
+                        if(empty($areasstr)){
+                             $saleset_free = 1;
+                        }else{
+                            $areas = explode(";", $areasstr);
+                             //var_dump($address);
+                            if (!empty($address)) {
+                                if (in_array($address['city'], $areas)) {
                                     $saleset_free = 1;
+                                }
+                            } else if (!empty($member['city'])) {
+                                    //设置了城市需要判断区域设置
+                                if (in_array($member['city'], $areas)) {
+                                        $saleset_free = 1;
+                                    }
+                            } else if (empty($member['city'])) {
+                                    //如果会员还未设置城市 ，默认邮费
+                                    $saleset_free = 0;
+                                }
+                        }
+                   }/*
+                       if (floatval($saleset['enoughorder']) <= 0) {
+                            $saleset_free = 1;
+                        } else {
+
+                            if ($realprice - $seckill_payprice >= floatval($saleset['enoughorder'])) {
+                                //订单大于设定的包邮金额
+                                if (empty($saleset['enoughareas'])) {
+                                    //如果不限制区域，包邮
+                                    $saleset_free = 1;
+                                } else {
+                                    //如果限制区域
+                                    $areas = explode(";", $saleset['enoughareas']);
+                                    if (!empty($address)) {
+                                        if (!in_array($address['city'], $areas)) {
+                                            $saleset_free = 1;
+                                        }
+                                    } else if (!empty($member['city'])) {
+                                        //设置了城市需要判断区域设置
+                                        if (!in_array($member['city'], $areas)) {
+                                            $saleset_free = 1;
+                                        }
+                                    } else if (empty($member['city'])) {
+                                        //如果会员还未设置城市 ，默认邮费
+                                        $saleset_free = 1;
+                                    }
                                 }
                             }
                         }
-                    }
+                    */
                 }
-
+                //var_dump($saleset_free);
+                //die();
                 if ($saleset_free == 1) {
                     $is_nofree = 0;
                     if (!empty($saleset['goodsids'])) {

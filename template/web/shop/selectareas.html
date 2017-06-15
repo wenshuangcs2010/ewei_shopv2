@@ -16,7 +16,7 @@
 				{if $value['@attributes']['name']=='请选择省份'}{php continue;}{/if}
                 <div class='province'>
                      <label class='checkbox-inline' style='margin-left:20px;'>
-                         <input type='checkbox' class='cityall' style='margin-top:12px;' /> {php echo $value['@attributes']['name']}
+                         <input type='checkbox' class='cityall' province="{php echo $value['@attributes']['name']}" style='margin-top:12px;' /> {php echo $value['@attributes']['name']}
                          <span class="citycount" style='color:#ff6600'></span>
                      </label>
                     {if count($value['city'])>0}
@@ -134,11 +134,17 @@
                 });
     }
 	
-    function selectAreas(){
+    function selectAreas(mod){
         clearSelects();
-        var old_citys = $('#areas').html().split(';');
-      
-                
+        //var old_citys = $('#areas').html().split(';');
+      var old_citys = $(mod).prev().html().split(';');
+      for(var i = 0 ;i<old_citys.length;i++)
+    {
+        if(old_citys[i] == "" || typeof(old_citys[i]) == "undefined"){
+             old_citys.splice(i,1);
+        }
+    }
+       console.log(old_citys);
         $('.city').each(function(){
             var parentcheck = false;
             for(var i in old_citys){
@@ -155,13 +161,19 @@
         
         $("#modal-areas").modal();
         var citystrs = '';
+        var provinces='';
         $('#btnSubmitArea').unbind('click').click(function(){
                    $('.city:checked').each(function(){              
                        citystrs+= $(this).attr('city') +";";
-                   }); 
-                   $('#areas').html(citystrs);
-                   $("#selectedareas").val(citystrs);
+                   });
+                   $('.cityall:checked').each(function(){              
+                       provinces+= $(this).attr('province') +";";
+                   });
+                   //$('#areas').html(citystrs);
+                   $(mod).prev().html(citystrs);
+                   //$("#selectedareas").val(citystrs);
+                   $(mod).next().val(citystrs);
+                   $(mod).next().next().val(provinces);
         })
-    
     }
 </script>
