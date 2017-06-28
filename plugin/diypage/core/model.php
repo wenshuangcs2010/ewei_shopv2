@@ -88,7 +88,10 @@ class DiypageModel extends PluginModel {
 
 			if(!empty($page['data']['items']) && is_array($page['data']['items'])){
 				// 循环第一遍  执行 更新数据
+              
 				foreach ($page['data']['items'] as $itemid=> &$item) {
+                   
+      
 					if($item['id']=='goods') {
 					    $creditshop = !empty($item['params']['goodstype']) ? true : false;
 						if($item['params']['goodsdata']=='0') {
@@ -172,6 +175,7 @@ class DiypageModel extends PluginModel {
                         }
 					}
 					elseif($item['id']=='merchgroup' && p('merch')){
+
                         if($item['params']['merchdata']=='0') {
                             // 更新商户信息
                             if(!empty($item['data']) && is_array($item['data'])) {
@@ -235,6 +239,7 @@ class DiypageModel extends PluginModel {
                             }
                         }
                         elseif($item['params']['merchdata']=='2'){
+
                             if(!empty($item['params']['groupid'])) {
                                 // 查询分组信息
                                 $group = pdo_fetch('select id, groupname, status from ' . tablename('ewei_shop_merch_group') . ' where id=:id and uniacid=:uniacid limit 1 ', array(':id'=>$item['params']['groupid'], ':uniacid' => $_W['uniacid']));
@@ -380,6 +385,7 @@ class DiypageModel extends PluginModel {
 						unset($page['data']['items'][$itemid]);
 					}
 				}
+
 				unset($item);
 
 				$this->savePage($page['id'], $page['data'], false);
@@ -820,14 +826,14 @@ class DiypageModel extends PluginModel {
 				}
 				unset($item);
 			}
-
+          
 			if ($mobile && !empty($page['data'])){
                 $page['data'] = json_encode($page['data']);
                 $page['data'] = $this->url($page['data']);
                 $page['data'] = json_decode($page['data'], true);
             }
 		}
-
+         
 
 		return $page;
 	}
@@ -904,6 +910,7 @@ class DiypageModel extends PluginModel {
 				pdo_insert('rule_keyword', $keyword_data);
 			}
 		}
+
 		if($update) {
 			$item = pdo_fetch("select id, type, name, keyword from " . tablename('ewei_shop_diypage') . ' where id=:id and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 
@@ -947,6 +954,7 @@ class DiypageModel extends PluginModel {
 
 			show_json(1, $result);
 		}
+
 	}
 
     public function  delPage($id) {

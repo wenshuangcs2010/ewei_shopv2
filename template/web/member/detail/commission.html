@@ -127,6 +127,64 @@
 </div>
 
 <div class="form-group">
+    <label class="col-sm-2 control-label">分销商分享链接权限</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'commission.agent.check'}
+        <label class="radio-inline"><input type="radio" class="changradio"  name="adata[changemember]" value="1" {if $member['changemember']==1}checked{/if}>升级会员</label>
+        <label class="radio-inline" ><input type="radio" class="changradio" name="adata[changemember]" value="0" {if $member['changemember']==0}checked{/if}>不升级会员</label>
+         <span class="help-block">如果选择升级会员,此分销商的分享的链接发展的下级将会更改或者分组会员等级</span>
+        {else}
+        <input type='hidden' name='adata[changemember]' value='{$member['changemember']}' />
+        <div class='form-control-static'>{if $member['changemember']==1}是{else}否{/if}</div>
+        {/if}
+
+    </div>
+</div>
+<div class="showmember" style="{if $member['changemember']==1}{else}display: none{/if}">
+    <div class="form-group">
+    <label class="col-sm-2 control-label">下线会员等级</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'member.list.edit'}
+        <select name='adata[memberlevel]' class='form-control'>
+            <option value=''>{php echo empty($shop['levelname'])?'普通会员':$shop['levelname']}</option>
+            {loop $levels $level}
+            <option value='{$level['id']}' {if $member['memberlevel']==$level['id']}selected{/if}>{$level['levelname']}</option>
+            {/loop}
+        </select>
+        {else}
+        <div class='form-control-static'>
+            {if empty($member['level'])}
+            {php echo empty($shop['levelname'])?'普通会员':$shop['levelname']}
+            {else}
+            {php echo pdo_fetchcolumn('select levelname from '.tablename('ewei_shop_member_level').' where id=:id limit 1',array(':id'=>$member['level']))}
+            {/if}
+        </div>
+        {/if}
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">下线会员分组</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'member.list.edit'}
+        <select name='adata[membergroupid]' class='form-control'>
+            <option value=''>无分组</option>
+            {loop $groups $group}
+            <option value='{$group['id']}' {if $member['membergroupid']==$group['id']}selected{/if}>{$group['groupname']}</option>
+            {/loop}
+        </select>
+        {else}
+        <div class='form-control-static'>
+            {if empty($member['groupid'])}
+            无分组
+            {else}
+            {php echo pdo_fetchcolumn('select groupname from '.tablename('ewei_shop_member_group').' where id=:id limit 1',array(':id'=>$member['groupid']))}
+            {/if}
+        </div>
+        {/if}
+    </div>
+</div>
+</div>
+<div class="form-group">
     <label class="col-sm-2 control-label">审核通过</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'commission.agent.check'}
@@ -208,6 +266,16 @@
             $('#module-menus-notice').html(dat);
         });
     }
+$(function(){
+  $(".changradio").click(function(){
+        if($("input[name='adata[changemember]']:checked").val()==1){
+            $(".showmember").show();
+        }else{
+            $(".showmember").hide();
+        }
+  });
+ });
+    $("adata[changemember]")
     function select_member(o) {
         $("#agentid").val(o.id);
         $("#parentagentavatar").show();

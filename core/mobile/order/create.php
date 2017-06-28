@@ -614,6 +614,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 } else {
                     if (empty($bargain_id)) {//如果不是砍价订单,执行下面语句
                         //会员优惠
+                        
                         $discountprice += $prices['discountprice'];
                         //任务活动优惠
                         $taskdiscountprice += $prices['taskdiscountprice'];
@@ -634,6 +635,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         } else if ($prices['discounttype'] == 2) {
                             //会员优惠
                             $discountprice += $prices['discountprice'];
+
                         }
                     }
                 }
@@ -744,8 +746,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     $seckill_dispatchprice = $dispatch_array['seckill_dispatch_price'];
                 }
             }
-
-
+            
             //多商户满减
             if ($is_openmerch == 1) {
                 if (empty($bargain_id)) {
@@ -1778,6 +1779,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $return_array['price'] = $dispatch_price + $seckill_dispatchprice;
         $return_array['couponcount'] = $couponcount;
         $return_array['realprice'] = $realprice;
+
         $return_array['deductenough_money'] = $deductenough_money;
         $return_array['deductenough_enough'] = $deductenough_enough;
         $return_array['deductcredit2'] = $deductcredit2;
@@ -1785,6 +1787,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $return_array['deductmoney'] = $deductmoney;
         $return_array['taskdiscountprice'] = $taskdiscountprice;
         $return_array['discountprice'] = $discountprice;
+
         $return_array['isdiscountprice'] = $isdiscountprice;
         //var_dump($realprice);
         $return_array['merch_showenough'] = $merch_saleset['merch_showenough'];
@@ -2750,8 +2753,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
+       
         $returndata=m("order")->get_tax($allgoods,$order['dispatchprice'],$goodsprice,$alldeduct);//正常算税
-
+       
         $allgoods=$returndata['order_goods'];
        
         $order['dpostfee']=$returndata['depostfee'];

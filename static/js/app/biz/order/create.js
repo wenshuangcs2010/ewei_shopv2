@@ -198,8 +198,8 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                                 $('#coupondiv').find('.fui-cell-label').html('已选择');
                                 $('#coupondiv').find('.fui-cell-info').html(data.couponname);
                                 $('#coupondiv').data(data);
-                                //modal.calcCouponPrice();
-                                modal.caculate();
+                                modal.calcCouponPrice();
+                                //modal.caculate();
                             }
                         })
                     })
@@ -239,6 +239,7 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
             log_id:modal.params.log_id,
             goods: modal.params.goods
         }, function (getjson) {
+
             if (getjson.status == 1) {
                 if (modal.params.iscarry) {
                     $('.dispatchprice').html('0.00')
@@ -248,9 +249,11 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                 if (getjson.result.taskdiscountprice) {
                     $('#taskdiscountprice').val(core.number_format(getjson.result.taskdiscountprice, 2));
                 }
+
                 if (getjson.result.discountprice) {
                     $('#discountprice').val(core.number_format(getjson.result.discountprice, 2));
                 }
+
                 if (getjson.result.buyagain) {
                     $('#buyagain').val(core.number_format(getjson.result.buyagain, 2));
                     $('#showbuyagainprice').html(core.number_format(getjson.result.buyagain, 2)).parents(".fui-cell").show();
@@ -311,6 +314,7 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                     modal.isnodispatch = 0;
                     modal.nodispatch = ''
                 }
+ 
                 modal.calcCouponPrice()
             }
         }, true, true)
@@ -376,6 +380,7 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
         var deductprice = 0;
         var taskdiscountprice = core.getNumber($(".taskdiscountprice").val());
         var discountprice = core.getNumber($(".discountprice").val());
+
         var isdiscountprice = core.getNumber($(".isdiscountprice").val());
         if (modal.params.couponid == 0) {
             if (taskdiscountprice > 0) {

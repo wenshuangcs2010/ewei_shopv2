@@ -45,12 +45,12 @@ class Picker_EweiShopV2Page extends MobilePage {
 
 
         //商品
-        $goods = pdo_fetch('select id,thumb,title,marketprice,isdiscount_stat_time,total,maxbuy,minbuy,unit,hasoption,showtotal,diyformid,diyformtype,diyfields,isdiscount,isdiscount_time,isdiscount_discounts, needfollow, followtip, followurl, type, isverify, maxprice, minprice, merchsale from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        $goods = pdo_fetch('select id,thumb,title,marketprice,isdiscount_stat_time,total,maxbuy,minbuy,unit,hasoption,isnodiscount,discounts,showtotal,diyformid,diyformtype,diyfields,isdiscount,isdiscount_time,isdiscount_discounts, needfollow, followtip, followurl, type, isverify, maxprice, minprice, merchsale from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
         if (empty($goods)) {
             show_json(0);
         }
         $goods = set_medias($goods, 'thumb');
-
+        
         $openid = $_W['openid'];
 
         if (is_weixin()) {
@@ -139,7 +139,7 @@ class Picker_EweiShopV2Page extends MobilePage {
         //价格显示
 
 
-
+         $level = m('member')->getLevel($openid);
         if (!empty($is_task_goods)) {
             if ( isset($options) && count($options) > 0 && $goods['hasoption']) {
                 $prices = array();
@@ -187,10 +187,16 @@ class Picker_EweiShopV2Page extends MobilePage {
                 $minprice = min($prices);
                 $maxprice = max($prices);
             }
+            $memberprice = m('goods')->getMemberPrice($goods, $level);
+
         }
 
-
-        $goods['minprice'] = number_format( $minprice,2); $goods['maxprice'] =number_format(  $maxprice,2);
+        if($memberprice<$minprice){
+             $minprice=$memberprice;
+             $maxprice=$memberprice;
+        }
+        $goods['minprice'] = number_format( $minprice,2); 
+        $goods['maxprice'] =number_format(  $maxprice,2);
 
         //自定义表单
         $diyformhtml = "";
@@ -269,12 +275,13 @@ class Picker_EweiShopV2Page extends MobilePage {
                 $canAddCart = false;
             }
         }
+
         //是否可以加入购物车
         $goods['canAddCart'] = true;
         if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund'])) {
             $goods['canAddCart'] = false;
         }
-
+   
         show_json(1, array(
             'goods' => $goods,
             'seckillinfo'=>$seckillinfo,

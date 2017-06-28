@@ -371,7 +371,7 @@
         <div class="col-sm-9 col-xs-12">
             {ifp 'sysset.trade.edit'}
             <div id="areas" class="form-control-static">{$data[nodispatchareas]}</div>
-            <a href="javascript:;" class="btn btn-default" onclick="selectAreas()">选择地区</a>
+            <a href="javascript:;" class="btn btn-default" onclick="selectAreas(this)">选择地区</a>
             <input type="hidden" id='selectedareas' name="data[nodispatchareas]" value="{$data[nodispatchareas]}" />
             {else}
             <div class='form-control-static'>{$data[nodispatchareas]}</div>

@@ -169,6 +169,7 @@ if ($_W['ispost']) {
         'productprice' => trim($_GPC['productprice']),
         'productsn' => trim($_GPC['productsn']),
         'credit' => trim($_GPC['credit']),
+        'brief_desc'=>trim($_GPC['brief_desc']),
         'maxbuy' => intval($_GPC['maxbuy']),
         'minbuy' => intval($_GPC['minbuy']),
         'usermaxbuy' => intval($_GPC['usermaxbuy']),

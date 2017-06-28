@@ -84,6 +84,7 @@ class Taxcore
 	  	function get_dprice_order($ordergoods,$shipping_fee,$goodsprice,$alldeduct=0){
 	  		$before_tax_price=0;
 	  		$test=0;
+	  		
 	  		//var_dump($ordergoods);
 	  		foreach($ordergoods as &$goods){
 	  			//$goods['price']=$goods['realprice']/$goods['total'];

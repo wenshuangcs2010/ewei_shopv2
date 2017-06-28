@@ -101,7 +101,10 @@
 	           <div class="name"><%g.title%></div>
 	   </a>
 	           <div class="price">
-		   <span class="text">￥<%g.minprice%></span>
+		   <span class="text">
+		   <%if g.isdiscount==1%><span class="fui-label fui-label-danger">折扣</span><%/if%>
+		   <%if g.memberprice>0 %><span class="fui-label fui-label-danger">会员</span><%/if%>
+		   ￥<%g.minprice%></span>
            <span class="buy"><%if g.bargain >0%>砍价活动<%else%><i class="icon icon-cart"></i><%/if%></span></div>
  	    </div>
 	</div>

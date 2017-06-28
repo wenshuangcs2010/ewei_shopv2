@@ -223,18 +223,46 @@ class Goods_EweiShopV2Model {
         $total = "";
 
         if (!$random) {
-            $sql = "SELECT id,title,thumb,marketprice,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
+            $sql = "SELECT id,title,thumb,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
            
             $countsql="select count(*) from " . tablename('ewei_shop_goods') . " where 1 {$condition}";
           
             $total = pdo_fetchcolumn($countsql,$params);
         } else {
-            $sql = "SELECT id,title,thumb,marketprice,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
+            $sql = "SELECT id,title,thumb,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
             $total  = $pagesize;
         }
-
+        $level = m('member')->getLevel($openid);
         $list = pdo_fetchall($sql, $params);
         $list = set_medias($list, 'thumb');
+        foreach ($list as $key=>$goods) {
+           if($goods['isdiscount']==1 && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
+
+                $list[$key]['isdiscount']=1;
+                $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
+                if (!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])) {
+                //统一促销
+                $prices_array = m('order')->getGoodsDiscountPrice($goods, $level, 1);
+                $prices[] = $prices_array['price'];
+                } else {
+                    //详细促销
+                    $goods_discounts = m('order')->getGoodsDiscounts($goods, $isdiscount_discounts, $levelid);
+                    $prices = $goods_discounts['prices'];
+                }
+               $minprice = min($prices);
+               $list[$key]['minprice']=$minprice;
+           }else{
+                $list[$key]['isdiscount']=0;
+                $memberprice = m('goods')->getMemberPrice($goods, $level);
+                //var_dump($memberprice);
+                
+                if($memberprice<$goods['minprice']){
+                    $list[$key]['memberprice']=$memberprice;
+                    $list[$key]['minprice']=$memberprice;
+                }
+           }
+        }
+       
         return array("list"=>$list,"total"=>$total);
     }
 

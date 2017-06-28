@@ -90,7 +90,7 @@ class Order_EweiShopV2Model
                         if($customs){
 
 
-                            // if($order['if_customs_z']==1){//盛付通 处理
+                             if($order['if_customs_z']==1){//盛付通 处理
                             //     //自动转账的订单
                             //     if($order['zhuan_status']!=1){
                             //         $order_sn=$order['ordersn'];
@@ -106,8 +106,8 @@ class Order_EweiShopV2Model
                             //         require EWEI_SHOPV2_TAX_CORE. '/Transfer/Transfer.php';
                             //         $payment=Transfer::getPayment("shenfupay");
                             //     }
-                            //     $params['paytype']=37;
-                            // }
+                                 $params['paytype']=37;
+                             }
                             $depot=m("kjb2c")->get_depot($order['depotid']);
                             $customsparams=array(
                                 'out_trade_no'=>$order['ordersn'],
@@ -131,7 +131,7 @@ class Order_EweiShopV2Model
                                             'mch_id'=>$setting['payment']['wechat']['mchid'],
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
-                                
+                                    
                                     $returndatatemp=m("kjb2c")->to_customs($customsparams,$config,'wx');
                                     WeUtility::logging('自动报关结果', var_export($returndatatemp, true));
                                 }
@@ -1288,7 +1288,8 @@ class Order_EweiShopV2Model
 
         }
 
-
+        //var_Dump($dispatch_array);
+        //die();
         if (!empty($dispatch_array)) {
             foreach ($dispatch_array as $k => $v) {
                 $dispatch_data = $dispatch_array[$k]['data'];
@@ -1321,61 +1322,13 @@ class Order_EweiShopV2Model
             }
         }
 
-
-
-        //判断多商户是否满额包邮
-        if (!empty($merch_array)) {
-
-            foreach ($merch_array as $key => $value) {
-                $merchid = $key;
-
-                if ($merchid > 0) {
-                    $merchset = $value['set'];
-                    if (!empty($merchset['enoughfree'])) {
-                        if (floatval($merchset['enoughorder']) <= 0) {
-                            $dispatch_price = $dispatch_price - $dispatch_merch[$merchid];
-                            $dispatch_merch[$merchid] = 0;
-                        } else {
-                            if ($merch_array[$merchid]['ggprice'] >= floatval($merchset['enoughorder'])) {
-                                //订单大于设定的包邮金额
-                                if (empty($merchset['enoughareas'])) {
-                                    //如果不限制区域，包邮
-                                    $dispatch_price = $dispatch_price - $dispatch_merch[$merchid];
-                                    $dispatch_merch[$merchid] = 0;
-                                } else {
-                                    //如果限制区域
-                                    $areas = explode(";", $merchset['enoughareas']);
-                                    if (!empty($address)) {
-                                        if (!in_array($address['city'], $areas)) {
-                                            $dispatch_price = $dispatch_price - $dispatch_merch[$merchid];
-                                            $dispatch_merch[$merchid] = 0;
-                                        }
-                                    } else if (!empty($member['city'])) {
-                                        //设置了城市需要判断区域设置
-                                        if (!in_array($member['city'], $areas)) {
-                                            $dispatch_price = $dispatch_price - $dispatch_merch[$merchid];
-                                            $dispatch_merch[$merchid] = 0;
-                                        }
-                                    } else if (empty($member['city'])) {
-                                        //如果会员还未设置城市 ，默认邮费
-                                        $dispatch_price = $dispatch_price - $dispatch_merch[$merchid];
-                                        $dispatch_merch[$merchid] = 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         //营销宝满额包邮
         if ($saleset) {
 
             if (!empty($saleset['enoughfree'])) {
 
                 //是否满足营销宝满额包邮
-              
+               $saleset_free=0;
                 if ($loop == 0) {
                     $orderprice=$realprice - $seckill_payprice;
 
@@ -1388,14 +1341,15 @@ class Order_EweiShopV2Model
                             $saleset_free = 1;
                         }
                     }
-
                    if(empty($saleset_free)){
-
+                   
+                    
                         if(empty($areasstr)){
-                             $saleset_free = 1;
+                             $saleset_free = 0;
                         }else{
                             $areas = explode(";", $areasstr);
                              //var_dump($address);
+                           
                             if (!empty($address)) {
                                 if (in_array($address['city'], $areas)) {
                                     $saleset_free = 1;
@@ -1407,10 +1361,15 @@ class Order_EweiShopV2Model
                                     }
                             } else if (empty($member['city'])) {
                                     //如果会员还未设置城市 ，默认邮费
-                                    $saleset_free = 0;
+                                    $saleset_free = 1;
                                 }
+
                         }
-                   }/*
+                       // var_dump($saleset_free);
+                   //die();
+                   }
+
+                   /*
                        if (floatval($saleset['enoughorder']) <= 0) {
                             $saleset_free = 1;
                         } else {
@@ -1445,6 +1404,7 @@ class Order_EweiShopV2Model
                 //die();
                 if ($saleset_free == 1) {
                     $is_nofree = 0;
+
                     if (!empty($saleset['goodsids'])) {
                         foreach ($goods as $k => $v) {
                             if (!in_array($v['goodsid'], $saleset['goodsids'])) {
@@ -1473,7 +1433,7 @@ class Order_EweiShopV2Model
             }
             unset($dm);
         }
-
+    // var_dump($saleset_free);
         if (!empty($nodispatch_array)) {
             $nodispatch = '商品';
             foreach ($nodispatch_array['title'] as $k => $v) {
@@ -1695,7 +1655,7 @@ class Order_EweiShopV2Model
         }
        
         $retrundata=$tax->get_dprice_order($out_goods,$dispatch_price,$goodsprice,$alldeduct);
-
+      
         $out_goods=$retrundata['order_goods'];
 
         $depostfee=$retrundata['depostfee'];//总运费

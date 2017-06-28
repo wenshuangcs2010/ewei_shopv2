@@ -170,7 +170,11 @@
                     {if $goods['type']==4}
                     {$goods['minprice']}(组合)<span>&yen;<del class='marketprice'>{$decountprice}</del></span>
                     {else}
+                     {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
+                        {$memberprice}
+                    {else}
                         {$goods['minprice']}
+                    {/if}
                     {/if} 
             {else}
                 {$goods['minprice']}~{$goods['maxprice']}
@@ -268,7 +272,17 @@
     </div>
 </div>
 {/if}
+{if $goods['brief_desc']}
+<div class='fui-cell-group  fui-sale-group' style='margin-top:0' id="buy-picker">
 
+<div class='fui-cell'>
+            <div class='fui-cell-text'>购买说明:{$goods['brief_desc']}
+            </div>
+            <div class='fui-cell-remark'></div>
+        </div>
+    </div>
+
+{/if}
 {if empty($seckillinfo)}
 {if floatval($goods['buyagain'])>0}
 <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
@@ -289,14 +303,14 @@
     </div>
 </div>
 {/if}
-{if empty($goods['isdiscount']) || (!empty($goods['isdiscount'])  && ($goods['isdiscount_time']<time() || $goods['isdiscount_stat_time']>time() ))}
-{if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
-<div class="fui-cell-group  fui-sale-group" style="margin-top:0">
-    <div class="fui-cell">
-        <div class="fui-cell-text" style="white-space: normal;">您的会员等级是 <span class="text-danger">{$level['levelname']}</span> 可享受 <span class="text-danger">￥{$memberprice}</span> 的价格</div>
+{if empty($goods['isdiscount']) || (!empty($goods['isdiscount'])  && ($goods['isdiscount_time']<=time() || $goods['isdiscount_stat_time']>=time() ))}
+    {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
+    <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
+        <div class="fui-cell">
+            <div class="fui-cell-text" style="white-space: normal;">您的会员等级是 <span class="text-danger">{$level['levelname']}</span> 可享受 <span class="text-danger">￥{$memberprice}</span> 的价格,普通会员价:<span class="text-danger">￥{$goods['minprice']}</span></div>
+        </div>
     </div>
-</div>
-{/if}
+    {/if}
 {/if}
 
 {/if}
@@ -821,7 +835,16 @@
     </div>
 </div>
 {/if}
+<div id='buy-picker-modal' style="margin: -100%;">
+<div class='sale-picker'>
+        <div class='fui-cell-title'>购买说明</div>
+        <div class="fui-cell-group fui-sale-group" style='margin-top:0'>
+            <strong>{$goods['brief_desc']}</strong>
+            <div class='btn btn-danger block'>确定</div>
+        </div>
 
+    </div>
+    </div>
 
 <div id='sale-picker-modal' style="margin: -100%;">
     <div class='sale-picker'>

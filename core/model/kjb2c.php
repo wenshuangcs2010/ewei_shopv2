@@ -36,6 +36,9 @@ class Kjb2c_EweiShopV2Model {
 		 	'customs'=>$customs,
 		 	'mch_customs_no'=>$depot['customs_code'],
 		 	);
+		 if($order['if_customs_z']==1 && $order['zhuan_status']==0){
+		 	show_json(0,"转账失败请联系管理员");
+		 }
 		 if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
 			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
 			if($sporder['pay_code']=="shenfupay"){

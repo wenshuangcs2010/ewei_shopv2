@@ -325,7 +325,6 @@ class Detail_EweiShopV2Page extends MobilePage {
             $enoughfree = com_run('sale::getEnoughFree'); //满包邮
             $data = m('common')->getPluginset('sale');
             $goodsprovinces=$data['enoughprovince'];
-            
         }
 
 //        var_dump($enoughfree);exit;
@@ -372,7 +371,7 @@ class Detail_EweiShopV2Page extends MobilePage {
             $minprice = min($prices);
             $maxprice = max($prices);
         }else{
-
+            
             if ( isset($options) && count($options) > 0 && $goods['hasoption']) {
                 $optionids = array();
                 foreach ($options as $val){

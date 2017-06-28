@@ -1529,11 +1529,23 @@ if (!class_exists('CommissionModel')) {
                             //首次点击分享连接
                             $authorid = empty($parent['isauthor']) ? $parent['authorid'] : $parent['id'];
                             $author = p('author');
+
                             if ($author) {
                                 $author->upgradeLevelByAgent($parent['id']);
-                                pdo_update('ewei_shop_member', array('agentid' => $parent['id'], 'childtime' => $time,'authorid'=>$authorid), array('uniacid' => $_W['uniacid'], 'id' => $member['id']));
+                                $memberupdatedata=array('agentid' => $parent['id'], 'childtime' => $time,'authorid'=>$authorid);
+                                if($parent['changemember']==1){
+                                    $memberupdatedata['level']=$parent['memberlevel'];
+                                    $memberupdatedata['groupid']=$parent['membergroupid'];
+                                }
+
+                                pdo_update('ewei_shop_member',$memberupdatedata , array('uniacid' => $_W['uniacid'], 'id' => $member['id']));
                             }else{
-                                pdo_update('ewei_shop_member', array('agentid' => $parent['id'], 'childtime' => $time), array('uniacid' => $_W['uniacid'], 'id' => $member['id']));
+                                $memberupdatedata=array('agentid' => $parent['id'], 'childtime' => $time);
+                                if($parent['changemember']==1){
+                                    $memberupdatedata['level']=$parent['memberlevel'];
+                                    $memberupdatedata['groupid']=$parent['membergroupid'];
+                                }
+                                pdo_update('ewei_shop_member', $memberupdatedata, array('uniacid' => $_W['uniacid'], 'id' => $member['id']));
                             }
 
                             if ($author){

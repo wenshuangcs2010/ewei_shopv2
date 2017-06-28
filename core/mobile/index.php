@@ -13,12 +13,13 @@ class Index_EweiShopV2Page extends MobilePage {
 
 	function main() {
 		global $_W, $_GPC;
-
+	
 		$this->diypage('home');
 
 		$uniacid =$_W['uniacid'];
 		$mid = intval($_GPC['mid']);
 		$index_cache = $this->getpage();
+
 		if(!empty($mid)){
 			$index_cache = preg_replace_callback("/href=[\'\"]?([^\'\" ]+).*?[\'\"]/", function($matches)use($mid){
 				$preg = $matches[1];

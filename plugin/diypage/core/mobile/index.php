@@ -19,6 +19,7 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 			$this->message("请求参数错误！", mobileUrl());
 		}
 		$page = $this->model->getPage($id, true);
+
 		if(empty($page)) {
 			$this->message("页面不存在！", mobileUrl());
 		}
@@ -26,7 +27,7 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 		if(empty($_W['openid']) && ($page['type']==3 || $page['type']==4)){
             $_W['openid'] = m('account')->checkLogin();
         }
-
+        //var_dump($page['data']['page']['visit']);
 		if(!empty($page['data']['page']['visit']) && $page['data']['page']['type']==1){
 		    if(empty($_W['openid'])){
                 $_W['openid'] = m('account')->checkLogin();
@@ -35,6 +36,7 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 
 			$title = !empty($page['data']['page']['novisit']['title']) ? $page['data']['page']['novisit']['title'] : "您没有权限访问!";
 			$link = !empty($page['data']['page']['novisit']['link']) ? $page['data']['page']['novisit']['link'] : mobileUrl();
+
 			$member = m('member')->getMember($_W['openid']);
 			$visit_m = $page['data']['page']['visitlevel']['member'];
 			$visit_c = $page['data']['page']['visitlevel']['commission'];
@@ -47,7 +49,7 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 		}
 
 		$diyitems = $page['data']['items'];
-
+      
 		//	设置分享信息
 		$this->model->setShare($page);
 

@@ -205,7 +205,7 @@
     <div class="col-sm-9 col-xs-12">
         {ife 'shop.dispatch' $dispatch}
         <div id="areas" class="form-control-static">{$dispatch_nodispatchareas}</div>
-        <a href="javascript:;" class="btn btn-default" onclick="selectAreas()">选择地区</a>
+        <a href="javascript:;" class="btn btn-default" onclick="selectAreas(this)">选择地区</a>
         <input type="hidden" id='selectedareas' name="nodispatchareas" value="{$dispatch_nodispatchareas}" />
         {else}
         <div class='form-control-static'>{$dispatch_nodispatchareas}</div>

@@ -122,6 +122,20 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
             });
             modal.salePicker.show()
         });
+        $('#buy-picker').click(function () {
+            modal.salePicker = new FoxUIModal({
+                content: $('#buy-picker-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.salePicker.close()
+                }
+            });
+            FoxUI.according.init();
+            modal.salePicker.container.find('.btn-danger').click(function () {
+                modal.salePicker.close()
+            });
+            modal.salePicker.show()
+        });
         $(".bottom-buttons .cartbtn").click(function () {
             var type =$(this).data('type');
             /*

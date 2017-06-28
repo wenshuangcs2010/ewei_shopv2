@@ -310,7 +310,7 @@
         <div class="col-sm-9 col-xs-12">
             {ife 'goods' $item}
             <div id="areas" class="form-control-static">{$item['edareas']}</div>
-            <a href="javascript:;" class="btn btn-default" onclick="selectAreas()">添加不参加满包邮的地区</a>
+            <a href="javascript:;" class="btn btn-default" onclick="selectAreas(this)">添加不参加满包邮的地区</a>
             <input type="hidden" id='selectedareas' name="edareas" value="{$item['edareas']}"/>
             <span class="help-block">如果设置0或空，则不支持满件包邮</span>
             {else}

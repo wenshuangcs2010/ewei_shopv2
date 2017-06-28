@@ -35,11 +35,11 @@ class MobilePage extends Page {
         }else{
 
             if ($preview&&!is_weixin()) {
-                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAV_dd0";
+                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
             }
             if (EWEI_SHOPV2_DEBUG)
             {
-                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAV_dd0";
+                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
             }
         }
         //var_dump($_W['openid']);
@@ -78,10 +78,12 @@ class MobilePage extends Page {
         if($diypage){
             $diyfollowbar['params']['isopen'] = 1;
         }
-        
+       
         @session_start();
-        if ((!$followed && $memberid!=$mid) || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen']))) {
+        //if ((!$followed && $memberid!=$mid) || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen'])))
+        if (!$followed || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen']))){
             $set = $_W['shopset'];
+
             $followbar = array(
                 'followurl' => $set['share']['followurl'],
                 'shoplogo'=>tomedia($set['shop']['logo']),
@@ -366,6 +368,7 @@ class MobilePage extends Page {
                 if(!empty($page)) {
                     p('diypage')->setShare($page);
                     $diyitems = $page['data']['items'];
+                    
                     include $this->template('diypage');
                     exit;
                 }

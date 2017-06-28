@@ -325,6 +325,7 @@ class List_EweiShopV2Page extends WebPage {
             if ($hascommission) {
                 if (cv('commission.agent.edit')) {
                     $adata = is_array($_GPC['adata']) ? $_GPC['adata'] : array();
+                  
                     if (!empty($adata)) {
 
                         //  判断修改上线权限 并写日志

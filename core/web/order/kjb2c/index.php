@@ -15,7 +15,6 @@ class Index_EweiShopV2Page extends WebPage
 		 $orderid=$_GPC['id'];
 
 		 $returndata=m("kjb2c")->to_customs_new($orderid);
-		 var_dump($returndata);
 		 die();
 		 $order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,isborrow,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
