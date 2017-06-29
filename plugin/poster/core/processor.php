@@ -174,7 +174,7 @@ class PosterProcessor extends PluginProcessor {
 			$log = array('uniacid' => $_W['uniacid'], 'posterid' => $poster['id'], 'openid' => $openid, 'from_openid' => $qr['openid'], 'subcredit' => $poster['subcredit'], 'submoney' => $poster['submoney'], 'reccredit' => $poster['reccredit'], 'recmoney' => $poster['recmoney'], 'createtime' => time());
 			pdo_insert('ewei_shop_poster_log', $log);
 			$log['id'] = pdo_insertid();
-
+			
 			//关注者入账描述
 			$subpaycontent = $poster['subpaycontent'];
 			if (empty($subpaycontent)) {
@@ -228,7 +228,19 @@ class PosterProcessor extends PluginProcessor {
 			$cansendreccoupon =false;
 			$cansendsubcoupon =false;
 			$plugin_coupon = com('coupon');
+
 			if($plugin_coupon){
+				//防止用户通过关注无限制获取优惠劵
+				if($qrmember['groupid']!=0){
+					if(!empty($membergroup['reccouponid']) && $membergroup['reccouponnum']>0){
+						$groupreccoupon = $plugin_coupon->getCoupon($membergroup['reccouponid']);
+						if(!empty($groupreccoupon)){
+							$upgrade['subcouponid'] = $poster['subcouponid'];
+							$upgrade['subcouponnum'] = $poster['subcouponnum'];
+							$plugin_coupon->poster($member, $poster['subcouponid'],$poster['subcouponnum']);
+						}
+					}
+				}
 				//推荐者奖励
                 if (empty($reward_totle['reccouponnum_totle']) || intval($reward_totle['reccouponnum_totle']) > intval($reward_real['reccouponnum_totle'])){
                     if(!empty($poster['reccouponid']) && $poster['reccouponnum']>0){

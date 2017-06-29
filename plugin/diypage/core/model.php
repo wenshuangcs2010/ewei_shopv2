@@ -107,15 +107,20 @@ class DiypageModel extends PluginModel {
 									$item['data'] = array();
 									$newgoodsids = implode(',', $goodsids);
                                     if($creditshop){
-                                        $goods = pdo_fetchall("select id, title, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
+                                        $goods = pdo_fetchall("select id,isnodiscount,discounts, title, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }else{
-                                        $goods = pdo_fetchall("select id, title, thumb, productprice, minprice, total, showlevels, showgroups, bargain, merchid from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
+                                        $goods = pdo_fetchall("select id, title,isnodiscount,discounts, thumb, productprice, minprice, total, showlevels, showgroups, bargain, merchid from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
 									if(!empty($goods) && is_array($goods)) {
+                                         $level = m('member')->getLevel($_W['openid']);
 										foreach ($goodsids as $goodsid) {
 											foreach ($goods as $index=>$good) {
 												if($good['id']==$goodsid){
 												    // 此处去掉判断权限
+                                                    $memberprice = m('goods')->getMemberPrice($good, $level);
+                                                    if($good['minprice']>$memberprice){
+                                                        $good['minprice']=$memberprice;
+                                                    }
                                                     $childid = rand(1000000000, 9999999999);
                                                     $childid = 'C' . $childid;
                                                     $item['data'][$childid] = array(
@@ -484,14 +489,17 @@ class DiypageModel extends PluginModel {
                                     ));
                                     $goods = $goodslist['list'];
                                 }else{
-                                    $goods = pdo_fetchall("select id, title, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where cate=:cate and status=1 and deleted=0 and uniacid=:uniacid order by {$orderby} limit ".$limit, array(':cate'=>$cateid, ':uniacid' => $_W['uniacid']));
+                                    $goods = pdo_fetchall("select id, title,isnodiscount,discounts, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where cate=:cate and status=1 and deleted=0 and uniacid=:uniacid order by {$orderby} limit ".$limit, array(':cate'=>$cateid, ':uniacid' => $_W['uniacid']));
                                 }
 
 								$item['data'] = array();
 								if(!empty($goods) && is_array($goods)) {
+                                   
 									foreach ($goods as $index=>$good) {
                                         $showgoods = m('goods')->visit($good, $this->member);
                                         if(!empty($showgoods)){
+
+                                            
                                             $childid = rand(1000000000, 9999999999);
                                             $childid = 'C' . $childid;
                                             $item['data'][$childid] = array(
@@ -539,11 +547,16 @@ class DiypageModel extends PluginModel {
 								}
 
 								$goodsids = $group['goodsids'];
-								$goods = pdo_fetchall("select id, title, thumb, minprice, sales, total, showlevels, showgroups, bargain from " . tablename('ewei_shop_goods') . " where id in( $goodsids ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid " . $orderby . " limit {$limit}", array(':uniacid' => $_W['uniacid']));
+								$goods = pdo_fetchall("select id, title,isnodiscount,discounts thumb, minprice, sales, total, showlevels, showgroups, bargain from " . tablename('ewei_shop_goods') . " where id in( $goodsids ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid " . $orderby . " limit {$limit}", array(':uniacid' => $_W['uniacid']));
 								if(!empty($goods) && is_array($goods)) {
+                                    $level = m('member')->getLevel($_W['openid']);
 									foreach ($goods as $index=>$good) {
                                         $showgoods = m('goods')->visit($good, $this->member);
                                         if(!empty($showgoods)){
+                                            $memberprice = m('goods')->getMemberPrice($good, $level);
+                                            if($good['minprice']>$memberprice){
+                                                $good['minprice']=$memberprice;
+                                            }
                                             $childid = rand(1000000000, 9999999999);
                                             $childid = 'C' . $childid;
                                             $item['data'][$childid] = array(

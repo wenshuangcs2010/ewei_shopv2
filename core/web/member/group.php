@@ -56,6 +56,10 @@ class Group_EweiShopV2Page extends WebPage {
         $levels=m('member')->getLevels();
 
         $group = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_member_group') . " WHERE id =:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        if($group['reccouponid']){
+            $plugin_coupon = com('coupon');
+            $reccoupon = $plugin_coupon->getCoupon($group['reccouponid']);
+        }
         if ($_W['ispost']) {
 
             $data = array(
@@ -66,8 +70,10 @@ class Group_EweiShopV2Page extends WebPage {
                 'updategroupid'=>$_GPC['updategroupid'],
                 'isupmember'=>$_GPC['isupmember'],
                 'levelsid'=>$_GPC['levelsid'],
+                'reccouponid'=>$_GPC['reccouponid'],
+                'reccouponnum'=>$_GPC['reccouponnum'],
             );
-
+           
             if (!empty($id)) {
                 pdo_update('ewei_shop_member_group', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
                 plog('member.group.edit', "修改会员分组 ID: {$id}");

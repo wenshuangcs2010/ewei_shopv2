@@ -237,6 +237,7 @@ class List_EweiShopV2Page extends WebPage {
                     $list[$key]['dispatchname'] = $dispatchid_array[$value['dispatchid']]['dispatchname'];
                     $list[$key]['salerid'] = $verifyopenid_array[$value['verifyopenid']]['salerid'];
                     $list[$key]['salernickname'] = $verifyopenid_array[$value['verifyopenid']]['salernickname'];
+                    $list[$key]['sfrelname']=$value['realname'];
                     $list[$key]['salername'] = $verifyopenid_array[$value['verifyopenid']]['salername'];
                 }
                 unset($value);
@@ -581,6 +582,9 @@ class List_EweiShopV2Page extends WebPage {
                 array('title' => '支付方式', 'field' => 'paytype', 'width' => 12),
                 array('title' => '配送方式', 'field' => 'dispatchname', 'width' => 12),
                 array('title' => '商品小计', 'field' => 'goodsprice', 'width' => 12),
+                array('title' => '运费', 'field' => 'dispatchprice', 'width' => 12),
+                array('title' => '身份证姓名', 'field' => 'sfrelname', 'width' => 12),
+                array('title' => '身份证号码', 'field' => 'imid', 'width' => 12),
                 array('title' => '运费', 'field' => 'dispatchprice', 'width' => 12),
                 array('title' => '积分抵扣', 'field' => 'deductprice', 'width' => 12),
                 array('title' => '余额抵扣', 'field' => 'deductcredit2', 'width' => 12),

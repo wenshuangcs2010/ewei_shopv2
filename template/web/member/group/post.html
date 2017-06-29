@@ -76,6 +76,25 @@
                     </div>
                     <span class="help-block">选择会员等级</span>
                 </div>
+                <div class="input-group recgroup">
+     
+            <div class='input-group-btn '>
+                <?php echo tpl_selector('reccouponid',array(
+                'preview'=>false, 
+                'callback'=>'select_coupon', 
+                'input'=>false,
+                'url'=>webUrl('sale/coupon/query',array('op'=>'query')),
+                'items'=>$reccoupon,
+                'placeholder'=>'优惠券名称',
+                'buttontext'=>!empty($reccoupon)?"赠送优惠券: [". $reccoupon['id']."]".$reccoupon['couponname']:"选择优惠券"))
+                ?>
+            </div>
+            <input type="text" name="reccouponnum" class="form-control" value="{$group['reccouponnum']}" />
+            <div class="input-group-addon">张</div>
+            <div class='input-group-btn'>
+                <button type='button' onclick='removeCoupon("rec")'  class='btn btn-default' style='border-radius:0'><i class="fa fa-remove"></i></button>
+            </div>
+        </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" type="submit">提交</button>
@@ -83,3 +102,12 @@
             </div>
         </div>
 </form>
+<script type="text/javascript">
+    function select_coupon(o,obj) {
+         
+         
+         var type = $(obj).closest('.content').data('name')=='reccouponid'?'rec':'sub';
+         $("."+type + "group").find('button:first').html( "赠送优惠券: [" + o.id + "]" + o.couponname );
+         
+    }
+</script>

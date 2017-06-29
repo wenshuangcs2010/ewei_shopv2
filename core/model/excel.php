@@ -60,7 +60,7 @@ class Excel_EweiShopV2Model {
 
             for ($i = 0; $i < $len; $i++) {
                 $value = isset($row[$params['columns'][$i]['field']])?$row[$params['columns'][$i]['field']]:'';
-                $sheet->setCellValue($this->column($i, $rownum), $value);
+                $sheet->setCellValueExplicit($this->column($i, $rownum), $value,PHPExcel_Cell_DataType::TYPE_STRING);
             }
             $rownum++;
         }

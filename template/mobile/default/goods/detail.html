@@ -166,14 +166,14 @@
     <div class="fui-cell">
         <div class="fui-cell-text price">
 			<span class="text-danger">
-			&yen;{if $goods['minprice']==$goods['maxprice']}
+			{if $goods['minprice']==$goods['maxprice']}
                     {if $goods['type']==4}
                     {$goods['minprice']}(组合)<span>&yen;<del class='marketprice'>{$decountprice}</del></span>
                     {else}
-                     {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
-                        {$memberprice}
+                     {if !empty($memberprice) && $memberprice<$goods['minprice'] && !empty($level)}
+                        <span class="fui-label fui-label-danger">会员</span>&yen;{$memberprice}
                     {else}
-                        {$goods['minprice']}
+                        &yen;{$goods['minprice']}
                     {/if}
                     {/if} 
             {else}
