@@ -2755,7 +2755,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         }
        
         $returndata=m("order")->get_tax($allgoods,$order['dispatchprice'],$goodsprice,$alldeduct);//正常算税
-       
+     
         $allgoods=$returndata['order_goods'];
        
         $order['dpostfee']=$returndata['depostfee'];
@@ -2840,6 +2840,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 if (!empty($bargain_act) && p('bargain')) {
                     $goods['total'] = 1;
                 }
+                $r=array();
                 if($goods['type']==4){
                     foreach ($goods['childrengoods'] as $childrengoods) {
                         $r[]=array(

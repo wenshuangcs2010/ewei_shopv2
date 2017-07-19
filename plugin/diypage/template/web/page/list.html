@@ -49,12 +49,20 @@
                 {/if}
             </select>
             {/if}
+            <select name='catid' class='form-control  input-sm select-md'   style="width:100px;"  >
+                <option value='0'>分类</option>
+                {loop $category $k $c}
+                <option value='{$c['id']}' {if $_GPC['catid']==$c['id']}selected{/if}>{$c['name']}</option>
+                {/loop}
+                </select>
             <div class="input-group">
                 <input type="text" class="input-sm form-control" name="keyword" value="{$_GPC['keyword']}" placeholder="请输入页面标题或关键字进行搜索">
+                
                 <span class="input-group-btn">
                     <button class="btn btn-sm btn-primary" type="submit"> 搜索</button>
                 </span>
             </div>
+           
 
         </div>
     </div>
@@ -73,14 +81,14 @@
                 <th style="width:25px;"><input type="checkbox"></th>
                 <th>{if $pagetype=='mod'}模块{else}页面{/if}名称(点击预览)</th>
                 {if $pagetype=='sys'}
-                    <th style="width: 90px; text-align: center;">页面类型</th>
+                    <th style="width: 70px; text-align: center;">页面类型</th>
                 {/if}
                 {if $pagetype=='diy'}
-                    <th style="width: 100px;">关键字</th>
+                    <th style="width: 70px;">关键字</th>
                 {/if}
                 <th style="width: 95px;">创建时间</th>
                 <th style="width: 95px;">最后修改时间</th>
-                <th style="width: 190px">操作</th>
+                <th style="width: 260px">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -119,6 +127,7 @@
                             {if $pagetype=='diy'}
                                 {ifp 'diypage.page.diy.edit'}
                                    <a class="btn btn-default btn-sm" href="{php echo webUrl('diypage/page/diy/edit', array('id'=>$item['id']))}"><i class="fa fa-edit"></i>  编辑</a>
+                                   <a  class='btn btn-default btn-sm select2' data-toggle='ajaxModal' href="{php echo webUrl('goods/down/qrcode', array('id' => $item['id'],'type'=>'diyqrcode'))}" >分销二维码</a>
                                 {/if}
                                 {ifp 'diypage.page.diy.delete'}
                                     <a class="btn btn-default btn-sm" data-toggle="ajaxRemove" href="{php echo webUrl('diypage/page/diy/delete', array('id'=>$item['id']))}" data-confirm="确定要删除该页面吗？"><i class="fa fa-remove"></i> 删除</a>

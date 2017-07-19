@@ -11,6 +11,8 @@ class Down_EweiShopV2Page extends WebPage {
 	function qrcode(){
 		 global $_W, $_GPC;
 		 $goodsid=$_GPC['id'];
+
+		 $type=$_GPC['type'];
 		 $condition.=' and dm.status=1 ';
 		 $sql = "select id,nickname,realname from " . tablename('ewei_shop_member')." where uniacid={$_W['uniacid']} and isagent =1 and status=1";
         $list = pdo_fetchall($sql);
@@ -22,6 +24,18 @@ class Down_EweiShopV2Page extends WebPage {
 		 $mids=$_GPC['cates'];
 		 if(empty($mids)){
 		 	show_json(0,"没有选择分销商");
+		 }
+		 $type=$_GPC['type'];
+		 if($type=="diyqrcode"){
+		 
+		 	if(count($mids)>=2){
+		 		show_json(0,"每次只能选中一个分销商");
+		 	}
+		 	
+		 	$url=mobileUrl('diypage', array('id'=>$goodsid,'mid'=>$mids[0]), true);
+			$ss=m('qrcode')->createQrcode($url);
+
+			show_json(1,array('url'=>$ss));
 		 }
 		 $member=array("openid"=>"123456789",'realname'=>"总店");
 		 $newfilepath=QRCODE_ZIP_PATH.$_W['uniacid']."/";//新文件地址

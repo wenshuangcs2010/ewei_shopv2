@@ -11,7 +11,7 @@
                 <div class="form-group">
     <label class="col-sm-2 control-label">分销商选择</label>
     <div class="col-sm-8 col-xs-12">
-
+        <input type="hidden" name="type" value="{$type}" />
         <select id="cates"  name='cates[]' class="form-control select2"  multiple='' >
         <option value="0" >总店</option>
             {loop $list $c}
@@ -32,6 +32,10 @@
         </div>
     </div>
     </form>
+
 <script type="text/javascript">
-$("#cates").select2();
+
+
+       $("#cates").select2(); 
+
 </script>

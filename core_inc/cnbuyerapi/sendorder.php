@@ -46,7 +46,7 @@ class Sendorder{
 		
 		$apiurl = str_replace('APP_ID', $this->app_id, $this->api);
 		$poststr=json_encode($this->params);
-		//var_dump($poststr);
+		
 		$postdata['paramjson']=Security::encrypt($poststr,$this->app_sect);
 		//var_dump($postdata['paramjson']);
 		load()->func('communication');

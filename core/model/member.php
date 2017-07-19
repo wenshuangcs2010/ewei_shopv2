@@ -311,6 +311,7 @@ class Member_EweiShopV2Model {
 			$uid = mc_openid2uid($openid);
 			if( !EWEI_SHOPV2_DEBUG ){
 				$userinfo = mc_oauth_userinfo();
+
 			} else {
 				$userinfo = array(
 					'openid' => $member['openid'],
@@ -323,20 +324,23 @@ class Member_EweiShopV2Model {
 			}
 
 			$mc = array();
-			$mc['nickname'] = $userinfo['nickname'];
+			$mc['nickname'] = stripcslashes($userinfo['nickname']);
 			$mc['avatar'] = $userinfo['headimgurl'];
 			$mc['gender'] = $userinfo['sex'];
 			$mc['resideprovince'] = $userinfo['province'];
 			$mc['residecity'] = $userinfo['city'];
+			$mc['nickname'] = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $mc['nickname']);
+			//WeUtility::logging('测试mc', var_export($mc, true));
 		}
 		if (empty($member) && !empty($openid)) {
+			
 			$member = array(
 				'uniacid' => $_W['uniacid'],
 				'uid' => $uid,
 				'openid' => $openid,
 				'realname' => !empty($mc['realname']) ? $mc['realname'] : '',
 				'mobile' => !empty($mc['mobile']) ? $mc['mobile'] : '',
-				'nickname' => !empty($mc['nickname']) ? $mc['nickname'] : '',
+				'nickname' => !empty($nickname) ? $nickname : '',
 				'avatar' => !empty($mc['avatar']) ? $mc['avatar'] : '',
 				'gender' => !empty($mc['gender']) ? $mc['gender'] : '-1',
 				'province' => !empty($mc['resideprovince']) ? $mc['resideprovince'] : '',
@@ -353,6 +357,8 @@ class Member_EweiShopV2Model {
 				show_message("暂时无法访问，请稍后再试!");
 			}
 			$upgrade = array('uid'=>$uid);
+			 //WeUtility::logging('测试mc', var_export($mc, true));
+			 // WeUtility::logging('测试member', var_export($member, true));
 			if (isset($mc['nickname']) && $member['nickname'] != $mc['nickname']) {
 				$upgrade['nickname'] = $mc['nickname'];
 			}

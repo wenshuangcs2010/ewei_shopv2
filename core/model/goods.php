@@ -47,7 +47,7 @@ class Goods_EweiShopV2Model {
         $pagesize = !empty($args['pagesize']) ? intval($args['pagesize']) : 10;
         $random = !empty($args['random']) ? $args['random'] : false;
 
-        $order = !empty($args['order']) ? $args['order'] : ' total desc,displayorder desc,createtime desc';
+        $order = !empty($args['order']) ? $args['order'] : ' displayorder desc,total desc,createtime desc';
         $orderby = empty($args['order']) ? '' : (!empty($args['by']) ? $args['by'] : '' );
 
         //多商户
@@ -244,19 +244,23 @@ class Goods_EweiShopV2Model {
                 //统一促销
                 $prices_array = m('order')->getGoodsDiscountPrice($goods, $level, 1);
                 $prices[] = $prices_array['price'];
+               
                 } else {
                     //详细促销
                     $goods_discounts = m('order')->getGoodsDiscounts($goods, $isdiscount_discounts, $levelid);
                     $prices = $goods_discounts['prices'];
+                   
                 }
+
                $minprice = min($prices);
+               $prices="";
                $list[$key]['minprice']=$minprice;
            }else{
                 $list[$key]['isdiscount']=0;
                 $memberprice = m('goods')->getMemberPrice($goods, $level);
                 //var_dump($memberprice);
                 
-                if($memberprice<$goods['minprice']){
+                if($memberprice<$goods['minprice'] && $goods['isnodiscount']!=1){
                     $list[$key]['memberprice']=$memberprice;
                     $list[$key]['minprice']=$memberprice;
                 }

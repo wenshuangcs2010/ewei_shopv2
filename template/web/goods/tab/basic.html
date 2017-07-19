@@ -238,6 +238,15 @@
     </div>
 </div>
 
+<div class="form-group">
+    <label class="col-sm-2 control-label">自动同步</label>
+    <div class="col-sm-9 col-xs-12" >
+        <label for="isrecommand" class="checkbox-inline">
+            <input type="checkbox" name="issync" value="1" id="issync" {if $item['issync'] == 1}checked="true"{/if} /> 是
+        </label>
+        <span class='help-block'>自动同步标题,购买说明仅代理商品有效</span>
+    </div>
+</div>
 
 <div class="form-group">
     <label class="col-sm-2 control-label">商品属性</label>

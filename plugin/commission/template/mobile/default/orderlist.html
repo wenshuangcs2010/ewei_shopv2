@@ -5,17 +5,10 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">{php echo $this->set['texts']['order']}</div>
+        <div class="title">分销订单</div>
 		 
     </div>
     <div class="fui-content navbar">
-		<div class='fui-cell-group' style='margin-top:0px;'>
-			<div class='fui-cell'>
-				<div class='fui-cell-label' style='width:auto'>{php echo $this->set['texts']['commission_total']}</div>
-				<div class='fui-cell-info'></div>
-				<div class='fui-cell-remark noremark'>+{php echo number_format($member['commission_total'],2)}{php echo $this->set['texts']['yuan']}</div>
-			</div>
-		</div>
         <div class="fui-tab fui-tab-warning" id="tab">
             <a class="active" data-tab='status'>所有</a>
             <a href="javascript:void(0)" data-tab='status0'>待付款</a>
@@ -35,10 +28,10 @@
     <%each list as order%>
     <div class='fui-according'>
         <div class='fui-according-header'>
-                    <span class="left"><%order.ordersn%>(<%order.level%>)<br>
+                    <span class="left"><%order.ordersn%><br>
                         <span><%order.createtime%></span>
                     </span>
-            <span class="right">+<%order.commission%><br><span><%order.status%></span></span>
+            <span class="right">￥<%order.price%><br><span><%order.status%></span></span>
             {if !empty($this->set['openorderdetail']) || !empty($this->set['openorderbuyer'])}
             <span class="remark"></span>
             {/if}
@@ -70,11 +63,7 @@
                         <div class="row">
                             <div class="row-text" style="font-size: 14px"><%g.title%></div>
                         </div>
-                        <div class="subtitle" style="font-size: 14px"><%g.optionname%>x<%g.total%></div>
-                    </div>
-                    <div class="row-remark">
-                        <p>预计</p>
-                        <p>+<%g.commission%></p>
+                        <div class="subtitle" style="font-size: 14px"><%g.optionname%><span style="color: red">￥<%g.price/g.total%></span>x<%g.total%></div>
                     </div>
                 </div>
                 <%/each%>

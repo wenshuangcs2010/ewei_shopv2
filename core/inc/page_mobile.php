@@ -78,10 +78,10 @@ class MobilePage extends Page {
         if($diypage){
             $diyfollowbar['params']['isopen'] = 1;
         }
-       
+   
         @session_start();
-        //if ((!$followed && $memberid!=$mid) || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen'])))
-        if (!$followed || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen']))){
+        if ((!$followed && $memberid!=$mid) || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen']))){
+        //if (!$followed || (!empty($diyfollowbar['params']['showtype']) && !empty($diyfollowbar['params']['isopen']))){
             $set = $_W['shopset'];
 
             $followbar = array(
@@ -108,6 +108,7 @@ class MobilePage extends Page {
             if(p('diypage')){
                 if((!empty($diyfollowbar) && !empty($diyfollowbar['params']['isopen'])) || (!empty($diyfollowbar) && $diypage)){
                     $showdiyfollowbar = true;
+
                     if(!empty($followbar['share_member'])){
                         if(!empty($diyfollowbar['params']['sharetext'])){
                             $touser = m('member')->getMember($memberid);

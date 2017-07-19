@@ -2565,7 +2565,9 @@
   <county name="樟木头"/>
   <county name="中堂"/>
   </city>
-  <city name="中山市" /> 
+  <city name="中山市">
+    <county name="中山市" />
+  </city>
  <city name="潮州市">
   <county name="市辖区" /> 
   <county name="湘桥区" /> 

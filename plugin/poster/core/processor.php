@@ -235,9 +235,8 @@ class PosterProcessor extends PluginProcessor {
 					if(!empty($membergroup['reccouponid']) && $membergroup['reccouponnum']>0){
 						$groupreccoupon = $plugin_coupon->getCoupon($membergroup['reccouponid']);
 						if(!empty($groupreccoupon)){
-							$upgrade['subcouponid'] = $poster['subcouponid'];
-							$upgrade['subcouponnum'] = $poster['subcouponnum'];
-							$plugin_coupon->poster($member, $poster['subcouponid'],$poster['subcouponnum']);
+								
+							$plugin_coupon->poster($member, $membergroup['reccouponid'],$membergroup['reccouponnum']);
 						}
 					}
 				}

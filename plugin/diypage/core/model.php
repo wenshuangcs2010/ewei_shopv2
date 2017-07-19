@@ -113,14 +113,19 @@ class DiypageModel extends PluginModel {
                                     }
 									if(!empty($goods) && is_array($goods)) {
                                          $level = m('member')->getLevel($_W['openid']);
+
 										foreach ($goodsids as $goodsid) {
 											foreach ($goods as $index=>$good) {
 												if($good['id']==$goodsid){
+                                                   
 												    // 此处去掉判断权限
+                                                    /*
+                                                    $memberprice=0;
                                                     $memberprice = m('goods')->getMemberPrice($good, $level);
-                                                    if($good['minprice']>$memberprice){
+
+                                                    if($good['minprice']>$memberprice && $memberprice!=0){
                                                         $good['minprice']=$memberprice;
-                                                    }
+                                                    }*/
                                                     $childid = rand(1000000000, 9999999999);
                                                     $childid = 'C' . $childid;
                                                     $item['data'][$childid] = array(
@@ -480,6 +485,7 @@ class DiypageModel extends PluginModel {
                                         $orderby = empty($item['params']['goodstype']) ? ' minprice asc, displayorder desc' : ' minmoney asc, displayorder desc';
                                     }
                                 }
+
 							    if(empty($item['params']['goodstype'])){
                                     $goodslist = m('goods')->getList(array(
                                         'cate'=>$cateid,
@@ -488,18 +494,18 @@ class DiypageModel extends PluginModel {
                                         'order'=>$orderby
                                     ));
                                     $goods = $goodslist['list'];
+
                                 }else{
                                     $goods = pdo_fetchall("select id, title,isnodiscount,discounts, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where cate=:cate and status=1 and deleted=0 and uniacid=:uniacid order by {$orderby} limit ".$limit, array(':cate'=>$cateid, ':uniacid' => $_W['uniacid']));
                                 }
 
 								$item['data'] = array();
 								if(!empty($goods) && is_array($goods)) {
-                                   
+                                    
 									foreach ($goods as $index=>$good) {
                                         $showgoods = m('goods')->visit($good, $this->member);
+                                      
                                         if(!empty($showgoods)){
-
-                                            
                                             $childid = rand(1000000000, 9999999999);
                                             $childid = 'C' . $childid;
                                             $item['data'][$childid] = array(
@@ -516,6 +522,7 @@ class DiypageModel extends PluginModel {
                                             );
                                         }
 									}
+
 								}
 							} else {
 								$item['data'] = array();
@@ -549,14 +556,17 @@ class DiypageModel extends PluginModel {
 								$goodsids = $group['goodsids'];
 								$goods = pdo_fetchall("select id, title,isnodiscount,discounts thumb, minprice, sales, total, showlevels, showgroups, bargain from " . tablename('ewei_shop_goods') . " where id in( $goodsids ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid " . $orderby . " limit {$limit}", array(':uniacid' => $_W['uniacid']));
 								if(!empty($goods) && is_array($goods)) {
+
                                     $level = m('member')->getLevel($_W['openid']);
 									foreach ($goods as $index=>$good) {
                                         $showgoods = m('goods')->visit($good, $this->member);
                                         if(!empty($showgoods)){
+                                            /*
+                                            $memberprice=0;
                                             $memberprice = m('goods')->getMemberPrice($good, $level);
-                                            if($good['minprice']>$memberprice){
+                                            if($good['minprice']>$memberprice && $memberprice!=0){
                                                 $good['minprice']=$memberprice;
-                                            }
+                                            }*/
                                             $childid = rand(1000000000, 9999999999);
                                             $childid = 'C' . $childid;
                                             $item['data'][$childid] = array(
@@ -1145,6 +1155,7 @@ class DiypageModel extends PluginModel {
 			5 => array('name'=>'商品详情页', 'pagetype'=>'sys', 'class'=>'danger'),
 			6 => array('name'=>'积分商城', 'pagetype'=>'sys', 'class'=>'info'),
             7 => array('name'=>'整点秒杀', 'pagetype'=>'sys', 'class'=>'danger'),
+            8 => array('name'=>'大转盘', 'pagetype'=>'sys', 'class'=>'games'),
 			99 => array('name'=>'公用模块', 'pagetype'=>'mod', 'class'=>''),
 		);
 		if(!empty($type)) {

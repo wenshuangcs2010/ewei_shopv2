@@ -106,10 +106,22 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">关键字</div>
         <div class="col-sm-10">
-            <input class="form-control input-sm diy-bind" data-bind="keyword" data-placeholder="" placeholder="请输入标题" value="<%page.keyword%>" />
+            <input class="form-control input-sm diy-bind" data-bind="keyword" data-placeholder="" placeholder="请输入关键字" value="<%page.keyword%>" />
         </div>
     </div>
-
+    <%if page.type!=5%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">页面分类</div>
+        <div class="col-sm-10">
+            <select class="form-control input-sm diy-bind" data-bind="catid">
+                <option value="0" <%if page.category=='0'%>selected="selected"<%/if%>>不分类</option>
+                <%each catid as category%>
+                <option value="<%category.id%>" <%if page.catid==category.id%>selected="selected"<%/if%>><%category.name%></option>
+                <%/each%>
+            </select>
+        </div>
+    </div>
+    <%/if%>
     <div class="form-group">
         <div class="col-sm-2 control-label">页面介绍</div>
         <div class="col-sm-10">

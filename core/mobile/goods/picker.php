@@ -186,15 +186,17 @@ class Picker_EweiShopV2Page extends MobilePage {
 
                 $minprice = min($prices);
                 $maxprice = max($prices);
+            }else{
+                $memberprice = m('goods')->getMemberPrice($goods, $level);
+                if($memberprice<$minprice){
+                    $minprice=$memberprice;
+                    $maxprice=$memberprice;
+                }
             }
-            $memberprice = m('goods')->getMemberPrice($goods, $level);
-
+            
         }
 
-        if($memberprice<$minprice){
-             $minprice=$memberprice;
-             $maxprice=$memberprice;
-        }
+        
         $goods['minprice'] = number_format( $minprice,2); 
         $goods['maxprice'] =number_format(  $maxprice,2);
 

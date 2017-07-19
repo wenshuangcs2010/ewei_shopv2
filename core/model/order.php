@@ -133,7 +133,7 @@ class Order_EweiShopV2Model
                                             );
                                     
                                     $returndatatemp=m("kjb2c")->to_customs($customsparams,$config,'wx');
-                                    WeUtility::logging('自动报关结果', var_export($returndatatemp, true));
+                                   
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);
@@ -670,6 +670,7 @@ class Order_EweiShopV2Model
                     $op_marketprice = m('goods')->getOptionPirce($goods['id'], $k);
                     $gprice = $this->getFormartDiscountPrice($v, $op_marketprice);
                     $prices[] = $gprice;
+                   
                     if (!empty($options)) {
                         foreach ($options as $key => $value) {
                             if ($value['id'] == $k) {
@@ -696,7 +697,7 @@ class Order_EweiShopV2Model
                 }
             }
         }
-
+        
         $data = array();
         $data['prices'] = $prices;
         $data['options'] = $options;
@@ -1607,13 +1608,17 @@ class Order_EweiShopV2Model
                 foreach ($packgoods as $key => $value) {
                     $packemarketprice+=$value['marketprice']*$value['number'];
                 }
+
                 $oneprice=$goods['ggprice']/$goods['total'];//单件商品卖价
+                $packgoodsamount=0;
+                foreach ($packgoods as $key => $value) {
+                   $packgoodsamount+=$value['marketprice']*$value['number'];
+                }
                 foreach ($packgoods as $key => $value) {
                     //
-                   
                   
-                    $oldrate=$value['marketprice']*$value['number']/$packemarketprice;//组合中单件商品比例
-
+                    $oldrate=($value['marketprice']*$value['number'])/$packgoodsamount;//组合中单件商品比例
+                    //var_dump($oldrate);
                     $price=$oneprice*$oldrate/$value['number'];//组合中单件商品卖价
                     //var_dump($price);
                     
@@ -1657,7 +1662,7 @@ class Order_EweiShopV2Model
         $retrundata=$tax->get_dprice_order($out_goods,$dispatch_price,$goodsprice,$alldeduct);
       
         $out_goods=$retrundata['order_goods'];
-
+ 
         $depostfee=$retrundata['depostfee'];//总运费
         $out_goods=$tax->get_tax($out_goods);
 
@@ -1681,7 +1686,7 @@ class Order_EweiShopV2Model
            $goods['shipping_fee']=$r[$goods['goodsid']][0]['shipping_fee'];
            $goods['dprice']=$r[$goods['goodsid']][0]['dprice'];
         }
-        
+       
         unset($goods);
         return array('order_goods'=>$order_goods,'depostfee'=>$depostfee,'tax_rate'=>$rate,'tax_consumption'=>$consumption_tax);
     }
@@ -1709,7 +1714,7 @@ class Order_EweiShopV2Model
         $dispriceamount=0;
         $dispatch_array=array();
         $disprice_dispatch_price=0;
-
+        
         foreach($out_goods as $key=>$goods){
             $out_goods[$key]['total']=$goods['total'];
             $out_goods[$key]['vat_rate']=$goods['vat_rate'];

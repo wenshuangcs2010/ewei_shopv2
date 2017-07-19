@@ -18,11 +18,15 @@ class Diy_EweiShopV2Page extends PluginWebPage {
 			$keyword = '%' . trim($_GPC['keyword']) . '%';
 			$condition = " and name like '{$keyword}' ";
 		}
+		if(!empty($_GPC['catid'])){
+			$condition.= " and catid = '{$_GPC[catid]}' ";
+		}
 		if(empty($_GPC['page'])){
 			$page=1;
 		}else{
 			$page=$_GPC['page'];
 		}
+		$category= pdo_fetchall("SELECT * FROM " . tablename('ewei_shop_diypage_category') . " WHERE uniacid = '{$_W['uniacid']}' ORDER BY displayorder asc");
 		$result = $this->model->getPageList('diy',$condition,$page);
 		extract($result);
 
@@ -42,7 +46,7 @@ class Diy_EweiShopV2Page extends PluginWebPage {
 
 		$result = $this->model->verify($do, 'diy');
 		extract($result);
-
+		$categorys= pdo_fetchall("SELECT id,name FROM " . tablename('ewei_shop_diypage_category') . " WHERE uniacid = '{$_W['uniacid']}' and status=1 ORDER BY displayorder asc");
 		if($template && $do=='add') {
 			$template['data'] = base64_decode($template['data']);
 			$template['data'] = json_decode($template['data'], true);
@@ -51,7 +55,6 @@ class Diy_EweiShopV2Page extends PluginWebPage {
 
 		$allpagetype = $this->model->getPageType();
 		$typename = $allpagetype[$type]['name'];
-
         $diymenu = pdo_fetchall('select id, name from ' . tablename('ewei_shop_diypage_menu') . ' where merch=:merch and uniacid=:uniacid  order by id desc', array(':merch'=>intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
         $category = pdo_fetchall("SELECT id, name FROM " . tablename('ewei_shop_diypage_template_category') . " WHERE merch=:merch and uniacid=:uniacid order by id desc ", array(':merch'=>intval($_W['merchid']), ':uniacid'=>$_W['uniacid']));
 
@@ -66,6 +69,8 @@ class Diy_EweiShopV2Page extends PluginWebPage {
 
 		if($_W['ispost']) {
 			$data = $_GPC['data'];
+			var_dump($data);
+			die();
 			$this->model->savePage($id, $data);
 		}
 

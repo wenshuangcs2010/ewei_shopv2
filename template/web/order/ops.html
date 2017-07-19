@@ -44,9 +44,9 @@
 	{/if}
 	
 	{else if $item['if_declare']==1  && !empty($item['mftno'])}
-		{if $_W['uniacid']==DIS_ACCOUNT}
+		
 		<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_declare', array('id' => $item['id']))}">申报</a></br>
-		{/if}
+		
 	<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/kjb2c/send_order', array('id' => $item['id']))}">货物放行</a>
 	{else}
 	<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/op/send', array('id' => $item['id']))}">确认发货</a>

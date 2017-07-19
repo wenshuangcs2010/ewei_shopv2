@@ -147,6 +147,7 @@ if ($_W['ispost']) {
         'isrecommand' => intval($_GPC['isrecommand']),
         'ishot' => intval($_GPC['ishot']),
         'isnew' => intval($_GPC['isnew']),
+        'issync'=>intval($_GPC['issync']),
         'isdiscount' => intval($_GPC['isdiscount']),
         'isdiscount_title' => trim(mb_substr($_GPC['isdiscount_title'],0,5,'UTF-8')),
         'isdiscount_time' =>  strtotime($_GPC['stat_time']['end']),

@@ -1100,5 +1100,6 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         show_json(1,array('url'=>$result['url'],'dataid'=>$result['dataid'],'coupontype'=>$result['coupontype']));
     }
+  
 
 }

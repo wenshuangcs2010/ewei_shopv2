@@ -169,9 +169,10 @@ class NINGBOData extends declareUtil{
 	}
 
 	function setGoods($goods_list){
-
+		$goods_detail=array();
 		foreach($goods_list as $rec_id => $goods)
 		{
+			$packgoods="";
 			if($goods['goodstype']==4){
 				
 				$packgoods=json_decode($goods['content3'],true);
@@ -188,8 +189,12 @@ class NINGBOData extends declareUtil{
 							'Amount'=>$value['dprice']*$value['total'],
 							));
 				}
+				//var_dump($goods_detail);
 				continue;
 			}
+
+			
+			
 			$goods_detail[]=array(
 						"Detail"=>
 						array(

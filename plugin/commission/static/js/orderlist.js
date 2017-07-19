@@ -32,7 +32,7 @@ define(['core', 'tpl'], function (core, tpl) {
         modal.page++
     };
     modal.getList = function () {
-        core.json('commission/order/get_list', {page: modal.page, status: modal.status}, function (ret) {
+        core.json('commission/orderlist/get_orderlist', {page: modal.page, status: modal.status}, function (ret) {
             var result = ret.result;
             if (result.list.length <= 0) {
                 $('.content-empty').show();
