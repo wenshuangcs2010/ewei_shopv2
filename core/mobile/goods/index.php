@@ -29,6 +29,35 @@ class Index_EweiShopV2Page extends MobilePage {
 		}
 		include $this->template();
 	}
+	function search(){
+		global $_W, $_GPC;
+		$params=array(
+			":openid"=>$_W['openid'],
+			":uniacid"=>$_W['uniacid'],
+			);
+		$searchlist=pdo_fetchall("SELECT * FROM ".tablename("ewei_shop_keywordscount")." WHERE uniacid=:uniacid and openid=:openid order by count desc Limit 0,10",$params);
+		include $this->template();
+	}
+	function createHtml(){
+		$html="";
+	}
+	function serachtitle(){
+		global $_W, $_GPC;
+		$keywords=$_GPC['keyword'];
+		if(!empty($keywords)){
+			$rest=m("goods")->searchTitle($keywords);
+			$array="";
+			foreach ($rest as $key => $value) {
+				$title=mb_substr($value['title'],0,25,'utf-8');
+				//var_dump($title);
+				$array[$key]=array(
+					'url'=>mobileUrl("goods/detail",array("id"=>$value['id'])),
+					'title'=>$title,
+					);
+			}
+			echo  json_encode($array);
+		}
+	}
 	function gift(){
 		global $_W,$_GPC;
 		$uniacid = $_W['uniacid'];
@@ -66,7 +95,9 @@ class Index_EweiShopV2Page extends MobilePage {
 			'order' => trim($_GPC['order']),
 			'by' => trim($_GPC['by'])
 		);
-		
+		if(!empty($args['keywords'])){
+			m("goods")->setKeyWords($args['keywords']);
+		}
 		//判断是否开启自选商品
 		$plugin_commission = p('commission');
 		if ($plugin_commission && intval($_W['shopset']['commission']['level'])>0 && empty($_W['shopset']['commission']['closemyshop']) && !empty($_W['shopset']['commission']['select_goods'])) {

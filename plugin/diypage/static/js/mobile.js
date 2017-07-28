@@ -6,6 +6,7 @@ define(['core', 'tpl'], function (core, tpl) {
         modal.initLocation();
         modal.initAudio();
         modal.initFax();
+        modal.initseach();
     };
     modal.initNotice = function () {
         if ($(".fui-notice").length > 0) {
@@ -23,31 +24,79 @@ define(['core', 'tpl'], function (core, tpl) {
             })
         }
     };
+    modal.initseach=function(){
+        $(".search").on("focus",function(){
+             location.href = core.getUrl('goods/search');
+        })
+    /*
+        $(".search").on("focus",function(){
+            $(".searchhtml").addClass("searchtable");
+            $(".searchhtml").css('z-index',99);
+            $(".searchbar").addClass('searchtab');
+            $(".searchbar").css('margin-left',"0.5rem");
+            $(".fui-header-left").show();
+            $(".search_conten").show();
+            core.json('diypage/index/searchKeyword',{}, function (json) {
+                var html="";
+                var result = json.result.list;
+                 
+                if(JSON.stringify(result) === '[]'){
+                   $(".search_conten .content-empty").show(); 
+                    return ;
+                }
+                $(".search_conten .content-empty").hide(); 
+                $(".search_conten .tempsearch_conten ul").html("");
+                $(result).each(function(index, result) {
+                    var url=core.getUrl('goods',{'keywords':result.keywords});
+                    html+="<a href="+url+"><li>"+result.keywords+"</li></a>";
+                });
+                $(".search_conten .tempsearch_conten ul").append(html);
+                $(".search_conten .tempsearch_conten").show();
+            });
+        });
+        $(".diypagesearch").on("click",function(){
+            $(".searchhtml").removeClass('searchtable');
+            $(".searchbar").removeClass('search2');
+            $(".searchbar").css('margin-left',"-0.5rem");
+            $(".fui-header-left").hide();
+            $(".tempsearch_conten").hide();
+            $(".search_conten").hide();
+        })
+        $('.search').bind('input propertychange', function () {
+           
+            if ($.trim($(this).val()) == '') {
+                $(".searchhtml .search_conten .sort_search_list_div").hide();
+            }else{
+                var keyword=$(this).val()
+                 core.json('goods/serachtitle', {keyword:keyword}, function (ret) {
+                    var html="";
+                    var ss=$(".searchhtml .search_conten .sort_search_list_div .searchlist_li").html("");
+                    $.each(ret, function(index, val) {
+                        //console.log(val.title);
+                        html+="<a href="+val.url+"><li>"+val.title+"</li></a>";
+                    });
+               
+                    $(".searchhtml .search_conten .sort_search_list_div .searchlist_li").html(html);
+                    $(".searchhtml .search_conten .sort_search_list_div").show();
+                 })
+            }
+        })*/
+    }
     modal.initFax=function (){
           require(['swiper'], function (modal) {
+            var loadsize=$(".swiper-container3 a").size();
+            var show_num=$(".swiper-container3").data("num");
+            console.log(show_num);
+            if(typeof(show_num)=="undefined" ||show_num==""){ 
+                show_num=6;
+            }
+           
             var swiper = new Swiper('.swiper-container3', {
             paginationClickable: true,
-            slidesPerView: 5,
+            slidesPerView: show_num,
+            loopedSlides:loadsize,
             spaceBetween: 50,
             preventClicks:true,
-            breakpoints: {
-                1024: {
-                    slidesPerView: 6,
-                    spaceBetween: 40
-                },
-                768: {
-                    slidesPerView: 6,
-                    spaceBetween: 30
-                },
-                640: {
-                    slidesPerView: 6,
-                    spaceBetween: 20
-                },
-                320: {
-                    slidesPerView: 6,
-                    spaceBetween: 10
-                }
-            }
              });
           })
         

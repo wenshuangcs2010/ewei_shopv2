@@ -1,0 +1,76 @@
+{template '_header'}
+<div class='fui-page  fui-page-current page-goods-list'>
+    <div class="fui-header">
+	<div class="fui-header-left">
+	    <a class="back"></a>
+	</div>
+	<div class="title">
+		<form method="post" action="{php echo mobileUrl('goods')}">
+				<div class="searchbar">
+				<div class="search-input">
+					<i class="icon icon-search"></i>
+					<input type="search" id="searchtitle"  name="keywords" placeholder="输入关键字..." value="{$_GPC['keywords']}">
+				</div>
+				</div>
+		</form>
+	</div>
+	<div class="fui-header-right" data-nomenu="true">
+	    <a href="javascript:;"><i class="icon icon-sort" id="listblock" data-state="list"></i></a>
+	</div>
+    </div>
+	<div class="sort_search search">
+	<div class="item on"><span class='search_text'>最近搜索</span></div>
+    </div>
+    <div class="sort_search_list" id="serchhtml" style="display: none" >
+		<ul id="searchlist">
+			
+		</ul>
+	</div>
+    <div class="fui-content navbar backcolor">
+	<div class='fui-content-inner'>
+	    <div class='content-empty' style='{if empty($searchlist)}display:block;{else}display:none;{/if}'>
+		<i class='icon icon-searchlist'></i><br/>暂无搜索历史
+	    </div>
+	    <div class="fui-goods-group container block search_content backcolor" id="goods-list-container">
+	    	<ul>
+			{loop $searchlist $item}
+			<a href="{php echo mobileUrl('goods',array('keywords'=>$item['keywords']))}"><li>{$item['keywords']}</li></a>
+			{/loop}
+
+	    	</ul>
+	    </div>
+	    
+	</div>
+		
+    </div>
+</div>
+<script type="text/javascript">
+
+	$('#searchtitle').bind('input propertychange', function () {
+            if ($.trim($(this).val()) == '') {
+                $('#serchhtml').hide();
+            }else{
+				
+				var keyword=$(this).val()
+				 core.json('goods/serachtitle', {keyword:keyword}, function (ret) {
+				 	var html="";
+				 	$('#searchlist').html("");
+				 	$.each(ret, function(index, val) {
+						//console.log(val.title);
+						html+="<a href="+val.url+"><li>"+val.title+"</li></a>";
+				 	});
+				 	$('#searchlist').append(html);
+				 	$('#serchhtml').show();
+
+				 })
+
+            }
+        });
+	window.onload = function()
+	{
+		$("#searchtitle").focus();
+
+	}
+</script>
+
+{template '_footer'}

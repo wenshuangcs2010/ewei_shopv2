@@ -41,6 +41,7 @@ class HttpUtil_EweiShopV2Model
 		$goodsurl="http://www.cnbuyers.cn/index.php?app=webService&act=We7GetGoodsInfo&sku=".$goodssn;
 		$resp = ihttp_get($goodsurl);
 		$content = $resp['content'];
+
 		if (empty($content)) {
 	            return array();
 	      }
@@ -48,8 +49,10 @@ class HttpUtil_EweiShopV2Model
 	    $data=(array)$content['data'];
 
 	    if(empty($data)){return array();}
+	    if($data['if_show']==0){
+	    	$data['stock']=0;
+	    }
 	    $updatedata=array(
-	    	'title'=>$data['goods_name'],
 	    	'total'=>$data['stock'],
 	    	'weight'=>$data['weight']*1000,
 	    	'consumption_tax'=>$data['consumption_tax'],

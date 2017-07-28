@@ -25,10 +25,35 @@ class Kjb2c_EweiShopV2Model {
 		require_once EWEI_SHOPV2_TAX_CORE. '/orderpay/parmentUtil.php';
         $parment=new ParmentUtil();
         $ret=$parment->_transPay($order);
+        if($ret['Code']==0){
+        	$updatedata['if_customs_z']=1;
+        	$updatedata['zhuan_status']=1;
+        	pdo_update("ewei_shop_order",$updatedata,array("id"=>$order['id']));
+        	if($order['deductcredit2']>0){
+                $order['price']=$order['price']+$order['deductcredit2'];
+            }
+        	$zporderdata=array(
+        		'orderid'=>$order['id'],
+        		'order_sn'=>$order['ordersn'],
+        		'pay_fee'=>$order['price'],
+        		'paymentno'=>$ret['RespBody']['SerialNo'],
+        		'add_time'=>time(),
+        		'imid'=>$order['imid'],
+        		'realname'=>$order['realname'],
+        		'pay_time'=>time(),
+        		'pay_code'=>'shenfupay',
+        		);
+        	pdo_insert("ewei_shop_zpay_log",$zporderdata);
+        		$this->to_customs_new($order['id']);
+        		//$this->to_customs_new($order['id']);
+        	show_json(1,"转账成功");
+        }else{
+        	show_json(0,$ret['Message']);
+        }
+	}
 	function to_customs_new($orderid){
 		global $_W,$_GPC;
 			$order=pdo_fetch("SELECT zhuan_status,paymentno,uniacid,if_customs_z,isdisorder,isborrow,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
-		
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);
 		if(!$customs){
 			show_json(0,"订单无需报关");
@@ -42,7 +67,10 @@ class Kjb2c_EweiShopV2Model {
 		 	'mch_customs_no'=>$depot['customs_code'],
 		 	);
 		 if($order['if_customs_z']==1 && $order['zhuan_status']==0){
-		 	show_json(0,"转账失败请联系管理员");
+		 	 $smtorderinfo = pdo_fetch("select * from " . tablename('ewei_shop_order') . ' where id=:id limit 1'
+            , array(':id' => $orderid));
+		 	$bool=$this->_shenfupay($smtorderinfo);
+		 	
 		 	show_json(1,"报关成功");
 		 }
 		if($order['paytype']==21 && $order['if_customs_z']==0){

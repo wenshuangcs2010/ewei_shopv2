@@ -9,7 +9,7 @@
                 <div class="searchbar">
                     <div class="search-input">
                         <i class="icon icon-search"></i>
-                        <input type="search" name="keywords" placeholder="输入关键字...">
+                        <input type="search" onfocus="check()"  name="keywords" placeholder="输入关键字...">
                     </div>
                 </div>
             </form>
@@ -140,6 +140,9 @@
     require(['biz/shop/category'], function (modal) {
         modal.init({php echo json_encode($category)},{php echo json_encode($category_set)});
     });
+    function check(){
+        location.href = core.getUrl('goods/search');
+    }
 </script>
 {php $this->footerMenus()}
 {template '_footer'}

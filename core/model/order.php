@@ -83,31 +83,12 @@ class Order_EweiShopV2Model
                             $this->setChildOrderPayResult($order, $time, 1);
                         }
                         //处理积分与库存
-                        
                         $this->setStocksAndCredits($orderid, 1);
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
-                       
                         if($customs){
-
-
-                             if($order['if_customs_z']==1){//盛付通 处理
-                            //     //自动转账的订单
-                            //     if($order['zhuan_status']!=1){
-                            //         $order_sn=$order['ordersn'];
-                            //         $data=array(
-                            //             'pay_fee'=>$order['price'],
-                            //             'realname'=>$order['realname'],
-                            //             'imid'=>$order['imid'],
-                            //             'order_sn'=>$order_sn,
-                            //             'orderid'=>$orderid,
-                            //             'add_time'=>time(),
-                            //             );
-                            //         pdo_insert("ewei_shop_zpay_log",$data);
-                            //         require EWEI_SHOPV2_TAX_CORE. '/Transfer/Transfer.php';
-                            //         $payment=Transfer::getPayment("shenfupay");
-                            //     }
-                                 $params['paytype']=37;
-                             }
+                            if($order['if_customs_z']==1){//需要盛付通处理不在此次报关和申报
+                                $params['paytype']=37;
+                            }
                             $depot=m("kjb2c")->get_depot($order['depotid']);
                             $customsparams=array(
                                 'out_trade_no'=>$order['ordersn'],
@@ -116,7 +97,7 @@ class Order_EweiShopV2Model
                                 'mch_customs_no'=>$depot['customs_code'],
                             );
                             $jearray=Dispage::getDisaccountArray();
-                            if($params['paytype']==21){
+                            if($params['paytype']==21 && $order['deductcredit2']==0){
                                 load()->model('payment');
                                 $uniacid=$_W['uniacid'];
                                 if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
@@ -131,9 +112,7 @@ class Order_EweiShopV2Model
                                             'mch_id'=>$setting['payment']['wechat']['mchid'],
                                             'apikey'=>$setting['payment']['wechat']['apikey'],
                                             );
-                                    
                                     $returndatatemp=m("kjb2c")->to_customs($customsparams,$config,'wx');
-                                   
                                 }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);

@@ -615,7 +615,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     if (empty($bargain_id)) {//如果不是砍价订单,执行下面语句
                         //会员优惠
                         
-                        $discountprice += $prices['discountprice'];
+                        //$discountprice += $prices['discountprice'];
                         //任务活动优惠
                         $taskdiscountprice += $prices['taskdiscountprice'];
 
@@ -1789,6 +1789,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $return_array['discountprice'] = $discountprice;
 
         $return_array['isdiscountprice'] = $isdiscountprice;
+
         //var_dump($realprice);
         $return_array['merch_showenough'] = $merch_saleset['merch_showenough'];
         $return_array['merch_deductenough_money'] = $merch_saleset['merch_enoughdeduct'];
@@ -2406,6 +2407,20 @@ class Create_EweiShopV2Page extends MobileLoginPage
             if(empty($realname) || empty($imid)){
                 show_json(0, '姓名和身份证必须填写');
             }
+            //验证身份实名
+            // $realname=addslashes(trim($realname));
+            // $idcardno=addslashes(trim($imid));
+            // $returndata=m("kjb2c")->isRealname($realname,$imid);
+            // if(!$returndata){
+            //     show_json(0, '姓名和身份证格式错误');
+            // }
+            // if($returndata['isverify']==-2){
+            //     show_json(0, $returndata['responseMessage']);
+            // }
+       
+            // if($returndata['isverify']){
+            //     show_json(0, "实名认证错误");
+            // }
         }
         if ($is_openmerch == 1) {
             //读取多商户营销设置
@@ -2739,12 +2754,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $isdiscountprice=$order['isdiscountprice'];//促销优惠
         $deductprice=$order['deductprice'];//积分抵扣
         //余额抵扣
-
-        
         $deductcredit2=$order['deductcredit2'];
-        
         $seckilldiscountprice=$oder['seckilldiscountprice'];//秒杀优惠
-        $alldeduct=$deductenough+$couponprice+$buyagainprice+$deductcredit2+$deductprice+$seckilldiscountprice;
+        $alldeduct=$deductenough+$couponprice+$buyagainprice+$deductprice+$seckilldiscountprice;
         //var_dump("all=".$allgoods);
         //die();
          //var_dump('抵扣'.$deductmoney);
@@ -2753,17 +2765,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
-       
         $returndata=m("order")->get_tax($allgoods,$order['dispatchprice'],$goodsprice,$alldeduct);//正常算税
-     
         $allgoods=$returndata['order_goods'];
-       
         $order['dpostfee']=$returndata['depostfee'];
         $order['tax_rate']=$returndata['tax_rate'];
         $order['tax_consumption']=$returndata['tax_consumption'];
-
         $disdata=m("order")->get_dis_tax($allgoods,$address);
-        
         if(!empty($disdata)){
             $ordertax=$order['tax_rate']+$order['tax_consumption'];
             $diff_fee=$ordertax-$disdata['alltax'];
