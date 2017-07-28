@@ -122,7 +122,9 @@ class Index_EweiShopV2Page extends WebPage {
             }
             
             if($goods){
-                $goods['disgoods_id']=$_GPC['goods_id'];
+                if($_W['uniacid']!=43){
+                    $goods['disgoods_id']=$_GPC['goods_id'];
+                }//不更新代理商品
                 $goods['status']=0;
                 $goods['uniacid']=$_W['uniacid'];
                 $goods['costprice']=0;

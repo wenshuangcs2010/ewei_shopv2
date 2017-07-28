@@ -21,7 +21,42 @@ class Goods_EweiShopV2Model {
         global $_W;
         return pdo_fetch("select * from " . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid Limit 1', array(':id' => $optionid, ':uniacid' => $_W['uniacid'], ':goodsid' => $goodsid));
     }
+    public function setKeyWords($keywords){
+        global $_W;
+        $keywords=trim($keywords);
+        $selectparams=array(
+            ':openid'=>$_W['openid'],
+            ':uniacid'=>$_W['uniacid'],
+            ':keywords'=>$keywords,
+            );
+        $data=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_keywordscount")." where openid=:openid and keywords=:keywords and uniacid=:uniacid",$selectparams);
+       
+        if(empty($data)){
+            $insertdata=array(
+                "uniacid"=>$_W['uniacid'],
+                'keywords'=>$keywords,
+                'count'=>1,
+                'openid'=>$_W['openid'],
+                );
+            pdo_insert("ewei_shop_keywordscount",$insertdata);
+        }else{
+            $updatedata=array(
+                "count"=>$data['count']+1,
+                );
+            pdo_update("ewei_shop_keywordscount",$updatedata,array("id"=>$data['id']));
+        }
+    }
 
+
+    public function searchKeyword(){
+        global $_W, $_GPC;
+        $params=array(
+            ":openid"=>$_W['openid'],
+            ":uniacid"=>$_W['uniacid'],
+            );
+        $searchlist=pdo_fetchall("SELECT * FROM ".tablename("ewei_shop_keywordscount")." WHERE uniacid=:uniacid and openid=:openid order by count desc Limit 0,10",$params);
+        return $searchlist;
+    }
     /**
      * 获取商品规格的价格
      * @param type $goodsid
@@ -32,7 +67,40 @@ class Goods_EweiShopV2Model {
         global $_W;
         return pdo_fetchcolumn("select marketprice from " . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid', array(':id' => $optionid, ':uniacid' => $_W['uniacid'], ':goodsid' => $goodsid));
     }
-
+    /**
+     * 获取标题的搜索结果
+     */
+    
+    public function searchTitle($keywords){
+        global $_W;
+        if (!empty($keywords)) {
+            $keywords=$this->replace_specialChar($keywords);
+            $tmp = str_replace(array(","," ",'  '),' ', $keywords);
+            $keywords_array=explode(" ", $tmp);
+            foreach ($keywords_array as $index=> $tmp) {
+                $str_length=$this->abslength($tmp);
+                for($i = 0; $i<$str_length; $i++){
+                    $keyword_arr[$index][] = $this->cc_msubstr($tmp, $i, 1);
+                }
+            }
+            foreach ($keyword_arr as $index=> $word)
+            {
+                foreach ($word as $value) {
+                    $conditions2[$index][]= "`title` LIKE '%{$value}%'";
+                    $conditions3[$index][]= "`keywords` LIKE '%{$value}%'";
+                } 
+            }
+            foreach ($conditions2 as $key => $value) {
+                $conditions2sql[]= join(' AND ', $conditions2[$key]);
+                $conditions3sql[]= join(' AND ', $conditions3[$key]);
+            }
+            $conditions2sql= join(' AND ', $conditions2sql);
+            $conditions3sql= join(' AND ', $conditions3sql);
+            $condition.=" AND (({$conditions2sql}) OR ({$conditions3sql}))";
+        }
+        $condition.=" AND status=1 AND total>0 AND uniacid={$_W['uniacid']} ORDER BY displayorder DESC LIMIT 0,10";
+        return pdo_fetchall("select title,id from ".tablename("ewei_shop_goods")." where 1 {$condition}");
+    }
     /**
      * 获取宝贝
      * @param type $page
@@ -235,6 +303,9 @@ class Goods_EweiShopV2Model {
         $level = m('member')->getLevel($openid);
         $list = pdo_fetchall($sql, $params);
         $list = set_medias($list, 'thumb');
+        if(empty($list)){
+            return array("list"=>array(),"total"=>0);
+        }
         foreach ($list as $key=>$goods) {
            if($goods['isdiscount']==1 && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
 

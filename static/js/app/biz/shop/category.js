@@ -19,6 +19,7 @@ define(['core', 'tpl'], function (core, tpl) {
             if ($(this).data("src")){
                $('#advimg').attr('src',$(this).data('src'));
             }
+            
             $("#advurl").prop("href", $(this).data("href"));
             if ($(this).data("cate") == 'recommend') {
                 modal.recommend_children = new Array;

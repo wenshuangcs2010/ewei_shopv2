@@ -13,13 +13,12 @@ class Index_EweiShopV2Page extends WebPage {
 
 
    function test11(){
-     global $_W, $_GPC;
-     $name=$_GPC['name'];
-    
-     $sql="select * from ".tablename("ewei_shop_goods")." where title={$name}";
-     $s=pdo_fetch($sql);
-     var_dump($s);
-     die();
+        global $_W, $_GPC;
+        
+        $order = pdo_fetch("select * from " . tablename('ewei_shop_order') . ' where id=:id limit 1'
+            , array(':id' => 208));
+        m('kjb2c')->_shenfupay($order);
+        //var_dump($data);
    }
 
     function main() {

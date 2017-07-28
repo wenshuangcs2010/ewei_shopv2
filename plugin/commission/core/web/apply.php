@@ -550,6 +550,7 @@ class Apply_EweiShopV2Page extends PluginWebPage {
     function detail() {
         global $_W, $_GPC;
         $applyData =$this->applyData();
+     
         extract($applyData);
         include $this->template();
     }

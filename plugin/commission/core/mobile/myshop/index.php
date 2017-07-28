@@ -115,6 +115,7 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 			}
 		}
 		$list  = m('goods')->getList($args);
+		//var_dump($list);
 		show_json(1, array(
 			'list' => $list['list'],'total'=>$list['total'], 'pagesize' => $args['pagesize']
 		));

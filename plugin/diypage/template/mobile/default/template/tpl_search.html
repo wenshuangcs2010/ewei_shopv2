@@ -1,12 +1,37 @@
-<div class="fui-searchbar bar" style="z-index: 0;">
+<div class="fui-searchbar bar searchhtml" style="z-index: 0;">
+    <div class="fui-header-left diypagesearch" style="display: none" >
+        <a href="javasrcipt:void()" class="back"></a>
+    </div>
     <div class="searchbar" style="background: {$diyitem['style']['background']}; padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px;">
             <form action="{php echo empty($diyitem['params']['goodstype']) ? mobileUrl('goods', array('merchid'=>$page['merch'])) : mobileUrl('creditshop/lists')}" method="post" style="position: relative;left:0;top:0;">
                 <input type="submit" class="searchbar-cancel searchbtn" value="搜索" style="top: 0; right: 0" />
                 <div class="search-input {$diyitem['style']['searchstyle']}" style="background: {$diyitem['style']['inputbackground']};">
                     <i class="icon icon-search" style="color: {$diyitem['style']['iconcolor']};"></i>
-                    <input type="search" placeholder="{$diyitem['params']['placeholder']}" class="search" name="keywords"
-                           style="text-align: {$diyitem['style']['textalign']}; color: {$diyitem['style']['color']}; background: none;" />
+                    <input type="search" placeholder="{$diyitem['params']['placeholder']}" class="search" name="keywords" style="text-align: {$diyitem['style']['textalign']}; color: {$diyitem['style']['color']}; background: none;" />
                 </div>
             </form>
+    </div>
+    <div class="search_conten" style="display: none">
+        <div class="sort_search">
+            <div class="item on"><span class='search_text'>最近搜索</span></div>
+        </div>
+        <div class="sort_search_list_div"  style="display: none" >
+        <ul class="searchlist_li">
+               
+        </ul>
+        </div>
+        <div class='content-empty' style='display:none'>
+        <i class='icon icon-searchlist'></i><br/>暂无搜索历史
+        </div>
+        <div class="tempsearch_conten" style="display:none">
+            <ul>
+                <li>111</li>
+                <li>222</li>
+                <li>333</li>
+                <li>444</li>
+                <li>555</li>
+                <li>666</li>
+            </ul>
+        </div>
     </div>
 </div>

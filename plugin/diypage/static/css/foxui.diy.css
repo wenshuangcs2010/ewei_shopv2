@@ -860,4 +860,83 @@ color: #FFF;
     color: #ff4965;
     border-bottom: solid .1rem #ff4965;
 }
-
+.searchhtml .fui-header-left {
+    position: absolute;left:0;
+    padding-left:.3rem; height:2.2rem;
+    line-height:2.2rem;
+    z-index: 2;
+}
+a.back:before {
+    content: " ";
+    display: inline-block;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    height: 0.5rem;
+    width: 0.5rem;
+    border-width: 0 0 2px 2px;
+    border-color: #999;
+    border-style: solid;
+    position: relative;
+    top:0;
+}
+.searchtable{
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:999;
+}
+.sort_search {
+    position: relative;
+    width: 100%;
+    -webkit-box-align: center;
+    padding: .4rem 0;
+    background: #fff;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    padding-left: 1rem;
+}
+.search_conten{
+    background-color:#fff;
+}
+.tempsearch_conten{
+    position: relative;
+    text-align: center;
+    color: #ccc;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    text-align: center;
+    height:18rem;
+}
+.tempsearch_conten ul{
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+}
+.tempsearch_conten li {
+    float: left;
+    list-style-type: none;
+    text-align: center;
+    border: .1rem solid;
+    border-color: #fafafa;
+    border-radius: 5px;
+    margin-top: 0.5rem;
+    margin-left: 0.8rem;
+    background-color: #fafafa;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+    font-size: 0.6rem;
+}
+.searchlist_li li{
+    list-style-type:none;
+    border-bottom-style: solid;
+    border-bottom-color: whitesmoke;
+    padding-left: 1rem;
+    background-image:url("jt.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position:100% 50%;
+    font-size: 0.6rem;
+    line-height: 1.5rem
+};

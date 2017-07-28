@@ -174,21 +174,6 @@ class Index_EweiShopV2Page extends WebPage
 		if(empty($item['realname'])|| empty($item['imid'])){
 			show_json(0,'未找到身份证信息,请注意');
 		}
-		$order_sn=$item['ordersn'];
-		$pay_fee=$item['price'];
-		$realname=$item['realname'];
-		$imid=$item['imid'];
-		$data=array(
-			'pay_fee'=>$item['price'],
-			'realname'=>$item['realname'],
-			'imid'=>$item['imid'],
-			'order_sn'=>$order_sn,
-			'orderid'=>$orderid,
-			'add_time'=>time(),
-			);
-		pdo_insert("ewei_shop_zpay_log",$data);
-		require EWEI_SHOPV2_TAX_CORE. '/Transfer/Transfer.php';
-        $payment=Transfer::getPayment("shenfupay");
-        pdo_update("ewei_shop_order",array("zhuan_status"=>1),array("id"=>$orderid));
+		m("kjb2c")->_shenfupay($item);
 	}
 }

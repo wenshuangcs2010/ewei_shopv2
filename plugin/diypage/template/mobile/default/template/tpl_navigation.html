@@ -1,7 +1,7 @@
 {if !empty($diyitem['data'])}
     <div  class="headtop" 
     style="{if $diyitem['style']['show']==1}top:0px;z-index: 9{/if}">
-        <div class="title swiper-container3" style="height:100%;{if $diyitem['style']['show_sher']==0}width:88%;{else}width:100%;{/if}background-color: {$diyitem['style']['background']}">
+        <div class="title swiper-container3" data-num="{$diyitem['style']['show_num']}" style="height:100%;{if $diyitem['style']['show_sher']==0}width:88%;{else}width:100%;{/if}background-color: {$diyitem['style']['background']}">
             <div  class="swiper-wrapper fui-tab fui-tab-danger tabcheck" style="background-color: {$diyitem['style']['background']}">
             	{php $url='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];}
 				 {loop $diyitem['data'] $key $item}
@@ -16,7 +16,7 @@
    
         </div>
 		{if $diyitem['style']['show_sher']==0}
-		<div class="fui-header-right btn-add"><a class="tab swiper-slide" href="{php echo mobileUrl('shop/category')}"><i class="icon icon-search"></i></a></div>
+		<div class="fui-header-right btn-add"><a class="tab swiper-slide" href="{php echo mobileUrl('goods/search')}"><i class="icon icon-search"></i></a></div>
 		{/if}
     </div>
 {if $diyitem['style']['show']==1}

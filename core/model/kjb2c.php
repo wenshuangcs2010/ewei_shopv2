@@ -7,19 +7,24 @@ require_once EWEI_SHOPV2_TAX_CORE. '/customs/customs.php';
 require_once EWEI_SHOPV2_TAX_CORE. '/declare/declare.php';
 require_once EWEI_SHOPV2_TAX_CORE. '/orderpay/paybase.php';
 class Kjb2c_EweiShopV2Model {
-
-
-
-
-
 	function to_customs($param,$config,$paytype="wx"){
-
 		$coustoms=customs::getObject($paytype,$config);
 		$retdata=(array)$coustoms->to_customs($param,$config);
 		//var_Dump($retdata);
 		return $retdata;
 	}
-
+	//实名身份验证
+	function isRealname($realname,$idno){
+		global $_W,$_GPC;
+		require_once EWEI_SHOPV2_TAX_CORE. 'orderpay/parmentUtil.php';
+        $parment=new ParmentUtil();
+        $retdata=$parment->isRealName($realname,$idno,$_W['openid']);
+        return $retdata;
+	}
+	function _shenfupay($order){
+		require_once EWEI_SHOPV2_TAX_CORE. '/orderpay/parmentUtil.php';
+        $parment=new ParmentUtil();
+        $ret=$parment->_transPay($order);
 	function to_customs_new($orderid){
 		global $_W,$_GPC;
 			$order=pdo_fetch("SELECT zhuan_status,paymentno,uniacid,if_customs_z,isdisorder,isborrow,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
@@ -38,28 +43,9 @@ class Kjb2c_EweiShopV2Model {
 		 	);
 		 if($order['if_customs_z']==1 && $order['zhuan_status']==0){
 		 	show_json(0,"转账失败请联系管理员");
+		 	show_json(1,"报关成功");
 		 }
-		 if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
-			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
-			if($sporder['pay_code']=="shenfupay"){
-				$params = array(
-				"order_sn" => $order['ordersn'],
-				"customs_place" => $customs,//报关地点
-				"businessMode" => 'BONDED',
-				"trade_num"	=>$sporder['paymentno'],
-				"amount" =>$sporder['pay_fee'],
-				"shipping_fee"	=> 0,
-				"amount_tariff"	=> 0,
-				"memo" => '',
-				'mch_customs_no'=>$depot['customs_code'],
-				);
-			}
-			$config=array();
-			$paytype=$sporder['pay_code'];
-			//$retrundata=m("kjb2c")->to_customs($params,array(),$sporder['pay_code']);
-			show_json(0,$retrundata['message']);
-		}
-		if($order['paytype']==21){
+		if($order['paytype']==21 && $order['if_customs_z']==0){
 		 	load()->model('payment');
 		 	$jearray=Dispage::getDisaccountArray();
 		 	$uniacid=$order['uniacid'];
@@ -84,7 +70,7 @@ class Kjb2c_EweiShopV2Model {
             }else{
             	show_json(0,"微信支付已经关闭请重新开启");
             }
-		}elseif($order['paytype']==22){
+		}elseif($order['paytype']==22 && $order['if_customs_z']==0){
 			load()->model('payment');
 			$paytype="alipay";
 			$uniacid=$_W['uniacid'];
@@ -106,12 +92,33 @@ class Kjb2c_EweiShopV2Model {
 				'mch_customs_no'=>$depot['customs_code'],
 				);
 
-		}else{
+		}
+		if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
+			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
+			if($sporder['pay_code']=="shenfupay"){
+				$params = array(
+				"order_sn" => $order['ordersn'],
+				"customs_place" => $customs,//报关地点
+				"businessMode" => 'BONDED',
+				"trade_num"	=>$sporder['paymentno'],
+				"amount" =>$sporder['pay_fee'],
+				"shipping_fee"	=> 0,
+				"amount_tariff"	=> 0,
+				"memo" => '',
+				'mch_customs_no'=>$depot['customs_code'],
+				);
+			}
+
+			$config=array();
+			$paytype=$sporder['pay_code'];
+		}
+		if(empty($paytype)){
 			show_json(0,"特殊支付方式请联系管理员");
 		}
 
 		$coustoms=customs::getObject($paytype,$config);
 		$retrundata=(array)$coustoms->to_customs($params);
+		
 		switch ($paytype) {
 			case 'wx':
 			if($retrundata['return_code']=="FAIL"){
@@ -127,7 +134,7 @@ class Kjb2c_EweiShopV2Model {
 		 		}
 				break;
 			case 'shenfupay':
-				
+				show_json(0,$retrundata['message']);
 				break;
 
 			case "alipay":

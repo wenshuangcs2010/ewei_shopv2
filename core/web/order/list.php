@@ -57,8 +57,10 @@ class List_EweiShopV2Page extends WebPage {
             $condition .= " AND o.{$searchtime}time >= :starttime AND o.{$searchtime}time <= :endtime ";
             $paras[':starttime'] = $starttime;
             $paras[':endtime'] = $endtime;
-        }
 
+        }
+ //var_dump($searchtime);
+          //  die();
         if ($_GPC['paytype'] != '') {
             if ($_GPC['paytype'] == '2') {
                 $condition .= " AND ( o.paytype =21 or o.paytype=22 or o.paytype=23 )";

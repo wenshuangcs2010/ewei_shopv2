@@ -39,37 +39,7 @@ class User_EweiShopV2Model {
                 'city' => '青岛'
             );
 
-            $userinfo = array(
-                'openid' => 'oT-ihv9XGkJbX9owJiLZcZPAJcog',
-                'nickname' => '狸小狐',
-                'headimgurl' => 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png',
-                'province' => '山东',
-                'city' => '青岛'
-            );
-
-            $userinfo = array(
-                'openid' => 'oT-ihv9XGkJbX9owJiLZcZPAJcog',
-                'nickname' => '狸小狐',
-                'headimgurl' => 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png',
-                'province' => '山东',
-                'city' => '青岛'
-            );
-
-            $userinfo = array(
-                'openid' => 'oT-ihv9XGkJbX9owJiLZcZPAJcog',
-                'nickname' => '狸小狐',
-                'headimgurl' => 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png',
-                'province' => '山东',
-                'city' => '青岛'
-            );
-
-            $userinfo = array(
-                'openid' => 'oT-ihv9XGkJbX9owJiLZcZPAJcog',
-                'nickname' => '狸小狐',
-                'headimgurl' => 'https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png',
-                'province' => '山东',
-                'city' => '青岛'
-            );
+           
             //我乐意复制这么多
         } else {
 		

@@ -18,6 +18,9 @@ class NINGBO_Api extends ningboData{
 		$this->setMftNo($order['mftno']);
 		$this->setOrderNo($order['ordersn']);
 		$this->setPostFee($order['dpostfee']);
+		if($order['deductcredit2']>0){
+            $order['price']=$order['price']+$order['deductcredit2'];
+        }
 		$this->setAmount($order['price']);
 		$taxAmount=$order['tax_rate']+$order['tax_consumption']>0 ? $order['tax_rate']+$order['tax_consumption']:0;
 

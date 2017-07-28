@@ -92,7 +92,16 @@
 							<div class="name"><%g.title%></div>
 						</a>
 						<div class="price">
-							<span class="text">￥<%g.minprice%></span>
+							<span class="text">￥
+							<%if g.memberprice!=NULL && g.memberprice!=''%>
+							<%g.memberprice%>
+							<%else if g.minprice!='' && g.minprice!=NULL%>
+							<%g.minprice%>
+							<%else%>
+							<%g.marketprice%>
+							<%/if%>
+							
+							</span>
 							<span class="buy"><i class="icon icon-cart"></i></span>
 						</div>
 					</div>

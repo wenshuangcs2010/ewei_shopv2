@@ -5,6 +5,7 @@ class Shengpay_payment extends paybase{
     private $debug=false;
     private $key='';
     var $_gateway="https://mas.shengpay.com/web-acquire-channel/cashier.htm";
+   
     private $params=array(
         'Name'=>'B2CPayment',
         'Version'=>'V4.1.1.1.1',
@@ -105,6 +106,7 @@ class Shengpay_payment extends paybase{
         $SignMsg=strtoupper(md5($origin.$this->_config['shengpay_key']));
         return $SignMsg;
     }
+    
 
 }
 ?>

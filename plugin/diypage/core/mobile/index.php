@@ -49,13 +49,21 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 		}
 
 		$diyitems = $page['data']['items'];
-      
+        
 		//	设置分享信息
 		$this->model->setShare($page);
 
 		include $this->template();
 	}
-
+    public function searchKeyword(){
+        $rest=m("goods")->searchKeyword();
+        foreach ($rest as &$row) {
+            unset($row['openid']);
+            unset($row['uniacid']);
+        }
+        unset($row);
+        show_json(1, array('list'=>$rest));
+    }
 	public function getmerch() {
 	    global $_W, $_GPC;
 

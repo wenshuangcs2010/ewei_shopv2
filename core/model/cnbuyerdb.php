@@ -12,9 +12,10 @@ class Cnbuyerdb_EweiShopV2Model {
 	private function getdb(){
 		$dsn = "mysql:host=".$this->host.";dbname=".$this->dbname;
 		try{
-			$this->db = new PDO($dsn, $this->dbusername, $this->dbpass);
+			$this->db = new PDO($dsn, $this->dbusername, $this->dbpass,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8';"));
 		}catch(Exception $e){
 			$this->db="";
+
 		}
 	}
 	public function __construct() {
@@ -55,11 +56,97 @@ class Cnbuyerdb_EweiShopV2Model {
 		}
 		$ret=$this->db->query($sql);
 		$result=$ret->fetch(PDO::FETCH_ASSOC);
-	
+		
 		$updatesql="update cs_goods_spec set stock=stock+{$num} where spec_id=".$result['spec_id'];
 		$this->db->query($updatesql);
 	}
+	//查询已经获取过的身份证信息
+	public function getRelanme($relname,$idcardno){
+		$sql="select * from cs_realname where realname='{$relname}' and idno='{$idcardno}'";
+		if(!$this->db){
+			return false;
+		}
+		$ret=$this->db->query($sql);
+		if(!empty($ret)){
+			$result=$ret->fetch(PDO::FETCH_ASSOC);
+			return $result;
+		}
+		return false;
+	}
+	public function getimidList($imid){
+		$sql="select count(*) from cs_realname where idno='{$imid}'";
+		if(!$this->db){
+			return false;
+		}
+		$ret=$this->db->query($sql);
+		if(!empty($ret)){
+			$result=$ret->fetch(PDO::FETCH_ASSOC);
+			return $result;
+		}
+		return false;
+	}
+	public function insertRelanme($data){
+		
+		$sql="insert into cs_realname";
+		$condition=$this->implode($data,",") ;
+		$sql.=" SET {$condition['fields']}";
+		$stmt = $this->db->prepare($sql);
+		$stmt->execute($condition['params']);
+		return $this->db->lastInsertId();
+	}
+	
 	public function __destruct (){//关闭链接
 		$this->db="";
+	}
+	private function implode($params, $glue = ',') {
+		$result = array('fields' => ' 1 ', 'params' => array());
+		$split = '';
+		$suffix = '';
+		$allow_operator = array('>', '<', '<>', '!=', '>=', '<=', '+=', '-=', 'LIKE', 'like');
+		if (in_array(strtolower($glue), array('and', 'or'))) {
+			$suffix = '__';
+		}
+		if (!is_array($params)) {
+			$result['fields'] = $params;
+			return $result;
+		}
+		if (is_array($params)) {
+			$result['fields'] = '';
+			foreach ($params as $fields => $value) {
+				$operator = '';
+				if (strpos($fields, ' ') !== FALSE) {
+					list($fields, $operator) = explode(' ', $fields, 2);
+					if (!in_array($operator, $allow_operator)) {
+						$operator = '';
+					}
+				}
+				if (empty($operator)) {
+					$fields = trim($fields);
+					if (is_array($value)) {
+						$operator = 'IN';
+					} else {
+						$operator = '=';
+					}
+				} elseif ($operator == '+=') {
+					$operator = " = `$fields` + ";
+				} elseif ($operator == '-=') {
+					$operator = " = `$fields` - ";
+				}
+				if (is_array($value)) {
+					$insql = array();
+					foreach ($value as $k => $v) {
+						$insql[] = ":{$suffix}{$fields}_{$k}";
+						$result['params'][":{$suffix}{$fields}_{$k}"] = is_null($v) ? '' : $v;
+					}
+					$result['fields'] .= $split . "`$fields` {$operator} (".implode(",", $insql).")";
+					$split = ' ' . $glue . ' ';
+				} else {
+					$result['fields'] .= $split . "`$fields` {$operator}  :{$suffix}$fields";
+					$split = ' ' . $glue . ' ';
+					$result['params'][":{$suffix}$fields"] = is_null($value) ? '' : $value;
+				}
+			}
+		}
+		return $result;
 	}
 }

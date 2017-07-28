@@ -9,7 +9,7 @@
 				<div class="searchbar">
 				<div class="search-input">
 					<i class="icon icon-search"></i>
-					<input type="search" id="search" placeholder="输入关键字..." value="{$_GPC['keywords']}">
+					<input type="search" onfocus="check()" placeholder="输入关键字..." value="{$_GPC['keywords']}">
 				</div>
 				</div>
 		</form>
@@ -17,6 +17,7 @@
 	<div class="fui-header-right" data-nomenu="true">
 	    <a href="javascript:;"><i class="icon icon-sort" id="listblock" data-state="list"></i></a>
 	</div>
+	
     </div>
     <div class="sort">
 	<div class="item on"><span class='text'>综合</span></div>
@@ -120,6 +121,9 @@
 </script>
     {template 'goods/picker'}
     <script language="javascript">
+    function check(){
+    	 location.href = core.getUrl('goods/search');
+    }
 	  window.category = false;
 	  {if $catlevel!=-1}
 	      window.category = {php echo json_encode($allcategory)};
