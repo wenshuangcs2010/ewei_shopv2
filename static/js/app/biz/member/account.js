@@ -76,6 +76,9 @@ define(['core'], function (core, tpl, picker) {
                 if (ret.status != 1) {
                     $('#btnCode').html('获取验证码').removeClass('disabled').removeAttr('disabled')
                 }
+                if (ret.status == 1) {
+                    modal.verifycode()
+                }
                 if (ret.status == -1 && modal.imgcode == 1) {
                     $("#btnCode2").trigger('click')
                 }

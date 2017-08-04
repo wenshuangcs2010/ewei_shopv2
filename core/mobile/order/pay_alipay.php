@@ -15,7 +15,7 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage {
     {
         global $_W, $_GPC;
         $url = urldecode($_GPC['url']);
-        if(is_weixin()){
+        if(!is_weixin()){
             header('location: ' . $url);
             exit;
         }

@@ -261,10 +261,13 @@ class Coupon_EweiShopV2ComModel extends ComModel {
 
             if($row['limitgoodcatetype']==0&&$row['limitgoodtype']==0&&$row['enough']==0)
             {
+
                 $pass = 1;
             }
             else
             {
+                $category = m('shop')->getAllCategory();
+
                 foreach($goodlist as $good)
                 {
                     if($row['merchid']>0&&$good['merchid']>0&&$row['merchid']!=$good['merchid'])
@@ -273,13 +276,30 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                     }
 
                     $p=0;
-
+               
                     //判断当前商品是否可以使用此优惠券;
                     $cates = explode(',',$good['cates']);
                     $limitcateids =explode(',',$row['limitgoodcateids']);
                     $limitgoodids =explode(',',$row['limitgoodids']);
 
-                    if($row['limitgoodcatetype']==0&&$row['limitgoodtype']==0)
+                    $catearr=array();
+                    foreach($limitcateids as $cateid){
+                        $catearr []= $cateid;
+                        foreach ($category as $index => $crow) {
+                            if ($crow['parentid'] == $cateid) {
+                                $catearr[] = $crow['id'];
+                                foreach ($category as $ind => $ro) {
+                                    if ($ro['parentid'] == $row['id']) {
+                                        $catearr[] = $ro['id'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                   // var_dump($catearr);
+                    $limitcateids = array_unique($catearr);
+
+                    if($row['limitgoodcatetype']==0 && $row['limitgoodtype']==0)
                     {
                         $p= 1;
                     }
@@ -287,6 +307,8 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                     if($row['limitgoodcatetype']==1)
                     {
                         $result = array_intersect($cates,$limitcateids);
+                        //var_dump($cates);
+                       // var_dump($limitcateids);
                         if(count($result)>0)
                         {
                             $p= 1;
@@ -655,7 +677,6 @@ class Coupon_EweiShopV2ComModel extends ComModel {
         }
 
         $list = $this->checkcouponlimit($list,$goodlist);
-
         return count($list);
     }
 

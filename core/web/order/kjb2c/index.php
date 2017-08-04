@@ -3,6 +3,7 @@
 if (!defined('IN_IA')) {
     exit('Access Denied');
 }
+header("Content-type: text/html; charset=utf-8");
 require_once EWEI_SHOPV2_TAX_CORE. '/declare/NINGBO.declare.php';
 class Index_EweiShopV2Page extends WebPage
 {

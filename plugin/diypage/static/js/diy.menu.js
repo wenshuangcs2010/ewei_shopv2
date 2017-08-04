@@ -356,6 +356,7 @@ define(['jquery.ui'], function (ui) {
         } else {
             var posturl = biz.url("diypage/menu/add", null, modal.merch)
         }
+       
         $.post(posturl, {id: modal.id, menu: modal.menu}, function (ret) {
             if (ret.status == 0) {
                 tip.msgbox.err(ret.result.message);

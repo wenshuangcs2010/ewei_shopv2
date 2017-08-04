@@ -113,6 +113,7 @@ define(['jquery.ui'], function (ui) {
         }
         $(".btn-save").data('status', 1).text("保存中...");
         var posturl = biz.url("diypage/shop/layer", null, modal.merch);
+      
         $.post(posturl, {data: modal.layer}, function (ret) {
             if (ret.status == 0) {
                 tip.msgbox.err(ret.result.message);

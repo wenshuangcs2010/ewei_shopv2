@@ -888,7 +888,8 @@ class DiypageModel extends PluginModel {
 			'name'=>$data['page']['name'],
 			'keyword'=>$data['page']['keyword'],
 			'type'=>$data['page']['type'],
-			'diymenu'=>$data['page']['diymenu']
+			'diymenu'=>$data['page']['diymenu'],
+            'catid'=>$data['page']['catid'],
 		);
 		if(!empty($id)) {
 			if($update) {

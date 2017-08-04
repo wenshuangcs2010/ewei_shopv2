@@ -1,5 +1,5 @@
 <?php
-
+header("Content-type: text/html; charset=utf-8");
 abstract class customs{
 	abstract  function to_customs($params);
 	protected  $_gateway;
@@ -29,18 +29,18 @@ abstract class customs{
 	 * return 拼接完成以后的字符串
 	 */
 	function createLinkstring($para) {
-		$arg  = "";
-		while (list ($key, $val) = each ($para)) {
-			$arg.=$key."=".$val."&";
-		}
-		//去掉最后一个&字符
-		$arg = substr($arg,0,count($arg)-2);
-		
-		//如果存在转义字符，那么去掉转义
-		if(get_magic_quotes_gpc()){$arg = stripslashes($arg);}
-		
-		return $arg;
+	$arg  = "";
+	while (list ($key, $val) = each ($para)) {
+		$arg.=$key."=".$val."&";
 	}
+	//去掉最后一个&字符
+	$arg = substr($arg,0,count($arg)-2);
+	
+	//如果存在转义字符，那么去掉转义
+	if(get_magic_quotes_gpc()){$arg = stripslashes($arg);}
+	
+	return $arg;
+}
 	/**
 	 * 报关
 	 * 除去数组中的空值和签名参数

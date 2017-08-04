@@ -19,7 +19,7 @@ class Diy_EweiShopV2Page extends PluginWebPage {
 			$condition = " and name like '{$keyword}' ";
 		}
 		if(!empty($_GPC['catid'])){
-			$condition.= " and catid = '{$_GPC[catid]}' ";
+			$condition.= " and catid = {$_GPC[catid]} ";
 		}
 		if(empty($_GPC['page'])){
 			$page=1;
@@ -69,8 +69,7 @@ class Diy_EweiShopV2Page extends PluginWebPage {
 
 		if($_W['ispost']) {
 			$data = $_GPC['data'];
-			var_dump($data);
-			die();
+			
 			$this->model->savePage($id, $data);
 		}
 

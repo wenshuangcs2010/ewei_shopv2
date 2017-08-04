@@ -2,7 +2,7 @@
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
+header("Content-type: text/html; charset=utf-8");
 require_once EWEI_SHOPV2_TAX_CORE. '/customs/customs.php';
 require_once EWEI_SHOPV2_TAX_CORE. '/declare/declare.php';
 require_once EWEI_SHOPV2_TAX_CORE. '/orderpay/paybase.php';
@@ -166,23 +166,19 @@ class Kjb2c_EweiShopV2Model {
 				break;
 
 			case "alipay":
-
+				if($retrundata['is_success']=="F"){
+					show_json(0,"失败");
+				}else{
+					$response=(array)$retrundata['response'];
+					$alipay=(array)$response['alipay'];
+					show_json(1,$alipay['result_code']);
+				}
 				break;
 			default:
 				# code...
 				break;
 		}
-		 
 	}
-
-
-
-
-
-
-
-
-
 
 	function get_depot($id){
 		return pdo_fetch("SELECT * from ".tablename("ewei_shop_depot")." where id=:id",array(":id"=>$id));
@@ -216,7 +212,9 @@ class Kjb2c_EweiShopV2Model {
 					$dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq
 				}
 			}
-			$order['paytype']=21;
+			if(empty($order['paytype'])){
+				$order['paytype']=21;
+			}
 			if($order['if_customs_z']==1 && $order['zhuan_status']==1){
 				$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
 				$order['paytype']=23;
@@ -285,6 +283,7 @@ class Kjb2c_EweiShopV2Model {
 			show_json(0,"申报地址错误");
 		}
 		$declare=DeclareCore::getObject($customs,$depot);
+		//var_dump($order);
 		$declare->to_order_declare($order,$expressname,$order_goods);
 		$response=$declare->init();
 		$stdclassobject =simplexml_load_string($response[0],null, LIBXML_NOCDATA);
@@ -295,7 +294,7 @@ class Kjb2c_EweiShopV2Model {
                 $return_data[$key] = $value;
             }
         }
-       	 WeUtility::logging('申报结果结果', var_export($return_data, true));
+       	 //WeUtility::logging('申报结果结果', var_export($return_data, true));
         if($return_data['Header']['Result'] == 'F'){
                	show_json(0,$return_data['Header']['ResultMsg']);
         }else{
