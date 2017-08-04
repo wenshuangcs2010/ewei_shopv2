@@ -275,7 +275,7 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
 
         $total <= 0 && $total = 1;
         $optionid = intval($_GPC['optionid']);
-        $goods = pdo_fetch('select id,marketprice,diyformid,diyformtype,depotid,diyfields, isverify, `type`,merchid, cannotrefund,maxbuy from '.tablename('ewei_shop_goods').' where id=:id and uniacid=:uniacid limit 1',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
+        $goods = pdo_fetch('select id,marketprice,diyformid,diyformtype,depotid,diyfields, isverify, `type`,merchid, cannotrefund,maxbuy,total from '.tablename('ewei_shop_goods').' where id=:id and uniacid=:uniacid limit 1',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
         if (empty($goods)) {
             show_json(0, '商品未找到');
         }
@@ -355,7 +355,6 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
             ':optionid' => $optionid,
             ':id' => $id
         ));
-
         if (empty($data)) {
             $data = array(
                 'uniacid' => $_W['uniacid'],
@@ -390,6 +389,9 @@ class Cart_EweiShopV2Page extends MobileLoginPage {
                 if($data['total']>=$goods['maxbuy'] && $goods['maxbuy']!=0){
                      show_json(0, '商品限购'.$goods['maxbuy'].'件');
                 }
+            }
+            if($data['total']>=$goods['total']){
+                show_json(0, '商品库存不足,无法加入购物车');
             }
             $data['diyformid'] = $diyformid;
             $data['diyformdata'] = $diyformdata;

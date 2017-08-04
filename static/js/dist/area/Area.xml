@@ -2778,7 +2778,7 @@
   </city>
   </province>
  <province name="重庆市">
- <city name="重庆辖区">
+ <city name="重庆市">
   <county name="万州区" /> 
   <county name="涪陵区" /> 
   <county name="渝中区" /> 
@@ -2801,7 +2801,7 @@
   <county name="永川区" />
   <county name="南川区" />
   </city>
- <city name="重庆辖县">
+ <city name="重庆市">
   <county name="潼南县" />
   <county name="铜梁县" /> 
   <county name="大足县" /> 

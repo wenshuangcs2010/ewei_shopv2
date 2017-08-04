@@ -50,7 +50,19 @@ class Picker_EweiShopV2Page extends MobilePage {
             show_json(0);
         }
         $goods = set_medias($goods, 'thumb');
-        
+        $cartdata = pdo_fetch("select id,total,diyformid from " . tablename('ewei_shop_member_cart') . ' where goodsid=:id and openid=:openid and   optionid=:optionid  and deleted=0 and  uniacid=:uniacid   limit 1', array(
+            ':uniacid' => $_W['uniacid'],
+            ':openid' => $_W['openid'],
+            ':optionid' => 0,
+            ':id' => $id
+        ));
+        if(!empty($cartdata)){
+            $goods['total']=$goods['total']-$cartdata['total'];
+        }
+        if($goods['maxbuy']==0){
+            $goods['maxbuy']=$goods['total'];
+        }
+         //var_dump($goods['maxbuy']);
         $openid = $_W['openid'];
 
         if (is_weixin()) {
@@ -61,8 +73,6 @@ class Picker_EweiShopV2Page extends MobilePage {
                 show_json(2, array('followtip' => $followtip, 'followurl' => $followurl));
             }
         }
-
-
         $openid =$_W['openid'];
         $member = m('member')->getMember($openid);
         $member = m('member')->getMember($_W['openid']);

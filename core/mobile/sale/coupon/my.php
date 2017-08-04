@@ -740,7 +740,6 @@ class My_EweiShopV2Page extends MobileLoginPage {
 		$id = intval($_GPC['id']);
 
 		$data = pdo_fetch('select c.*  from ' . tablename('ewei_shop_coupon_data') . '  cd inner join  ' . tablename('ewei_shop_coupon') . ' c on cd.couponid = c.id  where cd.id=:id and cd.uniacid=:uniacid and coupontype =0  limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
-
 		if (empty($data)) {
 			if (empty($coupon)) {
 				header('location: ' . mobileUrl('sale/coupon/my'));

@@ -132,7 +132,9 @@ class Order_EweiShopV2Model
                         if($order['isdisorder']==1){
                              m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
                         }
-
+                        if($order['deductcredit2']>0){
+                            pdo_update("ewei_shop_order",array("if_customs_z"=>1),array("id"=>$orderid));
+                        }
                         //发送赠送优惠券
                         if (com('coupon')) {
                             com('coupon')->sendcouponsbytask($order['id']); //订单支付

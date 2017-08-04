@@ -9,13 +9,13 @@
 				<div class="searchbar">
 				<div class="search-input">
 					<i class="icon icon-search"></i>
-					<input type="search" id="searchtitle"  name="keywords" placeholder="输入关键字..." value="{$_GPC['keywords']}">
+					<input type="search" id="searchtitle" autofocus="true" name="keywords" placeholder="输入关键字..." value="{$lastkeywords}">
 				</div>
 				</div>
 		</form>
 	</div>
-	<div class="fui-header-right" data-nomenu="true">
-	    <a href="javascript:;"><i class="icon icon-sort" id="listblock" data-state="list"></i></a>
+	<div class="fui-header-right" style="padding-right: 0;" data-nomenu="true">
+	    <a href="javascript:;"><i class="" data-state="list">搜索</i></a>
 	</div>
     </div>
 	<div class="sort_search search">
@@ -36,41 +36,39 @@
 			{loop $searchlist $item}
 			<a href="{php echo mobileUrl('goods',array('keywords'=>$item['keywords']))}"><li>{$item['keywords']}</li></a>
 			{/loop}
-
 	    	</ul>
 	    </div>
-	    
 	</div>
 		
     </div>
 </div>
 <script type="text/javascript">
-
 	$('#searchtitle').bind('input propertychange', function () {
             if ($.trim($(this).val()) == '') {
                 $('#serchhtml').hide();
             }else{
-				
 				var keyword=$(this).val()
-				 core.json('goods/serachtitle', {keyword:keyword}, function (ret) {
-				 	var html="";
-				 	$('#searchlist').html("");
-				 	$.each(ret, function(index, val) {
+					core.json('goods/serachtitle', {keyword:keyword}, function (ret) {
+					var html="";
+					$('#searchlist').html("");
+					$.each(ret, function(index, val) {
 						//console.log(val.title);
 						html+="<a href="+val.url+"><li>"+val.title+"</li></a>";
-				 	});
-				 	$('#searchlist').append(html);
-				 	$('#serchhtml').show();
-
-				 })
-
+					});
+					$('#searchlist').append(html);
+					$('#serchhtml').show();
+				})
             }
         });
-	window.onload = function()
-	{
-		$("#searchtitle").focus();
 
-	}
+	document.addEventListener('click',function(e){
+  		e.preventDefault();
+  		document.getElementById('searchtitle').focus();
+	});
+	
+	$(".fui-header-right a").click(function(event) {
+		$(".title form").submit();
+	});
 </script>
 
 {template '_footer'}

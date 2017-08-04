@@ -72,6 +72,20 @@ class Sms_EweiShopV2ComModel extends ComModel {
             if(!empty($emayResult)){
                 return array('status'=>0, 'message'=>"短信发送失败(错误信息: ".$emayResult.")");
             }
+        }elseif($template['type']=='cnbuyer'){
+            include_once EWEI_SHOPV2_VENDOR.'monternet/MONTERUtil.php';
+            $cnbuyerSms=new MONTERUtil($smsset['cnbuyer_username'],$smsset['cnbuyer_pw']);
+            $balance = $cnbuyerSms->getBalance();
+            if($balance<=0){
+                return array('status'=>0, 'message'=>"短信发送失败(梦网余额不足, 当前余额".$balance.")");
+            }
+
+            $returndata=$cnbuyerSms->send($mobile,$params);
+            $ret=$returndata['MongateSendSubmitResult'];
+            if($ret==-1||$ret==-12||$ret==-999){
+                return array('status'=>0,'message'=>"短信发送失败");
+            }
+            return array('status'=>1);
         }
         return array('status'=>1);
     }
@@ -96,6 +110,9 @@ class Sms_EweiShopV2ComModel extends ComModel {
             }
             elseif($item['type']=='emay'){
                 $item['name'] = '[亿美]'.$item['name'];
+            }
+            elseif($item['type']=='cnbuyer'){
+                $item['name'] = '[梦网]'.$item['name'];
             }
         }
         unset($item);
@@ -188,6 +205,16 @@ class Sms_EweiShopV2ComModel extends ComModel {
             if(empty($template['smssign'])){
                 return array('status'=>0, 'message'=>'未填写亿美软通短信签名!');
             }
+        }elseif($template['type']=='cnbuyer'){
+            if(empty($smsset['cnbuyer'])){
+                return array('status'=>0, 'message'=>'未开启梦网平台!');
+            }
+            if(empty($smsset['cnbuyer_username'])){
+                return array('status'=>0, 'message'=>'未填写梦网账号!');
+            }
+            if(empty($smsset['cnbuyer_pw'])){
+                return array('status'=>0, 'message'=>'未填写亿梦网密码!');
+            }
         }
         return $template;
     }
@@ -196,7 +223,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
     protected function sms_data($type, $data, $replace, $template) {
         // 如果 $replace=true $data 替换模板数据 否则 直接使用$data
         if($replace){
-            if($type=='emay'){
+            if($type=='emay'||$type=='cnbuyer'){
                 $tempdata = $template['content'];
                 foreach ($data as $key=>$value) {
                     $tempdata = str_replace("[".$key."]", $value, $tempdata);
@@ -236,6 +263,9 @@ class Sms_EweiShopV2ComModel extends ComModel {
             $result = json_encode($data);
         }
         elseif($type=='emay'){
+            $result = $data;
+        }
+        elseif($type=='cnbuyer'){
             $result = $data;
         }
         return $result;

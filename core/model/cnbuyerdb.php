@@ -94,7 +94,15 @@ class Cnbuyerdb_EweiShopV2Model {
 		$stmt->execute($condition['params']);
 		return $this->db->lastInsertId();
 	}
-	
+	public function getOrderinvon($order_sn){
+		$sql="select o.invoice_no,oe.shipping_name,sh.com_code from cs_order as o LEFT JOIN cs_order_extm oe ON o.order_id = oe.order_id LEFT JOIN cs_shipping sh ON sh.shipping_id=oe.shipping_id where o.order_sn='{$order_sn}'";
+		$ret=$this->db->query($sql);
+		if(!empty($ret)){
+			$result=$ret->fetch(PDO::FETCH_ASSOC);
+			return $result;
+		}
+		return false;
+	}
 	public function __destruct (){//关闭链接
 		$this->db="";
 	}

@@ -237,13 +237,14 @@ class Index_EweiShopV2Page extends MobilePage
         if(empty($sms_id)){
             show_json(0, '短信发送失败(NOSMSID)');
         }
-
+       
         $key = '__ewei_shopv2_member_verifycodesession_'.$_W['uniacid'].'_'.$mobile;
         @session_start();
         $code = random(5,true);
         $shopname = $_W['shopset']['shop']['name'];
       
         $ret = com('sms')->send($mobile, $sms_id, array('验证码'=>$code,'商城名称'=>!empty($shopname) ? $shopname : "商城名称"));
+
         if($ret['status']){
             $_SESSION[$key] = $code;
             $_SESSION['verifycodesendtime'] = time();

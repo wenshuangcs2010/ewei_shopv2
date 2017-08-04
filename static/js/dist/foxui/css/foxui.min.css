@@ -3972,3 +3972,49 @@ height:2.2rem;
     z-index: 1;
 }
 
+.coupon-picker {
+    height: auto;
+    width: 100%;
+    -moz-transition-duration: 300ms;
+    -webkit-transition-duration: 300ms;
+    transition-duration: 300ms;;
+    background: #f1f1f1;
+    padding-bottom: 2rem;
+}
+
+.coupon-picker-title {
+    background: #fff;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 0.75rem;
+    text-align: center;
+    position: relative;
+}
+
+.coupon-picker-container {
+    position: relative;
+    max-height: 12rem;
+    top: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.coupon-picker .fui-navbar {
+    height: 2rem;
+}
+
+.coupon-picker .fui-navbar .btn {
+    border: none;
+    font-size: 0.7rem;
+    border-radius: 0;
+    height: 2rem;
+}
+
+.coupon-picker .fui-navbar .btn:first-child {
+    color: #333
+}
+
+.coupon-picker .fui-navbar .btn:last-child {
+    width: 0.2%;
+}
+

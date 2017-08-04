@@ -43,13 +43,13 @@ class Bind_EweiShopV2Page extends MobileLoginPage
         $member = m('member')->getMember($_W['openid']);
 
         $bind = !empty($member['mobile']) && !empty($member['mobileverify']) ? 1 : 0;
-
+        $set = m('common')->getSysset(array('shop','wap'));
         if($_W['ispost']){
             $mobile = trim($_GPC['mobile']);
             $verifycode = trim($_GPC['verifycode']);
             $pwd = trim($_GPC['pwd']);
             $confirm = intval($_GPC['confirm']);
-
+      
             @session_start();
             $key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
             if( !isset($_SESSION[$key]) ||  $_SESSION[$key]!==$verifycode || !isset($_SESSION['verifycodesendtime']) || $_SESSION['verifycodesendtime']+600<time()){

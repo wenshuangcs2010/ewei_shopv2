@@ -13,6 +13,7 @@ class Cnbuersapi_EweiShopV2Page extends WebPage
 
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		if(!empty($order['cnbuyers_order_sn'])){
+			
 			show_json(0,"订单已经推送请勿重复推送");
 		}
 		if(empty($order)){

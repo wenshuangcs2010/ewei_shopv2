@@ -18,6 +18,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         }
     };
     modal.open = function (params) {
+
         modal.params = $.extend(modal.params, params || {});
         if (modal.goodsid != params.goodsid) {
             modal.goodsid = params.goodsid;
@@ -85,22 +86,19 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
                 minToast: "{min}" + modal.goods.unit + "起售",
                 maxToast: "最多购买{max}" + modal.goods.unit,
                 callback: function (num) {
-                    modal.params.total = num
+                    modal.params.total = num;
                 }
             });
 
         }else{
             modal.params.total = 1;
         }
-
         $(".spec-item", modal.container.container).unbind('click').click(function () {
             modal.chooseSpec(this);
-            
 
         });
         $('.cartbtn', modal.container.container).unbind('click').click(function () {
              modal.addToCart();
-           
         });
 
         $('.buybtn', modal.container.container).unbind('click').click(function () {

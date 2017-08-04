@@ -13,6 +13,19 @@ class Cnbuersapi_EweiShopV2Page extends WebPage
 
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		if(!empty($order['cnbuyers_order_sn'])){
+			$shipinfo=m("cnbuyerdb")->getOrderinvon($order['cnbuyers_order_sn']);
+			if(!empty($shipinfo['invoice_no'])){
+				$data = array();
+            	$data['status'] = 2;
+            	$data['express'] = $shipinfo['com_code'];
+            	$data['expresscom'] = $shipinfo['shipping_name'];
+            	$data['expresssn'] = $shipinfo['invoice_no'];
+            	$data['sendtime'] = time();
+            	pdo_update('ewei_shop_order', $data, array('id' => $order['id']));
+            	m('notice')->sendOrderMessage($order['id']);
+            	plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$shipinfo['shipping_name']} 快递单号: {$shipinfo['invoice_no']}");
+            	show_json(1,"订单成功发货");
+			}
 			show_json(0,"订单已经推送请勿重复推送");
 		}
 		if(empty($order)){

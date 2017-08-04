@@ -37,10 +37,12 @@ class Goods_EweiShopV2Model {
                 'keywords'=>$keywords,
                 'count'=>1,
                 'openid'=>$_W['openid'],
+                'updatetimes'=>time(),
                 );
             pdo_insert("ewei_shop_keywordscount",$insertdata);
         }else{
             $updatedata=array(
+                'updatetimes'=>time(),
                 "count"=>$data['count']+1,
                 );
             pdo_update("ewei_shop_keywordscount",$updatedata,array("id"=>$data['id']));
@@ -302,42 +304,38 @@ class Goods_EweiShopV2Model {
         }
         $level = m('member')->getLevel($openid);
         $list = pdo_fetchall($sql, $params);
+               //var_dump($sql);
         $list = set_medias($list, 'thumb');
         if(empty($list)){
             return array("list"=>array(),"total"=>0);
         }
         foreach ($list as $key=>$goods) {
-           if($goods['isdiscount']==1 && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
 
+           if($goods['isdiscount']==1 && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
                 $list[$key]['isdiscount']=1;
                 $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
                 if (!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])) {
                 //统一促销
                 $prices_array = m('order')->getGoodsDiscountPrice($goods, $level, 1);
                 $prices[] = $prices_array['price'];
-               
                 } else {
                     //详细促销
                     $goods_discounts = m('order')->getGoodsDiscounts($goods, $isdiscount_discounts, $levelid);
                     $prices = $goods_discounts['prices'];
-                   
                 }
-
+ 
                $minprice = min($prices);
                $prices="";
                $list[$key]['minprice']=$minprice;
            }else{
                 $list[$key]['isdiscount']=0;
                 $memberprice = m('goods')->getMemberPrice($goods, $level);
-                //var_dump($memberprice);
-                
-                if($memberprice<$goods['minprice'] && $goods['isnodiscount']!=1){
+                if($memberprice>0 && $goods['isnodiscount']!=1){
                     $list[$key]['memberprice']=$memberprice;
                     $list[$key]['minprice']=$memberprice;
                 }
            }
         }
-       
         return array("list"=>$list,"total"=>$total);
     }
 
@@ -498,6 +496,8 @@ class Goods_EweiShopV2Model {
                     {
                         $table ='(';
                         $i=0;
+                        $category = m('shop')->getAllCategory();
+                       
                         foreach($limitcateids as $cateid)
                         {
                             $i++;
@@ -505,7 +505,30 @@ class Goods_EweiShopV2Model {
                             {
                                 $table .=' union all ';
                             }
-                            $table .='select * from '.tablename('ewei_shop_goods').' where FIND_IN_SET('.$cateid.',cates)';
+                            $catearr = array($cateid);
+                            foreach ($category as $index => $row) {
+                                if ($row['parentid'] == $cateid) {
+                                    $catearr[] = $row['id'];
+                                    foreach ($category as $ind => $ro) {
+                                        if ($ro['parentid'] == $row['id']) {
+                                            $catearr[] = $ro['id'];
+                                        }
+                                    }
+                                }
+                            }
+                            $catearr = array_unique($catearr);
+                            $conpountidcondition .= " AND ( ";
+                           foreach ($catearr as $key=>$value){
+                                if ($key==0) {
+                                    $conpountidcondition.= " FIND_IN_SET({$value},cates)";
+                                }else{
+                                    $conpountidcondition.= " || FIND_IN_SET({$value},cates)";
+                                }
+                            }
+                            $conpountidcondition .= " <>0 )";
+                            //$table .='select * from '.tablename('ewei_shop_goods').' where FIND_IN_SET('.$cateid.',cates)';
+                            $table .='select * from '.tablename('ewei_shop_goods').' where 1 '.$conpountidcondition;
+                            $catearr = array();
                         }
                         $table .=') g ';
 
@@ -527,7 +550,6 @@ class Goods_EweiShopV2Model {
             $sql = "SELECT ".$distinct." g.id,g.title,g.thumb,g.marketprice,g.productprice,g.minprice,g.maxprice,g.isdiscount,g.isdiscount_time,g.isdiscount_discounts,g.sales,g.total,g.description,g.bargain FROM " . $table . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
             $total  = $pagesize;
         }
-
         $list = pdo_fetchall($sql, $params);
         $list = set_medias($list, 'thumb');
         return array("list"=>$list,"total"=>$total);
@@ -716,15 +738,16 @@ class Goods_EweiShopV2Model {
         if(!empty($goods['isnodiscount'])){
             return;
         }
+
         $discounts = json_decode($goods['discounts'], true);
         if (is_array($discounts)) {
             $key = !empty($level['id']) ? 'level' . $level['id'] : 'default';
             if (!isset($discounts['type']) || empty($discounts['type'])) {
-                $memberprice = $goods['minprice'];
+                $memberprice = $goods['marketprice'];
                 if (!empty($discounts[$key])){
                     $dd = floatval($discounts[$key]); //设置的会员折扣
                     if ($dd > 0 && $dd < 10) {
-                        $memberprice = round($dd / 10 * $goods['minprice'], 2);
+                        $memberprice = round($dd / 10 * $goods['marketprice'], 2);
                     }
                 }else{
                     $dd = floatval($discounts[$key.'_pay']); //设置的会员折扣
@@ -732,9 +755,11 @@ class Goods_EweiShopV2Model {
                     if (!empty($dd)){
                         $memberprice = round($dd, 2);
                     }else if ($md > 0 && $md < 10) {
-                        $memberprice = round($md / 10 * $goods['minprice'], 2);
+                        $memberprice = round($md / 10 * $goods['marketprice'], 2);
                     }
                 }
+               // var_dump($memberprice);
+                //die();
                 return $memberprice;
             } else {
                 //详细折扣
@@ -749,6 +774,7 @@ class Goods_EweiShopV2Model {
                     $marketprice[] =$optionprice;
                 }
                 $minprice = min($marketprice);
+
                 $maxprice = max($marketprice);
                 $memberprice = array(
                     'minprice'=>(float)$minprice,

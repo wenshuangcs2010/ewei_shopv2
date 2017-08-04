@@ -51,7 +51,11 @@ class Index_EweiShopV2Page extends ComWebPage {
 				'emay_out'=>intval($_GPC['emay_out']),
 				'emay_outresp'=>empty($_GPC['emay_outresp']) ? 30 : intval($_GPC['emay_outresp']),
 				'emay_warn'=>intval($_GPC['emay_warn']),
-				'emay_mobile'=>intval($_GPC['emay_mobile'])
+				'emay_mobile'=>intval($_GPC['emay_mobile']),
+				'cnbuyer'=>intval($_GPC['cnbuyer']),
+				'cnbuyer_username'=>trim($_GPC['cnbuyer_username']),
+				'cnbuyer_pw'=>intval($_GPC['cnbuyer_pw']),
+
 			);
 			if(empty($item)){
 				$arr['uniacid'] = $_W['uniacid'];

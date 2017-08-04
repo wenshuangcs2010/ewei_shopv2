@@ -138,6 +138,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
         });
         $(".bottom-buttons .cartbtn").click(function () {
             var type =$(this).data('type');
+
             /*
             if(type == 4){
                 modal.wholesalePicker('cart')
@@ -420,7 +421,6 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                 modal.total = total;
                 modal.optionid = optionid;
                 $('.option-selector').html("已选: 数量x" + total + " " + optiontitle);
-
                 if (action == 'buy') {
                     var giftid = $("#giftid").val();
                     if ($("#giftid") && giftid == '') {
@@ -457,7 +457,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/ca
                         }
                     }
                 } else if (action == 'cart') {
-
+ 
                     if ($('.diyform-container').length > 0) {
                         var diyformdata = diyform.getData('.diyform-container');
 

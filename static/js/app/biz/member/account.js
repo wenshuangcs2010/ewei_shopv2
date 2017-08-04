@@ -65,6 +65,7 @@ define(['core'], function (core, tpl, picker) {
                 FoxUI.toast.show('请输入图形验证码');
                 return
             }
+
             modal.seconds = 60;
             core.json('account/verifycode', {
                 mobile: $('#mobile').val(),
@@ -138,6 +139,10 @@ define(['core'], function (core, tpl, picker) {
             modal.seconds = modal.endtime;
             modal.verifycode()
         }
+        $("#btnCode2").click(function () {
+            $(this).prop('src', '../web/index.php?c=utility&a=code&r=' + Math.round(new Date().getTime()));
+            return false
+        });
         $('#btnCode').click(function () {
             if ($('#btnCode').hasClass('disabled')) {
                 return
@@ -146,13 +151,20 @@ define(['core'], function (core, tpl, picker) {
                 FoxUI.toast.show('请输入11位手机号码!');
                 return
             }
+
             modal.seconds = 60;
-            core.json('account/verifycode', {mobile: $('#mobile').val(), temp: 'sms_bind'}, function (ret) {
+            core.json('account/verifycode', 
+                {
+                    mobile: $('#mobile').val(),
+                    temp: 'sms_bind',
+                    imgcode: $.trim($('#verifycode2').val()) || 0,
+                 },
+                 function (ret) {
                 if (ret.status != 1) {
                     FoxUI.toast.show(ret.result.message);
                     $('#btnCode').html('获取验证码').removeClass('disabled').removeAttr('disabled')
                 }
-                if (rer.status == 1) {
+                if (ret.status == 1) {
                     modal.verifycode()
                 }
             }, false, true)

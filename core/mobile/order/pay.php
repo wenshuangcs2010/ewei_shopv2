@@ -766,22 +766,27 @@ class Pay_EweiShopV2Page extends MobileLoginPage
         $order = pdo_fetch("select * from " . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1'
             , array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
         $depotinfo=Dispage::getDepot($order['depotid']);
-        if($order['paytype']==1 &&$order['status']==1){//余额付款的时候
+        if($order['paytype']==1){
+            //余额支付伪造支付单
+            pdo_update("ewei_shop_order",array("paymentno"=>"123456789"),array("id"=>$order['id']));
+        }
+        if($order['paytype']==1 && $order['status']==1){//余额付款的时候
             //检查是否要申报
             //如果不是跳转
             if($depotinfo['if_declare']==1){
-                $order['if_custums_z']=1;
+                $order['if_customs_z']=1;
             }
         }//如果用户用了余额去抵扣
         if($order['deductcredit2']> 0 && $depotinfo['if_declare']==1 && $order['status']==1){
-            $order['if_custums_z']=1;
+            $order['if_customs_z']=1;
         }
         //如果是走盛付通转账  通用转账流程
-        if($order['if_custums_z']==1 && $order['zhuan_status']==0){//正常订单
+        if($order['if_customs_z']==1 && $order['zhuan_status']==0){//正常订单
             //必须转账的 //覆盖原有支付单
-            pdo_update("ewei_shop_order",array("if_custums_z"=>1),array("id"=>$order['id']));
+            pdo_update("ewei_shop_order",array("if_customs_z"=>1),array("id"=>$orderid));
             m('kjb2c')->_shenfupay($order);
         }
+
         $merchid = $order['merchid'];
         //商品
         $goods = pdo_fetchall("select og.goodsid,og.price,g.title,g.thumb,og.total,g.credit,og.optionid,og.optionname as optiontitle,g.isverify,g.storeids from " . tablename('ewei_shop_order_goods') . " og "

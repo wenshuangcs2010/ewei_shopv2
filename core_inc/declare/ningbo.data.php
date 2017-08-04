@@ -223,7 +223,7 @@ class NINGBOData extends declareUtil{
 	function setBuyerName($BuyerName){//订购人姓名
 		$this->params['Body']['Order']['BuyerName']=$BuyerName;
 	}
-	function setBuyerIsPayer($BuyerIsPayer=1){//订购人支付人是否一致（0=不一致，1=一致）
+	function setBuyerIsPayer($BuyerIsPayer=0){//订购人支付人是否一致（0=不一致，1=一致）
 
 		$this->params['Body']['Order']['BuyerIsPayer']=$BuyerIsPayer;
 	}

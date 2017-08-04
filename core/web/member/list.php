@@ -108,7 +108,7 @@ class List_EweiShopV2Page extends WebPage {
 
 //导出Excel
         if ($_GPC['export'] == '1') {
-
+           // ini_set("memory_limit","-1");//取消变量
             plog('member.list', '导出会员数据');
             foreach ($list as &$row) {
                 $row['createtime'] = date('Y-m-d H:i', $row['createtime']);

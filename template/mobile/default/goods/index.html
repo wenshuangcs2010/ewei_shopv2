@@ -122,7 +122,7 @@
     {template 'goods/picker'}
     <script language="javascript">
     function check(){
-    	 location.href = core.getUrl('goods/search');
+    	 location.href = core.getUrl('goods/search',{"show":1});
     }
 	  window.category = false;
 	  {if $catlevel!=-1}

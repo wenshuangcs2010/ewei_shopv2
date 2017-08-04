@@ -1107,7 +1107,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         if (is_array($goodsarr)) {
 
             $goods = array();
-
+            $category = m('shop')->getAllCategory();
             foreach ($goodsarr as $g) {
 
                 if (empty($g)) {
@@ -1121,7 +1121,23 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $cates = explode(',', $g['cates']);
                 $limitcateids = explode(',', $data['limitgoodcateids']);
                 $limitgoodids = explode(',', $data['limitgoodids']);
-
+                $catearr=array();
+                foreach($limitcateids as $cateid){
+                        $catearr[] = $cateid;
+                        foreach ($category as $index => $crow) {
+                            if ($crow['parentid'] == $cateid) {
+                                $catearr[] = $crow['id'];
+                                foreach ($category as $ind => $ro) {
+                                    if ($ro['parentid'] == $row['id']) {
+                                        $catearr[] = $ro['id'];
+                                    }
+                                }
+                            }
+                        }
+                       
+                }
+              
+                $limitcateids = array_unique($catearr);
                 $pass = 0;
 
                 if ($data['limitgoodcatetype'] == 0 && $data['limitgoodtype'] == 0) {
@@ -1130,6 +1146,8 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 if ($data['limitgoodcatetype'] == 1) {
                     $result = array_intersect($cates, $limitcateids);
+                  
+                  
                     if (count($result) > 0) {
                         $pass = 1;
                     }
@@ -1149,7 +1167,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $limitdiscounttype = intval($data['limitdiscounttype']);
             $coupongoodprice = 0;
             $gprice = 0;
-
             foreach ($goods as $k => $g) {
 
                 $gprice = (float)$g['marketprice'] * (float)$g['total'];
