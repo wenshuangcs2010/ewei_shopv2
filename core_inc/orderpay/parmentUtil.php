@@ -189,6 +189,7 @@ class ParmentUtil
             if(!get_extension_funcs("soap")){
                 return false;
             }
+         
             ini_set('soap.wsdl_cache_enabled', 0);
             try {
                 $options = array(

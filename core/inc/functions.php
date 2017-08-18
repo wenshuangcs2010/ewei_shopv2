@@ -324,7 +324,14 @@ if (!function_exists('is_mobile')) {
         return false;
     }
 }
-
+if(!function_exists('is_qyweixin')){
+    function is_qyweixin(){
+        if (!empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'wxwork') != false){
+            return true;
+        }
+        return false;
+    }
+}
 if (!function_exists('b64_encode')) {
     function b64_encode($obj)
     {

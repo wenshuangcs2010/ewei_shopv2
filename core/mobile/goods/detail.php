@@ -19,10 +19,15 @@ class Detail_EweiShopV2Page extends MobilePage {
         $id = intval($_GPC['id']);
         $rank = intval($_GPC['rank']);
         $join_id = intval($_GPC['join_id']);
-
-        if (!empty($join_id)) {
+        $log_id = intval($_GPC['log_id']);
+        $task_id = intval($_GPC['task_id']);
+       if (!empty($join_id)) {
             $_SESSION[$id . '_rank'] = $rank;
             $_SESSION[$id . '_join_id'] = $join_id;
+        }elseif(!empty($log_id)) {
+            $_SESSION[$id . '_log_id'] = $log_id;
+        }elseif(!empty($task_id)){
+            $_SESSION[$id . '_task_id'] = $task_id;
         }
 
         $err = false;
@@ -142,7 +147,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
 
         //任务活动购买商品
-        $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $join_id);
+        $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $log_id, $join_id);
         if (empty($task_goods_data['is_task_goods'])) {
             $is_task_goods = 0;
 
@@ -307,7 +312,9 @@ class Detail_EweiShopV2Page extends MobilePage {
         $canAddCart = true;
         if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund']) || !empty($is_task_goods) || !empty($gifts)) {
             $canAddCart = false;
+            //var_dump($goods['cannotrefund']);
         }
+       
          if(!empty($seckillinfo)){//秒杀商品禁止加入购物车
             $canAddCart = false;
          }
@@ -414,23 +421,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
         $log_id=0;
         $goods['minprice'] = $minprice; $goods['maxprice'] =$maxprice;
-        if($_GPC['log_id']>0){
-            $log_id=$_GPC['log_id'];
-            $lotterygoods=m("lottery")->show_goods($openid,$id,$_GPC['log_id']);
-            if(!empty($lotterygoods)){
-                
-               // var_dump($lotterygoods['marketprice']);
-                $goods['marketprice']=$lotterygoods['marketprice'];
-                $goods['minprice']=$lotterygoods['marketprice'];
-                $goods['maxprice']=$lotterygoods['marketprice'];
-                $goods['productprice']=$lotterygoods['marketprice'];
-                if($order_goodscount>=$lotterygoods['total']){
-                    $goods['userbuy'] = 0;
-                    $goods['canbuy']  = false;
-                }
-                $canAddCart = false;
-            }
-        }
+        
         
         //是否显示商品评论
         $getComments = empty($_W['shopset']['trade']['closecommentshow']);

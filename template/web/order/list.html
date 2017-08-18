@@ -209,6 +209,12 @@
                     <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['taskdiscountprice'],2)}</td>
                 </tr>
                 {/if}
+                {if $item['lotterydiscountprice']>0}
+                <tr>
+                    <td  style='border:none;text-align:right;'>游戏优惠：</td>
+                    <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['lotterydiscountprice'],2)}</td>
+                </tr>
+                {/if}
                 {if $item['discountprice']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>会员折扣：</td>

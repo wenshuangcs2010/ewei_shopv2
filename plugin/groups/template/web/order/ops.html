@@ -14,6 +14,7 @@
         {/if}
         {if $item['depot']['if_declare']==1 && empty($item['mftno'])}
         <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/order/to_declare', array('id' => $item['id']))}">申报</a><br />
+         <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send', array('id' => $item['id']))}">确认发货</a><br />
         {else if $item['depot']['if_declare']==1 && !empty($item['mftno'])}
              <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send_order', array('id' => $item['id']))}">货物放行</a><br />
         {else}

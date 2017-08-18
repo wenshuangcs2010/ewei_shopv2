@@ -183,6 +183,18 @@
         {/if}
     </div>
 </div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">下线会员升级渠道</label>
+    <div class="col-sm-9 col-xs-12">
+        
+        <select name='adata[isbrowser]' class='form-control'>
+            <option value='0' {if $member['isbrowser']==0}selected{/if}>全网通</option>
+            <option value='1' {if $member['isbrowser']==1}selected{/if}>手机端</option>
+            <option value='2' {if $member['isbrowser']==2}selected{/if}>微信端</option>
+            <option value='3' {if $member['isbrowser']==3}selected{/if}>企业微信端</option>
+        </select>
+    </div>
+</div>
 </div>
 <div class="form-group">
     <label class="col-sm-2 control-label">审核通过</label>

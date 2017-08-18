@@ -183,9 +183,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             $wechat['jie'] = $jie;
         }
         $alipay = array('success' => false);
-        if(empty($seckill_goods)){
-
-            //非秒杀才能 支付宝，货到付款
+          
             //支付宝
             if (isset($set['pay']) && $set['pay']['alipay'] == 1) {
                 //如果开启支付宝
@@ -210,9 +208,9 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                     }
                 }
             }
-
             //货到付款
             $cash = array('success' => $order['cash'] == 1 && isset($set['pay']) && $set['pay']['cash'] == 1 && $order['isverify'] == 0 && $order['isvirtual'] == 0);
+        if(empty($seckill_goods)){
 
         } else{
             $cash = array('success' => false);

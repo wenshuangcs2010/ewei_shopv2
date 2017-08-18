@@ -453,10 +453,17 @@ class Perm_EweiShopV2ComModel extends ComModel
                     'text' => '对账单',
                     'main' => '下载-log'
                 ),
+            // 'recharge' => array(
+            //     'text' => '充值',
+            //     'credit1' => '充值积分-log',
+            //     'credit2' => '充值余额-log',
+            // ),
             'recharge' => array(
                 'text' => '充值',
                 'credit1' => '充值积分-log',
-                'credit2' => '充值余额-log'
+                'credit2' => '充值余额-log',
+                'credit2recharge' => '充值余额审核',
+
             ),
             'credit' => array(
                 'text' => '积分余额明细',

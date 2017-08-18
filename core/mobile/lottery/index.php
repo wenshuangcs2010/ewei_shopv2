@@ -12,9 +12,9 @@ class index_EweiShopV2Page extends MobilePage {
 
     function main() {
         global $_W, $_GPC;
-        $task_sql = 'SELECT COUNT(*) FROM '.tablename('ewei_shop_lottery_join').'  WHERE lottery_num>0 and uniacid=:uniacid AND `join_user`=:join_user ';
-        $lottery = pdo_fetchcolumn($task_sql,array(':uniacid'=>$_W['uniacid'],':join_user'=>$_W['openid']));
-        include $this->template();
+        $lottery=m("lottery")->getLottery($_GPC['id']);
+        $type=$lottery['lottery_type'];
+        include $this->template("sale/nsign/lottery");
     }
     function lottery_desc(){
         global $_W, $_GPC;

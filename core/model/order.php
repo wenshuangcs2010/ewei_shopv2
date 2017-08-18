@@ -85,6 +85,7 @@ class Order_EweiShopV2Model
                         //处理积分与库存
                         $this->setStocksAndCredits($orderid, 1);
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
+
                         if($customs){
                             if($order['if_customs_z']==1){//需要盛付通处理不在此次报关和申报
                                 $params['paytype']=37;
@@ -124,7 +125,7 @@ class Order_EweiShopV2Model
                                     }
                                  }
                             }elseif($params['paytype']==22){
-
+                               
                             }elseif($params['paytype']==37){
 
                             }
@@ -153,6 +154,28 @@ class Order_EweiShopV2Model
                         //分销商
                         if (p('commission')) {
                             p('commission')->checkOrderPay($order['id']);
+                        }
+                        if (p('task')){
+                            if ($order['iscomment']){
+                                p('task')->checkTaskReward('commission_order',1);//分销订单
+                            }
+                            p('task')->checkTaskReward('cost_total',$order['price']);//消费总额
+                            p('task')->checkTaskReward('cost_enough',$order['price']);//消费满额
+                            p('task')->checkTaskReward('cost_count',1);//满单
+                            $goodslist = pdo_fetchall("SELECT goodsid FROM ".tablename('ewei_shop_order_goods')." WHERE orderid = :orderid AND uniacid = :uniacid",array(':orderid'=>$orderid, ':uniacid'=>$_W['uniacid']));
+                            foreach($goodslist as $item) {
+                                p('task')->checkTaskReward('cost_goods'.$item['goodsid'],1,$_W['openid']);//购买指定商品
+                            }
+                        }
+                        //抽奖模块
+                        if(p('lottery')&&empty($ispeerpay)){
+                            //type 1:消费 2:签到 3:任务 4:其他
+                            $res = p('lottery')->getLottery($order['openid'],1,array('money'=>$order['price'],'paytype'=>1));
+
+                            if($res){
+                                //发送模版消息
+                                p('lottery')->getLotteryList($order['openid'],array('lottery_id'=>$res));
+                            }
                         }
                     }
                 }
@@ -686,8 +709,8 @@ class Order_EweiShopV2Model
         return $data;
     }
 
-    //获得d商品促销或会员折扣价格
-    function getGoodsDiscountPrice($g, $level, $type = 0,$sale=true)
+        //获得d商品促销或会员折扣价格
+    function getGoodsDiscountPrice($g, $level, $type = 0)
     {
 
         //商品原价
@@ -703,7 +726,7 @@ class Order_EweiShopV2Model
             $gprice = $g['marketprice'] * $total;
         }
         //重复购买购买是否享受其他折扣
-        $buyagain_sale = $sale;
+        $buyagain_sale = true;
         $buyagainprice = 0;
         $canbuyagain = false;
 
@@ -719,6 +742,7 @@ class Order_EweiShopV2Model
             }
         }
 
+
         //成交的价格
         $price = $gprice;
         $price1 = $gprice;
@@ -726,12 +750,19 @@ class Order_EweiShopV2Model
 
         //任务活动物品
         $taskdiscountprice = 0; //任务活动折扣
+        $lotterydiscountprice = 0; //游戏活动折扣
         if (!empty($g['is_task_goods'])) {
             $buyagain_sale = false;
             $price = $g['task_goods']['marketprice'] * $total;
 
             if ($gprice > $price) {
-                $taskdiscountprice = abs($gprice - $price);
+                $d_price = abs($gprice - $price);
+
+                if ($g['is_task_goods'] == 1) {
+                    $taskdiscountprice = $d_price;
+                } else if ($g['is_task_goods'] == 2) {
+                    $lotterydiscountprice = $d_price;
+                }
             }
         }
 
@@ -746,9 +777,9 @@ class Order_EweiShopV2Model
         $isCdiscount = 0;
         //判断是否有会员折扣
         $isHdiscount = 0;
-        //var_dump($g['isdiscount_stat_time']);
+
         //是否有促销
-        if ($g['isdiscount'] &&  $g['isdiscount_stat_time']<=time() && $g['isdiscount_time'] >= time() && $buyagain_sale) {
+        if ($g['isdiscount'] && $g['isdiscount_time'] >= time() && $buyagain_sale) {
 
             if (is_array($isdiscount_discounts)) {
                 $key = !empty($level['id']) ? 'level' . $level['id'] : 'default';
@@ -782,12 +813,14 @@ class Order_EweiShopV2Model
             }
 
             //判断促销价是否低于原价
-            if ($price1 > $gprice) {
+            if ($price1 >= $gprice) {
                 $isdiscountprice = 0;
+                $isCdiscount = 0;
             } else {
                 $isdiscountprice = abs($price1 - $gprice);
+                $isCdiscount = 1;
             }
-            $isCdiscount = 1;
+
         }
 
         if (empty($g['isnodiscount']) && $buyagain_sale) {
@@ -821,8 +854,15 @@ class Order_EweiShopV2Model
                     }
                 }
             }
-            $discountprice = abs($price2 - $gprice);
-            $isHdiscount = 1;
+
+            //判断促销价是否低于原价
+            if ($price2 >= $gprice) {
+                $discountprice = 0;
+                $isHdiscount = 0;
+            } else {
+                $discountprice = abs($price2 - $gprice);
+                $isHdiscount = 1;
+            }
         }
 
         if ($isCdiscount == 1) {
@@ -834,11 +874,12 @@ class Order_EweiShopV2Model
         }
 
 
+
         //平均价格
         $unitprice = round($price / $total, 2);
-        //使用促销的价格
+        //使用促销的减免价格
         $isdiscountunitprice = round($isdiscountprice / $total, 2);
-        //使用会员折扣的价格
+        //使用会员折扣的减免价格
         $discountunitprice = round($discountprice / $total, 2);
 
         if ($canbuyagain) {
@@ -850,11 +891,11 @@ class Order_EweiShopV2Model
         }
 
         $price = $price - $buyagainprice;
-
         return array(
             'unitprice' => $unitprice,
             'price' => $price,
             'taskdiscountprice' => $taskdiscountprice,
+            'lotterydiscountprice' => $lotterydiscountprice,
             'discounttype' => $discounttype,
             'isdiscountprice' => $isdiscountprice,
             'discountprice' => $discountprice,

@@ -13,10 +13,10 @@
     {ifp 'sale.package'}<li {if $_W['routes']=='sale.package'}class="active"{/if}><a href="{php echo webUrl('sale/package')}">套餐管理</a></li>{/if}
     {ifp 'sale.gift'}<li {if $_W['routes']=='sale.gift'}class="active"{/if}><a href="{php echo webUrl('sale/gift')}">赠品管理</a></li>{/if}
   
-    {ifp 'sale.sign'}<li {if $_W['routes']=='sale.sign'}class="active"{/if}><a href="{php echo webUrl('sale/sign')}">签到管理(测试中)</a></li>
-<li {if $_W['routes']=='sale.sign.log'}class="active"{/if}><a href="{php echo webUrl('sale/sign/log')}">签到记录(测试中)</a></li>
+    {ifp 'sale.sign'}<li {if $_W['routes']=='sale.sign'}class="active"{/if}><a href="{php echo webUrl('sale/sign')}">签到管理(暂停使用)</a></li>
+<li {if $_W['routes']=='sale.sign.log'}class="active"{/if}><a href="{php echo webUrl('sale/sign/log')}">签到记录(暂停使用)</a></li>
  
-    {ifp 'sale.bigwheel'}<li {if $_W['routes']=='sale.bigwheel'}class="active"{/if}><a href="{php echo webUrl('sale/bigwheel')}">大转盘管理(测试中)</a></li>{/if}
+    {ifp 'sale.bigwheel'}<li {if $_W['routes']=='sale.bigwheel'}class="active"{/if}><a href="{php echo webUrl('sale/bigwheel')}">大转盘管理(暂停使用)</a></li>{/if}
     {/if}
  </ul>
 {/if}

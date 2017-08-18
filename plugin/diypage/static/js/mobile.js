@@ -86,7 +86,6 @@ define(['core', 'tpl'], function (core, tpl) {
           require(['swiper'], function (modal) {
             var loadsize=$(".swiper-container3 a").size();
             var show_num=$(".swiper-container3").data("num");
-            console.log(show_num);
             if(typeof(show_num)=="undefined" ||show_num==""){ 
                 show_num=6;
             }

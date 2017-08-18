@@ -93,8 +93,8 @@
 
         <th style='width:80px;'>充值金额</th>
         <th style='width:100px;'>充值时间</th>
-        <th style='width:80px;'>充值方式</th>
-        <th style='width:70px;'>状态</th>
+        <th style='width:70px;'>充值方式</th>
+        <th style='width:55px;'>状态</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -162,6 +162,12 @@
 		            	<a class='btn btn-danger btn-sm' data-toggle='ajaxPost' data-confirm="确认退款到微信钱包?" href="{php echo webUrl('finance/log/refund',array('id' => $row['id']));}">退款</a>
 		            {/if}
 	            {/if}
+            {/if}
+            {ifp 'finance.recharge.credit2recharge'}
+                {if $row['status']==0}
+                <a class='btn btn-danger btn-sm' data-toggle='ajaxPost' data-confirm="确认充值到用户账号?" href="{php echo webUrl('finance/log/credit2recharge',array('id' => $row['id'],'status'=>1));}">通过</a>
+                <a class='btn btn-danger btn-sm' data-toggle='ajaxPost' data-confirm="驳回充值申请?" href="{php echo webUrl('finance/log/credit2recharge',array('id' => $row['id'],'status'=>-1));}">驳回</a>
+                {/if}
             {/if}
 
         </td>

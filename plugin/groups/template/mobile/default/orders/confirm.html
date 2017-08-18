@@ -72,7 +72,7 @@
                 <div class="fui-cell-info"><input type="tel" placeholder="请输入联系电话" name='mobile'   class="fui-input" value="{$member['mobile']}"/></div>
             </div>
         </div>
-        <div class="fui-list-group" style='margin-top: 10px'>
+                <div class="fui-list-group" style='margin-top: 10px'>
             <div class="fui-list goods-item">
                 <div class="fui-list-media">
                     <a href="{php echo mobileUrl('groups/goods',array('id'=>$goods['id']))}" class="external">
@@ -108,6 +108,23 @@
                 </div>
             </div>
         </div>
+        <div class="fui-cell-group sm" id="realnamecheck" {if $depot['if_declare']==1} style="display: block"{else}style="display: none" {/if} >
+
+                <div class="fui-cell">
+                        <div class="fui-cell-label" style="font-size: 0.6rem;color: red" >海关总署:</div>
+                        <div class="fui-cell-remark noremark" style="font-size: 0.6rem;color: red;text-align: left;">订购人信息必须和支付人开户身份信息一致</div>
+                </div>
+
+                <div class="fui-cell">
+                    <div class="fui-cell-label sm">姓名</div>
+                    <div class="fui-cell-info"><input type="text" placeholder="请输入姓名" name='srealname' id="srealname" class="fui-input" value="{$lastorder['srealname']}"/></div>
+                </div>
+                <div class="fui-cell">
+                    <div class="fui-cell-label sm">身份证</div>
+                    <div class="fui-cell-info"><input type="text" placeholder="请输入身份证号码" name='imid' id="imid"   class="fui-input" value="{$lastorder['imid']}"/></div>
+                </div>
+        </div>
+
         <div class="fui-cell-group  sm">
             <div id='coupondiv' class="fui-cell fui-cell-click" {if $couponcount<=0}style='display:none'{/if}>
             <div class='fui-cell-label' style='width:auto;'>优惠券</div>

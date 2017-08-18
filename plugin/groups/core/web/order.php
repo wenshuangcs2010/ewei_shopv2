@@ -217,6 +217,9 @@ class Order_EweiShopV2Page extends PluginWebPage {
 		}
 		include $this->template();
 	}
+	function editimid(){
+		
+	}
 	/*
 	 * 订单详情
 	 * */

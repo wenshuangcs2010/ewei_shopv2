@@ -595,9 +595,7 @@ class List_EweiShopV2Page extends WebPage {
                 $diyform_flag_author = 1;
                 $authorfields = iunserializer($member['diyauthordata']);
             }
-
             if (!empty($member['diyaagentdata'])) {
-
                 $diyform_flag_abonus = 1;
                 $aafields = iunserializer($member['diyaagentfields']);
             }

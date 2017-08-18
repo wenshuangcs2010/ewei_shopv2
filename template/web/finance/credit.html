@@ -1,5 +1,8 @@
 {template '_header'}
-<div class="page-heading"> <h2>{if $type=='credit1'}积分{else}余额{/if}明细</h2> </div>
+<div class="page-heading"> <h2>{if $type=='credit1'}积分{else}余额{/if}明细</h2> 
+<span>{if $type=='credit2'}未使用的余额:￥{$lastcreadit2};已使用的余额:{$allprice}{/if}</span>
+</div>
+
 <form action="./index.php" method="get" class="form-horizontal" role="form" id="form1">
     <input type="hidden" name="c" value="site" />
     <input type="hidden" name="a" value="entry" />

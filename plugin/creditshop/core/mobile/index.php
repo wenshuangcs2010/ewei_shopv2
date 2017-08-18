@@ -40,7 +40,7 @@ class Index_EweiShopV2Page extends CreditshopMobilePage {
 
 		//积分兑换
 		$exchanges = pdo_fetchall("select id, title,goodstype, subtitle, credit, money, thumb,`type` from " . tablename('ewei_shop_creditshop_goods') . '
-				where uniacid=:uniacid and isrecommand = 1 and goodstype = 0 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
+				where uniacid=:uniacid and isrecommand = 1 and goodstype = 0 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 5', array(':uniacid' => $uniacid));
 		$exchanges = set_medias($exchanges, 'thumb');
 		is_array($exchanges)?$exchanges:$exchanges = array();
 		foreach($exchanges as $key => $value){

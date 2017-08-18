@@ -78,7 +78,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
         });
 
         if( modal.seckillinfo == false ){
-
+            
             $('.fui-number', modal.container.container).numbers({
                 value: modal.params.total,
                 max: modal.goods.maxbuy,
@@ -87,6 +87,7 @@ define(['core', 'tpl', 'biz/member/cart', 'biz/plugin/diyform'], function (core,
                 maxToast: "最多购买{max}" + modal.goods.unit,
                 callback: function (num) {
                     modal.params.total = num;
+
                 }
             });
 

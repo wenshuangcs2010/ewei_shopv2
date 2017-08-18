@@ -379,6 +379,13 @@
                     <div class="fui-cell-remark noremark">-&yen; {$order['isdiscountprice']}</div>
                 </div>
                 {/if}
+                {if $order['lotterydiscountprice']>0}
+                <div class="fui-cell">
+                    <div class="fui-cell-label">游戏优惠</div>
+                    <div class="fui-cell-info"></div>
+                    <div class="fui-cell-remark noremark">-&yen; {$order['lotterydiscountprice']}</div>
+                </div>
+                {/if}
                 {if $order['deductprice']>0}
                 <div class="fui-cell">
                     <div class="fui-cell-label">{$_W['shopset']['trade']['credittext']}抵扣</div>

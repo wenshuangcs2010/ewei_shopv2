@@ -12,9 +12,18 @@ if (!defined('IN_IA')) {
 class Log_EweiShopV2Page extends MobileLoginPage {
 
     function main() {
+       
         global $_W, $_GPC;
         $_GPC['type'] = intval($_GPC['type']);
         include $this->template();
+    }
+    function test(){
+       if(is_qyweixin()){
+            var_dump("企业微信");
+       }else{
+         var_dump("非企业微信");
+       }
+     
     }
     function get_list(){
         global $_W, $_GPC;

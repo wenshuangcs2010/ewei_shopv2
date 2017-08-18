@@ -17,7 +17,7 @@ class Picker_EweiShopV2Page extends MobilePage {
         $id = intval($_GPC['id']);
         $rank = intval($_SESSION[$id . '_rank']);
         $join_id = intval($_SESSION[$id . '_join_id']);
-        $log_id=intval($_GPC['log_id']);
+        $log_id = intval($_SESSION[$id . '_log_id']);
         $seckillinfo = false;
         $seckill  = p('seckill');
         if( $seckill){
@@ -99,7 +99,7 @@ class Picker_EweiShopV2Page extends MobilePage {
         }
 
         //任务活动购买商品
-        $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $join_id);
+        $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $log_id, $join_id);
         if (empty($task_goods_data['is_task_goods'])) {
             $is_task_goods = 0;
         } else {
@@ -270,23 +270,7 @@ class Picker_EweiShopV2Page extends MobilePage {
                 }
             }
         }
-        if($log_id>0){
-            $lotterygoods=m("lottery")->show_goods($openid,$id,$log_id);
-            if(!empty($lotterygoods)){
-                
-               // var_dump($lotterygoods['marketprice']);
-                $goods['marketprice']=$lotterygoods['marketprice'];
-                $goods['minprice']=$lotterygoods['marketprice'];
-                $goods['maxprice']=$lotterygoods['marketprice'];
-                $goods['productprice']=$lotterygoods['marketprice'];
-                if($order_goodscount>=$lotterygoods['total']){
-                    $goods['userbuy'] = 0;
-                    $goods['canbuy']  = false;
-                }
-                $goods['maxbuy']=$lotterygoods['total'];
-                $canAddCart = false;
-            }
-        }
+        
 
         //是否可以加入购物车
         $goods['canAddCart'] = true;

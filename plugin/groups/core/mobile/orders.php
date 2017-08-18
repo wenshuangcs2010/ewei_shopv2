@@ -386,6 +386,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 			}else{
 				$goods['headsmoney'] = 0;
 			}
+
 			//是否支持核销
 			if(!empty($goods['isverify'])){
 				$isverify = true;
@@ -421,6 +422,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 				}
 				$verifynum = !empty($goods['verifytype'])?$verifynum = $goods['verifynum']:1;
 			}else{
+
 				if(empty($_GPC['aid'])){
 					//默认地址
 				$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . '
@@ -430,8 +432,8 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 				$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid   limit 1'
                 , array(':uniacid' => $uniacid, ':openid' => $openid, ':id' => $_GPC['aid']));
 				}
-
 			}
+
 			/*积分抵扣*/
 			$creditdeduct = pdo_fetch("SELECT creditdeduct,groupsdeduct,credit,groupsmoney FROM" . tablename('ewei_shop_groups_set') .  "WHERE uniacid = :uniacid ",array(':uniacid'=>$uniacid));
 			if(intval($creditdeduct['creditdeduct'])){//是否开启积分抵扣
@@ -485,7 +487,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 			$goods['weight']=$goods_info['weight'];
             $depotid=$goods['depotid']=$goods_info['depotid'];
             $goods['disgoods_id']=$goods_info['disgoods_id'];
-
+            $depot=Dispage::getDepot($depotid);
             $dispatch_price=p('groups')->group_dispatch_price($goods,$address);
           	//var_dump($dispatch_price);
 			//生成订单号
@@ -499,6 +501,13 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 				if($isverify){
 					if(empty($_GPC['realname']) || empty($_GPC['mobile'])){
 						throw new Exception('联系人或联系电话不能为空！');
+					}
+				}
+				if($depot['if_declare']==1){
+					$srealname=$_GPC['srealname'];
+					$imid=$_GPC['imid'];
+					if(empty($srealname) || empty($imid)){
+						throw new Exception('身份证信息不能为空！');
 					}
 				}
 				$consumption_tax=0;
@@ -548,6 +557,8 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage {
 					'teamid'=>$teamid,
 					'is_team' => $is_team,
 					'heads' => $heads,
+					'srealname'=>$srealname,
+					'imid'=>$imid,
 					'discount' => !empty($heads)?$goods['headsmoney']:0,
 					'addressid' => intval($_GPC['aid']),
 					'message' => trim($_GPC['message']),

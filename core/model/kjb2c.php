@@ -253,6 +253,7 @@ class Kjb2c_EweiShopV2Model {
 			$address=serialize($address);
 			$order['address']=$address;
 			$order['dpostfee']=$order['depostfee'];
+			$order['realname']=$order['srealname'];
 			$order['tax_rate']=empty($order['vat_rate']) ?0 : $order['vat_rate'];
 			$order['tax_consumption']=empty($order['consumption_tax']) ?0 : $order['consumption_tax'];
 			if($order['pay_type']=="wechat"){

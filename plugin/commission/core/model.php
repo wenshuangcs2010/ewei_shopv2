@@ -1533,17 +1533,68 @@ if (!class_exists('CommissionModel')) {
                             if ($author) {
                                 $author->upgradeLevelByAgent($parent['id']);
                                 $memberupdatedata=array('agentid' => $parent['id'], 'childtime' => $time,'authorid'=>$authorid);
+                                $isbrower=-1;
                                 if($parent['changemember']==1){
-                                    $memberupdatedata['level']=$parent['memberlevel'];
-                                    $memberupdatedata['groupid']=$parent['membergroupid'];
+                                    switch ($parent['isbrowser']) {
+                                        case 0:
+                                            $isbrower=1;
+                                            break;
+                                        case 1:
+                                            if(is_moblie()){
+                                                $isbrower=1;
+                                            }
+                                        break;
+                                        case 2:
+                                            if(is_weixin()){
+                                                $isbrower=1;
+                                            }
+                                        break;
+                                        case 3:
+                                            if(is_qyweixin()){
+                                                $isbrower=1;
+                                            }
+                                        break;
+                                        default:
+                                            $isbrower=-1;
+                                            break;
+                                    }
+                                    if($isbrower==1){
+                                        $memberupdatedata['level']=$parent['memberlevel'];
+                                        $memberupdatedata['groupid']=$parent['membergroupid'];
+                                    }
                                 }
 
                                 pdo_update('ewei_shop_member',$memberupdatedata , array('uniacid' => $_W['uniacid'], 'id' => $member['id']));
                             }else{
                                 $memberupdatedata=array('agentid' => $parent['id'], 'childtime' => $time);
                                 if($parent['changemember']==1){
-                                    $memberupdatedata['level']=$parent['memberlevel'];
-                                    $memberupdatedata['groupid']=$parent['membergroupid'];
+                                    switch ($parent['isbrowser']) {
+                                        case 0:
+                                            $isbrower=1;
+                                            break;
+                                        case 1:
+                                            if(is_moblie()){
+                                                $isbrower=1;
+                                            }
+                                        break;
+                                        case 2:
+                                            if(is_weixin()){
+                                                $isbrower=1;
+                                            }
+                                        break;
+                                        case 3:
+                                            if(is_qyweixin()){
+                                                $isbrower=1;
+                                            }
+                                        break;
+                                        default:
+                                            $isbrower=-1;
+                                            break;
+                                    }
+                                    if($isbrower==1){
+                                        $memberupdatedata['level']=$parent['memberlevel'];
+                                        $memberupdatedata['groupid']=$parent['membergroupid'];
+                                    }
                                 }
                                 pdo_update('ewei_shop_member', $memberupdatedata, array('uniacid' => $_W['uniacid'], 'id' => $member['id']));
                             }

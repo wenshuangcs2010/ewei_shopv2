@@ -15,7 +15,6 @@ class Log_EweiShopV2Page extends WebPage {
         global $_W, $_GPC;
        
         //var_dump( $disInfo);
-      
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
 
@@ -177,7 +176,29 @@ class Log_EweiShopV2Page extends WebPage {
         $levels = m('member')->getLevels();
         include $this->template();
     }
-
+    function credit2recharge(){
+       global $_W, $_GPC;
+       $id=$_GPC['id'];
+       $status=$_GPC['status'];
+       $memberlog=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_member_log")." where id=:id and uniacid=:uniacid",array(":id"=>$id,":uniacid"=>$_W['uniacid']));
+       if(empty($memberlog)){
+        show_json(0);
+       }
+        $profile = m('member')->getMember($memberlog['openid']);
+       if($memberlog['status']!=1 && $status==1){
+        pdo_update("ewei_shop_member_log",array("status"=>1),array("id"=>$id));
+        $profile = m('member')->getMember($memberlog['openid']);
+        m('member')->setCredit($memberlog['openid'], "credit2", $memberlog['money'], array($_W['uid'], '后台会员充值余额'. " " . $memberlog['remark']));
+        m('notice')->sendMemberLogMessage($id);
+        plog('finance.recharge.credit2', "充值余额: {$memberlog['money']} <br/>会员信息: ID: {$profile['id']} /  {$profile['openid']}/{$profile['nickname']}/{$profile['realname']}/{$profile['mobile']} 通过审核");
+        show_json(1);
+       }
+       if($status==-1){
+            pdo_update("ewei_shop_member_log",array("status"=>-1),array("id"=>$id));
+            plog('finance.recharge.credit2', "充值余额: {$memberlog['money']} <br/>会员信息: ID: {$profile['id']} /  {$profile['openid']}/{$profile['nickname']}/{$profile['realname']}/{$profile['mobile']} 驳回申请");
+            show_json(1);
+       }
+    }
     function refund() {
         global $_W, $_GPC;
         $set = $_W['shopset']['shop'];

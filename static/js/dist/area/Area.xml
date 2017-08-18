@@ -2200,10 +2200,16 @@
   <county name="来凤县" /> 
   <county name="鹤峰县" /> 
   </city>
- <city name="湖北省辖单位">
-  <county name="仙桃市" /> 
+  <city name="潜江市">
   <county name="潜江市" /> 
+  </city>
+  <city name="仙桃市">
+  <county name="仙桃市" /> 
+  </city>
+  <city name="天门市">
   <county name="天门市" /> 
+  </city>
+  <city name="神农架林区">
   <county name="神农架林区" /> 
   </city>
   </province>

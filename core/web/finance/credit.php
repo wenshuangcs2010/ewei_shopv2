@@ -17,7 +17,14 @@ class Credit_EweiShopV2Page extends WebPage
         global $_W, $_GPC;
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
-
+        if($type=="credit2"){
+            //获取余额已经抵扣多少钱
+            $sql="select sum(num) from ims_mc_credits_record where uniacid=:uniacid    and credittype=:credittype and module =:module";
+            $lastcreadit2=pdo_fetchcolumn($sql,array(":uniacid"=>$_W['uniacid'],":credittype"=>$type,":module"=>"ewei_shopv2"));
+            //获取余额支付金额
+            $sql="select sum(num) from ims_mc_credits_record where uniacid=:uniacid    and credittype=:credittype and module =:module and num<0";
+            $allprice=pdo_fetchcolumn($sql,array(":uniacid"=>$_W['uniacid'],":credittype"=>$type,":module"=>"ewei_shopv2"));
+        }
         $condition = ' and log.uniacid=:uniacid and log.module=:module and m.uniacid=:uniacid  and log.credittype=:credittype';
         $params = array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':credittype' => $type);
 

@@ -218,9 +218,10 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
     modal.caculate = function () {
         var goodsprice = core.getNumber($('.goodsprice').html());
         var taskdiscountprice = core.getNumber($(".taskdiscountprice").val());
+        var lotterydiscountprice = core.getNumber($(".lotterydiscountprice").val());
         var discountprice = core.getNumber($(".discountprice").val());
         var isdiscountprice = core.getNumber($(".isdiscountprice").val());
-        var totalprice = goodsprice - taskdiscountprice - discountprice - isdiscountprice;
+         var totalprice = goodsprice - taskdiscountprice - lotterydiscountprice - discountprice - isdiscountprice;
         if ($('.shownum').length > 0) {
             totalprice = core.getNumber($('.marketprice').html()) * parseInt($('.shownum').val())
         }
@@ -253,7 +254,9 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                 if (getjson.result.discountprice) {
                     $('#discountprice').val(core.number_format(getjson.result.discountprice, 2));
                 }
-
+                if (getjson.result.lotterydiscountprice) {
+                    $('#lotterydiscountprice').val(core.number_format(getjson.result.lotterydiscountprice, 2));
+                }
                 if (getjson.result.buyagain) {
                     $('#buyagain').val(core.number_format(getjson.result.buyagain, 2));
                     $('#showbuyagainprice').html(core.number_format(getjson.result.buyagain, 2)).parents(".fui-cell").show();
@@ -323,10 +326,11 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
         var goodsprice = core.getNumber($('.goodsprice').html());
         var couponprice = couponprice;
         var taskdiscountprice = core.getNumber($(".showtaskdiscountprice").html());
+        var lotterydiscountprice = core.getNumber($(".showlotterydiscountprice").html());
         var discountprice = core.getNumber($(".showdiscountprice").html());
         var isdiscountprice = core.getNumber($(".showisdiscountprice").html());
         var buyagainprice = core.getNumber($("#buyagain").val());
-        var totalprice = goodsprice - taskdiscountprice - discountprice - isdiscountprice - couponprice - buyagainprice;
+        var totalprice = goodsprice - taskdiscountprice - lotterydiscountprice -discountprice - isdiscountprice - couponprice - buyagainprice;
         var dispatchprice = core.getNumber($(".dispatchprice").html());
         var merch_enoughprice = 0;
         if ($("#merch_deductenough_money").length > 0 && $("#merch_deductenough_money").html() != '') {
@@ -380,7 +384,7 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
         var deductprice = 0;
         var taskdiscountprice = core.getNumber($(".taskdiscountprice").val());
         var discountprice = core.getNumber($(".discountprice").val());
-
+        var lotterydiscountprice = core.getNumber($(".lotterydiscountprice").val());
         var isdiscountprice = core.getNumber($(".isdiscountprice").val());
         if (modal.params.couponid == 0) {
             if (taskdiscountprice > 0) {
@@ -394,6 +398,12 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                 $('.discount').show()
             } else {
                 $('.discount').hide()
+            }
+            if (lotterydiscountprice > 0) {
+                $(".showlotterydiscountprice").html($(".lotterydiscountprice").val());
+                $('.islotterydiscount').show()
+            } else {
+                $('.islotterydiscount').hide()
             }
             if (isdiscountprice > 0) {
                 $(".showisdiscountprice").html($(".isdiscountprice").val());

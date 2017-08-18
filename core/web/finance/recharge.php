@@ -37,8 +37,9 @@ class Recharge_EweiShopV2Page extends WebPage {
                     $num = -$num;
                 }
             }
-            m('member')->setCredit($profile['openid'], $type, $num, array($_W['uid'], '后台会员充值' . $typestr . " " . $remark));
-
+            if($type=='credit1'){
+                m('member')->setCredit($profile['openid'], $type, $num, array($_W['uid'], '后台会员充值' . $typestr . " " . $remark));
+            }
             if($type=='credit2'){
                 $set = m('common')->getSysset('shop');
                 $logno = m('common')->createNO('member_log', 'logno', 'RC');
@@ -48,7 +49,7 @@ class Recharge_EweiShopV2Page extends WebPage {
                     'uniacid' => $_W['uniacid'],
                     'type' => '0',
                     'createtime' => TIMESTAMP,
-                    'status' => '1',
+                    'status' => '0',
                     'title' => $set['name'] . "会员充值",
                     'money' => $num,
                     'remark' => $remark,
@@ -56,10 +57,12 @@ class Recharge_EweiShopV2Page extends WebPage {
                 );
                 pdo_insert('ewei_shop_member_log', $data);
                 $logid = pdo_insertid();
-                m('notice')->sendMemberLogMessage($logid);
+                //m('notice')->sendMemberLogMessage($logid);
             }
-
-            plog('finance.recharge.' . $type, "充值{$typestr}: {$_GPC['num']} <br/>会员信息: ID: {$profile['id']} /  {$profile['openid']}/{$profile['nickname']}/{$profile['realname']}/{$profile['mobile']}");
+            plog('finance.recharge.' . $type, "充值{$typestr}: {$_GPC['num']} <br/>会员信息: ID: {$profile['id']} /  {$profile['openid']}/{$profile['nickname']}/{$profile['realname']}/{$profile['mobile']} 等待审核中");
+            if($type=='credit1'){
+                plog('finance.recharge.' . $type, "充值{$typestr}: {$_GPC['num']} <br/>会员信息: ID: {$profile['id']} /  {$profile['openid']}/{$profile['nickname']}/{$profile['realname']}/{$profile['mobile']}");
+            }
             show_json(1, array('url' => referer()));
         }
         include $this->template();

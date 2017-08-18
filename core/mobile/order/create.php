@@ -74,7 +74,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
         $uniacid = $_W['uniacid'];
         $openid = $_W['openid'];
-        $log_id=intval($_GPC['log_id']);
+
         $goodsid = intval(intval($_GPC['id']));
         //赠品id，订单是否有赠品
         $giftid = intval($_GPC['giftid']);
@@ -393,9 +393,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                     //任务活动购买商品
                     $rank = intval($_SESSION[$id . '_rank']);
+                    $log_id = intval($_SESSION[$id . '_log_id']);
                     $join_id = intval($_SESSION[$id . '_join_id']);
 
-                    $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $join_id, $optionid);
+                    $task_goods_data = m('goods')->getTaskGoods($openid, $id, $rank, $log_id, $join_id, $optionid);
                     if (empty($task_goods_data['is_task_goods'])) {
                         $g['is_task_goods'] = 0;
                     } else {
@@ -597,7 +598,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         $g['ggprice'] = $prices['price'];
                         $g['unitprice'] = $prices['unitprice'];
                     }
-                   
                 }
 
 
@@ -1364,6 +1364,8 @@ class Create_EweiShopV2Page extends MobileLoginPage
         //任务活动优惠
         $taskdiscountprice = 0;
 
+        //游戏活动优惠
+        $lotterydiscountprice = 0;
         //会员优惠
         $discountprice = 0;
 
@@ -1407,20 +1409,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $deductenough_enough = 0;
 
         $goodsarr = $_GPC['goods'];
-
-        if(count($goodsarr)==1){
-            if($log_id>0){
-               foreach($goodsarr as $g){
-                    $lotterygoods=m("lottery")->show_goods($openid,$g['goodsid'],$log_id);
-                    
-                    if(!empty($lotterygoods)){
-
-                        $allow_sale=false;
-                    }
-                } 
-            }
-            
-        }
         if (is_array($goodsarr)) {
 
             $weight = 0;
@@ -1473,8 +1461,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 } else {
                     $rank = intval($_SESSION[$goodsid . '_rank']);
+                    $log_id = intval($_SESSION[$goodsid . '_log_id']);
                     $join_id = intval($_SESSION[$goodsid . '_join_id']);
-                    $task_goods_data = m('goods')->getTaskGoods($openid, $goodsid, $rank, $join_id, $optionid);
+                    $task_goods_data = m('goods')->getTaskGoods($openid, $goodsid, $rank, $log_id, $join_id, $optionid);
                     if (empty($task_goods_data['is_task_goods'])) {
                         $data['is_task_goods'] = 0;
                     } else {
@@ -1509,10 +1498,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 } else {
                     //计算折扣或促销后成交价格
-                    if($log_id==0 || empty($log_id)){
+                   
                         $prices = m('order')->getGoodsDiscountPrice($data, $level);
                         $data['ggprice'] = $prices['price'];
-                    }
+                    
                    
                    
                 }
@@ -1535,6 +1524,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                     //秒杀不管其他活动
                     $g['taskdiscountprice'] = 0;
+                    $g['lotterydiscountprice'] = 0;
                     $g['discountprice'] = 0;
                     $g['isdiscountprice'] = 0;
                     $g['discounttype'] = 0;
@@ -1543,11 +1533,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                     $g['taskdiscountprice'] = $prices['taskdiscountprice'];
                     $g['discountprice'] = $prices['discountprice'];
+                    $g['lotterydiscountprice'] = $prices['lotterydiscountprice'];
                     $g['isdiscountprice'] = $prices['isdiscountprice'];
                     $g['discounttype'] = $prices['discounttype'];
 
                     $taskdiscountprice += $prices['taskdiscountprice'];
-
+                    $lotterydiscountprice += $prices['lotterydiscountprice'];
                     //重复购买的优惠价格
                     $buyagainprice += $prices['buyagainprice'];
 
@@ -1565,17 +1556,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         //会员优惠
                         $discountprice += $prices['discountprice'];
                     }
-                }
-
-                if($log_id>0){
-                    
-                    $lotterygoods=m("lottery")->show_goods($openid,$goodsid,$log_id);
-              
-                        if(!empty($lotterygoods)){
-                            $allow_sale=false;
-                            $data['ggprice']=$lotterygoods['marketprice'];
-                        }
-                   
                 }
 
                 $realprice += $data['ggprice'];
@@ -1804,7 +1784,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $return_array['deductmoney'] = $deductmoney;
         $return_array['taskdiscountprice'] = $taskdiscountprice;
         $return_array['discountprice'] = $discountprice;
-
+        $return_array['lotterydiscountprice'] = $lotterydiscountprice;
         $return_array['isdiscountprice'] = $isdiscountprice;
 
         //var_dump($realprice);
@@ -1832,7 +1812,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         global $_W, $_GPC;
         $openid = $_W['openid'];
         $uniacid = $_W['uniacid'];
-        $log_id=intval($_GPC['log_id']);
+       
         $open_redis = function_exists('redis') && !is_error(redis());
 
         if( $open_redis ) {
@@ -1947,6 +1927,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $taskdiscountprice = 0; //任务活动优惠
         $discountprice = 0; //折扣的钱
         $isdiscountprice = 0; //促销优惠的钱
+        $lotterydiscountprice = 0; //游戏活动优惠
         $merchisdiscountprice = 0; //多商户促销优惠的钱
         $cash = 1; //是否支持货到付款
         $depotid=0;//仓库ID
@@ -2055,6 +2036,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
             //任务活动购买商品
             $rank = intval($_SESSION[$goodsid . '_rank']);
+            $log_id = intval($_SESSION[$goodsid . '_log_id']);
             $join_id = intval($_SESSION[$goodsid . '_join_id']);
             if ($data['seckillinfo'] && $data['seckillinfo']['status'] == 0) {
 
@@ -2065,7 +2047,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $tgoods = false;
             } else {
 
-                $task_goods_data = m('goods')->getTaskGoods($openid, $goodsid, $rank, $join_id, $optionid);
+                $task_goods_data = m('goods')->getTaskGoods($openid, $goodsid, $rank, $log_id, $join_id, $optionid);
                 if (empty($task_goods_data['is_task_goods'])) {
                     $data['is_task_goods'] = 0;
                 } else {
@@ -2289,6 +2271,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $prices = m('order')->getGoodsDiscountPrice($data, $level,0,$package_sale);
                 $data['ggprice'] = $prices['price'];
                 $data['taskdiscountprice'] = $prices['taskdiscountprice'];
+                $data['lotterydiscountprice'] = $prices['lotterydiscountprice'];
                 $data['discountprice'] = $prices['discountprice'];
                 $data['discountprice'] = $prices['discountprice'];
                 $data['discounttype'] = $prices['discounttype'];;
@@ -2300,10 +2283,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $data['buyagainprice'] = $prices['buyagainprice'];
 
                 $goodsprice += $g['ggprice'];
-               
+
                 $buyagainprice += $prices['buyagainprice'];
                 $taskdiscountprice += $prices['taskdiscountprice'];
-
+                $lotterydiscountprice += $prices['lotterydiscountprice'];
 
                 if ($prices['discounttype'] == 1) {
                     $isdiscountprice += $prices['isdiscountprice'];
@@ -2324,15 +2307,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 $discountprice_array[$merchid]['ggprice'] += $prices['ggprice'];
 
             }
-            if($log_id>0){
-                $lotterygoods=m("lottery")->show_goods($_W['openid'],$goodsid,$log_id);
-                if(!empty($lotterygoods)){
-                    
-                    $data['ggprice']=$lotterygoods['marketprice'];
-                    $saleset = false;
-                }
-            }
-           
             $merch_array[$merchid]['ggprice'] += $data['ggprice'];
             $totalprice += $data['ggprice'];
 
@@ -2508,6 +2482,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $discountprice = $return_array['discountprice'];
             $couponprice = $return_array['deductprice'];
             $totalprice = $return_array['totalprice'] ;
+
             $discountprice_array = $return_array['discountprice_array'];
             $merchisdiscountprice = $return_array['merchisdiscountprice'];
             $coupongoodprice = $return_array['coupongoodprice'];
@@ -2674,7 +2649,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         if(!empty($disaccount)){
             $distcode=$disaccount['distcode'];
         }else{
-            $distcode="SH";
+            $distcode="SHCG";
         }
         //生成订单号
         if ($ismerch > 0) {
@@ -2703,15 +2678,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
             $totalprice = $packageprice + $package['freight'];
             $is_package = 1;
         }
-
-        if(count($allgoods)==1){
-
-            $lotterygoodsall=m("lottery")->show_goods($_W['openid'],$goodsid,$log_id);
-            if(!empty($lotterygoodsall)){
-                pdo_update("ewei_shop_lottery_log",array("is_reward"=>2),array('id'=>$log_id));
-            }
-        }
-        
         //订单数据
         $order = array();
         $order['ismerch'] = $ismerch;
@@ -2725,6 +2691,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $order['grprice'] = $grprice;
         $order['depotid']=$depotid;//wsq
         $order['taskdiscountprice'] = $taskdiscountprice;
+        $order['lotterydiscountprice'] = $lotterydiscountprice;
         $order['discountprice'] = $discountprice;
         $order['isdiscountprice'] = $isdiscountprice;
         $order['merchisdiscountprice'] = $merchisdiscountprice;
@@ -2770,6 +2737,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $discountprice=$order['discountprice'];//会员优惠
         $isdiscountprice=$order['isdiscountprice'];//促销优惠
         $deductprice=$order['deductprice'];//积分抵扣
+        $lotterydiscountprice;//游戏优惠
         //余额抵扣
         $deductcredit2=$order['deductcredit2'];
         $seckilldiscountprice=$oder['seckilldiscountprice'];//秒杀优惠
@@ -2782,6 +2750,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         foreach($allgoods as $god){
             $goodsprice+=$god['ggprice'];
         }
+        
         $returndata=m("order")->get_tax($allgoods,$order['dispatchprice'],$goodsprice,$alldeduct);//正常算税
         $allgoods=$returndata['order_goods'];
         $order['dpostfee']=$returndata['depostfee'];
@@ -3131,11 +3100,14 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
 
         //任务活动下单成功
-        if (!empty($tgoods)) {
+         if (!empty($tgoods)) {
             $rank = intval($_SESSION[$tgoods['goodsid'] . '_rank']);
+            $log_id = intval($_SESSION[$tgoods['goodsid'] . '_log_id']);
             $join_id = intval($_SESSION[$tgoods['goodsid'] . '_join_id']);
-            m('goods')->getTaskGoods($tgoods['openid'], $tgoods['goodsid'], $rank, $join_id, $tgoods['optionid'], $tgoods['total']);
+            m('goods')->getTaskGoods($tgoods['openid'], $tgoods['goodsid'], $rank, $log_id, $join_id, $tgoods['optionid'], $tgoods['total']);
+
             $_SESSION[$tgoods['goodsid'] . '_rank'] = 0;
+            $_SESSION[$tgoods['goodsid'] . '_log_id'] = 0;
             $_SESSION[$tgoods['goodsid'] . '_join_id'] = 0;
         }
 
