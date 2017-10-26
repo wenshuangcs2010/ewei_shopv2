@@ -12,7 +12,7 @@ class Sendorder{
 		$this->params['realName']=urlencode($params['realname']);
 		$this->params['account_id']="";
 		$this->params['imId']=$params['imid'];
-		$this->params['disType']="T";
+		$this->params['disType']="F";
 		$this->params['payment_id']=13;
 		$this->params['tradeNum']=$params['paymentno'];;
 		$this->params['out_order_sn']=$params['ordersn'];
@@ -31,12 +31,26 @@ class Sendorder{
 	public function init_out_goods($goodslist){
 		$goodstemp1=array();
 		foreach($goodslist as $goods){
-			$goodstemp['goods_name']="aaa";
-			$goodstemp['only_sku']=$goods['goodssn'];
-			$goodstemp['quantity']=$goods['total'];
-			$goodstemp['price']=$goods['realprice']/$goods['total'];
-			$goodstemp1[]=$goodstemp;
+			if($goods['goodstype']==4){
+				$pgoodslist=json_decode($goods['content3'],true);
+				foreach($pgoodslist as $pgoods){
+					$goodstemp['goods_name']="aaa";
+					$goodstemp['only_sku']=$pgoods['goodssn'];
+					$goodstemp['quantity']=$pgoods['total'];
+					$goodstemp['price']=$pgoods['price'];
+					$goodstemp1[]=$goodstemp;
+				}
+			}else{
+				$goodstemp['goods_name']="aaa";
+				$goodstemp['only_sku']=$goods['goodssn'];
+				$goodstemp['quantity']=$goods['total'];
+				$goodstemp['price']=$goods['realprice']/$goods['total'];
+				$goodstemp1[]=$goodstemp;
+			}
+			
+			
 		}
+
 		$this->params['outOrderGoods']=$goodstemp1;
 	}
 

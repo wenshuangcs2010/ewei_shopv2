@@ -93,7 +93,10 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 
         $sec = m('common')->getSec();
         $sec = iunserializer($sec['sec']);
-
+        //检查是否有饭卡
+        //
+        var_Dump($_W['openid']);
+        die();
         //微信
         $wechat = array('success' => false);
         $jie = intval($_GPC['jie']);
@@ -182,6 +185,8 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             }
             $wechat['jie'] = $jie;
         }
+
+       // WeUtility::logging('aaa', var_export($wechat,true));
         $alipay = array('success' => false);
           
             //支付宝
@@ -505,6 +510,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             $ret['user'] = $order['openid'];
             $ret['fee'] = $order['price'];
             $ret['weid'] = $_W['uniacid'];
+            $ret['paytype'] = 3;
             $ret['uniacid'] = $_W['uniacid'];
             $pay_result = m('order')->payResult($ret);
             @session_start();
@@ -577,12 +583,14 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             $ret['user'] = $log['openid'];
             $ret['fee'] = $log['fee'];
             $ret['weid'] = $log['weid'];
+            $ret['paytype'] = 1;
             $ret['uniacid'] = $log['uniacid'];
             @session_start();
             $_SESSION[EWEI_SHOPV2_PREFIX . "_order_pay_complete"] = 1;
             $pay_result = m('order')->payResult($ret);
 
             if ($_W['ispost']) {
+                //var_dump($pay_result);
                 show_json(1, array('result'=>$pay_result));
             } else {
                 header("location:" . mobileUrl('order/pay/success', array('id' => $order['id'],'result'=>$pay_result)));
@@ -636,6 +644,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 $ret['fee'] = $log['fee'];
                 $ret['weid'] = $log['weid'];
                 $ret['uniacid'] = $log['uniacid'];
+                $ret['paytype'] = 21;
                 $ret['deduct'] = intval($_GPC['deduct']) == 1;
                 $pay_result = m('order')->payResult($ret);
                 @session_start();
@@ -768,21 +777,18 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             //余额支付伪造支付单
             pdo_update("ewei_shop_order",array("paymentno"=>"123456789"),array("id"=>$order['id']));
         }
-        if($order['paytype']==1 && $order['status']==1){//余额付款的时候
+        if($order['paytype']==1 && $order['status']==1 && $depotinfo['if_declare']==1){//余额付款的时候
             //检查是否要申报
             //如果不是跳转
-            if($depotinfo['if_declare']==1){
-                $order['if_customs_z']=1;
-            }
+            $order['if_customs_z']=1;
         }//如果用户用了余额去抵扣
         if($order['deductcredit2']> 0 && $depotinfo['if_declare']==1 && $order['status']==1){
             $order['if_customs_z']=1;
         }
         //如果是走盛付通转账  通用转账流程
-        if($order['if_customs_z']==1 && $order['zhuan_status']==0){//正常订单
+        if($order['paytype']==1 && $order['if_customs_z']==1 && $order['zhuan_status']==0){//正常订单
             //必须转账的 //覆盖原有支付单
             pdo_update("ewei_shop_order",array("if_customs_z"=>1),array("id"=>$orderid));
-            m('kjb2c')->_shenfupay($order);
         }
 
         $merchid = $order['merchid'];
@@ -815,7 +821,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 $store = pdo_fetch('select * from  ' . tablename('ewei_shop_store') . ' where id=:id limit 1', array(':id' => $order['storeid']));
             }
         }
-
+        
         //核销门店
         $stores = false;
         if ($order['isverify']) {

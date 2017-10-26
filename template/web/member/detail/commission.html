@@ -125,7 +125,36 @@
 
     </div>
 </div>
+{if $_W['uniacid']==DIS_ACCOUNT}
+<div class="form-group">
+    <label class="col-sm-2 control-label">分销商订单统计</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'commission.agent.check'}
+        <label class="radio-inline"><input type="radio" class="ordercheck" name="adata[ordercheck]" value="1" {if $member['ordercheck']==1}checked{/if}>是</label>
+        <label class="radio-inline" ><input type="radio" class="ordercheck" name="adata[ordercheck]" value="0" {if $member['ordercheck']==0}checked{/if}>否</label>
+        {else}
+        <input type='hidden' name='adata[ordercheck]' value='{$member['ordercheck']}' />
+        <div class='form-control-static'>{if $member['ordercheck']==1}是{else}否{/if}</div>
+        {/if}
+    </div>
+</div>
 
+<div class="showorder" style="{if $member['ordercheck']==1}{else}display: none{/if}">
+    <div class="form-group">
+    <label class="col-sm-2 control-label">下线更新</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'commission.agent.check'}
+        <label class="radio-inline"><input type="radio" class="updatemember" name="adata[updatemember]" value="1" {if $member['updatemember']==1}checked{/if}>强制更新</label>
+        <label class="radio-inline" ><input type="radio" class="updatemember" name="adata[updatemember]" value="0" {if $member['updatemember']==0}checked{/if}>系统设置</label>
+        <span class="help-block">强制更新后，如果有分销商上级的用户，也会被更改为当前分销商下线</span>
+        {else}
+        <input type='hidden' name='adata[updatemember]' value='{$member['updatemember']}' />
+        <div class='form-control-static'>{if $member['updatemember']==1}是{else}否{/if}</div>
+        {/if}
+    </div>
+</div>
+</div>
+{/if}
 <div class="form-group">
     <label class="col-sm-2 control-label">分销商分享链接权限</label>
     <div class="col-sm-9 col-xs-12">
@@ -284,6 +313,13 @@ $(function(){
             $(".showmember").show();
         }else{
             $(".showmember").hide();
+        }
+  });
+  $(".ordercheck").click(function(){
+        if($("input[name='adata[ordercheck]']:checked").val()==1){
+            $(".showorder").show();
+        }else{
+            $(".showorder").hide();
         }
   });
  });

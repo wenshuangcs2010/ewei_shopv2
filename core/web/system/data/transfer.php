@@ -94,7 +94,10 @@ class Transfer_EweiShopV2Page extends SystemPage {
 							$goodsid = $g['id'];
 							unset($g['id']);
 							$g['uniacid'] = $wechatid1;
-							$g['disgoods_id'] = $goodsid;
+
+							if($wechatid==DIS_ACCOUNT){
+								$g['disgoods_id'] = $goodsid;
+							}
 							unset($g['discounts']);
 							unset($g['hascommission']);
 							unset($g['commission1_rate']);
@@ -104,6 +107,7 @@ class Transfer_EweiShopV2Page extends SystemPage {
 							unset($g['commission2_pay']);
 							unset($g['commission3_rate']);
 							unset($g['commission3_pay']);
+							unset($g['costprice']);
 							pdo_insert('ewei_shop_goods', $g);
 							$newgoodsid = pdo_insertid();
 
@@ -132,9 +136,9 @@ class Transfer_EweiShopV2Page extends SystemPage {
 								unset($o['id']);
 								$o['uniacid'] = $wechatid1;
 								$o['goodsid'] = $newgoodsid;
+								unset($o['costprice']);
 								pdo_insert('ewei_shop_goods_option', $o);
 								$newoptionid = pdo_insertid();
-
 								$newspecitemids = array();
 								if (!empty($o['specs'])) {
 

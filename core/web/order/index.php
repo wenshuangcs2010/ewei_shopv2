@@ -17,7 +17,25 @@ class Index_EweiShopV2Page extends WebPage
         global $_W;
         include $this->template();
     }
-
+function test(){
+    $params=array (
+      'weid' => NULL,
+      'uniacid' => '5',
+      'result' => 'success',
+      'type' => '',
+      'from' => 'return',
+      'tid' => 'SHCG092610323788111',
+      'user' => '30589',
+      'fee' => '66.00',
+      'is_usecard' => '0',
+      'card_type' => '0',
+      'card_fee' => '0.00',
+      'card_id' => '',
+      'paytype' => 22,
+      'paymentno' => '201709262100100421025ee797101',
+    );
+    m("order")->payResult($params);
+}
     /**
      * 查询订单金额
      * @param int $day 查询天数

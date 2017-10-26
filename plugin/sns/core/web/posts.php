@@ -116,9 +116,23 @@ class Posts_EweiShopV2Page extends PluginWebPage
 			$piclist = array_merge(iunserializer($item['images']));
 		}
 		$board = pdo_fetchall('select id,title from ' . tablename('ewei_shop_sns_board') . ' where uniacid = ' . $uniacid . ' order by id desc ');
+
 		$set = $this->set;
+		$sql="SELECT m.id,m.nickname,m.openid,b.title  FROM ".
+		 tablename('ewei_shop_sns_manage') .
+		  " as sm LEFT JOIN ".tablename("ewei_shop_member")
+		  ." as m ON sm.openid= m.openid LEFT JOIN ".
+		  tablename("ewei_shop_sns_board")." as b ON sm.bid = b.id "
+		  ." where  sm.uniacid=:uniacid and m.uniacid=:uniacid";
+		$managers = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+		
+		foreach($managers as &$row){
+			$row['nickname']="[版主][{$row['title']}]".$row['nickname'];
+		}
+		unset($row);
 		if (isset($set['managers'])) 
 		{
+			$tempmanagers=$managers;
 			if (!(empty($set['managers']))) 
 			{
 				$openids = array();
@@ -128,9 +142,17 @@ class Posts_EweiShopV2Page extends PluginWebPage
 					$openids[] = '\'' . $openid . '\'';
 				}
 				$managers = pdo_fetchall('select id,nickname,openid from ' . tablename('ewei_shop_member') . "\n" . '                            where openid in (' . implode(',', $openids) . ') and uniacid = ' . $uniacid . ' ');
+				foreach($managers as &$row){
+					$row['nickname']="[超级管理员]".$row['nickname'];
+				}
+				unset($row);
+				$managers=array_merge($tempmanagers,$managers);
+
 			}
 		}
+		
 		$imagesData = $this->getSet();
+
 		if ($_W['ispost']) 
 		{
 			$title = trim($_GPC['title']);
@@ -150,6 +172,7 @@ class Posts_EweiShopV2Page extends PluginWebPage
 				show_json(0, '内容最少3个汉字或字符哦~');
 			}
 			$data = array('bid' => intval($_GPC['bid']), 'title' => trim($_GPC['title']), 'openid' => trim($_GPC['openid']), 'content' => trim($_GPC['content']), 'images' => '', 'createtime' => time(), 'replytime' => time(), 'istop' => intval($_GPC['istop']), 'isbest' => intval($_GPC['isbest']), 'isboardtop' => intval($_GPC['isboardtop']), 'isboardbest' => intval($_GPC['isboardbest']), 'checked' => 1, 'isadmin' => 1);
+
 			if (!(empty($data['openid']))) 
 			{
 				$user = pdo_fetch('select avatar,nickname from ' . tablename('ewei_shop_member') . ' where openid = \'' . $data['openid'] . '\' and uniacid = ' . $uniacid . ' ');

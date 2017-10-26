@@ -126,9 +126,12 @@ class Board_EweiShopV2Page extends SnsMobilePage
 			$row['createtime'] = $this->model->timeBefore($row['createtime']);
 			$row['goodcount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_like') . ' where pid=:pid limit 1', array(':pid' => $row['id']));
 			$row['postcount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where pid=:pid and deleted = 0 limit 1', array(':pid' => $row['id']));
+
 			$row['content'] = htmlspecialchars_decode($row['content']);
+
 			$images = array();
 			$rowimages = iunserializer($row['images']);
+			
 			if (is_array($rowimages) && !(empty($rowimages))) 
 			{
 				foreach ($rowimages as $img ) 

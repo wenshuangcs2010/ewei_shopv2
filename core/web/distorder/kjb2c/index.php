@@ -12,6 +12,39 @@ class Index_EweiShopV2Page extends WebPage
 		 $orderid=$_GPC['id'];
 
 $returndata=m("kjb2c")->to_customs_new($orderid);
+$paytype=$returndata['paytype'];
+		 $returndata=$returndata['returndata'];
+		 switch ($paytype) {
+			case 'wx':
+			if($retrundata['return_code']=="FAIL"){
+                	show_json(0,$retrundata['return_msg']);
+             }else{
+                	if($retrundata['result_code']=="FAIL"){
+						show_json(0,$retrundata['err_code_des']);
+                	}
+					show_json(1,$retrundata['return_msg']);
+                }
+                if(isset($retrundata['errno'])){
+		 			show_json(0,$retrundata['message']);
+		 		}
+				break;
+			case 'shenfupay':
+				show_json(0,$retrundata['message']);
+				break;
+
+			case "alipay":
+				if($retrundata['is_success']=="F"){
+					show_json(0,"失败");
+				}else{
+					$response=(array)$retrundata['response'];
+					$alipay=(array)$response['alipay'];
+					show_json(1,$alipay['result_code']);
+				}
+				break;
+			default:
+				# code...
+				break;
+		}
 die();
 		  $order=pdo_fetch("SELECT zhuan_status,paymentno,if_customs_z,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		
@@ -83,6 +116,11 @@ die();
 	function to_declare(){
 		global $_W,$_GPC;
 		$orderid=$_GPC['id'];
-		m("kjb2c")->to_declare($orderid);
+		$ret=m("kjb2c")->to_declare($orderid);
+		if($ret['status']==1){
+			show_json(1,'ok');
+		}else{
+			show_json(0,$ret['msg']);
+		}
 	}
 }

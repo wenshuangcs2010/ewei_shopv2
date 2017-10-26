@@ -4,8 +4,7 @@
  * 
  * @author ewei 狸小狐 QQ:22185157 
  */
-ini_set('display_errors', 'On');
-error_reporting(E_ALL);
+
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
 require '../../../../../addons/ewei_shopv2/core/inc/functions.php';

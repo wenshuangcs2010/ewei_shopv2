@@ -60,13 +60,14 @@ class ErpHttp{
 	}
 
 	public function getGoodsList($pageindex,$goodssn="",$pagesize=500){
+		
 		$this->postdata['time']=date("Y/m/d H:i:s");
 		$this->postdata['yzm']=strtoupper(md5($this->postdata['secret'].$this->postdata['time']));
 		$this->postdata['goodsId']=$goodssn;
 		$this->postdata['pageindex']=$pageindex;//必填
 		$this->postdata['pagesize']=$pagesize;
-		$this->postdata['startTime']=date("Y/m/d H:i:s",strtotime("-860 day"));
-		$this->postdata['endTime']=date("Y/m/d H:i:s");
+		$this->postdata['startTime']="2017-08-05 00:49:32";
+		$this->postdata['endTime']=date("Y-m-d H:i:s");
 		load()->func('communication');
 		$resp = ihttp_request($this->GoodsListURl, $this->postdata);
 		if(!empty($resp['content'])){

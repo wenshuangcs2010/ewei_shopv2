@@ -40,10 +40,10 @@ class List_EweiShopV2Page extends WebPage {
             $params[':endtime'] = $endtime;
         }
         if ($_GPC['level'] != '') {
-            $condition.=' and level=' . intval($_GPC['level']);
+            $condition.=' and dm.level=' . intval($_GPC['level']);
         }
         if ($_GPC['groupid'] != '') {
-            $condition.=' and groupid=' . intval($_GPC['groupid']);
+            $condition.=' and dm.groupid=' . intval($_GPC['groupid']);
         }
         $join = '';
         if ($_GPC['followed'] != '') {

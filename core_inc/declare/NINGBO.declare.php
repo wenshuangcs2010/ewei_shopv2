@@ -72,7 +72,7 @@ class NINGBO_Api extends ningboData{
                  &xmlstr=".urlencode($this->xml).'
                  &msgtype='.$this->_cnec_jh_order.'
                  &customs=3105';
-                 //WeUtility::logging('contetn', var_export($this->xml,true));
+        //WeUtility::logging('contetn', var_export($this->xml,true));
         $resp = ihttp_request($this->_api,$posturl);
        return (array)$resp['content'];
 	}

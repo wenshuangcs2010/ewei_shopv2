@@ -139,6 +139,7 @@ class Printer_EweiShopV2ComModel extends ComModel
         if (empty($printer)){
             return error(-1,'小票打印机未找到');
         }
+      
         $template = pdo_fetch("SELECT * FROM ".tablename('ewei_shop_member_printer_template')." WHERE uniacid=:uniacid AND id=:id",array(':uniacid'=>$_W['uniacid'],':id'=>$templateid));
         if (empty($printer)){
             return error(-1,'打印模板未找到');
@@ -237,6 +238,7 @@ class Printer_EweiShopV2ComModel extends ComModel
         $this->printer = $printer;
         $this->template = $template;
         $this->params = $params;
+      
         load()->func('communication');
         switch ($printer['type']){
             case self::PRINTRT_FEIE:
@@ -548,6 +550,7 @@ class Printer_EweiShopV2ComModel extends ComModel
         $order_status = '';
         $order_time = '';
         $order_time_title = '';
+
         if ($order['status'] == '0'){
             $status = 1;
             $order_status = '未支付';
@@ -564,7 +567,7 @@ class Printer_EweiShopV2ComModel extends ComModel
             $order_time = date('Y-m-d H:i',$order['finishtime']);
             $order_time_title = '收货时间';
         }
-
+      
         $openid = $order['openid'];
         $order_goods = pdo_fetchall('select g.id,g.title,g.shorttitle,og.realprice,og.total,og.price,og.optionname as optiontitle,g.noticeopenid,g.noticetype from ' . tablename('ewei_shop_order_goods') . ' og '
             . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid '
@@ -681,15 +684,15 @@ class Printer_EweiShopV2ComModel extends ComModel
 
         //获取打印设置
         $PrinterSet = $this->getPrinterSet();
-
+        //var_dump($PrinterSet);
         if (!empty($PrinterSet['ordertype']) && !empty($PrinterSet['order_printer'])){
+
             if (in_array($status,$PrinterSet['ordertype'])){
                 foreach ($PrinterSet['order_printer'] as $value){
                     $this->printer($params,$PrinterSet['order_template'],$value['id'],0);
                 }
             }
         }
-
         if (isset($StorePrinterSet)){
             if (!empty($StorePrinterSet['ordertype']) && !empty($StorePrinterSet['order_printer'])){
                 if (in_array($status,$StorePrinterSet['ordertype'])){
@@ -751,6 +754,7 @@ class Printer_EweiShopV2ComModel extends ComModel
 
         $printer = explode(',',$printerid);
         $params['data'] = $goods;
+
         if (!empty($printer) && !empty($templateid)){
             foreach ($printer as $value){
                 $this->printer($params,$templateid,$value,1);

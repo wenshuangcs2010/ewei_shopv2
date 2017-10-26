@@ -38,9 +38,7 @@ class Index_EweiShopV2Page extends MobilePage {
 		if($_GPC['show']==1){
 			$lastkeywords=pdo_fetchcolumn("SELECT keywords FROM ".tablename("ewei_shop_keywordscount")." WHERE uniacid=:uniacid and openid=:openid order by updatetimes desc Limit 0,1",$params);
 		}
-		
-		
-		$searchlist=pdo_fetchall("SELECT * FROM ".tablename("ewei_shop_keywordscount")." WHERE uniacid=:uniacid and openid=:openid order by count desc Limit 0,10",$params);
+		$searchlist=pdo_fetchall("SELECT * FROM ".tablename("ewei_shop_keywordscount")." WHERE uniacid=:uniacid and openid=:openid order by updatetimes desc Limit 0,10",$params);
 		include $this->template();
 	}
 	function createHtml(){

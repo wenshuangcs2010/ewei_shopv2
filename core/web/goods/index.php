@@ -15,9 +15,7 @@ class Index_EweiShopV2Page extends WebPage {
    function test11(){
         global $_W, $_GPC;
         
-        $order = pdo_fetch("select * from " . tablename('ewei_shop_order') . ' where id=:id limit 1'
-            , array(':id' => 208));
-        m('kjb2c')->_shenfupay($order);
+         com_run('printer::sendOrderMessage', 208);
         //var_dump($data);
    }
 
@@ -33,8 +31,14 @@ class Index_EweiShopV2Page extends WebPage {
         } else {
             $is_openmerch = 0;
         }
-        $depotsql="SELECT * from ".tablename("ewei_shop_depot")." where uniacid=:uniacid";
+        $depotsql="SELECT * from ".tablename("ewei_shop_depot")." where uniacid=:uniacid and enabled=1";
         $depotlist=pdo_fetchall($depotsql,array(":uniacid"=>$_W['uniacid']));
+        if($_W['uniacid']!=DIS_ACCOUNT){
+            $depotsql="SELECT * from ".tablename("ewei_shop_depot")." where uniacid=:uniacid and enabled=1";
+            $depotACCOUNTlist=pdo_fetchall($depotsql,array(":uniacid"=>DIS_ACCOUNT));
+            $depotlist = array_merge($depotlist, $depotACCOUNTlist);
+        }
+      
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
         $sqlcondition = $groupcondition = '';
@@ -87,7 +91,9 @@ class Index_EweiShopV2Page extends WebPage {
             $condition .= " <>0 )";
            // $condition .= " AND FIND_IN_SET({$_GPC['cate']},cates)<>0 ";
         }
-
+        if(isset($_GPC['depotid']) && is_numeric($_GPC['depotid'])){
+            $condition .=" AND g.depotid={$_GPC['depotid']}";
+        }
         $goodsfrom = strtolower(trim($_GPC['goodsfrom']));
         empty($goodsfrom) && $_GPC['goodsfrom'] = $goodsfrom = 'sale';
 

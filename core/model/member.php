@@ -40,6 +40,12 @@ class Member_EweiShopV2Model {
 			$info['headimgurl'] = $info['avatar'];
 			$info['province'] = empty($info['province']) ? $fans['resideprovince'] : $info['province'];
 			$info['city'] = empty($info['city']) ? $fans['residecity'] : $info['city'];
+			// if($info['credit1']>0){
+			// 	pdo_update('mc_members', array("credit1" => $info['credit1']), array('uid' => $uid));
+			// }
+			// if($info['credit2']>0){
+			// 	pdo_update('mc_members', array("credit2" => $info['credit2']), array('uid' => $uid));
+			// }
 		}
 		if (!empty($info['birthyear']) && !empty($info['birthmonth']) && !empty($info['birthday'])) {
 			$info['birthday'] = $info['birthyear'] . '-' . (strlen($info['birthmonth']) <= 1 ? '0' . $info['birthmonth'] : $info['birthmonth']) . '-' . (strlen($info['birthday']) <= 1 ? '0' . $info['birthday'] : $info['birthday']);
@@ -229,6 +235,7 @@ class Member_EweiShopV2Model {
                 $newcredit = 0;
             }
             pdo_update('ewei_shop_member', array($credittype => $newcredit), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
+           
         }
     }
 

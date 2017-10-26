@@ -10,7 +10,8 @@ if (!defined('IN_IA')) {
 }
 require MODULE_ROOT. '/dispage.php';
 class Page extends WeModuleSite {
-
+	
+	
 	public function runTasks() {
 		global $_W;
 		load()->func('communication');

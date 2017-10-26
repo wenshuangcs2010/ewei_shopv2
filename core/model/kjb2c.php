@@ -44,11 +44,9 @@ class Kjb2c_EweiShopV2Model {
         		'pay_code'=>'shenfupay',
         		);
         	pdo_insert("ewei_shop_zpay_log",$zporderdata);
-        		$this->to_customs_new($order['id']);
-        		//$this->to_customs_new($order['id']);
-        	show_json(1,"转账成功");
+        	return array("ret"=>1,"msg"=>'');
         }else{
-        	show_json(0,$ret['Message']);
+        	return array("ret"=>0,"msg"=>$ret['Message']);
         }
 	}
 	function to_customs_new($orderid){
@@ -96,7 +94,7 @@ class Kjb2c_EweiShopV2Model {
               
                
             }else{
-            	show_json(0,"微信支付已经关闭请重新开启");
+            	return array("paytype"=>0,'retrundata'=>"微信支付已经关闭请重新开启");
             }
 		}elseif($order['paytype']==22 && $order['if_customs_z']==0){
 			load()->model('payment');
@@ -141,43 +139,12 @@ class Kjb2c_EweiShopV2Model {
 			$paytype=$sporder['pay_code'];
 		}
 		if(empty($paytype)){
-			show_json(0,"特殊支付方式请联系管理员");
+			return array("paytype"=>0,'retrundata'=>"特殊支付方式请联系管理员");
 		}
 
 		$coustoms=customs::getObject($paytype,$config);
 		$retrundata=(array)$coustoms->to_customs($params);
-		
-		switch ($paytype) {
-			case 'wx':
-			if($retrundata['return_code']=="FAIL"){
-                	show_json(0,$retrundata['return_msg']);
-             }else{
-                	if($retrundata['result_code']=="FAIL"){
-						show_json(0,$retrundata['err_code_des']);
-                	}
-					show_json(1,$retrundata['return_msg']);
-                }
-                if(isset($retrundata['errno'])){
-		 			show_json(0,$retrundata['message']);
-		 		}
-				break;
-			case 'shenfupay':
-				show_json(0,$retrundata['message']);
-				break;
-
-			case "alipay":
-				if($retrundata['is_success']=="F"){
-					show_json(0,"失败");
-				}else{
-					$response=(array)$retrundata['response'];
-					$alipay=(array)$response['alipay'];
-					show_json(1,$alipay['result_code']);
-				}
-				break;
-			default:
-				# code...
-				break;
-		}
+		return array("paytype"=>$paytype,'retrundata'=>$retrundata);
 	}
 
 	function get_depot($id){
@@ -193,15 +160,19 @@ class Kjb2c_EweiShopV2Model {
 		return false;
 	}
 	function to_declare($orderid,$order_table="ewei_shop_order"){
+
+		//WeUtility::logging('to_declareparams1', var_export("进入申报", true));
 		$depotid=0;
 		if($order_table=="ewei_shop_order"){
 			$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+			//WeUtility::logging('to_declareorder', var_export($order, true));
 			$depotid=$order['depotid'];
 			$order_goodssql="SELECT og.*,g.disgoods_id,g.dispatchid,g.unit,g.weight,g.title from "
 						.tablename("ewei_shop_order_goods")." as og "
 						."LEFT JOIN ".tablename("ewei_shop_goods")." as g on og.goodsid=g.id "
 						." where orderid=:orderid";
 			$order_goods=pdo_fetchall($order_goodssql,array(":orderid"=>$orderid));
+			//WeUtility::logging('to_declareorder_goods', var_export($order_goods, true));
 			$Weight=0;
 			foreach($order_goods as $goods){
 				$dispatchid=$goods['dispatchid'];
@@ -212,9 +183,7 @@ class Kjb2c_EweiShopV2Model {
 					$dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq
 				}
 			}
-			if(empty($order['paytype'])){
-				$order['paytype']=21;
-			}
+			//WeUtility::logging('to_declareparams', var_export($order, true));
 			if($order['if_customs_z']==1 && $order['zhuan_status']==1){
 				$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
 				$order['paytype']=23;
@@ -239,10 +208,9 @@ class Kjb2c_EweiShopV2Model {
 			$Weight=0;
 			if($order['gid']>0){
 				$Weight=pdo_fetchcolumn("SELECT weight from ".tablename("ewei_shop_goods")."where id=:id",array(":id"=>$order['gid']));
-
 				$Weight=$Weight*$order['goodsnum'];
 			}else{
-				show_json(0,"自建商品无法申报");
+				return array("status"=>0,"msg"=>"自建商品无法申报");
 			}
 
 			$openid=$order['openid'];
@@ -277,17 +245,17 @@ class Kjb2c_EweiShopV2Model {
 		}
 		$depot=Dispage::getDepot($depotid);
 		if($depot['if_declare']!=1){
-			show_json(0,"订单无须申报");
+			
+			return array("status"=>0,"msg"=>"订单无须申报");
 		}
 		$customs=$this->check_if_customs($depotid);
 		if(empty($customs)){
-			show_json(0,"申报地址错误");
+			return array("status"=>0,"msg"=>"申报地址错误");
 		}
 		$declare=DeclareCore::getObject($customs,$depot);
-		//var_dump($order);
 		$declare->to_order_declare($order,$expressname,$order_goods);
 		$response=$declare->init();
-		$stdclassobject =simplexml_load_string($response[0],null, LIBXML_NOCDATA);
+		$stdclassobject =@simplexml_load_string($response[0],null, LIBXML_NOCDATA);
 		$_array = is_object($stdclassobject) ? get_object_vars($stdclassobject) : $stdclassobject;
          if(!empty($_array)){
             foreach ($_array as $key => $value){
@@ -295,14 +263,16 @@ class Kjb2c_EweiShopV2Model {
                 $return_data[$key] = $value;
             }
         }
-       	 //WeUtility::logging('申报结果结果', var_export($return_data, true));
-        if($return_data['Header']['Result'] == 'F'){
-               	show_json(0,$return_data['Header']['ResultMsg']);
-        }else{
-        	pdo_update($order_table, array('mftno' => $return_data['Header']['MftNo']), array('id' => $orderid));
-        }
         
-        show_json(1,"ok");
+        if($return_data['Header']['Result'] == 'F'){
+        	return array("status"=>0,'msg'=>$return_data['Header']['ResultMsg']);
+        }else{
+        	$rest=pdo_update($order_table, array('mftno' => $return_data['Header']['MftNo']), array('id' => $orderid));
+        	WeUtility::logging('to_declare', var_export($return_data, true)."order_id:".$orderid);
+      
+        	WeUtility::logging('to_declare', var_export($rest, true)."更新结果");
+        }
+        return array("status"=>1,'msg'=>"ok");
 	}
 	function get_groups_order_goods($gid){
 		$sql="SELECT * FROM ".tablename("ewei_shop_goods")." WHERE id=:gid";
@@ -422,5 +392,39 @@ class Kjb2c_EweiShopV2Model {
 		 	}
 
 		 }
+	}
+	function cnec_jh_cancel($depotid,$mftno){
+		$depot=Dispage::getDepot($depotid);
+		if($depot['if_declare']!=1){
+			show_json(0,"订单无须申报");
+		}
+		$customs=$this->check_if_customs($depotid);
+		$declare=DeclareCore::getObject($customs,$depot);
+		return $declare->cnec_jh_cancel($mftno);
+	}
+
+	function sendOrder($orderid){
+		require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendorder.php");
+		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		if(empty($order) || !empty($order['cnbuyers_order_sn'])){
+			return false;
+		}
+		load()->model('payment');
+        $setting = uni_setting($order['uniacid'], array('payment'));
+        $depot=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:id",array(":id"=>$order['depotid']));
+        $order['address']=unserialize($order['address']);
+        $ordergoods=pdo_fetchall("SELECT * from ".tablename("ewei_shop_order_goods")." where orderid=:orderid",array(":orderid"=>$orderid));
+        $sendorder=new Sendorder();
+		$sendorder->init($order);
+		$sendorder->params['shipping_id']=$depot['cnbuyershoping_id'];
+		$sendorder->params['account_id']=$setting['payment']['wechat']['mchid'];
+		$sendorder->init_out_goods($ordergoods);
+		$data=$sendorder->iHttpPost();
+		if(isset($data['errorcode'])){
+			return false;
+		}
+		$redata=$sendorder->datadeencrypt($data[0]);
+		$data=(array)json_decode($redata);
+		pdo_update("ewei_shop_order",array("cnbuyers_order_sn"=>$data['order_sn']),array("id"=>$order['id']));
 	}
 }

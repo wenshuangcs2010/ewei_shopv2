@@ -85,7 +85,7 @@
                 <a class='op' data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}">查看物流</a>
                 {/if}
                 {ifp 'groups.order.remarksaler'}
-                <a class='op'  data-toggle="ajaxModal" href="{php echo webUrl('groups/order/remarksaler', array('id' => $item['id']))}" {if !empty($item['note'])}style='color:red'{/if} >备注</a>
+                <a class='op'  data-toggle="ajaxModal" href="{php echo webUrl('groups/order/remarksaler', array('id' => $item['id']))}" {if !empty($item['remark'])}style='color:red'{/if} >备注</a>
                 {/if}
             </td>
         </tr>
@@ -268,8 +268,8 @@
               
             </td>
         </tr>
-        <tr style="border-bottom:none;background:#f9f9f9;">
-            <td colspan='8' style='text-align:left;height:0;padding:0'></td>
+        <tr style="border-bottom:block;background:#f9f9f9;">
+            <td colspan='8' style='text-align:left;height:0;padding:0'>{$item['message']}</td>
         </tr>
         {/loop}
     </table>

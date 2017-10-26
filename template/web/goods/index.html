@@ -88,10 +88,11 @@
                 <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
                 {/loop}
             </select>
-            <select name="deposid" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="商品分类">
-                <option value="" {if empty($_GPC['deposid'])}selected{/if} >仓库选择</option>
+            <select name="depotid" class='form-control input-sm select-sm select2' style="width:100px;" data-placeholder="商品分类">
+                <option value="" {if empty($_GPC['depotid'])}selected{/if} >仓库选择</option>
+                <option value="0" {if isset($_GPC['depotid']) && $_GPC['depotid']==0 && is_numeric($_GPC['depotid']) }selected{/if} >默认仓库</option>
                 {loop $depotlist $c}
-                <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
+                <option value="{$c['id']}" {if $_GPC['depotid']==$c['id']}selected{/if} >{$c['title']}</option>
                 {/loop}
             </select>
             <div class="input-group">				 

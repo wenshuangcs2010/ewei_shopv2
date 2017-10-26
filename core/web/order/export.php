@@ -47,6 +47,7 @@ class Export_EweiShopV2Page extends WebPage {
             array('title' => '订单改价', 'field' => 'changeprice', 'width' => 12),
             array('title' => '运费改价', 'field' => 'changedispatchprice', 'width' => 12),
             array('title' => '应收款', 'field' => 'price', 'width' => 12),
+            array('title' => '仓库', 'field' => 'depotid', 'width' => 12),
             array('title' => '状态', 'field' => 'status', 'width' => 12),
             array('title' => '下单时间', 'field' => 'createtime', 'width' => 24),
             array('title' => '付款时间', 'field' => 'paytime', 'width' => 24),
@@ -63,10 +64,18 @@ class Export_EweiShopV2Page extends WebPage {
             array('title' => '一级佣金', 'field' => 'commission1', 'width' => 12),
             array('title' => '二级佣金', 'field' => 'commission2', 'width' => 12),
             array('title' => '三级佣金', 'field' => 'commission3', 'width' => 12),
+            array('title' => '增值税', 'field' => 'tax_rate', 'width' => 12),
+            array('title' => '消费税', 'field' => 'tax_consumption', 'width' => 12),
+            array('title' => '申报运费', 'field' => 'dpostfee', 'width' => 12),
+            array('title' => '游戏活动抵扣', 'field' => 'lotterydiscountprice', 'width' => 12),
             array('title' => '扣除佣金后利润', 'field' => 'commission4', 'width' => 12),
             array('title' => '扣除佣金及运费后利润', 'field' => 'profit', 'width' => 12),
             array('title' => '上级分销商姓名', 'field' => 'fxrealname', 'width' => 12),
+            array('title' => '身份证', 'field' => 'realname', 'width' => 12),
+             array('title' => '身份证号码', 'field' => 'imid', 'width' => 12),
+            array('title' => '上级分销商姓名', 'field' => 'fxrealname', 'width' => 12),
             array('title' => '上级分销商昵称', 'field' => 'fxnickname', 'width' => 12),
+             array('title' => '支付单号', 'field' => 'paymentno', 'width' => 12),
         );
     }
 
@@ -147,18 +156,19 @@ class Export_EweiShopV2Page extends WebPage {
             }
             //是否包含商品信息
             $goodsindex = $this->field_index($columns, 'goods_title');
-
+           
             if ($goodsindex != -1) {
                 array_splice($columns, $goodsindex + 1, 0, array(
                     array('title' => '商品短标题', 'field' => 'goods_shorttitle', 'width' => 12),
                     array('title' => '商品编码', 'field' => 'goods_goodssn', 'width' => 12),
-                    array('title' => '商品条码', 'field' => 'goods_productsn', 'width' => 12),
                     array('title' => '商品规格', 'field' => 'goods_optiontitle', 'width' => 12),
                     array('title' => '商品数量', 'field' => 'goods_total', 'width' => 12),
                     array('title' => '商品单价(折扣前)', 'field' => 'goods_price1', 'width' => 12),
                     array('title' => '商品单价(折扣后)', 'field' => 'goods_price2', 'width' => 12),
-                    array('title' => '商品价格(折扣前)', 'field' => 'goods_rprice1', 'width' => 12),
-                    array('title' => '商品价格(折扣后)', 'field' => 'goods_rprice2', 'width' => 12)
+                    array('title' => '单个商品(增值税)', 'field' => 'pricetaxrate', 'width' => 12),
+                    array('title' => '单个商品(消费税)', 'field' => 'taxconsumption', 'width' => 12),
+                    array('title' => '申报单价', 'field' => 'dprice', 'width' => 12),
+                    array('title' => '单个商品申报运费', 'field' => 'shipping_fee', 'width' => 12),
                 ));
             }
             plog('order.export', "导出订单");
@@ -268,7 +278,12 @@ class Export_EweiShopV2Page extends WebPage {
                     $statuscondition = " AND o.status = " . intval($status);
                 }
             }
-
+            $depotsql="SELECT * from ".tablename("ewei_shop_depot");
+            $depostlist=pdo_fetchall($depotsql);
+            $de=array();
+            foreach ($depostlist as $key => $value) {
+                $de[$value['id']]=$value['title'];
+            }
             $sql = "select o.* , a.realname as arealname,ag.realname as fxrealname,ag.nickname as fxnickname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername from " . tablename('ewei_shop_order') . " o"
                 . " left join " . tablename('ewei_shop_order_refund') . " r on r.id =o.refundid "
                 . " left join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid "
@@ -292,6 +307,9 @@ class Export_EweiShopV2Page extends WebPage {
                 $value['statusvalue'] = $s;
                 $value['statuscss'] = $orderstatus[$value['status']]['css'];
                 $value['status'] = $orderstatus[$value['status']]['name'];
+                $value['depotid']=$value['depotid']>0 ? $de[$value['depotid']] : "自营";
+                var_dump($value['depotid']);
+                die();
                 if ($pt == 3 && empty($value['statusvalue'])) {
                     $value['statuscss'] = $orderstatus[1]['css'];
                     $value['status'] = $orderstatus[1]['name'];
@@ -370,7 +388,7 @@ class Export_EweiShopV2Page extends WebPage {
                 }
 
                 //订单商品
-                $order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.changeprice,og.oldprice,og.commission1,og.commission2,og.commission3,og.commissions,og.diyformdata,og.diyformfields,g.shorttitle from ' . tablename('ewei_shop_order_goods') . ' og '
+                $order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle,og.shipping_fee,og.pricetaxrate,og.taxconsumption, og.realprice,og.changeprice,og.oldprice,og.commission1,og.commission2,og.commission3,og.commissions,og.diyformdata,og.dprice,og.shipping_fee,og.diyformfields,g.shorttitle from ' . tablename('ewei_shop_order_goods') . ' og '
                     . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid '
                     . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $value['id']));
                 $goods = '';
@@ -455,10 +473,12 @@ class Export_EweiShopV2Page extends WebPage {
 
                 $value['goods_str'] = $goods;
 
+
                 $value['ordersn'] = $value['ordersn'] . " ";
                 if ($value['deductprice'] > 0) {
                     $value['deductprice'] = "-" . $value['deductprice'];
                 }
+
                 if ($value['deductcredit2'] > 0) {
                     $value['deductcredit2'] = "-" . $value['deductcredit2'];
                 }
@@ -540,8 +560,13 @@ class Export_EweiShopV2Page extends WebPage {
                         $exportlist["row{$goodsindex}"]['goods_rprice1'] = $g['price'];
                         $exportlist["row{$goodsindex}"]['goods_rprice2'] = $g['realprice'];
                         $exportlist["row{$goodsindex}"]['goods_diyformdata'] = $g['goods_diyformdata'];
+                        $exportlist["row{$goodsindex}"]['pricetaxrate'] = $g['pricetaxrate'];
+                        $exportlist["row{$goodsindex}"]['taxconsumption'] = $g['taxconsumption'];
+                        $exportlist["row{$goodsindex}"]['dprice'] = $g['dprice'];
+                        $exportlist["row{$goodsindex}"]['shipping_fee'] = $g['shipping_fee'];
                         $goodsindex++;
                     }
+                  
                     //计算下个位置
                     $nextindex = 0;
                     for ($i = 0; $i <= $index; $i++) {

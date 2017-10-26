@@ -192,6 +192,7 @@ class EweiShopWechatPay
                         $record['tag'] = iserializer($log['tag']);
                         pdo_update('core_paylog', $record, array('plid' => $log['plid']));
                         pdo_update('ewei_shop_order', array('paytype' => 21,'isborrow'=>$isborrow,'borrowopenid'=>$borrowopenid, 'apppay'=>$this->isapp?1:0), array('ordersn' => $log['tid'],'uniacid'=>$log['uniacid']));
+                        
                     }
                 }
             }

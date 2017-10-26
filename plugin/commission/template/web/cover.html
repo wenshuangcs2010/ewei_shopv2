@@ -8,7 +8,15 @@
                     <p class='form-control-static'><a href='javascript:;' class="js-clip" title='点击复制链接' data-url="{php echo mobileUrl('commission',null,true)}" >{php echo mobileUrl('commission',null,true)}</a></p>
                 </div>
             </div>
-            
+            {if $_W['uniacid']==DIS_ACCOUNT}
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">订单统计链接</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <p class='form-control-static'><a href='javascript:;' class="js-clip" title='点击复制链接' data-url="{php echo mobileUrl('commission.memberorder',null,true)}" >{php echo mobileUrl('commission.memberorder',null,true)}</a></p>
+                    </div>
+                </div>
+            {/if}
+             
            <div class="form-group">
                 <label class="col-sm-2 control-label must" >关键词</label>
                 <div class="col-sm-9 col-xs-12">

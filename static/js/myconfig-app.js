@@ -12,7 +12,8 @@ require.config({
         'jquery.qrcode':'../dist/jquery/jquery.qrcode.min',
         'ydb':'../dist/Ydb/YdbOnline',
         'swiper':'../dist/swiper/swiper.min',
-        'BMap':"//api.map.baidu.com/api?v=2.0&ak=uvlCwUWyIK4zr4Umk6oqk27U"
+        'BMap':"//api.map.baidu.com/api?v=2.0&ak=uvlCwUWyIK4zr4Umk6oqk27U",
+        
     },
     shim: {
         'foxui':{
@@ -28,7 +29,8 @@ require.config({
         'BMap': {
             deps: ['jquery'],
             exports: 'BMap'
-        }
+        },
+        
     },
     waitSeconds: 0
 });

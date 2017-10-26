@@ -54,6 +54,7 @@ class Goods_EweiShopV2Page extends WebPage {
             $sql.="LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
         }
         $list = pdo_fetchall($sql, $params);
+       
         foreach ($list as &$row) {
             if (!empty($row['optiongoodssn'])) {
                 $row['goodssn'] = $row['optiongoodssn'];

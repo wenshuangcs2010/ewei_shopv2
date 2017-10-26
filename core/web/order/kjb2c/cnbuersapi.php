@@ -10,7 +10,7 @@ class Cnbuersapi_EweiShopV2Page extends WebPage
 	require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendorder.php");
 		global $_W,$_GPC;
 		$orderid=$_GPC['id'];
-
+		
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		if(!empty($order['cnbuyers_order_sn'])){
 			$shipinfo=m("cnbuyerdb")->getOrderinvon($order['cnbuyers_order_sn']);
@@ -34,6 +34,10 @@ class Cnbuersapi_EweiShopV2Page extends WebPage
 		load()->model('payment');
         $setting = uni_setting($order['uniacid'], array('payment'));
 		$depot=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:id",array(":id"=>$order['depotid']));
+		//检查当前订单是否可以推单
+		if($depot['ismygoods']==0){
+			show_json(0,"此仓库商品已关闭推单功能 请联系管理员");
+		}
 		$order['address']=unserialize($order['address']);
 		$ordergoods=pdo_fetchall("SELECT * from ".tablename("ewei_shop_order_goods")." where orderid=:orderid",array(":orderid"=>$orderid));
 		$sendorder=new Sendorder();

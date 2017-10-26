@@ -6,7 +6,7 @@
     {ifp 'commission.agent'}<li {if $_W['routes']=='commission.statistics.order'}class="active"{/if}><a href="{php echo webUrl('commission/statistics/order')}">分销订单</a></li>{/if}
     {ifp 'commission.agent'}<li {if $_W['routes']=='commission.statistics.agent'}class="active"{/if}><a href="{php echo webUrl('commission/statistics/agent')}">分销商统计</a></li>{/if}
     {ifp 'commission.agent'}<li {if $_W['routes']=='commission.statistics.user'}class="active"{/if}><a href="{php echo webUrl('commission/statistics/user')}">分销关系</a></li>{/if}
-
+    
     
 
 </ul>
@@ -19,7 +19,12 @@
 	float:right;margin-right:20px;
 	}
 </style>
-
+{if $_W['uniacid']==DIS_ACCOUNT}
+      <div class='menu-header'>分销统计</div>
+      <ul class='commission-list'>
+      <li {if $_W['routes']=='commission.statistics' && $_GPC['status']==1}class="active"{/if}><a href="{php echo webUrl('commission.statistics.orderstatic',array('status'=>1))}">订单统计管理<span  class='text-danger'>{$totals['total1']}</span></a></li>
+      </ul>
+{/if}
 {php $totals = p('commission')->getTotals()}
 <div class='menu-header'>提现申请</div>
 <ul class='commission-list'>
@@ -35,6 +40,6 @@
    {ifp 'commission.notice'}<li  {if $_W['routes']=='commission.rank'}class="active"{/if}><a href="{php echo webUrl('commission/rank')}">排行榜设置</a></li>{/if}
    {ifp 'commission.notice'}<li  {if $_W['routes']=='commission.notice'}class="active"{/if}><a href="{php echo webUrl('commission/notice')}">通知设置</a></li>{/if}
     {ifp 'commission.cover'}<li {if $_W['routes']=='commission.cover'}class="active"{/if}><a href="{php echo webUrl('commission/cover')}">入口设置</a></li>{/if}
+    
    {ifp 'commission.set'}<li {if $_W['routes']=='commission.set'}class="active"{/if}><a href="{php echo webUrl('commission/set')}">基础设置</a></li>{/if}
-	
 </ul>

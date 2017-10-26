@@ -111,13 +111,28 @@ class Index_EweiShopV2Page extends ComWebPage {
             $data = is_array($_GPC['data']) ? $_GPC['data'] : array();
             $data['enoughfree'] = $data['enoughfree'];
             $data['enoughorder'] = $data['enoughorder'];
-           
+            $data['memberleveid']=$_GPC['memberleveid'];
             $data['goodsids'] = $_GPC['goodsids'];
+
             plog('sale.enough', '修改满额包邮优惠');
             m('common')->updatePluginset(array('sale' => $data));
             show_json(1);
         }
         $data = m('common')->getPluginset('sale');
+        $set = m('common')->getSysset();
+        $shopset = $set['shop'];
+        $default = array(
+            'id' => 'default',
+            'levelname' => empty($set['shop']['levelname']) ? '普通等级' : $set['shop']['levelname'],
+            'discount' => $set['shop']['leveldiscount'],
+            'ordermoney' => 0,
+            'ordercount' => 0
+        );
+        $condition = " and uniacid=:uniacid";
+        $params = array(':uniacid' => $_W['uniacid']);
+        $others = pdo_fetchall("SELECT * FROM " . tablename('ewei_shop_member_level') . " WHERE 1 {$condition} ORDER BY level asc", $params);
+        $list = array_merge(array($default), $others);
+
         if (!empty($data['goodsids'])){
             $goods = pdo_fetchall("SELECT id,uniacid,title,thumb FROM ".tablename('ewei_shop_goods')." WHERE uniacid=:uniacid AND id IN (".implode(',',$data['goodsids']).")",array(':uniacid'=>$_W['uniacid']));
         }

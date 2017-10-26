@@ -20,7 +20,7 @@ if (!class_exists('CommissionModel')) {
 
     class CommissionModel extends PluginModel
     {
-
+        
         public function getSet($uniacid = 0)
         {
             $set = parent::getSet($uniacid);
@@ -3030,7 +3030,12 @@ if (!class_exists('CommissionModel')) {
         {
             global $_W, $_GPC;
             $set = $this->getSet();
-            $tm = $set['tm'];
+            if(isset($set['tm'])){
+                $tm = $set['tm'];
+            }else{
+                return false;
+            }
+            
             $templateid = $tm['templateid'];
 
             $member = m('member')->getMember($openid);

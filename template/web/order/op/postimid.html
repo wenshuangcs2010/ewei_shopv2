@@ -23,6 +23,15 @@
                         <input type="text" name="imid" class="form-control" value="{$item['imid']}" data-rule-required='true' />
                     </div>
                 </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">清空申报单:</label>
+                <div class="col-sm-9 col-xs-12">
+                    <label class="radio-inline"><input type="radio" name="clear_mnf" value="0" checked="true"/> 否</label>
+                    <label class="radio-inline"><input type="radio" name="clear_mnf" value="1"  /> 是</label>
+                    <span class="help-block">提示：需要先关闭跨境购订单</span>
+                </div>
+                </div>
 
             </div>
             <div class="modal-footer">

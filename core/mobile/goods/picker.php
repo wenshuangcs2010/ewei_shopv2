@@ -90,6 +90,7 @@ class Picker_EweiShopV2Page extends MobilePage {
 
         if($goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
             //有促销
+          
             $isdiscount = true;
             $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
             $levelid = $member['level'];
@@ -177,7 +178,7 @@ class Picker_EweiShopV2Page extends MobilePage {
 
 
         } else {
-            if($goods['isdiscount'] && $goods['isdiscount_time']>=time()){
+            if($goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
                 $goods['oldmaxprice'] = $maxprice;
                 $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
                 $prices = array();

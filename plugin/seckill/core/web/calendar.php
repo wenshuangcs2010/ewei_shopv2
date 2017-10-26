@@ -36,7 +36,8 @@ class Calendar_EweiShopV2Page extends SeckillWebPage  {
         $year = trim($_GPC['year']);
         $month = trim($_GPC['month']);
         $day  = get_last_day($year,$month);
-        $calendar = redis()->hGetAll("{$redis_prefix}calendar_{$year}_0{$month}");
+        $calendar = redis()->hGetAll("{$redis_prefix}calendar_{$year}_{$month}");
+
         if(empty($calendar)){
             $calendar = array();
             for($i=1;$i<=$day;$i++){
@@ -52,7 +53,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage  {
                 if($i<10){
                     $i='0'.$i;
                 }
-                $date  = "{$year}-0{$month}-{$i}";
+                $date  = "{$year}-{$month}-{$i}";
                 $result[$date] = false;
                 if(isset($calendar[ $date ] )){
                     $value =trim($calendar[ $date ]);
@@ -93,7 +94,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage  {
         if(empty($task)){
             show_json(0, "任务未找到" );
         }
-        redis()->hSet("{$redis_prefix}calendar_{$year}_{$month}" , date('Y-m-d',$time), $taskid);
+        $rl=redis()->hSet("{$redis_prefix}calendar_{$year}_{$month}" , date('Y-m-d',$time), $taskid);
         show_json(1,array('taskid'=>$task['id'],'title'=>$task['title']));
     }
 

@@ -168,7 +168,7 @@
 			<span class="text-danger">
 			{if $goods['minprice']==$goods['maxprice']}
                     {if $goods['type']==4}
-                    {$goods['minprice']}(组合)<span>&yen;<del class='marketprice'>{$decountprice}</del></span>
+                    {$goods['minprice']}(组合)
                     {else}
                      {if !empty($memberprice) && $memberprice<$goods['minprice'] && !empty($level)}
                         <span class="fui-label fui-label-danger">会员</span>&yen;{$memberprice}

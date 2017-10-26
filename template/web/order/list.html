@@ -24,7 +24,7 @@
     <input type="hidden" name="agentid" value="{$_GPC['agentid']}" />
     <input type="hidden" name="refund" value="{$_GPC['refund']}" />
     <div class="page-toolbar row m-b-sm m-t-sm">
-        <div class="col-sm-7">
+        <div class="col-sm-8">
 
             <div class="btn-group btn-group-sm" style='float:left'>
                 <button class="btn btn-default btn-sm"  type="button" data-toggle='refresh'><i class='fa fa-refresh'></i></button>
@@ -48,12 +48,21 @@
                 </select>
 
                 {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
-
+                 <select name='depotid'  class='form-control  input-sm select-md'   style="width:60px;padding:0 5px;"  >
+                <option value='' {if $_GPC['depotid']==0}selected{/if}>仓库</option>
+                  {loop $depostlist $op}
+                     <option value='{$op[id]}' {if $_GPC['depotid']==$op['id']}selected{/if}>{$op['title']}</option>
+                  {/loop}
+         </select>
             </div>
+
+        
+
+    
         </div>
 
-
-        <div class="col-sm-5 pull-right">
+        
+        <div class="col-sm-4 pull-right">
 
             <select name='searchfield'  class='form-control  input-sm select-md'   style="width:95px;padding:0 5px;"  >
 

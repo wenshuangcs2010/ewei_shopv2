@@ -8,7 +8,7 @@
 if (!defined('IN_IA')) {
     exit('Access Denied');
 }
-
+require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendorder.php");
 class Order_EweiShopV2Model
 {
 
@@ -24,15 +24,14 @@ class Order_EweiShopV2Model
         $data = array('status' => $params['result'] == 'success' ? 1 : 0);
       
         $ordersn = $params['tid'];
-        $order = pdo_fetch('select id,ordersn,depotid,zhuan_status,realname,imid,isdisorder,disorderamount, price,openid,dispatchtype,addressid,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':ordersn' => $ordersn));
+        $order = pdo_fetch('select id,ordersn,depotid,price,zhuan_status,realname,imid,isdisorder,disorderamount, price,openid,if_customs_z,dispatchtype,addressid,address,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':ordersn' => $ordersn));
 
         $orderid = $order['id'];
+  
 
         if ($params['from'] == 'return') {
-
             //秒杀
             $seckill_result = plugin_run('seckill::setOrderPay', $order['id']);
-
             if($seckill_result=='refund'){
                 return 'seckill_refund';
             }
@@ -73,67 +72,95 @@ class Order_EweiShopV2Model
                         $change_data['status'] = 1;
                         $change_data['paytime'] = $time;
                         $change_data['paymentno'] =$params['paymentno'];//wsq
+                        if(isset($params['paytype'])){
+                            $change_data['paytype']=$params['paytype'];
+                        }
                         if ($order['isparent'] == 1) {
                             $change_data['merchshow'] = 1;
                         }
+
                         //订单状态
                         pdo_update('ewei_shop_order', $change_data, array('id' => $orderid));
                         if ($order['isparent'] == 1) {
                             //处理子订单状态
                             $this->setChildOrderPayResult($order, $time, 1);
                         }
+                        
                         //处理积分与库存
                         $this->setStocksAndCredits($orderid, 1);
+                       
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
-
+                        
+                        
+                       
                         if($customs){
-                            if($order['if_customs_z']==1){//需要盛付通处理不在此次报关和申报
+                            
+                            if($order['if_customs_z']==1 || $order['deductcredit2']>0 || $params['paytype']==1){//需要盛付通处理不在此次报关和申报
                                 $params['paytype']=37;
                             }
                             $depot=m("kjb2c")->get_depot($order['depotid']);
-                            $customsparams=array(
-                                'out_trade_no'=>$order['ordersn'],
-                                'transaction_id'=>$params['paymentno'],
-                                'customs'=>$customs,
-                                'mch_customs_no'=>$depot['customs_code'],
-                            );
-                            $jearray=Dispage::getDisaccountArray();
+                            if($depot['if_declare']==1 && $order['if_customs_z']!=1 && $params['paytype']!=1){
+                                m("kjb2c")->to_customs_new($orderid);
+                            }
+
                             if($params['paytype']==21 && $order['deductcredit2']==0){
-                                load()->model('payment');
-                                $uniacid=$_W['uniacid'];
-                                if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
-                                    $uniacid=DIS_ACCOUNT;
-                                    $customsparams['out_trade_no']=$order['ordersn']."_borrow";
-                                }
-                                $setting = uni_setting($uniacid, array('payment'));
-                                if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
-                                    $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>$uniacid));
-                                        $config=array(
-                                            "appid"=>$APPID,
-                                            'mch_id'=>$setting['payment']['wechat']['mchid'],
-                                            'apikey'=>$setting['payment']['wechat']['apikey'],
-                                            );
-                                    $returndatatemp=m("kjb2c")->to_customs($customsparams,$config,'wx');
-                                }
                                 if($depot['if_declare']==1 && $order['isdisorder']==0){
                                     m("kjb2c")->to_declare($orderid);
                                 }
                                  if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
                                     $disInfo=Dispage::getDisInfo($_W['uniacid']);
                                     if($disInfo['secondpay']==0){
+                                        m("kjb2c")->to_declare($orderid);
+                                    }
+                                 }
+                            }elseif($params['paytype']==22 && $order['deductcredit2']==0){//支付宝的
+                                if($depot['if_declare']==1 && $order['isdisorder']==0){
+                                    m("kjb2c")->to_declare($orderid);
+                                }
+                                if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
+                                    $disInfo=Dispage::getDisInfo($_W['uniacid']);
+                                    if($disInfo['secondpay']==0){
                                          m("kjb2c")->to_declare($orderid);
                                     }
                                  }
-                            }elseif($params['paytype']==22){
-                               
-                            }elseif($params['paytype']==37){
+                            }elseif($params['paytype']==37 && $order['zhuan_status']==0 && !empty($order['realname']) && !empty($order['imid'])){
+                                
+                                $payret=m("kjb2c")->_shenfupay($order);
+                                if($payret['ret']==1){
+                                    m("kjb2c")->to_customs_new($orderid);
+                                    if($depot['if_declare']==1 && $order['isdisorder']==0){
+                                        m("kjb2c")->to_declare($orderid);
+                                    }
 
+                                    if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
+                                        $disInfo=Dispage::getDisInfo($_W['uniacid']);
+                                        if($disInfo['secondpay']==0){
+                                             m("kjb2c")->to_declare($orderid);
+                                        }
+                                     }
+                                }
+                            }
+                        }else{
+                            $disInfo=Dispage::getDisInfo($_W['uniacid']);
+                            $depot=m("kjb2c")->get_depot($order['depotid']);
+                            //对一些不需要报关但是要推单的订单进行处理
+                            if($order['isdisorder']==0){
+                                //主站订单指定推单
+                                if($depot['ismygoods']==1){
+                                     m("kjb2c")->sendOrder($orderid);
+                                }
+                            }
+                            if($order['isdisorder']==1 && $disInfo['secondpay']==0){
+                                if($depot['ismygoods']==1){
+                                    m("kjb2c")->sendOrder($orderid);//代理无需支付的 
+                                }
                             }
                         }
+                        //WeUtility::logging('to_customsparams2', var_export("3333", true));
                         if($order['isdisorder']==1){
                              m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
                         }
-                        if($order['deductcredit2']>0){
+                        if($order['deductcredit2']>0 && $customs){
                             pdo_update("ewei_shop_order",array("if_customs_z"=>1),array("id"=>$orderid));
                         }
                         //发送赠送优惠券
@@ -145,9 +172,10 @@ class Order_EweiShopV2Model
                         if (com('coupon') && !empty($order['couponid'])) {
                             com('coupon')->backConsumeCoupon($order['id']); //订单支付
                         }
-                        //模板消息
-                        m('notice')->sendOrderMessage($orderid);
-
+                       
+                            //模板消息
+                            m('notice')->sendOrderMessage($orderid);    
+                        
                         //打印机打印
                         com_run('printer::sendOrderMessage', $orderid);
 
@@ -179,6 +207,7 @@ class Order_EweiShopV2Model
                         }
                     }
                 }
+                  WeUtility::logging('to_customsparams2', var_export("结束返回", true));
                 return true;
             }
         }
@@ -403,7 +432,7 @@ class Order_EweiShopV2Model
 
         global $_W;
         $order = pdo_fetch('select id,ordersn,uniacid,price,openid,dispatchtype,addressid,carrier,status,isparent,paytype from ' . tablename('ewei_shop_order') . ' where id=:id limit 1', array(':id' => $orderid));
-
+      
         $param = array();
         $uniacid=$order['uniacid'];
         $param[':uniacid'] = $uniacid;
@@ -777,9 +806,9 @@ class Order_EweiShopV2Model
         $isCdiscount = 0;
         //判断是否有会员折扣
         $isHdiscount = 0;
-
+     
         //是否有促销
-        if ($g['isdiscount'] && $g['isdiscount_time'] >= time() && $buyagain_sale) {
+        if ($g['isdiscount'] && $g['isdiscount_stat_time'] <= time() && $buyagain_sale && $g['isdiscount_time']>=time()) {
 
             if (is_array($isdiscount_discounts)) {
                 $key = !empty($level['id']) ? 'level' . $level['id'] : 'default';
@@ -1113,7 +1142,11 @@ class Order_EweiShopV2Model
         } else if (!empty($member['city'])) {
             $user_city = $member['city'];
         }
-       
+        $baoyou=true;
+        //检查是否进行包邮活动
+        if(isset($saleset['memberleveid'])&&$member['level']==$saleset['memberleveid']){
+                $baoyou=false;
+        }
         foreach ($goods as $g) {
             $realprice += $g['ggprice'];
             $dispatch_merch[$g['merchid']] = 0;
@@ -1136,7 +1169,7 @@ class Order_EweiShopV2Model
             $sendfree = false;
             $merchid = $g['merchid'];
 
-            if (!empty($g['issendfree'])) { //本身包邮
+            if (!empty($g['issendfree']) && $baoyou) { //本身包邮
                 $sendfree = true;
 
             } else {
@@ -1170,7 +1203,7 @@ class Order_EweiShopV2Model
                 if ($seckillinfo && $seckillinfo['status'] == 0) {
                     //秒杀不参与满额包邮
                 } else {
-                    if ($totalprice_array[$g['goodsid']] >= floatval($g['edmoney']) && floatval($g['edmoney']) > 0) { //单品满额包邮
+                    if ($totalprice_array[$g['goodsid']] >= floatval($g['edmoney']) && floatval($g['edmoney']) > 0 && $baoyou) { //单品满额包邮
                         $gareas = explode(";", $g['edareas']);
                         if (empty($gareas)) {
                             $sendfree = true;
@@ -1346,7 +1379,7 @@ class Order_EweiShopV2Model
         }
 
         //营销宝满额包邮
-        if ($saleset) {
+        if ($saleset && $baoyou) {
 
             if (!empty($saleset['enoughfree'])) {
 
@@ -1456,7 +1489,6 @@ class Order_EweiShopV2Model
             }
             unset($dm);
         }
-    // var_dump($saleset_free);
         if (!empty($nodispatch_array)) {
             $nodispatch = '商品';
             foreach ($nodispatch_array['title'] as $k => $v) {

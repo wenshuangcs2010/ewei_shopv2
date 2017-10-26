@@ -23,6 +23,7 @@
 <a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_customs', array('id' => $item['id']))}">报关</a><br/>
 {elseif $item['if_customs_z']==1 && $item['zhuan_status']==1}
 <a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_customs', array('id' => $item['id']))}">报关</a><br/>
+
 {/if}
 {else}
 {if $_W['uniacid']==DIS_ACCOUNT}
@@ -31,7 +32,8 @@
 {/if}
 {if $item['if_declare']==1  && empty($item['mftno'])}
 	{if $item['if_customs_z']==0 && $item['zhuan_status']==0}
-	<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_declare', array('id' => $item['id']))}">申报</a>
+	<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_declare', array('id' => $item['id']))}">申报</a><br/>
+	<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/op/send', array('id' => $item['id']))}">确认发货</a>
 	{elseif $item['if_customs_z']==1 && $item['zhuan_status']==1}
 	<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_declare', array('id' => $item['id']))}">申报</a>
 	{elseif $item['if_customs_z']==1 && $item['zhuan_status']==0}

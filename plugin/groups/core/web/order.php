@@ -218,7 +218,21 @@ class Order_EweiShopV2Page extends PluginWebPage {
 		include $this->template();
 	}
 	function editimid(){
-		
+		global $_W, $_GPC;
+        $opdata = $this->opData();
+        extract($opdata);
+        if($_W['ispost']){
+           $imid=trim($_GPC['imid']);
+           $realname=trim($_GPC['srealname']);
+           $id=$_GPC['id'];
+           $ret=pdo_update("ewei_shop_groups_order",array("imid"=>$imid,"srealname"=>$realname),array("id"=>$id));
+           if($ret){
+            show_json(1,'修改成功');
+           }else{
+            show_json(0,"修改失败");
+           }
+        }
+        include $this->template();
 	}
 	/*
 	 * 订单详情

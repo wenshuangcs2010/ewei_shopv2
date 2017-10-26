@@ -15,6 +15,7 @@ class PluginMobilePage extends MobilePage {
     public function __construct() {
 
         parent::__construct();
+       
         $this->model = m('plugin')->loadModel($GLOBALS["_W"]['plugin']);
         $this->set = $this->model->getSet();
     }

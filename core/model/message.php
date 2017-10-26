@@ -22,6 +22,7 @@ class Message_EweiShopV2Model {
       
                 return;
         }   
+      
         return $account->sendTplNotice($touser, $template_id, $postdata, $url);
     }
 

@@ -352,24 +352,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 } else {
                     $changenum = true;
                 }
-                if($log_id>0){
-                    $lotterygoods=m("lottery")->show_goods($_W['openid'],$id,$log_id);
-                 
-                    if(!empty($lotterygoods)){
-                        $data['marketprice']=$lotterygoods['marketprice'];
-                        $data['minprice']=$lotterygoods['marketprice'];
-                        $data['maxprice']=$lotterygoods['marketprice'];
-                        $data['maxbuy'] =$lotterygoods['total'];
-                        
-                        $data['unitprice']=$lotterygoods['marketprice'];
-                        $data['canbuy']  = false;
-                        $data['usermaxbuy']=$lotterygoods['total'];
-                        $allow_sale=false;
-                        $changenum = false;
-                    }
-                   
-                }
-               
+                
                 //秒杀不能修改数量
                 if ($data['seckillinfo'] && $data['seckillinfo']['status'] == 0) {
                     $changenum = false;
@@ -404,6 +387,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                         $g['is_task_goods'] = $task_goods_data['is_task_goods'];
                         $g['is_task_goods_option'] = $task_goods_data['is_task_goods_option'];
                         $g['task_goods'] = $task_goods_data['task_goods'];
+                       
                     }
                 }
 
@@ -573,8 +557,8 @@ class Create_EweiShopV2Page extends MobileLoginPage
             if ($sale_plugin && $buyagain_sale && $allow_sale) {
                 $saleset = $_W['shopset']['sale'];
                 $saleset['enoughs'] = $sale_plugin->getEnoughs();
+                
             }
-
             //计算产品成交价格及是否包邮
             foreach ($goods as &$g) {
 
@@ -2389,9 +2373,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $couponid = intval($_GPC['couponid']);
         //参数检查wsq
         $ifidentity=Dispage::check_readname($depotid);//wsq
-        if($member['showifidentity']==1){
-            $ifidentity=true;
-        }
+        
         if($ifidentity){
             $realname=$_GPC['realname'];
             $imid=$_GPC['imid'];
@@ -2730,7 +2712,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
         if($member['showifidentity']==1){
             $order['if_customs_z']=1;
         }
-        
         $deductenough=$order['deductenough'];//满额立减优惠
         $couponprice=$order['couponprice'];//优惠券优惠
         $buyagainprice=$order['buyagainprice'];//重复购买优惠

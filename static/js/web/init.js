@@ -286,8 +286,8 @@ define(['jquery', 'bootstrap'], function ($, bs) {
 					}
 					obj.trigger('valueChange', [val, oldval]);
 				},
-						obj.hide().html('<i class="fa fa-spinner fa-spin"></i>');
-				var input = $('<input type="text" class="form-control input-sm" />');
+				obj.hide().html('<i class="fa fa-spinner fa-spin"></i>');
+				var input = $('<input type="text" class="input-sm form-control" />');
 				if (edit == 'textarea') {
 					input = $('<textarea type="text" class="form-control" style="resize:none" rows=3 ></textarea>');
 				}

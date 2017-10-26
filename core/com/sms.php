@@ -256,8 +256,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
                 }
                 $result .= $key."=".$value;
                 $i++;
-            }
-
+            }           
         }
         elseif($type=='dayu'){
             $result = json_encode($data);

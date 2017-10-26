@@ -66,6 +66,7 @@ class index_EweiShopV2Page extends PluginMobilePage {
                 $credit1=$member['credit1'];
                 $ss=unserialize($lottery['task_data']);
                 $has_changes= floor($credit1/$ss['credit']);
+               
             }else{
                 $has_changes = pdo_fetchcolumn('select count(*) from '.tablename('ewei_shop_lottery_join').'where uniacid=:uniacid AND lottery_id=:lottery_id  AND join_user=:join_user and lottery_num>0',array(':uniacid'=>$_W['uniacid'],':join_user'=>$_W['openid'],':lottery_id'=>$id));
             }

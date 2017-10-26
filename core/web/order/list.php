@@ -41,7 +41,8 @@ class List_EweiShopV2Page extends WebPage {
 
         $uniacid = $_W['uniacid'];
         $paras = $paras1 = array(':uniacid' => $uniacid);
-
+        $depotsql="SELECT * from ".tablename("ewei_shop_depot")." where uniacid={$_W['uniacid']}";
+        $depostlist=pdo_fetchall($depotsql);
         $merch_plugin = p('merch');
         $merch_data = m('common')->getPluginset('merch');
 
@@ -68,7 +69,11 @@ class List_EweiShopV2Page extends WebPage {
                 $condition .= " AND o.paytype =" . intval($_GPC['paytype']);
             }
         }
-
+        if(!empty($_GPC['depotid']) && is_numeric($_GPC['depotid'])){
+            $condition .= " AND  o.depotid = :depotid";
+            $paras[':depotid']=intval($_GPC['depotid']);
+        }
+      
         if (!empty($_GPC['searchfield']) && !empty($_GPC['keyword'])) {
             $searchfield = trim(strtolower($_GPC['searchfield']));
             $_GPC['keyword'] = trim($_GPC['keyword']);
@@ -390,7 +395,7 @@ class List_EweiShopV2Page extends WebPage {
                 }
 
                 //订单商品
-                $order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.changeprice,og.oldprice,og.commission1,og.commission2,og.commission3,og.commissions,og.diyformdata,og.diyformfields,op.specs,g.merchid,og.seckill,og.seckill_taskid,og.seckill_roomid from ' . tablename('ewei_shop_order_goods') . ' og '
+                $order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.changeprice,og.oldprice,og.commission1,og.commission2,og.commission3,og.commissions,og.dprice,og.pricetaxrate,og.taxconsumption,shipping_fee,og.diyformdata,og.diyformfields,op.specs,g.merchid,og.seckill,og.seckill_taskid,og.seckill_roomid from ' . tablename('ewei_shop_order_goods') . ' og '
                     . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid '
                     . ' left join ' . tablename('ewei_shop_goods_option') . ' op on og.optionid = op.id '
                     . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $uniacid, ':orderid' => $value['id']));
@@ -565,6 +570,7 @@ class List_EweiShopV2Page extends WebPage {
                 array('title' => '订单编号', 'field' => 'ordersn', 'width' => 24),
                 array('title' => '粉丝昵称', 'field' => 'nickname', 'width' => 12),
                 array('title' => '会员姓名', 'field' => 'mrealname', 'width' => 12),
+                array('title' => '仓库', 'field' => 'depotid', 'width' => 12),
                 array('title' => 'openid', 'field' => 'openid', 'width' => 24),
                 array('title' => '会员手机手机号', 'field' => 'mmobile', 'width' => 12),
                 array('title' => '收货姓名(或自提人)', 'field' => 'realname', 'width' => 12),
@@ -604,9 +610,12 @@ class List_EweiShopV2Page extends WebPage {
                 array('title' => '快递单号', 'field' => 'expresssn', 'width' => 24),
                 array('title' => '订单备注', 'field' => 'remark', 'width' => 36),
                 array('title' => '核销员', 'field' => 'salerinfo', 'width' => 24),
+                array('title' => '增值税', 'field' => 'tax_rate', 'width' => 24),
+                array('title' => '消费税', 'field' => 'tax_consumption', 'width' => 24),
                 array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36),
                 array('title' => '订单自定义信息', 'field' => 'order_diyformdata', 'width' => 36),
                 array('title' => '商品自定义信息', 'field' => 'goods_diyformdata', 'width' => 36),
+
             );
             if (!empty($agentid) && $level > 0) {
                 $columns[] = array('title' => '分销级别', 'field' => 'level', 'width' => 24);
@@ -621,13 +630,23 @@ class List_EweiShopV2Page extends WebPage {
 
                 $columns[] = array('title' => '导入发货(1为发货)', 'field' => '', 'width' => 24);
             }
-
+           
+            $de=array();
+            foreach ($depostlist as $key => $value) {
+                $de[$value['id']]=$value['title'];
+            }
             foreach ($list as &$row) {
                 $row['realname'] = str_replace('=', "", $row['realname']);
                 $row['nickname'] = str_replace('=', "", $row['nickname']);
                 $row['ordersn'] = $row['ordersn'] . " ";
                 if ($row['deductprice'] > 0) {
                     $row['deductprice'] = "-" . $row['deductprice'];
+                }
+
+                if($row['depotid']>0){
+                    $row['depotid']=$de[$row['depotid']];
+                }else{
+                    $row['depotid']="自营";
                 }
                 if ($row['deductcredit2'] > 0) {
                     $row['deductcredit2'] = "-" . $row['deductcredit2'];

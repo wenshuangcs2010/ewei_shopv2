@@ -190,6 +190,7 @@ class Temp_EweiShopV2Page extends ComWebPage {
 					$sms_data[$d['data_temp']] = $postdata[$i];
 				}
 			}
+			
 			elseif ($item['type']=='emay'){
 				$sms_data = trim($postdata);
 			}

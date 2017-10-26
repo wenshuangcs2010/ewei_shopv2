@@ -478,7 +478,7 @@ class Dispage{
 
 
 	public static function getDisaccountArray(){
-		return array(37);
+		return array(37,47);
 	}
 	//获取组合中的商品
 	public static function getPackgoods($goodsid,$uniacid){

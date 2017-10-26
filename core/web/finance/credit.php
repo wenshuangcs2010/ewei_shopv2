@@ -65,6 +65,7 @@ class Credit_EweiShopV2Page extends WebPage
         }
 
         $list = pdo_fetchall($sql, $params);
+      
         //导出Excel
         if ($_GPC['export'] == 1) {
             if ($_GPC['type'] == 1) {

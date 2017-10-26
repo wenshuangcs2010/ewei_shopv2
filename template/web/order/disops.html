@@ -25,7 +25,11 @@
 		{/if}
 		{if $item['if_declare']==1 && empty($item['mftno'])}
 			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_declare', array('id' => $item['id']))}">申报</a>
+			{if $_W['role']=='founder'}
+			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_zhuanz', array('id' => $item['id']))}">转账</a>
+			{/if}
 			{else if $item['if_declare']==1  && !empty($item['mftno'])}
+			<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_declare', array('id' => $item['id']))}">申报</a><br/>
 			<a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/kjb2c/send_order', array('id' => $item['id']))}">货物放行</a>
 			{else}
 			<span class="text-danger">待供货商发货</span>

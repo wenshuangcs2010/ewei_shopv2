@@ -27,7 +27,40 @@ class Common_EweiShopV2Model {
 		}
 		return $set;
 	}
+/**
+     * @param bool $isapp
+     * @return array
+     */
+    public function public_build($isapp = false)
+    {
+        global $_W;
 
+        if (!(empty($this->public_build))) {
+            return $this->public_build;
+        }
+
+
+        $set = $this->getSysset('pay');
+
+        if (!(empty($set['weixin_id'])) && ($isapp == false)) {
+            $payments = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_payment') . ' WHERE uniacid=:uniacid AND id=:id', array(':uniacid' => $_W['uniacid'], ':id' => $set['weixin_id']));
+
+            if (empty($payments)) {
+                error(-1, '支付参数不存在!');
+            }
+
+
+            $payments['is_new'] = 1;
+        }
+         else {
+            $payments = m('common')->getSec();
+            $payments = iunserializer($payments['sec']);
+            $payments['is_new'] = 0;
+        }
+
+        $this->public_build = array($set, $payments);
+        return $this->public_build;
+    }
 	/**
 	 * 获取配置
 	 */
@@ -948,6 +981,7 @@ class Common_EweiShopV2Model {
         $package['sign'] = strtoupper(md5($string1));
         $dat = array2xml($package);
         $response = ihttp_request('https://api.mch.weixin.qq.com/pay/micropay', $dat);
+      
         if (is_error($response)) {
             return $response;
         }

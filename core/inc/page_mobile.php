@@ -20,6 +20,7 @@ class MobilePage extends Page {
 
         //检测商城是否关闭
         m('shop')->checkClose();
+       
 
         $preview = intval($_GPC['preview']);
 
@@ -54,6 +55,9 @@ class MobilePage extends Page {
             $this->merch_user = pdo_fetch("select * from ".tablename('ewei_shop_merch_user')." where id=:id limit 1",array(':id'=>intval($_GPC['merchid'])));
         }
     }
+
+
+
     public function followBar($diypage=false, $merch=false) {
         global $_W, $_GPC;
 

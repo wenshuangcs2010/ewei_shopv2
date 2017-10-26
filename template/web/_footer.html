@@ -11,7 +11,7 @@
     });
 
 
- {if $_W['isfounder'] && $_W['routes']!='system.auth.upgrade'}
+
     function check_ewei_shopv2_upgrade() {
   
         require(['util'], function (util) {  
@@ -21,15 +21,15 @@
             $.post('{php echo webUrl("system/auth/upgrade/check")}', function (ret) {
                 if (ret && ret.status == '1') { 
 		  
-	var result = ret.result;	    
+	               var result = ret.result;	    
                     if(result.filecount>0 || result.database || result.upgrades){
-	 	 
+	 	              
                         var html = '<div id="ewei-shopv2-upgrade-tips" class="tips-upgrade">';
 	   html+='<span class="tclose" onclick="check_ewei_shopv2_upgrade_hide();"><i class="fa fa-times-circle fa-2x"></i></span>';
-                         html+= '<div class="title">检测到更新</div>';
-                        html+='<div class="text"> 新版本 ' + result.version + " RELEASE " + result.release;
-                        html+=',请尽快更新! </div>';
-			html+='<div class="buttons"><a href="{php echo webUrl("system/auth/upgrade")}" class="btn btn-warning btn-sm">立即去更新</a></div></div>';
+                         html+= '<div class="title">检测到自动发货</div>';
+                        html+='<div class="text"> 发货数量 ' + result.version ;
+                        html+=' </div>';
+			
                         $('body').prepend(html);
                    }
                 }
@@ -47,7 +47,7 @@
             check_ewei_shopv2_upgrade();
         },4000);
     });
-{/if}
+
 
     $(function () {
         $('.page-content').show();

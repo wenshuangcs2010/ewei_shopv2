@@ -180,6 +180,7 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage {
 							. " left join " . tablename('ewei_shop_goods') . " g on g.id=og.goodsid  "
 							. " where og.orderid=:orderid and og.nocommission=0 and og.uniacid = :uniacid order by og.createtime  desc ", array(':uniacid' => $_W['uniacid'], ':orderid' => $row['id']));
 					$goods = set_medias($goods, 'thumb');
+					
 					foreach ($goods as &$g) {
 						$commissions = iunserializer($g['commissions']);
 						if ($orderids[$row['id']]['level'] == 1) {

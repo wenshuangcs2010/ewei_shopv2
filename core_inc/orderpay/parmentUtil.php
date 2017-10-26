@@ -245,8 +245,6 @@ class ParmentUtil
          private function nosoap_clice(){
             //$this->test();
             //die();
-            ini_set("display_errors", "On");
-            error_reporting(E_ALL | E_STRICT);
             require_once EWEI_SHOPV2_TAX_CORE. 'lib/nusoap.php';
                 $client = new SoapClient($this->_customs_api,"wsdl");
                 $client->soap_defencoding = 'UTF-8';

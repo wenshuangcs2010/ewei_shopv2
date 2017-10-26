@@ -672,7 +672,13 @@ class Op_EweiShopV2Page extends WebPage {
            $imid=trim($_GPC['imid']);
            $realname=trim($_GPC['realname']);
            $id=$_GPC['id'];
-           $ret=pdo_update("ewei_shop_order",array("imid"=>$imid,"realname"=>$realname),array("id"=>$id));
+           $data=array("imid"=>$imid,"realname"=>$realname);
+           if($_GPC['clear_mnf']==1){
+                $data['mftno']="";
+                $order=pdo_fetch("SELECT depotid,mftno FROM ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$id));
+                $returndata=m("kjb2c")->cnec_jh_cancel($order['depotid'],$order['mftno']);
+           }
+           $ret=pdo_update("ewei_shop_order",$data,array("id"=>$id));
            if($ret){
             show_json(1,'修改成功');
            }else{

@@ -36,7 +36,97 @@ class Upgrade_EweiShopV2Page extends SystemPage {
 
 	function check() {
 		global $_W, $_GPC;
+		@session_start();
+		$sql="SELECT id,ordersn ,mftno FROM ".tablename('ewei_shop_order')." where status=1 and refundid=0 and (depotid=21 or depotid=23) and mftno <> ''";
+		//每隔30分钟更新
+		$order_list = pdo_fetchall($sql);
 
+		$sql="SELECT id,ordersn ,cnbuyers_order_sn FROM ".tablename('ewei_shop_order')." where status=1 and refundid=0 and cnbuyers_order_sn <> ''";
+		$cnbuyerorder_list = pdo_fetchall($sql);
+		$newtime=time();
+		if(isset($_SESSION['updatetime_'.$_W['uniacid']])){
+			$datatime=$newtime-$_SESSION['updatetime_'.$_W['uniacid']];
+		
+			if($datatime<3600){
+				show_json(0, "111");
+				exit;
+			}
+		}
+		$_SESSION['updatetime_'.$_W['uniacid']]=time();
+		$count=0;
+		foreach($order_list as $order){
+			$bool=false;
+			$rerundata=m("kjb2c")->send_order($order['id']);
+			$body=(array)$rerundata['Body'];
+			$mft=(array)$body['Mft'];
+			$MftInfos=(array)$mft['MftInfos'];
+			$MftInfo=(array)$MftInfos['MftInfo'];
+			foreach ($MftInfo as $key=>$value) {
+				$newval=(array)$value;
+				if($newval['Status']==22){
+					$bool=ture;
+					$LogisticsName=$mft['LogisticsName'];
+					$LogisticsNo=$mft['LogisticsNo'];
+					if($_W['unaicid']==$order['uniacid']){
+						$count+=1;
+					}
+				}
+			}
+
+			if($bool){
+				if($LogisticsName=="北仑军通"){
+					$express="yuantong";
+					$expresscom="圆通速递";
+				}else{
+					$express="shunfeng";
+				}
+				$change_data['express'] = $express;
+				$change_data['expresscom'] = $expresscom;
+				$change_data['expresssn'] = $LogisticsNo;
+				$change_data['status']=2;
+				$change_data['sendtime'] = time();
+				pdo_update('ewei_shop_order', $change_data, array('id' => $order['id']));
+				m('notice')->sendOrderMessage($order['id']);
+				plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$expresscom} 快递单号: {$LogisticsNo}");
+			}
+		}
+
+		foreach ($cnbuyerorder_list as $order) {
+			if(!empty($order['cnbuyers_order_sn'])){
+				$shipinfo=m("cnbuyerdb")->getOrderinvon($order['cnbuyers_order_sn']);
+				if(!empty($shipinfo['invoice_no'])){
+					if($_W['unaicid']==$order['uniacid']){
+						$count+=1;
+					}
+					$data = array();
+	            	$data['status'] = 2;
+	            	$data['express'] = $shipinfo['com_code'];
+	            	$data['expresscom'] = $shipinfo['shipping_name'];
+	            	$data['expresssn'] = $shipinfo['invoice_no'];
+	            	$data['sendtime'] = time();
+	            	pdo_update('ewei_shop_order', $data, array('id' => $order['id']));
+	            	m('notice')->sendOrderMessage($order['id']);
+	            	plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$shipinfo['shipping_name']} 快递单号: {$shipinfo['invoice_no']}");
+				}
+			}
+		}
+		if($count==0){
+			show_json(0, "111");
+		}
+		//var_dump($sql);
+
+
+show_json(1, array(
+					'result' => 1,
+					'version' => $count,
+					'release' => "123",
+					'filecount' => 5,
+					'database' => !empty($database),
+					'upgrades'=> !empty($upgrade['upgrades']),
+					'log' => nl2br($log),
+					'templatefiles'=>"/" . $file['path'] . "<br/>",
+				));
+die();/*
 		$plugins = pdo_fetchall('select `identity` from '.tablename('ewei_shop_plugin'),array(),'identity');
 		load()->func('db');
         load()->func('communication');
@@ -119,7 +209,7 @@ class Upgrade_EweiShopV2Page extends SystemPage {
 		if (is_file(EWEI_SHOPV2_PATH . "tmp")){
 			@unlink(EWEI_SHOPV2_PATH . "tmp");
 		}
-		show_json(0, $resp['content']);
+		show_json(0, $resp['content']);*/
 	}
 
 	function process() {
