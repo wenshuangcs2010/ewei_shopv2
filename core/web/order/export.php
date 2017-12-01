@@ -308,8 +308,7 @@ class Export_EweiShopV2Page extends WebPage {
                 $value['statuscss'] = $orderstatus[$value['status']]['css'];
                 $value['status'] = $orderstatus[$value['status']]['name'];
                 $value['depotid']=$value['depotid']>0 ? $de[$value['depotid']] : "自营";
-                var_dump($value['depotid']);
-                die();
+              
                 if ($pt == 3 && empty($value['statusvalue'])) {
                     $value['statuscss'] = $orderstatus[1]['css'];
                     $value['status'] = $orderstatus[1]['name'];

@@ -94,6 +94,18 @@
                 <div class='fui-list-angle'><span class="angle"></span></div>
             </div>
             {/if}
+            {if $fcard['success']}
+            <div class='fui-list pay-btn' data-type='fcard'>
+                <div class='fui-list-media'>
+                    <i class='icon icon-deliver1 cash'></i>
+                </div>
+                <div class='fui-list-inner'>
+                    <div class="title">饭卡支付</div>
+                    <div class="subtitle">{$fcard['cardname']}专用饭卡支付</div>
+                </div>
+                <div class='fui-list-angle'><span class="angle"></span></div>
+            </div>
+            {/if}
             {/if}
 
         </div>

@@ -18,7 +18,10 @@ class Index_EweiShopV2Page extends WebPage {
 			header('location: '.webUrl('finance/log/withdraw'));
 		} else if(cv('finance.downloadbill')){
 			header('location: '.webUrl('finance/downloadbill'));
-		}else{
+		}else if(cv('finance.fcard')){
+			header('location: '.webUrl('finance/fcard'));
+		}
+		else{
 			header('location: '.webUrl());
 		}
 	}

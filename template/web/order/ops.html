@@ -41,6 +41,9 @@
 		{if $_W['uniacid']==DIS_ACCOUNT}
 		<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_zhuanz', array('id' => $item['id']))}">转账</a>
 		{else}
+		{ifp $_W['isfounder']}
+		<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_zhuanz', array('id' => $item['id']))}">转账</a>
+		{/if}
 		<span class="text-info">等待处理</span>
 		{/if}
 	{/if}

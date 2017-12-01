@@ -212,6 +212,15 @@
 			</a>
 		</div>
 	{/if}
+	{if $member['isagent']==1 && $member['status']==1}
+		<div class="fui-cell-group fui-cell-click">
+			<a class="fui-cell" href="{php echo mobileUrl('commission.memberorder')}">
+				<div class="fui-cell-icon"><i class="icon icon-help"></i></div>
+				<div class="fui-cell-text"><p>我的销售</p></div>
+				<div class="fui-cell-remark"></div>
+			</a>
+		</div>
+	{/if}
 	{if !is_weixin() && !empty($wapset['open'])}
 	<div class="fui-cell-group fui-cell-click">
 		<a class="fui-cell external" href="{if !empty($member['mobileverify'])}{php echo mobileUrl('member/changepwd')}{else}{php echo mobileUrl('member/bind')}{/if}">

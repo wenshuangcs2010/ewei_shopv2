@@ -42,15 +42,20 @@ class aliApy
         if($this->post['trade_status']!='TRADE_SUCCESS'){
             exit('fail');
         }
-        $this->strs = explode(':', $this->body);
         $this->type = intval($this->strs[1]); //类型 0 购物 1 充值 2收银台
+        
+        $this->strs = explode(':', $this->body);
+       
         $this->total_fee= round($this->post['total_fee'],2);
         $_W['uniacid'] = $_W['weid'] = intval($this->strs[0]);
         $this->init();
+
+        
     }
 
     public function init()
     {
+
         if ($this->type == '0'){
             $this->order();
         }elseif ($this->type == '1'){
@@ -60,7 +65,7 @@ class aliApy
         }
         exit('success');
     }
-
+    
     /**
      * 订单支付
      */
@@ -79,7 +84,7 @@ class aliApy
         $params[':tid'] = $tid;
         $params[':module'] = 'ewei_shopv2';
         $log = pdo_fetch($sql, $params);
-        WeUtility::logging('orderpay', var_export($this->post,true).'aa');
+      
 
         if($this->post['total_fee']!=$log['fee']){
             exit('fail');
@@ -170,7 +175,7 @@ class aliApy
             exit;
         }
         if(p('cashier')){
-//            p('cashier')->payResult($ordersn);
+            p('cashier')->payResult($ordersn);
         }
     }
 

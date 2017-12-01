@@ -165,12 +165,14 @@
                     $('.choosetemp').show();
                 }
             }
+            if (window.type == '4') {
+                $('.dispatch_info').show();
+            }
             if (window.type == '2' || window.type == '3') {
                 $(':checkbox[name=cash]').attr("checked",false);
                 $(':checkbox[name=cash]').parent().hide();
             } else {
                 $(':checkbox[name=cash]').parent().show();
-
             }
         })
 
@@ -701,6 +703,7 @@
             $('#type_virtual').show();
             $('.entity').hide();
         } else if(type == 4) {
+
         	$('#type_pack').show();
           	$('#type_virtual').hide();
             $('.entity').hide();

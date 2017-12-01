@@ -101,9 +101,9 @@
         <div class='fui-according expanded'>
             <div class='fui-according-header'>
                 <i class='icon icon-info'></i>
-					<span class="text">{if $refund['status']==0}等待商家处理{if $order['status']==1}退款{else}售后{/if}申请{/if}
-						{if $refund['status']>=3}商家已经通过{if $order['status']==1}退款{else}售后{/if}申请{/if}
-					</span>
+                    <span class="text">{if $refund['status']==0}等待商家处理{if $order['status']==1}退款{else}售后{/if}申请{/if}
+                        {if $refund['status']>=3}商家已经通过{if $order['status']==1}退款{else}售后{/if}申请{/if}
+                    </span>
 
                 <div class='remark'></div>
             </div>
@@ -233,8 +233,10 @@
     {if $refund['status']==0}
     <a data-nocache="true" class='btn btn-danger btn-edit' href='#page-refund-edit'>修改申请</a>
     {/if}
-
-    {if $refund['status']!=5}
+    {if $refund['status']==1}
+    退款完成
+    {/if}
+    {if $refund['status']!=5 && $refund['status']!=1}
     <a class='btn btn-default-o btn-cancel'>取消申请</a>
     {/if}
 </div>

@@ -90,9 +90,7 @@ class Order_EweiShopV2Model
                         $this->setStocksAndCredits($orderid, 1);
                        
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
-                        
-                        
-                       
+
                         if($customs){
                             
                             if($order['if_customs_z']==1 || $order['deductcredit2']>0 || $params['paytype']==1){//需要盛付通处理不在此次报关和申报
@@ -207,7 +205,6 @@ class Order_EweiShopV2Model
                         }
                     }
                 }
-                  WeUtility::logging('to_customsparams2', var_export("结束返回", true));
                 return true;
             }
         }
@@ -662,7 +659,13 @@ class Order_EweiShopV2Model
         $totals['status4'] = pdo_fetchcolumn(
             'SELECT COUNT(1) FROM ' . tablename('ewei_shop_order') . ""
             . " WHERE uniacid = :uniacid {$condition} and ismr=0  and refundstate>0 and refundid<>0 and deleted=0", $paras);
-     
+        $totals['status6'] = pdo_fetchcolumn(
+            'SELECT COUNT(1) FROM ' . tablename('ewei_shop_order_refund') . ""
+            . " WHERE uniacid = :uniacid  and (status=0 or status>1)", array(":uniacid"=>$_W['uniacid']));
+
+         $totals['status7'] = pdo_fetchcolumn(
+            'SELECT COUNT(1) FROM ' . tablename('ewei_shop_order_refund') . ""
+            . " WHERE uniacid = :uniacid and status=1", array(":uniacid"=>$_W['uniacid']));
         $totals['status5'] = pdo_fetchcolumn(
             'SELECT COUNT(1) FROM ' . tablename('ewei_shop_order') . ""
             . " WHERE uniacid = :uniacid {$condition} and ismr=0 and refundtime<>0 and deleted=0", $paras);

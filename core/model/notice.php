@@ -718,7 +718,6 @@ class Notice_EweiShopV2Model {
 					'keyword3' => array('title' => '订单号', 'value' => $order['ordersn'], "color" => "#4a5077"),
 					'remark' => array('value' => $remark, "color" => "#4a5077")
 				);
-
 				$account = m('common')->getAccount();
 				if (!empty($tm['openid'])) {
 					$openids = explode(',', $tm['openid']);

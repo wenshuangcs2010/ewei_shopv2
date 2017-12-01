@@ -294,7 +294,7 @@ class Common_EweiShopV2Model {
         $key=wordwrap($key,64,"\n",true);
         return str_replace("{key}",$key,$head_end);
     }
-
+    
     /**
      *
      * 支付宝条码支付

@@ -93,10 +93,17 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 
         $sec = m('common')->getSec();
         $sec = iunserializer($sec['sec']);
-        //检查是否有饭卡
-        //
-        var_Dump($_W['openid']);
-        die();
+        //检查用户所在分组
+        $fcard=array('success' => false);
+        $item=m("unit")->checkMember($member['groupid']);
+        if($item){
+            $isok=m("unit")->checkOrder($openid,$item,$order);
+           
+            if($isok && is_weixin()){
+                $fcard['success']=true;
+                $fcard['cardname']=$item['unitname'];
+            }
+        }
         //微信
         $wechat = array('success' => false);
         $jie = intval($_GPC['jie']);
@@ -226,6 +233,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             'credit' => $credit,
             'alipay' => $alipay,
             'wechat' => $wechat,
+            'fcard' => $fcard,
             'cash' => $cash,
             'money' => $order['price']
         );
@@ -328,7 +336,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 
         $type = $_GPC['type'];
 
-        if (!in_array($type, array('wechat', 'alipay', 'credit', 'cash'))) {
+        if (!in_array($type, array('wechat', 'alipay', 'credit', 'cash','fcard'))) {
             if ($_W['ispost']) {
                 show_json(0, '未找到支付方式');
             } else {
@@ -528,8 +536,82 @@ class Pay_EweiShopV2Page extends MobileLoginPage
         $ps['user'] = $openid;
         $ps['fee'] = $log['fee'];
         $ps['title'] = $log['title'];
+        if($type == 'fcard'){
+            //检查是否可以使用饭卡支付
+            $fcard=array('success' => false);
+            $item=m("unit")->checkMember($member['groupid']);
+            if($item){
+                $isok=m("unit")->checkOrder($openid,$item,$order);
+                if($isok && is_weixin()){
+                    $fcard['success']=true;
+                    $fcard['cardname']=$item['unitname'];
+                }
+            }
+           
+            if(!$fcard['success'] && empty($member['cardnumber'])){
+                if ($_W['ispost']) {
+                    show_json(0, '饭卡支付条件不足!请和管理员联系');
+                } else {
+                    $this->message("饭卡支付条件不足!请和管理员联系", mobileUrl('order'));
+                }
+            }
+            //检查订单是否已经支付
+            $sql="SELECT * FROM ".tablename("ewei_shop_unit_pay_log")." where orderid=:orderid and uniacid=:uniacid";
+            $fcarditem=pdo_fetch($sql,array(":orderid"=>$order['id'],":uniacid"=>$_W['uniacid']));
+            if(empty($fcarditem)){
+                 $fcardlog=array(
+                    'unitid'=>$item['id'],
+                    'uniacid'=>$_W['uniacid'],
+                    'openid'=>$openid,
+                    'cardnumber'=>$member['cardnumber'],
+                    'price'=>$order['price'],
+                    'addtime'=>time(),
+                    'orderid'=>$order['id'],
+                    'msg'=>"订单支付",
+                    'times'=>time(),
+                    'status'=>1,
+                );
+                pdo_insert("ewei_shop_unit_pay_log",$fcardlog);
+            }else{
+                $fcardlog=array(
+                    'unitid'=>$item['id'],
+                    'uniacid'=>$_W['uniacid'],
+                    'openid'=>$openid,
+                    'cardnumber'=>$member['cardnumber'],
+                    'price'=>$order['price'],
+                    'addtime'=>time(),
+                    'times'=>time(),
+                    'orderid'=>$order['id'],
+                    'msg'=>"订单支付",
+                    'status'=>1,
+                );
+                pdo_update("ewei_shop_unit_pay_log",$fcardlog,array("id"=>$fcarditem['id']));
+            }
+            $record = array();
+            $record['status'] = '1';
+            $record['type'] = 'fcard';
+            pdo_update('core_paylog', $record, array('plid' => $log['plid']));
+            m('order')->setOrderPayType($order['id'], 1);
+            $ret = array();
+            $ret['result'] = 'success';
+            $ret['type'] = $log['type'];
+            $ret['from'] = 'return';
+            $ret['tid'] = $log['tid'];
+            $ret['user'] = $log['openid'];
+            $ret['fee'] = $log['fee'];
+            $ret['weid'] = $log['weid'];
+            $ret['paytype'] = 8;
+            $ret['uniacid'] = $log['uniacid'];
+            @session_start();
+            $_SESSION[EWEI_SHOPV2_PREFIX . "_order_pay_complete"] = 1;
+            $pay_result = m('order')->payResult($ret);
 
-
+            if ($_W['ispost']) {
+                show_json(1, array('result'=>$pay_result));
+            } else {
+                header("location:" . mobileUrl('order/pay/success', array('id' => $order['id'],'result'=>$pay_result)));
+            }
+        }
         //余额支付
         if ($type == 'credit') {
 
@@ -585,6 +667,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             $ret['weid'] = $log['weid'];
             $ret['paytype'] = 1;
             $ret['uniacid'] = $log['uniacid'];
+
             @session_start();
             $_SESSION[EWEI_SHOPV2_PREFIX . "_order_pay_complete"] = 1;
             $pay_result = m('order')->payResult($ret);

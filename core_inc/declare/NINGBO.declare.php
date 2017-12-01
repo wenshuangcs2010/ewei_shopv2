@@ -27,7 +27,8 @@ class NINGBO_Api extends ningboData{
 		$this->setTaxAmount($taxAmount);
 		$this->setAddedValueTaxAmount($order['tax_rate']);
 		$this->setConsumptionDutyAmount($order['tax_consumption']);
-		$this->setGrossWeight($order['weight']);
+		$weight=$order['weight']/1000;
+		$this->setGrossWeight($weight);
 		$this->setPaytime($order['paytime']);
 		
 		$this->setPaymentNo($order['paymentno']);
@@ -65,18 +66,17 @@ class NINGBO_Api extends ningboData{
 	}
 	function cnec_jh_order(){
 		load()->func('communication');
-		 $posturl="
-                 &timestamp=".urlencode(date('Y-m-d H:i:s'))."
+		$timse=date('Y-m-d H:i:s');
+		$posturl="
+                 &timestamp=".urlencode($timse)."
                  &userid=".$this->_OrgUser."
-                 &sign=".md5($this->_OrgUser.$this->_Orgkey.date('Y-m-d H:i:s'))."
+                 &sign=".md5($this->_OrgUser.$this->_Orgkey.$timse)."
                  &xmlstr=".urlencode($this->xml).'
                  &msgtype='.$this->_cnec_jh_order.'
                  &customs=3105';
-        //WeUtility::logging('contetn', var_export($this->xml,true));
         $resp = ihttp_request($this->_api,$posturl);
-       return (array)$resp['content'];
+       	return (array)$resp['content'];
 	}
-
 
 		    /**
 	     * 订单关闭

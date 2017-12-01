@@ -65,10 +65,10 @@ class Memberorder_EweiShopV2Page extends CommissionMobileLoginPage {
     $paras[':starttime']=$starttime;
     $paras[':endtime']=$endtime;
     $paras[':openid']=$member['openid'];
-    $sql="select count(*) from ".tablename("ewei_shop_order")." as o where (paytype=21 or paytype=22)".$condition;
+    $sql="select count(*) from ".tablename("ewei_shop_order")." as o where (paytype=21 or paytype=22) and agentid=:agentid ".$condition;
    
     $ordercount=pdo_fetchcolumn($sql,$paras);
-        $sql="select sum(price) from ".tablename("ewei_shop_order")." as o where (paytype=21 or paytype=22)".$condition;
+        $sql="select sum(price) from ".tablename("ewei_shop_order")." as o where (paytype=21 or paytype=22) and agentid=:agentid ".$condition;
 
     $orderprice=pdo_fetchcolumn($sql,$paras);
 		//var_dump($status);
@@ -130,6 +130,7 @@ class Memberorder_EweiShopV2Page extends CommissionMobileLoginPage {
       		$params[':openid']=$row['openid'];
           $params[':agentid']=$row['agentid'];
       		$params[':uniacid']=$_W['uniacid'];
+         
       		$row['price']=pdo_fetchcolumn($sql,$params);
       		if(empty($row['price'])){
       			$row['price']=0;

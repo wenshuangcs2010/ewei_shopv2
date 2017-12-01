@@ -311,6 +311,7 @@ class Member_EweiShopV2Model {
 		}
 		$member = m('member')->getMember($openid);
 		$followed = m('user')->followed($openid);
+	
 		$uid = 0;
 		$mc = array();
 		load()->model('mc');

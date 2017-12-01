@@ -106,11 +106,12 @@ class Index_EweiShopV2Page extends WebPage
 			
 			$expresscom=$LogisticsName;
 			$expresssn=$LogisticsNo;
-			if($express=="北仑军通"){
+			if($expresscom=="北仑军通"){
 				$express="yuantong";
 				$expresscom="圆通速递";
 			}else{
 				$express="shunfeng";
+				$expresscom="顺丰速运";
 			}
 			$change_data['express'] = $express;
 			$change_data['expresscom'] = $expresscom;

@@ -46,7 +46,13 @@ define(['core', 'tpl'], function (core, tpl) {
             }, function () {
                 btn.removeAttr('stop')
             })
-        } else {
+        } else if(type == 'fcard'){
+            FoxUI.confirm('确认要支付吗?', '提醒', function () {
+                modal.complete(btn, type)
+            }, function () {
+                btn.removeAttr('stop')
+            })
+        }else {
             modal.complete(btn, type)
         }
     };
@@ -136,6 +142,5 @@ define(['core', 'tpl'], function (core, tpl) {
             FoxUI.toast.show(pay_json.result.message)
         }, false, true)
     };
-
     return modal
 });

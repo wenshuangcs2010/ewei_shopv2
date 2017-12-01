@@ -45,7 +45,7 @@ class Goods_EweiShopV2Page extends WebPage {
         }
         $orderby = !isset($_GPC['orderby']) ? 'og.price' : ( empty($_GPC['orderby']) ? 'og.price' : 'og.total');
 
-        $sql = "select og.price,og.total,o.createtime,o.ordersn,g.title,g.thumb,g.goodssn,op.goodssn as optiongoodssn from " . tablename('ewei_shop_order_goods') . ' og '
+        $sql = "select og.realprice,og.total,o.createtime,o.ordersn,g.title,g.thumb,g.goodssn,op.goodssn as optiongoodssn from " . tablename('ewei_shop_order_goods') . ' og '
             . " left join " . tablename('ewei_shop_order') . " o on o.id = og.orderid "
             . " left join " . tablename('ewei_shop_goods') . " g on g.id = og.goodsid "
             . " left join " . tablename('ewei_shop_goods_option') . " op on op.id = og.optionid "

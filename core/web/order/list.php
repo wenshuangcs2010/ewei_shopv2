@@ -256,6 +256,7 @@ class List_EweiShopV2Page extends WebPage {
             '0' => array('css' => 'default', 'name' => '未支付'),
             '1' => array('css' => 'danger', 'name' => '余额支付'),
             '11' => array('css' => 'default', 'name' => '后台付款'),
+            '8' => array('css' => 'primary', 'name' => '饭卡支付'),
             '2' => array('css' => 'danger', 'name' => '在线支付'),
             '21' => array('css' => 'success', 'name' => '微信支付'),
             '22' => array('css' => 'warning', 'name' => '支付宝支付'),
@@ -829,4 +830,93 @@ class List_EweiShopV2Page extends WebPage {
         $result = empty($totals) ? array() : $totals;
         show_json(1,$result);
     }
+    
+    //获取维权订单
+    public function newreturnorder(){
+        global $_GPC,$_W;
+        $uniacid=$_W['uniacid'];
+        $param=array(":uniacid"=>$_W['uniacid']);
+        $pindex = max(1, intval($_GPC['page']));
+        $psize = 20;
+        $status=$_GPC['status'];
+        if(empty($status)||is_numeric($status)==0){
+            $where="and (ro.status=0 or ro.status>1)";
+        }else{
+           $where="and ro.status=1 ";
+        }
+        $sql="SELECT ro.*,o.ordersn,o.paytype,o.status,o.price,o.cnbuyers_order_sn,o.id as oid ,o.refundstate from ".tablename("ewei_shop_order_refund")." as ro "
+            ."LEFT JOIN ".tablename("ewei_shop_order")." as o ON o.id=ro.orderid"
+        ." where ro.uniacid=:uniacid ".$where;
+        $sql.="LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+        $list=pdo_fetchall($sql,$param);
+        $paytype = array(
+            '0' => array('css' => 'default', 'name' => '未支付'),
+            '1' => array('css' => 'danger', 'name' => '余额支付'),
+            '11' => array('css' => 'default', 'name' => '后台付款'),
+            '8' => array('css' => 'primary', 'name' => '饭卡支付'),
+            '2' => array('css' => 'danger', 'name' => '在线支付'),
+            '21' => array('css' => 'success', 'name' => '微信支付'),
+            '22' => array('css' => 'warning', 'name' => '支付宝支付'),
+            '23' => array('css' => 'warning', 'name' => '银联支付'),
+            '3' => array('css' => 'primary', 'name' => '货到付款'),
+        );
+        $orderstatus = array(
+            '-1' => array('css' => 'default', 'name' => '已关闭'),
+            '0' => array('css' => 'danger', 'name' => '待付款'),
+            '1' => array('css' => 'info', 'name' => '待发货'),
+            '2' => array('css' => 'warning', 'name' => '待收货'),
+            '3' => array('css' => 'success', 'name' => '已完成')
+        );
+        foreach ($list as $key => &$value) {
+            if(empty($value['ogid'])){
+                $order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.refundstatus,og.refundid,og.changeprice,og.oldprice,og.dprice,og.diyformdata,og.diyformfields,op.specs,g.merchid,og.seckill,og.seckill_taskid,og.seckill_roomid from ' . tablename('ewei_shop_order_goods') . ' og '
+                                    . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid '
+                                    . ' left join ' . tablename('ewei_shop_goods_option') . ' op on og.optionid = op.id '
+                                    . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $uniacid, ':orderid' => $value['oid']));
+            }else{
+                $order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.refundstatus,og.refundid,og.changeprice,og.oldprice,og.dprice,og.diyformdata,og.diyformfields,op.specs,g.merchid,og.seckill,og.seckill_taskid,og.seckill_roomid from ' . tablename('ewei_shop_order_goods') . ' og '
+                                    . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid '
+                                    . ' left join ' . tablename('ewei_shop_goods_option') . ' op on og.optionid = op.id '
+                                    . ' where og.uniacid=:uniacid and og.id=:ogid ', array(':uniacid' => $uniacid, ':ogid' => $value['ogid']));
+            }
+           
+            
+
+
+
+            $value['goods'] = set_medias($order_goods, 'thumb');
+            $s = $value['status'];
+            $pt = $value['paytype'];
+            $value['paytypevalue'] = $pt;
+            $value['css'] = $paytype[$pt]['css'];
+            $value['paytype'] = $paytype[$pt]['name'];
+            $value['statusvalue'] = $s;
+                $value['statuscss'] = $orderstatus[$value['status']]['css'];
+                $value['status'] = $orderstatus[$value['status']]['name'];
+                if ($pt == 3 && empty($value['statusvalue'])) {
+                    $value['statuscss'] = $orderstatus[1]['css'];
+                    $value['status'] = $orderstatus[1]['name'];
+                }
+                if ($s == 1) {
+                    if ($value['isverify'] == 1) {
+                        $value['status'] = "待使用";
+                    } else if (empty($value['addressid'])) {
+
+                        if (!empty($value['ccard'])) {
+                            $value['status'] = "待充值";
+                        } else {
+                            $value['status'] = "待取货";
+                        }
+                    }
+                }
+        }
+
+        $r_type = array( '0' => '退款', '1' => '退货退款', '2' => '换货','3'=>"商品退款");
+        unset($value);
+
+        load()->func('tpl');
+        include $this->template('order/newreturnorder');
+    }
+
+    //
 }

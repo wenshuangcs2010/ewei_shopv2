@@ -520,17 +520,15 @@
         {/if}
         {if $order['status']==3 && $order['iscomment']==0 && empty($_W['shopset']['trade']['closecomment'])}
         <a class="btn btn-default btn-default-o" href="{php echo mobileUrl('order/comment',array('id'=>$order['id']))}">评价</a>
+        <a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/newrefund',array('id'=>$order['id']))}">维权处理</a>
+        
         {/if}
         {if $order['status']==2}
         <div class="btn btn-default btn-default-o order-finish" data-orderid="{$order['id']}">确认收货</div>
         {/if}
 
         {if $order['canrefund']}
-        <a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/refund',array('id'=>$order['id']))}">{if $order['status'] ==1}申请退款{else}申请售后{/if}{if !empty($order['refundstate'])}中{/if}</a>
-        {/if}
-
-        {if $order['refundstate'] > 0 && $refund['status']!=5}
-        <a class='btn btn-default-o btn-cancel'>取消申请</a>
+        <a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/newrefund',array('id'=>$order['id']))}">{if $order['status'] ==1}申请退款{else}申请售后{/if}{if $refundcount>0}中{/if}</a>
         {/if}
         {else if $order['userdeleted']==1}
             <div class="btn btn-default btn-default-o order-deleted" data-orderid="{$order['id']}">彻底删除订单</div>

@@ -68,7 +68,7 @@ class Log_EweiShopV2Page extends WebPage {
             $condition.=' and log.status=' . intval($_GPC['status']);
         }
 
-        $sql = "select log.id,m.id as mid, m.realname,m.avatar,m.weixin,log.logno,log.type,log.status,log.rechargetype,m.nickname,m.mobile,g.groupname,log.money,log.createtime,l.levelname,log.realmoney,log.deductionmoney,log.charge,log.remark,log.alipay,log.bankname,log.bankcard,log.realname as applyrealname,log.applytype from " . tablename('ewei_shop_member_log') . " log "
+        $sql = "select log.id,m.openid as mopenid,m.id as mid, m.realname,m.avatar,m.weixin,log.logno,log.type,log.status,log.rechargetype,m.nickname,m.mobile,g.groupname,log.money,log.createtime,l.levelname,log.realmoney,log.deductionmoney,log.charge,log.remark,log.alipay,log.bankname,log.bankcard,log.realname as applyrealname,log.applytype from " . tablename('ewei_shop_member_log') . " log "
             . " left join " . tablename('ewei_shop_member') . " m on m.openid=log.openid"
             . " left join " . tablename('ewei_shop_member_group') . " g on m.groupid=g.id"
             . " left join " . tablename('ewei_shop_member_level') . " l on m.level =l.id"
@@ -118,7 +118,7 @@ class Log_EweiShopV2Page extends WebPage {
                     }
                 } else if ($row['status'] == -1) {
                     if ($row['type'] == 0) {
-                        $row['status'] = "";
+                        $row['status'] = "充值失败";
                     } else {
                         $row['status'] = "失败";
                     }
@@ -137,10 +137,13 @@ class Log_EweiShopV2Page extends WebPage {
             $columns = array();
 
             $columns[] = array('title' => '昵称', 'field' => 'nickname', 'width' => 12);
+            $columns[] = array('title' => 'OPENID', 'field' => 'mopenid', 'width' => 12);
+            
             $columns[] = array('title' => '姓名', 'field' => 'realname', 'width' => 12);
             $columns[] = array('title' => '手机号', 'field' => 'mobile', 'width' => 12);
             $columns[] = array('title' => '会员等级', 'field' => 'levelname', 'width' => 12);
             $columns[] = array('title' => '会员分组', 'field' => 'groupname', 'width' => 12);
+            $columns[] = array('title' => '状态', 'field' => 'status', 'width' => 12);
             $columns[] = array('title' => (empty($type) ? "充值金额" : "提现金额"), 'field' => 'money', 'width' => 12);
             if (!empty($type)) {
                 $columns[] = array('title' => '到账金额', 'field' => 'realmoney', 'width' => 12);

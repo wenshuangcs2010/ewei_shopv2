@@ -1,0 +1,40 @@
+{template '_header'}
+<div class='fui-page {if empty($order['refundstate'])}fui-page-current{/if}' id='page-refund-edit' >
+<div class="fui-header">
+    <div class="fui-header-left">
+        <a class="back" onclick='history.back()'></a>
+    </div>
+    <div class="title">{if $order['status']==1}退款{else}售后{/if}申请</div>
+    <div class="fui-header-right">&nbsp;</div>
+</div>
+<div class='fui-content margin navbar'>
+    <div class="fui-cell-group">
+        {loop $order_goods $row}
+        <div class="fui-goods-item"  data-type="1">
+              <a href="{php echo mobileUrl('order/newrefund/goodsrefuand',array('ogid'=>$row['id'],'orderid'=>$order['id']))}">
+              <div class="image" data-lazyloaded="true" style="background-image: url({$row['thumb']});">
+              </div>
+                </a>
+            <div class="detail">
+               <a href="{php echo mobileUrl('order/newrefund/goodsrefuand',array('ogid'=>$row['id'],'orderid'=>$order['id']))}">
+                       <div class="name">{$row['title']}</div>
+               </a>
+                <div class="price">
+                   <span class="text">￥{php echo $row['realprice']/$row['total']}x{$row['total']}</span>
+                  
+                   <a href="{php echo mobileUrl('order/newrefund/goodsrefuand',array('ogid'=>$row['id'],'orderid'=>$order['id'],'retype'=>1))}"><span data-goodsid="{$row['id']}" class="buy" > 售后处理</span>
+                   </a>
+                   </div>
+                </div>
+            </div>
+        {/loop}
+    </div>
+</div>
+    <script language='javascript'>
+        require(['biz/order/newrefund'], function (modal) {
+            modal.init({orderid: "{$orderid}",refundid:"{$refundid}"});
+        });
+
+    </script>
+</div>
+{template '_footer'}

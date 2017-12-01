@@ -111,10 +111,19 @@
         <a href="{php echo webUrl('order/list/status4')}">维权申请 <span class='text-danger status4'>--</span></a>
     </li>
     {/if}
-     
+     {ifp 'order.list.status4'}
+    <li {if $_W['routes']=='order.list.newreturnorder'}class="active"{/if}>
+        <a href="{php echo webUrl('order/list/newreturnorder')}">新维权申请 <span class='text-danger status6'>--</span></a>
+    </li>
+    {/if}
     {ifp 'order.list.status5'}
     <li {if $_W['routes']=='order.list.status5'}class="active"{/if}>
         <a href="{php echo webUrl('order/list/status5')}">维权完成 <span class="status5">--</span></a>
+    </li>
+    {/if}
+    {ifp 'order.list.status5'}
+    <li {if $_W['routes']=='order.list.newreturnorder'}class="active"{/if}>
+        <a href="{php echo webUrl('order/list/newreturnorder',array('status'=>1))}">新维权完成 <span class="status7">--</span></a>
     </li>
     {/if}
       </ul>
@@ -147,6 +156,8 @@
                 $("#order li span.status3").text(res.status3);
                 $("#weq  li span.status4").text(res.status4);
                 $("#weq  li span.status5").text(res.status5);
+                $("#weq  li span.status6").text(res.status6);
+                $("#weq  li span.status7").text(res.status7);
                 $("#order li span.status_1").text(res.status_1);
                 $("#order li span.all").text(res.all);
             }

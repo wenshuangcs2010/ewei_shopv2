@@ -15,6 +15,9 @@
   	<li {if $_W['routes']=='finance.log.distix'} class="active" {/if}><a href="{php echo webUrl('finance/log/distix')}">代理商提现申请</a></li>
   {/if}
     {ifp 'finance.downloadbill'}<li {if $_W['routes'] == 'finance.downloadbill' } class="active" {/if}><a href="{php echo webUrl('finance/downloadbill')}">下载对账单</a></li>{/if}
+    {if $_W['uniacid']==DIS_ACCOUNT}
+    {ifp 'finance.log.withdraw'}<li {if $_W['routes'] == 'finance.fcard' } class="active" {/if}><a href="{php echo webUrl('finance/fcard')}">饭卡对账单</a></li>{/if}
+    {/if}
 </ul>
 {/if}
 

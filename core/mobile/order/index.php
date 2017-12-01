@@ -244,7 +244,7 @@ paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdelet
 
                 $refund = pdo_fetch("select * from " . tablename('ewei_shop_order_refund') . ' where id=:id and uniacid=:uniacid and orderid=:orderid limit 1'
                     , array(':id' => $row['refundid'], ':uniacid' => $uniacid, ':orderid' => $row['id']));
-
+                
                 if (!empty($refund)) {
                     $row['statusstr'] = '待' . $r_type[$refund['rtype']];
                 }
@@ -545,7 +545,7 @@ paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdelet
 
         //虚拟物品信息
         $order['virtual_str'] = str_replace("\n", "<br/>", $order['virtual_str']);
-
+        
         //是否可以退款
         if ($order['status'] == 1 || $order['status'] == 2) {
             $canrefund = true;
@@ -593,7 +593,7 @@ paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdelet
                 }
             }
         }
-
+        
         $order['canrefund'] = $canrefund;
 
         //如果发货，查找第一条物流

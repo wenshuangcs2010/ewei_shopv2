@@ -36,11 +36,11 @@ class MobilePage extends Page {
         }else{
 
             if ($preview&&!is_weixin()) {
-                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
+                $_W['openid'] = "oIZ9Ks4s4bEqKnOEGC7iGvLdbIFc";
             }
             if (EWEI_SHOPV2_DEBUG)
             {
-                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
+                $_W['openid'] = "oIZ9Ks4s4bEqKnOEGC7iGvLdbIFc";
             }
         }
         //var_dump($_W['openid']);

@@ -43,12 +43,10 @@ class Goods_rank_EweiShopV2Page extends WebPage {
             $condition1.=" and g.title like :title";
             $params1[':title'] = "%{$_GPC['title']}%";
         }
-
-
         $orderby = !isset($_GPC['orderby']) ? 'money' : ( empty($_GPC['orderby']) ? 'money' : 'count');
 
         $sql = "SELECT g.id,g.title,g.thumb,"
-            . "(select ifnull(sum(og.price),0) from  " . tablename('ewei_shop_order_goods') . " og left join " . tablename('ewei_shop_order') . " o on og.orderid=o.id  where o.status>=1 and og.goodsid=g.id {$condition})  as money,"
+            . "(select ifnull(sum(og.realprice),0) from  " . tablename('ewei_shop_order_goods') . " og left join " . tablename('ewei_shop_order') . " o on og.orderid=o.id  where o.status>=1 and og.goodsid=g.id {$condition})  as money,"
             . "(select ifnull(sum(og.total),0) from  " . tablename('ewei_shop_order_goods') . " og left join " . tablename('ewei_shop_order') . " o on og.orderid=o.id  where o.status>=1 and og.goodsid=g.id {$condition}) as count  "
             . "from " . tablename('ewei_shop_goods') . " g  "
             . "where 1 {$condition1}  order by {$orderby} desc ";
