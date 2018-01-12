@@ -45,6 +45,7 @@
                 <option value="0" {if $item['updateid'] == '0'}selected="true"{/if}>请选择</option>
                 <option value="1" {if $item['updateid'] == '1'}selected="true"{/if}>保税超市</option>
                 <option value="2" {if $item['updateid'] == '2'}selected="true"{/if}>阿迪达斯代理</option>
+                <option value="3" {if $item['updateid'] == '3'}selected="true"{/if}>OMS订单管理平台</option>
             </select>
         </div>
     </div>
@@ -60,8 +61,18 @@
                 <input type="text" id='cnbuyershoping_id' name="cnbuyershoping_id" class="form-control" value="{$item['cnbuyershoping_id']}" style="width:300px;"/>
         </div>
     </div>
-
-    
+    <div class="form-group mygoodsdiv">
+        <label class="col-sm-2 control-label must">APP_id</label>
+        <div class="col-sm-9 col-xs-12">
+                <input type="text" id='app_id' name="app_id" class="form-control" value="{$item['app_id']}" style="width:300px;"/>
+        </div>
+    </div>
+    <div class="form-group mygoodsdiv">
+        <label class="col-sm-2 control-label must">APP_SECRET</label>
+        <div class="col-sm-9 col-xs-12">
+                <input type="text" id='app_secret' name="app_secret" class="form-control" value="{$item['app_secret']}" style="width:300px;"/>
+        </div>
+    </div>
     <div class="form-group">
         <label class="col-sm-2 control-label must">实名购买</label>
         <div class="col-sm-9 col-xs-12">

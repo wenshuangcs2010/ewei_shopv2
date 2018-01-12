@@ -36,6 +36,7 @@ class WebPage extends Page {
 				$perm_type_value[] = $val['value'];
 			}
 			$is_xxx = com('perm')->check_xxx($_W['routes']);
+			
 			if ($is_xxx) {
 				if (!$perm) {
 					foreach ($is_xxx as $item) {

@@ -182,7 +182,7 @@ class List_EweiShopV2Page extends WebPage {
 
 
         if ($condition != ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0' || !empty($sqlcondition)){
-            $sql = "select o.* , a.realname as arealname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername,r.rtype,r.status as rstatus,de.if_declare,de.if_customs from " . tablename('ewei_shop_order') . " o"
+            $sql = "select o.* , a.realname as arealname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername,r.rtype,r.status as rstatus,de.if_declare,de.ismygoods,de.updateid,de.if_customs from " . tablename('ewei_shop_order') . " o"
                 . " left join " . tablename('ewei_shop_order_refund') . " r on r.id =o.refundid "
                 . " left join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid "
                 . " left join " . tablename('ewei_shop_member_address') . " a on a.id=o.addressid "
@@ -198,13 +198,14 @@ class List_EweiShopV2Page extends WebPage {
             $list = pdo_fetchall($sql, $paras);
         }else{
             $status_condition = str_replace('o.','',$statuscondition);
-            $sql = "select o.*,de.if_declare,de.if_customs from " . tablename('ewei_shop_order') . " as o "
+            $sql = "select o.*,de.if_declare,de.ismygoods,de.updateid,de.if_customs from " . tablename('ewei_shop_order') . " as o "
             . " left join " . tablename('ewei_shop_depot') . " as de on de.id =o.depotid "
             ."where o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0 {$status_condition} GROUP BY o.id ORDER BY o.createtime DESC  ";
             if (empty($_GPC['export'])) {
                 $sql.="LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
             }
             $list = pdo_fetchall($sql, $paras);
+
             if (!empty($list)){
                 $refundid = '';
                 $openid = '';

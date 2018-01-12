@@ -86,6 +86,8 @@ class Perm_EweiShopV2ComModel extends ComModel
 
                 'seckill' => $this->perm_seckill(),
 
+                'composter' => $this->perm_composter(),
+
             );
             self::$allPerms = $perms;
         }
@@ -251,8 +253,9 @@ class Perm_EweiShopV2ComModel extends ComModel
             'delete' => '删除-log',
             'delete1' => '彻底删除-log',
             'restore' => '恢复到仓库-log',
+            'editstatus'=>'上下架',
             'xxx' => array(
-                'status' => 'edit',
+                'status' => 'editstatus',
                 'property' => 'edit',
                 'goodsprice' => 'edit',
                 'change' => 'edit'
@@ -2699,7 +2702,29 @@ class Perm_EweiShopV2ComModel extends ComModel
                 )
         ) : array();
     }
-
+    //分销二维码权限
+    protected function perm_composter(){
+         return $this->isopen('composter')&&$this->is_perm_plugin('composter')?array(
+            'text' => m('plugin')->getName('composter'),
+            'add'=>array(
+                'text'=>'人员管理',
+                'edit'=>'人员编辑',
+                'add'=>'人员添加',
+                'xxx' =>
+                    array(
+                        'enabled' => 'edit'
+                    )
+            ),
+            'scan'=>array(
+                 'text'=>'新增二维码',
+                 'add'=>'新增二维码',
+                    ),
+            'log'=>array(
+                 'text'=>'全部二维码',
+                 'view'=>'查看二维码',
+                    ),
+            ):array();
+    }
     /*拼团权限*/
     protected function perm_seckill()
     {

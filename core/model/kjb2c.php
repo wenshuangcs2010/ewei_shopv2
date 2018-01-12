@@ -318,6 +318,7 @@ class Kjb2c_EweiShopV2Model {
 		if($depot['if_declare']!=1){
 			show_json(0,'当前订单无需申报');
 		}
+		//获取一下申报单
 		$customs=$this->check_if_customs($order['depotid']);
 		if(empty($customs)){
 			show_json(0,"申报地址错误");
@@ -384,11 +385,12 @@ class Kjb2c_EweiShopV2Model {
                    );
                 $payment=paybase::getPayment('wx',$config);
                 $returncode=$payment->buildRequestForm($orderpay);
-               
-                WeUtility::logging('支付结果', var_export($returncode, true));
                 if($returncode['status']==0){
-                    m("kjb2c")->to_declare($orderid);
+                	 $ret=m("kjb2c")->sendOmsorder($orderid);
+                    //m("kjb2c")->to_declare($orderid);
+                    
                 }
+                return $returncode;
 		 	}
 
 		 }
@@ -402,7 +404,48 @@ class Kjb2c_EweiShopV2Model {
 		$declare=DeclareCore::getObject($customs,$depot);
 		return $declare->cnec_jh_cancel($mftno);
 	}
+	function sendOmsorder($orderid){
+		require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendOmsapi.php");
+		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		if(!empty($order['cnbuyers_order_sn'])){
+			return array("status"=>0,"msg"=>"重复");
+		}
+		$sendorder=new SendOmsapi();
+		$ordergoods=pdo_fetchall("SELECT * from ".tablename("ewei_shop_order_goods")." where orderid=:orderid",array(":orderid"=>$orderid));
+		foreach($ordergoods as $goods){
+				$dispatchid=$goods['dispatchid'];
+				$Weight+=$goods['weight']*$goods['total'];
+				if($order['dispatchid']==0){
+					$dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//wsq
+				}else{
+					$dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq
+				}
+			}
+		$order['express']=$dispatch_data['express'];
+		$ret=$sendorder->sendorder($order,$ordergoods);
+		if(empty($ret)){
+			return array("status"=>1,"msg"=>"error");
+		}
+		if($ret['error']==0){
+			$order_sn='';
+			foreach ($ret['data'] as $key => $value) {
+				$order_sn.=$value['order_sn']."|";
+			}
+			pdo_update("ewei_shop_order",array("cnbuyers_order_sn"=>$order_sn),array("id"=>$order['id']));
+			return array("status"=>1,"msg"=>"ok");
+		}else{
+			return array("status"=>1,"msg"=>$ret['message']);
+		}
 
+	}
+
+	function getOrderinvoice_no($depotid,$ordersn){
+		require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendOmsapi.php");
+		$sendorder=new SendOmsapi();
+		$ret=$sendorder->selectOrderShipping($depotid,$ordersn);
+		
+		return $ret;
+	}
 	function sendOrder($orderid){
 		require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendorder.php");
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
@@ -418,7 +461,7 @@ class Kjb2c_EweiShopV2Model {
 		$sendorder->init($order);
 		$sendorder->params['shipping_id']=$depot['cnbuyershoping_id'];
 		$sendorder->params['account_id']=$setting['payment']['wechat']['mchid'];
-		$sendorder->init_out_goods($ordergoods);
+		$sendorder->init_out_goods($ordergoods,$order['uniacid'],$order['isdisorder']);
 		$data=$sendorder->iHttpPost();
 		if(isset($data['errorcode'])){
 			return false;

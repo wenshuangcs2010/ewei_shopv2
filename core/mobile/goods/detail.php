@@ -203,7 +203,6 @@ class Detail_EweiShopV2Page extends MobilePage {
                 //检查商品库存是否足够
                 if($vg['total']<$vg['number']){//组合中可购买数量
                     $goods['total']=0;
-
                 }
                 $decountprice+=$vg['minprice']*$vg['number'];
             }
@@ -360,11 +359,11 @@ class Detail_EweiShopV2Page extends MobilePage {
         if (empty($is_task_goods)) {
             $memberprice = m('goods')->getMemberPrice($goods, $level);
         }
-
+        
         if($goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
             $goods['oldmaxprice'] = $maxprice;
             $prices = array();
-          
+       
             $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
             if (!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])) {
                 //统一促销

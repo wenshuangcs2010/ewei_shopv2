@@ -11,7 +11,7 @@ if (!defined('IN_IA')) {
 
 class Index_EweiShopV2Page extends MobilePage {
 
- 
+
 	function main() {
 		global $_W, $_GPC;
 		$allcategory = m('shop')->getCategory();

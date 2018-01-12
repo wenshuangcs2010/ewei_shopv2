@@ -15,7 +15,9 @@ class Index_EweiShopV2Page extends WebPage {
    function test11(){
         global $_W, $_GPC;
         
-         com_run('printer::sendOrderMessage', 208);
+        if (com('coupon')) {
+            com('coupon')->sendcouponsbytask(266); //订单支付
+        }
         //var_dump($data);
    }
 
@@ -146,7 +148,7 @@ class Index_EweiShopV2Page extends WebPage {
                 $de[$value['id']]=$value['title'];
             }
             $categorys = m('shop')->getFullCategory(true);
-            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.subtitle,g.keywords,g.displayorder FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.consumption_tax,g.vat_rate,g.subtitle,g.keywords,g.displayorder FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
             $goodslist=pdo_fetchall($sql,$params);
             $categorystemp=array();
             foreach ($categorys as $r) {
@@ -179,6 +181,8 @@ class Index_EweiShopV2Page extends WebPage {
                 array('title' => '代理状态', 'field' => 'isdis', 'width' => 12),
                 array('title' => '销量', 'field' => 'sales', 'width' => 12),
                 array('title' => '库存', 'field' => 'total', 'width' => 12),
+                array('title' => '增值税', 'field' => 'vat_rate', 'width' => 12),
+                array('title' => '消费税', 'field' => 'consumption_tax', 'width' => 12),
                 array('title' => '首图链接', 'field' => 'imgthumb', 'width' => 12),
             );
             if($_W['uniacid']!=DIS_ACCOUNT){
@@ -278,10 +282,7 @@ class Index_EweiShopV2Page extends WebPage {
 		}
 		include $this->template();
     }
-    function test(){
-        $tax=new Tax();
-        $tax->tax_rate(63);
-    }
+   
     function add() {
         $this->post();
     }

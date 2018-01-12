@@ -437,6 +437,7 @@ class DiypageModel extends PluginModel {
 				foreach ($page['data']['items'] as $itemid=>&$item) {
 					if($item['id']=='goods') {
 					    // 判断浏览权限
+                   
 						if($item['params']['goodsdata']=='0') {
                             if(!empty($item['data']) && is_array($item['data'])) {
                                 $goodsids = array();
@@ -452,6 +453,7 @@ class DiypageModel extends PluginModel {
                                     } else {
                                         $goods = pdo_fetchall("select id, showlevels, showgroups from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
+                            
                                     if (!empty($goods) && is_array($goods)) {
                                         foreach ($item['data'] as $childid=>$childgoods) {
                                             foreach ($goods as $index => $good) {

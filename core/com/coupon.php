@@ -1265,8 +1265,8 @@ class Coupon_EweiShopV2ComModel extends ComModel {
             $goodssendtasks = pdo_fetchall('select  og.id,og.goodsid,og.orderid,og.parentorderid,og.total,gst.id as taskid,gst.couponid,gst.sendnum,gst.sendpoint,gst.num
             from '. tablename('ewei_shop_coupon_goodsendtask').' gst
             inner join ' . tablename('ewei_shop_order_goods') . ' og on og.goodsid =gst.goodsid  and (orderid=:orderid or parentorderid=:orderid)
-            where  og.uniacid=:uniacid and og.openid=:openid and gst.num>=gst.sendnum',
-            array( ':uniacid' => $_W['uniacid'],':openid' => $_W['openid'],':orderid' => $orderid));
+            where  og.uniacid=:uniacid and og.openid=:openid and gst.num>=gst.sendnum and gst.starttime< :now and gst.endtime>:now and gst.status=1',
+            array( ':uniacid' => $_W['uniacid'],':openid' => $_W['openid'],':orderid' => $orderid,':now' => time()));
 
 
             foreach($goodssendtasks as $task)
@@ -1300,12 +1300,13 @@ class Coupon_EweiShopV2ComModel extends ComModel {
         if (!is_array($orderid)) {
             $order = pdo_fetch('select id,openid,ordersn,createtime,status,finishtime,`virtual`,isparent,parentid  from ' . tablename('ewei_shop_order') . ' where id=:id and status>=0  and uniacid=:uniacid limit 1', array(':id' => intval($orderid), ':uniacid' => $_W['uniacid']));
         }
+
         if (empty($order)) {
             return;
         }
 
         $parentid = $order['parentid'];
-
+   
         $gosendtask = false;
         if ($order['status'] == 1) {
             $gosendtask = true;
@@ -1334,7 +1335,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
         //满额送优惠券
         if ($gosendtask) {
 
-            $list=$this->getOrderSendCoupons($orderid,$sendpoint,1);
+            $list=$this->getOrderSendCoupons($orderid,$sendpoint,1,$order['openid']);
 
             if(!empty($list)&&count($list)>0)
             {
@@ -1343,8 +1344,9 @@ class Coupon_EweiShopV2ComModel extends ComModel {
         }
 
         //购买指定商品送优惠券
-        $list2=$this->getOrderSendCoupons($orderid,$sendpoint,2);
-
+        $list2=$this->getOrderSendCoupons($orderid,$sendpoint,2,$order['openid']);
+        //var_dump($list2);
+       
         if(!empty($list2)&&count($list2)>0)
         {
             $this ->posterbylist($list2 ,$order['openid'],6);
@@ -1352,23 +1354,22 @@ class Coupon_EweiShopV2ComModel extends ComModel {
     }
 
     //获取所有子订单需要发送的优惠券列表
-    function getOrderSendCoupons($orderid,$sendpoint,$tasktype)
+    function getOrderSendCoupons($orderid,$sendpoint,$tasktype,$openid)
     {
         global $_W;
-
         if($sendpoint ==2)
         {
             $taskdata = pdo_fetchall('select id, couponid, sendnum  from ' . tablename('ewei_shop_coupon_taskdata') . '
             where  status=0  and openid=:openid and uniacid=:uniacid and sendpoint=:sendpoint and tasktype=:tasktype
             and (orderid=:orderid or parentorderid=:orderid)' ,
-                array( ':openid' => $_W['openid'],':uniacid' => $_W['uniacid'],':sendpoint' => $sendpoint,':tasktype' => $tasktype,':orderid' => $orderid));
+                array( ':openid' => $openid,':uniacid' => $_W['uniacid'],':sendpoint' => $sendpoint,':tasktype' => $tasktype,':orderid' => $orderid));
 
         }else
         {
             $taskdata = pdo_fetchall('select  id, couponid, sendnum  from ' . tablename('ewei_shop_coupon_taskdata') . '
             where  status=0  and openid=:openid and uniacid=:uniacid and sendpoint=:sendpoint and tasktype=:tasktype
             and orderid=:orderid' ,
-                array( ':openid' => $_W['openid'],':uniacid' => $_W['uniacid'],':sendpoint' => $sendpoint,':tasktype' => $tasktype,':orderid' => $orderid));
+                array( ':openid' => $openid,':uniacid' => $_W['uniacid'],':sendpoint' => $sendpoint,':tasktype' => $tasktype,':orderid' => $orderid));
         }
 
         return $taskdata;
@@ -1439,10 +1440,9 @@ class Coupon_EweiShopV2ComModel extends ComModel {
 
             $url =mobileUrl('sale/coupon/my/showcoupons',array('key'=>$showkey),true);
         }
-
-
         foreach($list  as $taskdata)
         {
+
             $couponnum = 0;
             $couponnum = intval($taskdata['sendnum']);
 
@@ -1475,7 +1475,7 @@ class Coupon_EweiShopV2ComModel extends ComModel {
                 pdo_insert('ewei_shop_coupon_data', $data);
 
                 $coupondataid=pdo_insertid();
-
+               
                 //增加用户优惠券展示记录
                 $data = array(
                     'showkey' => $showkey,

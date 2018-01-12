@@ -104,6 +104,16 @@
                     </select>
 
                 </div>
+                 <div class="col-sm-3">
+
+                    <select name="depotid" class="form-control select2">
+                        <option value="" {if $_GPC['depotid']==''}selected{/if} >仓库</option>
+                        {loop $depotlist $de}
+                        <option value="{$de['id']}" {if $_GPC['depotid'] ==$de['id']} selected="selected" {/if}>{$de['title']}</option>
+                        {/loop}
+                    </select>
+
+                </div>
             </div>
             <div class="form-group">
                 {if $is_openmerch == 1}

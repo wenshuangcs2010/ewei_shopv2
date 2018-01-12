@@ -41,7 +41,7 @@ class Upgrade_EweiShopV2Page extends SystemPage {
 		//每隔30分钟更新
 		$order_list = pdo_fetchall($sql);
 
-		$sql="SELECT id,ordersn ,cnbuyers_order_sn FROM ".tablename('ewei_shop_order')." where status=1 and refundid=0 and cnbuyers_order_sn <> ''";
+		$sql="SELECT id,ordersn ,cnbuyers_order_sn,depotid FROM ".tablename('ewei_shop_order')." where status=1 and refundid=0 and cnbuyers_order_sn <> ''";
 		$cnbuyerorder_list = pdo_fetchall($sql);
 		$newtime=time();
 		if(isset($_SESSION['updatetime_'.$_W['uniacid']])){
@@ -93,17 +93,17 @@ class Upgrade_EweiShopV2Page extends SystemPage {
 
 		foreach ($cnbuyerorder_list as $order) {
 			if(!empty($order['cnbuyers_order_sn'])){
-				$shipinfo=m("cnbuyerdb")->getOrderinvon($order['cnbuyers_order_sn']);
+				$shipinfo=m("kjb2c")->getOrderinvoice_no($order['depotid'],$order['cnbuyers_order_sn']);
 				if(!empty($shipinfo['invoice_no'])){
 					if($_W['unaicid']==$order['uniacid']){
 						$count+=1;
 					}
 					$data = array();
-	            	$data['status'] = 2;
-	            	$data['express'] = $shipinfo['com_code'];
-	            	$data['expresscom'] = $shipinfo['shipping_name'];
-	            	$data['expresssn'] = $shipinfo['invoice_no'];
-	            	$data['sendtime'] = time();
+		        	$data['status'] = 2;
+		        	$data['express'] = $ret['data']['shipping_code'];
+		        	$data['expresscom'] = $ret['data']['shipping_name'];
+		        	$data['expresssn'] = $ret['data']['invoice_no'];
+		        	$data['sendtime'] = time();
 	            	pdo_update('ewei_shop_order', $data, array('id' => $order['id']));
 	            	m('notice')->sendOrderMessage($order['id']);
 	            	plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$shipinfo['shipping_name']} 快递单号: {$shipinfo['invoice_no']}");

@@ -212,7 +212,7 @@ class ParmentUtil
                     'SignType' =>$this->SignType,
                     'Mac' =>$this->Mac,
                     );
-                $transResponse = $client->__soapCall('Transfer', array(array('request'=>$param)),array('location' =>$this->_customs_api_trans)); //以数组形式传递params
+                //$transResponse = $client->__soapCall('Transfer', array(array('request'=>$param)),array('location' =>$this->_customs_api_trans)); //以数组形式传递params
                 //var_dump($transResponse);
                 //die();
                 $respTrans_s = $transResponse->TransferResult;

@@ -53,6 +53,7 @@ class Role_EweiShopV2Page extends WebPage {
 		$id = intval($_GPC['id']);
 		$item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_perm_role') . " WHERE id =:id and deleted=0 and uniacid=:uniacid limit 1", array(':uniacid' => $_W['uniacid'], ':id' => $id));
 		$perms = com('perm')->formatPerms();
+		
 		$role_perms = array();
 		$user_perms = array();
 		if (!empty($item)) {

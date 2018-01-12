@@ -12,6 +12,7 @@ class Cnbuersapi_EweiShopV2Page extends WebPage
 		$orderid=$_GPC['id'];
 		
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+	
 		if(!empty($order['cnbuyers_order_sn'])){
 			$shipinfo=m("cnbuyerdb")->getOrderinvon($order['cnbuyers_order_sn']);
 			if(!empty($shipinfo['invoice_no'])){
@@ -46,6 +47,9 @@ class Cnbuersapi_EweiShopV2Page extends WebPage
 		$sendorder->params['shipping_id']=$depot['cnbuyershoping_id'];
 		$sendorder->params['account_id']=$setting['payment']['wechat']['mchid'];
 		$sendorder->init_out_goods($ordergoods);
+
+
+		
 		$data=$sendorder->iHttpPost();
 		if(isset($data['errorcode'])){
 			show_json(0,$data['errmsg']);

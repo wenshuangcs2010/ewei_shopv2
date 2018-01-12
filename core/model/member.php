@@ -315,7 +315,9 @@ class Member_EweiShopV2Model {
 		$uid = 0;
 		$mc = array();
 		load()->model('mc');
-		if ($followed || empty($shopset['shop']['getinfo']) || $shopset['shop']['getinfo'] == 1 ) {
+		//查询用户是否有ims_mc_mapping_fans unionid
+		//站
+		if ($followed || empty($shopset['shop']['getinfo']) || $shopset['shop']['getinfo'] == 1  ) {
 			$uid = mc_openid2uid($openid);
 			if( !EWEI_SHOPV2_DEBUG ){
 				$userinfo = mc_oauth_userinfo();
@@ -337,6 +339,7 @@ class Member_EweiShopV2Model {
 			$mc['gender'] = $userinfo['sex'];
 			$mc['resideprovince'] = $userinfo['province'];
 			$mc['residecity'] = $userinfo['city'];
+			$mc['unionid'] = $userinfo['unionid'];
 			$mc['nickname'] = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $mc['nickname']);
 			//WeUtility::logging('测试mc', var_export($mc, true));
 		}
@@ -354,6 +357,7 @@ class Member_EweiShopV2Model {
 				'province' => !empty($mc['resideprovince']) ? $mc['resideprovince'] : '',
 				'city' => !empty($mc['residecity']) ? $mc['residecity'] : '',
 				'area' => !empty($mc['residedist']) ? $mc['residedist'] : '',
+				'unionid'=>!empty($mc['unionid']) ? $mc['unionid'] : '',
 				'createtime' => time(),
 				'status' => 0
 			);
@@ -375,6 +379,9 @@ class Member_EweiShopV2Model {
 			}
 			if (isset($mc['gender']) && $member['gender'] != $mc['gender']) {
 				$upgrade['gender'] = $mc['gender'];
+			}
+			if(isset($mc['unionid']) && $member['unionid'] != $mc['unionid'] && !empty($mc['unionid'])){
+				$upgrade['unionid'] = $mc['unionid'];
 			}
 			if (!empty($upgrade)) {
 				pdo_update('ewei_shop_member', $upgrade, array('id' => $member['id']));

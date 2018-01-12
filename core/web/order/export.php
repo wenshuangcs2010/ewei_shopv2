@@ -138,9 +138,10 @@ class Export_EweiShopV2Page extends WebPage {
             '0' => array('css' => 'danger', 'name' => '待付款'),
             '1' => array('css' => 'info', 'name' => '待发货'),
             '2' => array('css' => 'warning', 'name' => '待收货'),
-            '3' => array('css' => 'success', 'name' => '已完成')
+            '3' => array('css' => 'success', 'name' => '已完成'),
+            '7' => array('css' => 'success', 'name' => '已付款'),
         );
-
+        $depotlist=pdo_fetchall("select * from ".tablename("ewei_shop_depot")." where uniacid=:uniacid",array(":uniacid"=>$_W['uniacid']));
         //导出Excel
         if ($_GPC['export'] == 1) {
 
@@ -230,6 +231,10 @@ class Export_EweiShopV2Page extends WebPage {
                 $_GPC['storeid'] = trim($_GPC['storeid']);
                 $condition .= " AND o.verifystoreid=" . intval($_GPC['storeid']);
             }
+            if (!empty($_GPC['depotid'])) {
+                $_GPC['depotid'] = trim($_GPC['depotid']);
+                $condition .= " AND o.depotid=" . intval($_GPC['depotid']);
+            }
 
 
 
@@ -262,6 +267,7 @@ class Export_EweiShopV2Page extends WebPage {
             }
 
             $statuscondition = '';
+
             if ($status != '') {
 
                 if ($status == '-1') {
@@ -274,7 +280,9 @@ class Export_EweiShopV2Page extends WebPage {
                     $statuscondition = " AND ( o.status = 1 or (o.status=0 and o.paytype=3) )";
                 } else if ($status == '0') {
                     $statuscondition = " AND o.status = 0 and o.paytype<>3";
-                } else {
+                } elseif($status == '7'){
+                     $statuscondition = " AND o.status > 0 and o.paytype<>3";
+                }else {
                     $statuscondition = " AND o.status = " . intval($status);
                 }
             }

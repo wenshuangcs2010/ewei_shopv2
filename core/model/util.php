@@ -19,6 +19,9 @@ class Util_EweiShopV2Model {
 
         //$url = "http://wap.kuaidi100.com/wap_result.jsp?rand=" . time() . "&id={$express}&fromWeb=null&postid={$expresssn}";
         $url = "https://www.kuaidi100.com/query?type={$express}&postid={$expresssn}&id=1&valicode=&temp=";
+        if($express=="shunfeng"){
+          $url="http://baidu.kuaidi100.com/query?type={$express}&postid={$expresssn}&id=4&valicode=&temp=0.5553617616442275&sessionid=";
+        }
         load()->func('communication');
         $resp = ihttp_request($url);
         $content = $resp['content'];

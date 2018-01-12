@@ -4,6 +4,7 @@ class NINGBO_Api extends ningboData{
 	var $_cnec_jh_order = 'cnec_jh_order'; //进口订单
 	var $_cnec_jh_cancel="cnec_jh_cancel";
 	var $_cnec_jh_decl_byorder="cnec_jh_decl_byorder";
+	var $_cnec_get_mftno="cnec_get_mftno";
 	function __construct($config){
 		//var_Dump($config);
 		$this->ningboData($config);
@@ -124,5 +125,21 @@ class NINGBO_Api extends ningboData{
 	        $resp= ihttp_request($this->_api, $posturl);
 	        return (array)$resp['content'];
 	    }
+
+	    //获取申报单
 	    
+	    function _cnec_get_mftno($order_sn){
+	    	$xml_data['Header']['OrderFrom'] = $this->_OrderFrom;
+  			$xml_data['Header']['OrderNo'] = $order_sn;
+	        $xml = $this->toXml($xml_data, 'Message');
+	        $posturl="
+	             &timestamp=".urlencode(date('Y-m-d H:i:s'))."
+                 &userid=".$this->_OrgUser."
+                 &sign=".md5($this->_OrgUser . $this->_Orgkey . date('Y-m-d H:i:s'))."
+                 &xmlstr=".urlencode($xml).'
+                 &msgtype='.$this->_cnec_jh_decl_byorder.'
+                 &customs=3105';
+            $resp= ihttp_request($this->_api, $posturl);
+	        return (array)$resp['content'];
+	    }
 }

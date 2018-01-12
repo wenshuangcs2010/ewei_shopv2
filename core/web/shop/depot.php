@@ -99,6 +99,8 @@ class Depot_EweiShopV2Page extends WebPage {
             $data['test_api'] = trim($_GPC['test_api']);
             $data['orgname'] = trim($_GPC['orgname']);
             $data['rrguser'] = trim($_GPC['rrguser']);
+            $data['app_id'] = trim($_GPC['app_id']);
+            $data['app_secret'] = trim($_GPC['app_secret']);
             $data['orgkey'] = trim($_GPC['orgkey']);
             $data['ordershop'] = trim($_GPC['ordershop']);
             $data['orderfrom'] = trim($_GPC['orderfrom']);

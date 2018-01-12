@@ -9,6 +9,7 @@ if (!defined('IN_IA')) {
     exit('Access Denied');
 }
 require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendorder.php");
+require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendOmsapi.php");
 class Order_EweiShopV2Model
 {
 
@@ -97,7 +98,7 @@ class Order_EweiShopV2Model
                                 $params['paytype']=37;
                             }
                             $depot=m("kjb2c")->get_depot($order['depotid']);
-                            if($depot['if_declare']==1 && $order['if_customs_z']!=1 && $params['paytype']!=1){
+                            if($order['if_customs_z']!=1 && $params['paytype']!=1){
                                 m("kjb2c")->to_customs_new($orderid);
                             }
 
@@ -122,39 +123,42 @@ class Order_EweiShopV2Model
                                     }
                                  }
                             }elseif($params['paytype']==37 && $order['zhuan_status']==0 && !empty($order['realname']) && !empty($order['imid'])){
-                                
                                 $payret=m("kjb2c")->_shenfupay($order);
                                 if($payret['ret']==1){
                                     m("kjb2c")->to_customs_new($orderid);
                                     if($depot['if_declare']==1 && $order['isdisorder']==0){
                                         m("kjb2c")->to_declare($orderid);
                                     }
-
                                     if($order['isdisorder']==1 && $depot['if_declare']==1){//代理订单要申报无需二次支付的订单
                                         $disInfo=Dispage::getDisInfo($_W['uniacid']);
                                         if($disInfo['secondpay']==0){
                                              m("kjb2c")->to_declare($orderid);
                                         }
-                                     }
-                                }
-                            }
-                        }else{
-                            $disInfo=Dispage::getDisInfo($_W['uniacid']);
-                            $depot=m("kjb2c")->get_depot($order['depotid']);
-                            //对一些不需要报关但是要推单的订单进行处理
-                            if($order['isdisorder']==0){
-                                //主站订单指定推单
-                                if($depot['ismygoods']==1){
-                                     m("kjb2c")->sendOrder($orderid);
-                                }
-                            }
-                            if($order['isdisorder']==1 && $disInfo['secondpay']==0){
-                                if($depot['ismygoods']==1){
-                                    m("kjb2c")->sendOrder($orderid);//代理无需支付的 
+                                    }
                                 }
                             }
                         }
-                        //WeUtility::logging('to_customsparams2', var_export("3333", true));
+                        $disInfo=Dispage::getDisInfo($_W['uniacid']);
+                        $depot=m("kjb2c")->get_depot($order['depotid']);
+                        //全部订单推送非代理 主站
+                        if($order['isdisorder']==0 && $_W['uniacid']==DIS_ACCOUNT){
+                            //主站订单指定推单
+                            if($depot['ismygoods']==1 && $depot['updateid']==1){
+                                //推送到保税超市
+                                m("kjb2c")->sendOrder($orderid);
+                            }elseif($depot['ismygoods']==1 && $depot['updateid']==3){
+                                $ret=m("kjb2c")->sendOmsorder($orderid);
+                                WeUtility::logging('log_ret_oms', var_export($ret,true));
+                            }
+                        }
+                        if($order['isdisorder']==1 && $disInfo['secondpay']==0){
+                            if($depot['ismygoods']==1 && $depot['updateid']==1){
+                                //推送到保税超市
+                                m("kjb2c")->sendOrder($orderid);//代理无需支付的 
+                            }elseif($depot['ismygoods']==1 && $depot['updateid']==3){
+                                $ret=m("kjb2c")->sendOmsorder($orderid);
+                            }
+                        }
                         if($order['isdisorder']==1){
                              m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
                         }
@@ -163,9 +167,10 @@ class Order_EweiShopV2Model
                         }
                         //发送赠送优惠券
                         if (com('coupon')) {
+                            WeUtility::logging('coupon_test', var_export($order['id'], true));
                             com('coupon')->sendcouponsbytask($order['id']); //订单支付
                         }
-
+                        
                         //优惠券返利
                         if (com('coupon') && !empty($order['couponid'])) {
                             com('coupon')->backConsumeCoupon($order['id']); //订单支付
@@ -173,7 +178,7 @@ class Order_EweiShopV2Model
                        
                             //模板消息
                             m('notice')->sendOrderMessage($orderid);    
-                        
+                       
                         //打印机打印
                         com_run('printer::sendOrderMessage', $orderid);
 
@@ -1127,7 +1132,6 @@ class Order_EweiShopV2Model
     //计算订单商品总运费
     function getOrderDispatchPrice($goods, $member, $address, $saleset = false, $merch_array, $t, $loop = 0)
     {
-
         global $_W;
         $realprice = 0;
         $dispatch_price = 0;
@@ -1145,11 +1149,13 @@ class Order_EweiShopV2Model
         } else if (!empty($member['city'])) {
             $user_city = $member['city'];
         }
-        $baoyou=true;
+        $baoyou=true;//包邮活动
         //检查是否进行包邮活动
-        if(isset($saleset['memberleveid'])&&$member['level']==$saleset['memberleveid']){
+        if(isset($saleset['memberleveid'])  && $member['level']==$saleset['memberleveid'] && !empty($saleset['memberleveid'])){
                 $baoyou=false;
         }
+        //var_dump($baoyou);
+        //die();
         foreach ($goods as $g) {
             $realprice += $g['ggprice'];
             $dispatch_merch[$g['merchid']] = 0;
@@ -1171,10 +1177,12 @@ class Order_EweiShopV2Model
             //是否包邮
             $sendfree = false;
             $merchid = $g['merchid'];
-
+            
+          
+ 
             if (!empty($g['issendfree']) && $baoyou) { //本身包邮
                 $sendfree = true;
-
+               
             } else {
 
                 if ($seckillinfo && $seckillinfo['status'] == 0) {
@@ -1189,14 +1197,20 @@ class Order_EweiShopV2Model
                         } else {
                             if (!empty($address)) {
                                 if (!in_array($address['city'], $gareas)) {
-                                    $sendfree = true;
+                                    if($baoyou){
+                                        $sendfree = true;
+                                    }
                                 }
                             } else if (!empty($member['city'])) {
                                 if (!in_array($member['city'], $gareas)) {
-                                    $sendfree = true;
+                                    if($baoyou){
+                                        $sendfree = true;
+                                    }
                                 }
                             } else {
-                                $sendfree = true;
+                                if($baoyou){
+                                    $sendfree = true;
+                                }
                             }
                         }
                     }
@@ -1213,21 +1227,27 @@ class Order_EweiShopV2Model
                         } else {
                             if (!empty($address)) {
                                 if (!in_array($address['city'], $gareas)) {
-                                    $sendfree = true;
+                                    if($baoyou){
+                                        $sendfree = true;
+                                    }
                                 }
                             } else if (!empty($member['city'])) {
                                 if (!in_array($member['city'], $gareas)) {
-                                    $sendfree = true;
+                                    if($baoyou){
+                                        $sendfree = true;
+                                    }
                                 }
                             } else {
-                                $sendfree = true;
+                                if($baoyou){
+                                    $sendfree = true;
+                                }
                             }
                         }
                     }
                 }
 
             }
-
+           
             //读取快递信息
             if ($g['dispatchtype'] == 1) {
                 //使用统一邮费
@@ -1274,11 +1294,10 @@ class Order_EweiShopV2Model
             } else if ($g['dispatchtype'] == 0) {
                 //使用快递模板
                 $g['dispatchid']=Dispage::get_dispatch_id($g['goodsid'],$_W['uniacid']);//wsq获取原始配送方式ID
-                if (empty($g['dispatchid'])) {
+                if (empty($g['dispatchid'])){
                     //默认快递
                     $dispatch_data = m('dispatch')->getDefaultDispatch($merchid,$g['disgoods_id'],$g['goodsid']);//wsq
                 } else {
-                    
                     $dispatch_data = m('dispatch')->getOneDispatch($g['dispatchid'],$g['disgoods_id']);//wsq
                 }
                 if (empty($dispatch_data)) {
@@ -1325,7 +1344,7 @@ class Order_EweiShopV2Model
                             //按重量计费
                             $param = $g['weight'] * $g['total'];
                         }
-
+                        //var_dump($param);
                         if (array_key_exists($dkey, $dispatch_array)) {
                             $dispatch_array[$dkey]['param'] += $param;
                         } else {
@@ -1359,7 +1378,8 @@ class Order_EweiShopV2Model
 
                     //用户有默认地址
                     $dprice = m('dispatch')->getCityDispatchPrice($areas, $address['city'], $param, $dispatch_data);
-
+                   
+                     //var_Dump($dprice);
                 } else if (!empty($member['city'])) {
                     //设置了城市需要判断区域设置
                     $dprice = m('dispatch')->getCityDispatchPrice($areas, $member['city'], $param, $dispatch_data);
@@ -1367,7 +1387,6 @@ class Order_EweiShopV2Model
                     //如果会员还未设置城市 ，默认邮费
                     $dprice = m('dispatch')->getDispatchPrice($param, $dispatch_data);
                 }
-
 
                 $merchid = $dispatch_data['merchid'];
                 $dispatch_merch[$merchid] += $dprice;
@@ -1786,7 +1805,7 @@ class Order_EweiShopV2Model
             }else{
                 $dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//
             }
-            
+
             if ($dispatch_data['calculatetype'] == 1) {
                             //按件计费
                 $param = $goods['total'];

@@ -332,8 +332,12 @@ class Notice_EweiShopV2Model {
 		}
 
 		$order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id limit 1', array(':id' => $orderid));
+
 		if (empty($order)) {
 			return;
+		}
+		if(empty($_W['uniacid'])){
+			$_W['uniacid']=$order['uniacid'];
 		}
 		$openid = $order['openid'];
 		$url = $this->getUrl('order/detail', array('id' => $orderid));
@@ -435,7 +439,7 @@ class Notice_EweiShopV2Model {
 		if (!is_array($usernotice)) {
 			$usernotice = array();
 		}
-		$set = m('common')->getSysset();
+		$set = m('common')->getSysset("",$_W['uniacid']);
 
 		$shop = $set['shop'];
 		$tm = $set['notice'];
@@ -832,12 +836,11 @@ class Notice_EweiShopV2Model {
 						'default' => $msg,
 						'url' => $url,
 						'datas' => $datas
-			         ));
-
+				));
 				// 短信通知
 				com_run('sms::callsms', array('tag'=>'submit', 'datas'=>$datas, 'mobile'=>$member['mobile']));
 			}
-			 
+
 		} else if ($order['status'] == 1) {
 
 			//商家通知
@@ -868,7 +871,6 @@ class Notice_EweiShopV2Model {
 							'default' => $msg,
 							'datas' => $datas
 						));
-						
 //						if (!empty($tm['new'])) {
 //							m('message')->sendTplNotice($tmopenid, $tm['new'], $msg, '', $account);
 //						} else {
@@ -1700,6 +1702,7 @@ class Notice_EweiShopV2Model {
 		if (empty($touser)) {
 			return;
 		}
+
 		$tm = $_W['shopset']['notice'];
 		if(empty($tm)) {
 			$tm = m('common')->getSysset('notice');
@@ -1721,6 +1724,7 @@ class Notice_EweiShopV2Model {
 		$default_message = isset($params['default']) ? $params['default'] : array();
 		$url = isset($params['url']) ? $params['url'] : '';
 		$account = isset($params['account']) ? $params['account'] : m('common')->getAccount();
+		
 		$datas = isset($params['datas']) ? $params['datas'] : array();
 		$advanced_message = false;
 

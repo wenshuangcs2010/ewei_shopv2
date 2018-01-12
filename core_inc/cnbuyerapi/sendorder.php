@@ -47,8 +47,6 @@ class Sendorder{
 				$goodstemp['price']=$goods['realprice']/$goods['total'];
 				$goodstemp1[]=$goodstemp;
 			}
-			
-			
 		}
 
 		$this->params['outOrderGoods']=$goodstemp1;

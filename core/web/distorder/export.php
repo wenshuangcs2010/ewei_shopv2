@@ -40,31 +40,13 @@ class Export_EweiShopV2Page extends WebPage {
             array('title' => '配送方式', 'field' => 'dispatchname', 'width' => 12),
             array('title' => '商品小计', 'field' => 'goodsprice', 'width' => 12),
             array('title' => '运费', 'field' => 'dispatchprice', 'width' => 12),
-            array('title' => '积分抵扣', 'field' => 'deductprice', 'width' => 12),
-            array('title' => '余额抵扣', 'field' => 'deductcredit2', 'width' => 12),
-            array('title' => '满额立减', 'field' => 'deductenough', 'width' => 12),
-            array('title' => '优惠券优惠', 'field' => 'couponprice', 'width' => 12),
-            array('title' => '订单改价', 'field' => 'changeprice', 'width' => 12),
-            array('title' => '运费改价', 'field' => 'changedispatchprice', 'width' => 12),
             array('title' => '应收款', 'field' => 'price', 'width' => 12),
+            array('title' => '代理总货值', 'field' => 'disorderamount', 'width' => 12),
             array('title' => '状态', 'field' => 'status', 'width' => 12),
             array('title' => '下单时间', 'field' => 'createtime', 'width' => 24),
             array('title' => '付款时间', 'field' => 'paytime', 'width' => 24),
             array('title' => '发货时间', 'field' => 'sendtime', 'width' => 24),
             array('title' => '完成时间', 'field' => 'finishtime', 'width' => 24),
-            array('title' => '快递公司', 'field' => 'expresscom', 'width' => 24),
-            array('title' => '快递单号', 'field' => 'expresssn', 'width' => 24),
-            array('title' => '订单备注', 'field' => 'remark', 'width' => 36),
-            array('title' => '核销员', 'field' => 'salerinfo', 'width' => 24),
-            array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36),
-            array('title' => '订单自定义信息', 'field' => 'order_diyformdata', 'width' => 36),
-            array('title' => '商品自定义信息', 'field' => 'goods_diyformdata', 'width' => 36),
-            array('title' => '佣金总额', 'field' => 'commission', 'width' => 12),
-            array('title' => '一级佣金', 'field' => 'commission1', 'width' => 12),
-            array('title' => '二级佣金', 'field' => 'commission2', 'width' => 12),
-            array('title' => '三级佣金', 'field' => 'commission3', 'width' => 12),
-            array('title' => '扣除佣金后利润', 'field' => 'commission4', 'width' => 12),
-            array('title' => '扣除佣金及运费后利润', 'field' => 'profit', 'width' => 12),
         );
     }
 
@@ -162,7 +144,7 @@ class Export_EweiShopV2Page extends WebPage {
 
             $status = $_GPC['status'];
 
-            $condition = " o.uniacid = :uniacid and o.deleted=0 and o.isparent=0 ";
+            $condition = " o.uniacid <> :uniacid and o.deleted=0 and o.isparent=0 and o.isdisorder=1";
 
             if ($is_openmerch == 1) {
                 $merchtype = $_GPC['merchtype'];
@@ -178,7 +160,7 @@ class Export_EweiShopV2Page extends WebPage {
                 $condition .= " and o.merchid = 0 ";
             }
 
-            $paras = array(':uniacid' => $_W['uniacid']);
+            $paras = array(':uniacid' => DIS_ACCOUNT);
 
             if (!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])) {
                 $starttime = strtotime($_GPC['time']['start']);
@@ -551,7 +533,8 @@ class Export_EweiShopV2Page extends WebPage {
                     $exportlist[] = $r;
                 }
             }
-
+            var_Dump($columns);
+            die();
             m('excel')->export($exportlist, array(
                 "title" => "订单数据-" . date('Y-m-d-H-i', time()),
                 "columns" => $columns
