@@ -60,7 +60,39 @@ class DiypageModel extends PluginModel {
 			'pager'=>$pager
 		);
 	}
-
+public function exchangePage($pageid = 0) 
+    {
+        global $_W;
+        $set = $this->getSet();
+        if (!(empty($pageid))) 
+        {
+            $page = $this->getPage($pageid, true);
+        }
+        if (empty($pageid) || (!(empty($pageid)) && empty($page))) 
+        {
+            if (!(empty($set['page']['exchange']))) 
+            {
+                $page = $this->getPage($set['page']['exchange'], true);
+            }
+        }
+        if (empty($page) || !(is_array($page)) || !(is_array($page['data']['items']))) 
+        {
+            return false;
+        }
+        $exchange_input = array();
+        $pageitems = $page['data']['items'];
+        if (!(empty($pageitems))) 
+        {
+            foreach ($pageitems as $pageitemid => $pageitem ) 
+            {
+                if ($pageitem['id'] == 'exchange_input') 
+                {
+                    $exchange_input = $pageitem;
+                }
+            }
+        }
+        return array('exchange_input' => $exchange_input, 'diyadv' => $page['data']['page']['diyadv'], 'items' => $pageitems);
+    }
     public function getPage($id, $mobile=false){
 		global $_W;
 
@@ -109,7 +141,7 @@ class DiypageModel extends PluginModel {
                                     if($creditshop){
                                         $goods = pdo_fetchall("select id,isnodiscount,discounts, title, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }else{
-                                        $goods = pdo_fetchall("select id, title,isnodiscount,discounts, thumb, productprice, minprice, total, showlevels, showgroups, bargain, merchid from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
+                                        $goods = pdo_fetchall("select id,brief_desc, title,isnodiscount,discounts, thumb, productprice, minprice, total, showlevels, showgroups, bargain, merchid from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
 									if(!empty($goods) && is_array($goods)) {
                                          $level = m('member')->getLevel($_W['openid']);
@@ -128,8 +160,13 @@ class DiypageModel extends PluginModel {
                                                     }*/
                                                     $childid = rand(1000000000, 9999999999);
                                                     $childid = 'C' . $childid;
+                                                    if(isset($good['brief_desc']) && mb_strlen($good['brief_desc'],"utf-8")>38){
+                                                        $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
+                                                        $good['brief_desc']=$newStr;
+                                                    }
                                                     $item['data'][$childid] = array(
                                                         'thumb'=>$good['thumb'],
+                                                        'brief_desc'=>empty($good['brief_desc']) ? "" : time($good['brief_desc']),
                                                         'title'=>$good['title'],
                                                         'price'=>$good['minprice'],
                                                         'gid'=>$good['id'],
@@ -451,7 +488,7 @@ class DiypageModel extends PluginModel {
                                     if ($creditshop) {
                                         $goods = pdo_fetchall("select id, showlevels, showgroups from " . tablename('ewei_shop_creditshop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     } else {
-                                        $goods = pdo_fetchall("select id, showlevels, showgroups from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
+                                        $goods = pdo_fetchall("select id,brief_desc, showlevels, showgroups from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
                             
                                     if (!empty($goods) && is_array($goods)) {
@@ -510,8 +547,13 @@ class DiypageModel extends PluginModel {
                                         if(!empty($showgoods)){
                                             $childid = rand(1000000000, 9999999999);
                                             $childid = 'C' . $childid;
+                                            if(mb_strlen($good['brief_desc'],"utf-8")>38){
+                                                $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
+                                                $good['brief_desc']=$newStr;
+                                            }
                                             $item['data'][$childid] = array(
                                                 'thumb'=>$good['thumb'],
+                                                'brief_desc'=>empty($good['brief_desc']) ? "":trim($good['brief_desc']),
                                                 'title'=>$good['title'],
                                                 'price'=>$good['minprice'],
                                                 'gid'=>$good['id'],
@@ -556,7 +598,7 @@ class DiypageModel extends PluginModel {
 								}
 
 								$goodsids = $group['goodsids'];
-								$goods = pdo_fetchall("select id, title,isnodiscount,discounts thumb, minprice, sales, total, showlevels, showgroups, bargain from " . tablename('ewei_shop_goods') . " where id in( $goodsids ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid " . $orderby . " limit {$limit}", array(':uniacid' => $_W['uniacid']));
+								$goods = pdo_fetchall("select id, brief_desc,title,isnodiscount,discounts thumb, minprice, sales, total, showlevels, showgroups, bargain from " . tablename('ewei_shop_goods') . " where id in( $goodsids ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid " . $orderby . " limit {$limit}", array(':uniacid' => $_W['uniacid']));
 								if(!empty($goods) && is_array($goods)) {
 
                                     $level = m('member')->getLevel($_W['openid']);
@@ -571,8 +613,13 @@ class DiypageModel extends PluginModel {
                                             }*/
                                             $childid = rand(1000000000, 9999999999);
                                             $childid = 'C' . $childid;
+                                            if(mb_strlen($good['brief_desc'],"utf-8")>38){
+                                                $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
+                                                $good['brief_desc']=$newStr;
+                                            }
                                             $item['data'][$childid] = array(
                                                 'thumb'=>$good['thumb'],
+                                                'brief_desc'=>empty($good['brief_desc'])?"":trim($good['brief_desc']),
                                                 'title'=>$good['title'],
                                                 'price'=>$good['minprice'],
                                                 'gid'=>$good['id'],
@@ -652,9 +699,14 @@ class DiypageModel extends PluginModel {
                                     if(!empty($showgoods)){
                                         $childid = rand(1000000000, 9999999999);
                                         $childid = 'C' . $childid;
+                                        if(mb_strlen($good['brief_desc'],"utf-8")>38){
+                                            $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
+                                            $good['brief_desc']=$newStr;
+                                        }
                                         $item['data'][$childid] = array(
                                             'thumb'=>$good['thumb'],
                                             'title'=>$good['title'],
+                                            'brief_desc'=>empty($good['brief_desc'])?"":trim($good['brief_desc']),
                                             'price'=>$good['minprice'],
                                             'gid'=>$good['id'],
                                             'total'=>$good['total'],

@@ -143,7 +143,16 @@ a {
     font-size: 0.7rem;
     color: #262626;
 }
-
+.fui-goods-item .detail .brief_desc{
+    font-size: 0.6rem;
+    color:#a5a5a5;
+    /*
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 11rem;
+    -webkit-text-overflow:ellipsis;*/
+    }
 .fui-goods-item .detail .price {
     position: relative;
     display: -webkit-box;

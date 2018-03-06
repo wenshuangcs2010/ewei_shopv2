@@ -288,18 +288,18 @@ class Goods_EweiShopV2Model {
             $condition.=" and ifnull(showlevels,'')='' ";
             $condition.=" and   ifnull(showgroups,'')='' ";
         }
-
+      
 
         $total = "";
 
         if (!$random) {
-            $sql = "SELECT id,title,thumb,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
+            $sql = "SELECT id,title,thumb,brief_desc,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
            
             $countsql="select count(*) from " . tablename('ewei_shop_goods') . " where 1 {$condition}";
           
             $total = pdo_fetchcolumn($countsql,$params);
         } else {
-            $sql = "SELECT id,title,thumb,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
+            $sql = "SELECT id,title,thumb,brief_desc,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
             $total  = $pagesize;
         }
         $level = m('member')->getLevel($openid);
@@ -335,6 +335,12 @@ class Goods_EweiShopV2Model {
                     $list[$key]['minprice']=$memberprice;
                 }
            }
+
+           if(mb_strlen($goods['brief_desc'],"utf-8")>38){
+                $newStr = mb_substr($goods['brief_desc'],0,38,"UTF8").".....";
+                $list[$key]['brief_desc']=$newStr;
+           }
+           //
         }
         return array("list"=>$list,"total"=>$total);
     }
@@ -835,6 +841,7 @@ class Goods_EweiShopV2Model {
                 $showgoods = 1;
             }
         }
+
         return $showgoods;
     }
 

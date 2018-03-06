@@ -233,7 +233,7 @@
                         </div>
                         <div class="detail">
                             <%if params.showtitle=='1'%>
-                                <div class="name" style="color: <%style.titlecolor%>;">
+                                <div class="name" style="color: <%style.titlecolor%>;  <%if params.showdesc=='1'%>height: 30px;<%/if%>">
                                     <%if item.bargain>0%>
                                     <label style="background-color: <%style.buybtncolor%>; padding: 0px 2px; color: #fff; font-size: 0.6rem">砍价</label>
                                     <%/if%>
@@ -246,6 +246,12 @@
                                     <%/if%>
                                     <%item.title%>
                                 </div>
+                            <%/if%>
+                            <%if params.showdesc=='1'%>
+                                <div class="desc" style="color: <%style.titlecolor%>;">
+                                    <%item.brief_desc%>
+                                </div>
+
                             <%/if%>
                             <%if params.showprice=='1'%>
                                 <div class="price">
@@ -303,9 +309,10 @@
                                 </div>
                             <%/if%>
                         </div>
+
                         <div class="detail">
                             <%if params.showtitle=='1'%>
-                                <div class="name">
+                                <div class="name" <%if params.showdesc=='1'%>style="height: 40px;"<%/if%>>
                                     <%if params.goodstype==1 && params.showtag>0%>
                                         <label style="background-color: <%style.tagbackground%>; padding: 0px 2px; color: #fff; font-size: 0.6rem">
                                             <%if params.showtag==1%>￥69<%/if%>
@@ -314,6 +321,9 @@
                                         </label>
                                     <%/if%>
                                     这里是商品标题(商品从设定<%if params.goodsdata=='1'%>分类<%/if%><%if params.goodsdata=='2'%>分组<%/if%><%if params.goodsdata=='3'%>新品商品<%/if%><%if params.goodsdata=='4'%>热卖商品<%/if%><%if params.goodsdata=='5'%>推荐商品<%/if%><%if params.goodsdata=='6'%>促销商品<%/if%><%if params.goodsdata=='7'%>包邮商品<%/if%><%if params.goodsdata=='8'%>限时卖商品<%/if%><%if params.goodsdata=='9'%>积分兑换商品<%/if%><%if params.goodsdata=='10'%>积分抽奖商品<%/if%>读取)</div>
+                            <%/if%>
+                            <%if params.showdesc=='1'%>
+                                这里是购买说明
                             <%/if%>
                             <%if params.showprice=='1'%>
                                 <div class="price">

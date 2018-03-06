@@ -1088,14 +1088,18 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">列表样式</div>
         <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="liststyle" value="block one" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='block one'%>checked="checked"<%/if%> > 单列显示</label>
-            <label class="radio-inline"><input type="radio" name="liststyle" value="block" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='block'%>checked="checked"<%/if%>> 双列显示</label>
+            <label class="radio-inline"><input type="radio"  data-bind-init="true" name="liststyle" value="block one" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='block one'%>checked="checked"<%/if%> > 单列显示</label>
+            <label class="radio-inline"><input type="radio" data-bind-init="true" name="liststyle" value="block" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='block'%>checked="checked"<%/if%>> 双列显示</label>
             <%if params.goodstype==0||!params.goodstype%>
-                <label class="radio-inline"><input type="radio" name="liststyle" value="block three" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='block three'%>checked="checked"<%/if%>> 三列显示</label>
+                <label class="radio-inline"><input type="radio" data-bind-init="true" name="liststyle" value="block three" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='block three'%>checked="checked"<%/if%>> 三列显示</label>
             <%/if%>
             <%if params.goodsscroll=='0'||!params.goodsscroll%>
-            <label class="radio-inline"><input type="radio" name="liststyle" value="" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle==''%>checked="checked"<%/if%>> 列表显示</label>
+            <label class="radio-inline"><input type="radio" data-bind-init="true" name="liststyle" value="" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle==''%>checked="checked"<%/if%>> 列表显示</label>
+
+             <label class="radio-inline"><input type="radio" name="liststyle" data-bind-init="true" value="four" class="diy-bind" data-bind-child="style" data-bind="liststyle" <%if style.liststyle=='four'%>checked="checked"<%/if%>> 单列单图模式</label>
             <%/if%>
+
+
         </div>
     </div>
 
@@ -1143,7 +1147,15 @@
             <label class="radio-inline"><input type="radio" name="showtitle" value="1" class="diy-bind" data-bind-child="params" data-bind="showtitle" <%if params.showtitle=='1'%>checked="checked"<%/if%> > 显示</label>
         </div>
     </div>
-
+    <%if style.liststyle=='four'%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品购买说明</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="showdesc" value="0" class="diy-bind" data-bind-child="params" data-bind="showdesc" data-bind-init="true"   <%if params.showdesc=='0'%>checked="checked"<%/if%>> 不显示</label>
+            <label class="radio-inline"><input type="radio" name="showdesc" value="1" class="diy-bind" data-bind-child="params" data-bind="showdesc" data-bind-init="true"  <%if params.showdesc=='1'%>checked="checked"<%/if%> > 显示</label>
+        </div>
+    </div>
+    <%/if%>
     <%if params.showtitle=='1'%>
         <div class="form-group">
             <div class="col-sm-2 control-label">名称颜色</div>

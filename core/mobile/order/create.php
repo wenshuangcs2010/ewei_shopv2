@@ -1692,7 +1692,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
             }
             if($_GPC['packageid']>0){
                 $couponcount = 0;
-            }
+            } 
             $realprice += $dispatch_price +$seckill_dispatchprice;
 
             $deductcredit = 0; //抵扣需要扣除的积分

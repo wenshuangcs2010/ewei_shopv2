@@ -3,7 +3,7 @@
         <div class="fui-goods-group {$diyitem['style']['liststyle']}" style="background: {$diyitem['style']['background']};">
             {loop $diyitem['data'] $goodsitem}
                 <a class="fui-goods-item" data-goodsid="{$goodsitem['gid']}" href="{php echo mobileUrl(empty($diyitem['params']['goodstype'])?'goods/detail':'creditshop/detail', array('id'=>$goodsitem['gid']))}" data-nocache="true" style="position: relative;">
-                    <div class="image" data-lazy-background="{php echo tomedia($goodsitem['thumb'])}">
+                    <div class="image" {if $diyitem['params']['showdesc']==1 && !empty($goodsitem['brief_desc'])}style=" height: 8rem;width: 8rem"{/if} data-lazy-background="{php echo tomedia($goodsitem['thumb'])}">
                         {if $diyitem['params']['showicon']==1 || $diyitem['params']['showicon']==2}
                             <div class="goodsicon {$diyitem['params']['iconposition']}"
                                  {if $diyitem['params']['iconposition']=='left top'}
@@ -37,6 +37,12 @@
                                     {$goodsitem['title']}
                                 </div>
                             {/if}
+                             {if $diyitem['params']['showdesc']==1 && !empty($goodsitem['brief_desc'])}
+                             <div class="brief_desc">
+                                  {$goodsitem['brief_desc']}
+                             </div>
+                               
+                             {/if}
                             {if $diyitem['params']['showprice']==1}
                                 <div class="price">
                                     <span class="text" style="color: {$diyitem['style']['pricecolor']};">
@@ -46,7 +52,7 @@
                                             {if $goodsitem['price']==0&&$goodsitem['credit']==0}免费
                                             {elseif $goodsitem['price']>0&&$goodsitem['credit']==0}{$goodsitem['price']}<small>元</small>
                                             {elseif $goodsitem['price']==0&&$goodsitem['credit']>0}{$goodsitem['credit']}<small>积分</small>
-                                            {elseif $goodsitem['price']>0&&$goodsitem['credit']>0}{$goodsitem['credit']}<small>积分</small>+{$goodsitem['price']}<small>元</small>{/if}
+                                            {elseif $goodsitem['price']>0&&$goodsitem['credit']>0}{$goodsitem['credit']}<small>积分</small>+{$goodsitem['price']}1<small>元</small>{/if}
                                         {/if}
                                     </span>
                                     {if !empty($diyitem['style']['buystyle']) && empty($goodsitem['bargain']) && empty($diyitem['params']['goodstype'])}

@@ -272,7 +272,8 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                 }
                 if (getjson.result.deductcredit2) {
                     $('#deductcredit2_money').html(getjson.result.deductcredit2);
-                    $("#deductcredit2").data('credit2', getjson.result.deductcredit2)
+                    $("#deductcredit2").data('credit2', getjson.result.deductcredit2);
+                    $('#deductcredit2').prop("checked",true);
                 }
                 if (getjson.result.seckillprice>0) {
                     $('#seckillprice').show();

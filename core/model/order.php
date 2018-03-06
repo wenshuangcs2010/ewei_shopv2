@@ -1154,6 +1154,7 @@ class Order_EweiShopV2Model
         if(isset($saleset['memberleveid'])  && $member['level']==$saleset['memberleveid'] && !empty($saleset['memberleveid'])){
                 $baoyou=false;
         }
+        
         //var_dump($baoyou);
         //die();
         foreach ($goods as $g) {
@@ -1178,11 +1179,11 @@ class Order_EweiShopV2Model
             $sendfree = false;
             $merchid = $g['merchid'];
             
-          
- 
+            
+
             if (!empty($g['issendfree']) && $baoyou) { //本身包邮
                 $sendfree = true;
-               
+
             } else {
 
                 if ($seckillinfo && $seckillinfo['status'] == 0) {
@@ -1219,7 +1220,9 @@ class Order_EweiShopV2Model
 
                 if ($seckillinfo && $seckillinfo['status'] == 0) {
                     //秒杀不参与满额包邮
+                    
                 } else {
+
                     if ($totalprice_array[$g['goodsid']] >= floatval($g['edmoney']) && floatval($g['edmoney']) > 0 && $baoyou) { //单品满额包邮
                         $gareas = explode(";", $g['edareas']);
                         if (empty($gareas)) {
@@ -1247,7 +1250,7 @@ class Order_EweiShopV2Model
                 }
 
             }
-           
+      
             //读取快递信息
             if ($g['dispatchtype'] == 1) {
                 //使用统一邮费

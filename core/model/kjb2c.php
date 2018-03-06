@@ -341,10 +341,7 @@ class Kjb2c_EweiShopV2Model {
 		global $_W;
 		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		$disInfo=Dispage::getDisInfo($uniacid);
-		if($uniacid==26){
-			WeUtility::logging('自动支付', var_export($disInfo, true));
-			WeUtility::logging('自动支付', $orderid);
-		}
+		
 		 if($disInfo['secondpaytype']==0 && $disInfo['autoretainage']==1 && $disInfo['secondpay']==1){//需要二次支付和自动付款
 		 	
 		 	$payfee=$order['disorderamount'];
@@ -388,8 +385,12 @@ class Kjb2c_EweiShopV2Model {
                 if($returncode['status']==0){
                 	 $ret=m("kjb2c")->sendOmsorder($orderid);
                     //m("kjb2c")->to_declare($orderid);
-                    
+                    WeUtility::logging('代理支付推单', var_export($ret, true));
                 }
+                if($uniacid==26){
+					WeUtility::logging('代理支付状态', var_export($returncode, true));
+				}
+               
                 return $returncode;
 		 	}
 
@@ -404,24 +405,79 @@ class Kjb2c_EweiShopV2Model {
 		$declare=DeclareCore::getObject($customs,$depot);
 		return $declare->cnec_jh_cancel($mftno);
 	}
-	function sendOmsorder($orderid){
+	function sendOmsorder($orderid,$type="ewei_shop_order"){
 		require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendOmsapi.php");
-		$order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+		$order=pdo_fetch("SELECT * from ".tablename($type)." where id=:id",array(":id"=>$orderid));
 		if(!empty($order['cnbuyers_order_sn'])){
 			return array("status"=>0,"msg"=>"重复");
 		}
 		$sendorder=new SendOmsapi();
-		$ordergoods=pdo_fetchall("SELECT * from ".tablename("ewei_shop_order_goods")." where orderid=:orderid",array(":orderid"=>$orderid));
-		foreach($ordergoods as $goods){
-				$dispatchid=$goods['dispatchid'];
-				$Weight+=$goods['weight']*$goods['total'];
-				if($order['dispatchid']==0){
-					$dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//wsq
-				}else{
-					$dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq
+		if($type=="ewei_shop_order"){
+			
+				$sql="SELECT og.*,g.disgoods_id from ".tablename("ewei_shop_order_goods")." as og".
+			" LEFT JOIN ".tablename("ewei_shop_goods")." as g ON og.goodsid=g.id".
+
+			" where og.orderid=:orderid";
+			$ordergoods=pdo_fetchall($sql,array(":orderid"=>$orderid));
+			foreach($ordergoods as $goods){
+					$dispatchid=$goods['dispatchid'];
+					$Weight+=$goods['weight']*$goods['total'];
+					if($order['dispatchid']==0){
+						$dispatch_data = m('dispatch')->getDefaultDispatch(0,$goods['disgoods_id'],$goods['goodsid']);//wsq
+					}else{
+						$dispatch_data = m('dispatch')->getOneDispatch($goods['dispatchid'],$goods['disgoods_id']);//wsq
+					}
 				}
+			$order['express']=$dispatch_data['express'];
+		}
+		if($type=="ewei_shop_groups_order"){
+			$sql="SELECT o.*,g.goodssn,g.title,g.goodsnum,g.units,g.gid from ".tablename("ewei_shop_groups_order")." as o "
+			."left join ".tablename('ewei_shop_groups_goods')." as g on g.id = o.goodid"
+			." where o.id=:id ";
+			$order=pdo_fetch($sql,array(":id"=>$orderid));
+			$depotid=$order['depotid'];
+			if($order['dispatchid']==0){
+					$dispatch_data = m('dispatch')->getDefaultDispatch(0,$order['disgoods_id'],$order['gid']);//wsq
+				}else{
+					$dispatch_data = m('dispatch')->getOneDispatch($order['dispatchid'],$goods['disgoods_id']);//wsq
+				}
+			$Weight=0;
+			if($order['gid']>0){
+				$Weight=pdo_fetchcolumn("SELECT weight from ".tablename("ewei_shop_goods")."where id=:id",array(":id"=>$order['gid']));
+				$Weight=$Weight*$order['goodsnum'];
+			}else{
+				return array("status"=>0,"msg"=>"自建商品无法推单");
 			}
-		$order['express']=$dispatch_data['express'];
+			$openid=$order['openid'];
+			$order['ordersn']=$order['orderno'];
+			$order['weight']=$Weight;
+			$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid   limit 1'
+                , array(':uniacid' => $order['uniacid'], ':openid' => $openid, ':id' => $order['addressid']));
+			$order['realName']=
+			$order['address']=serialize($address);
+			$order['paytype']="T";
+			$order['realname']=$order['srealname'];
+			$order['tax_rate']=empty($order['vat_rate']) ?0 : $order['vat_rate'];
+			$order['tax_consumption']=empty($order['consumption_tax']) ?0 : $order['consumption_tax'];
+			if($order['pay_type']=="wechat"){
+				$order['paytype']=21;
+			}
+			$order['dispatchprice']=$order['freight'];
+			$order['goodsprice']=$order['price'];
+			$order['price']=$order['price']+$order['freight'];
+			//$order['dpostfee']="00";
+			$expressname=pdo_fetchcolumn("select `name` from ".tablename("ewei_shop_express")." where express=:express",array(":express"=>$dispatch_data['express']));
+			$ordergoods[]=array(
+				'goodssn'=>$order['goodssn'],
+				'title'=>$order['title'],
+				'total'=>$order['goodsnum'],
+				'unit'=>$order['units'],
+				'price'=>($order['price']-$order['freight'])/$order['goodsnum'],
+				'realprice'=>($order['price']-$order['freight'])/$order['goodsnum'],
+				);
+			
+		}
+
 		$ret=$sendorder->sendorder($order,$ordergoods);
 		if(empty($ret)){
 			return array("status"=>1,"msg"=>"error");
@@ -431,7 +487,7 @@ class Kjb2c_EweiShopV2Model {
 			foreach ($ret['data'] as $key => $value) {
 				$order_sn.=$value['order_sn']."|";
 			}
-			pdo_update("ewei_shop_order",array("cnbuyers_order_sn"=>$order_sn),array("id"=>$order['id']));
+			pdo_update($type,array("cnbuyers_order_sn"=>$order_sn),array("id"=>$order['id']));
 			return array("status"=>1,"msg"=>"ok");
 		}else{
 			return array("status"=>1,"msg"=>$ret['message']);

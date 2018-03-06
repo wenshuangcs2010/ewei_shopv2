@@ -29,7 +29,140 @@ if (!function_exists('m')) {
         return $_modules[$name];
     }
 }
-
+if (!(function_exists('pagination2'))) 
+{
+    function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 5, 'after' => 4, 'ajaxcallback' => '', 'callbackfuncname' => '')) 
+    {
+        global $_W;
+        if (empty($_W['shopset']['template']['style_v3'])) 
+        {
+            return pagination($total, $pageIndex, $pageSize, $url, $context);
+        }
+        $pdata = array('tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => '');
+        if ($context['ajaxcallback']) 
+        {
+            $context['isajax'] = true;
+        }
+        if ($context['callbackfuncname']) 
+        {
+            $callbackfunc = $context['callbackfuncname'];
+        }
+        $html = '<div><ul class="pagination pagination-centered"><li><span class="nobg">共' . $total . '条记录</span></li></ul>';
+        if (empty($_W['shopset']['template']['style_v3'])) 
+        {
+            $html = '';
+        }
+        if (!(empty($total))) 
+        {
+            $pdata['tcount'] = $total;
+            $pdata['tpage'] = ((empty($pageSize) || ($pageSize < 0) ? 1 : ceil($total / $pageSize)));
+            if (1 < $pdata['tpage']) 
+            {
+                $html .= '<ul class="pagination pagination-centered">';
+                $cindex = $pageIndex;
+                $cindex = min($cindex, $pdata['tpage']);
+                $cindex = max($cindex, 1);
+                $pdata['cindex'] = $cindex;
+                $pdata['findex'] = 1;
+                $pdata['pindex'] = ((1 < $cindex ? $cindex - 1 : 1));
+                $pdata['nindex'] = (($cindex < $pdata['tpage'] ? $cindex + 1 : $pdata['tpage']));
+                $pdata['lindex'] = $pdata['tpage'];
+                if ($context['isajax']) 
+                {
+                    if (empty($url)) 
+                    {
+                        $url = $_W['script_name'] . '?' . http_build_query($_GET);
+                    }
+                    $pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['findex'] . '\', this);return false;"' : ''));
+                    $pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['pindex'] . '\', this);return false;"' : ''));
+                    $pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['nindex'] . '\', this);return false;"' : ''));
+                    $pdata['laa'] = 'href="javascript:;" page="' . $pdata['lindex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['lindex'] . '\', this);return false;"' : ''));
+                }
+                else if ($url) 
+                {
+                    $pdata['jump'] = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
+                    $pdata['faa'] = 'href="?' . str_replace('*', $pdata['findex'], $url) . '"';
+                    $pdata['paa'] = 'href="?' . str_replace('*', $pdata['pindex'], $url) . '"';
+                    $pdata['naa'] = 'href="?' . str_replace('*', $pdata['nindex'], $url) . '"';
+                    $pdata['laa'] = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
+                }
+                else 
+                {
+                    $jump_get = $_GET;
+                    $jump_get['page'] = '';
+                    $pdata['jump'] = 'href="' . $_W['script_name'] . '?' . http_build_query($jump_get) . $pdata['cindex'] . '" data-href="' . $_W['script_name'] . '?' . http_build_query($jump_get) . '"';
+                    $_GET['page'] = $pdata['findex'];
+                    $pdata['faa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+                    $_GET['page'] = $pdata['pindex'];
+                    $pdata['paa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+                    $_GET['page'] = $pdata['nindex'];
+                    $pdata['naa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+                    $_GET['page'] = $pdata['lindex'];
+                    $pdata['laa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+                }
+                if (1 < $pdata['cindex']) 
+                {
+                    $html .= '<li><a ' . $pdata['faa'] . ' class="pager-nav">首页</a></li>';
+                    $html .= '<li><a ' . $pdata['paa'] . ' class="pager-nav">&laquo;上一页</a></li>';
+                }
+                if (!($context['before']) && ($context['before'] != 0)) 
+                {
+                    $context['before'] = 5;
+                }
+                if (!($context['after']) && ($context['after'] != 0)) 
+                {
+                    $context['after'] = 4;
+                }
+                if (($context['after'] != 0) && ($context['before'] != 0)) 
+                {
+                    $range = array();
+                    $range['start'] = max(1, $pdata['cindex'] - $context['before']);
+                    $range['end'] = min($pdata['tpage'], $pdata['cindex'] + $context['after']);
+                    if (($range['end'] - $range['start']) < ($context['before'] + $context['after'])) 
+                    {
+                        $range['end'] = min($pdata['tpage'], $range['start'] + $context['before'] + $context['after']);
+                        $range['start'] = max(1, $range['end'] - $context['before'] - $context['after']);
+                    }
+                    $i = $range['start'];
+                    while ($i <= $range['end']) 
+                    {
+                        if ($context['isajax']) 
+                        {
+                            $aa = 'href="javascript:;" page="' . $i . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $i . '\', this);return false;"' : ''));
+                        }
+                        else if ($url) 
+                        {
+                            $aa = 'href="?' . str_replace('*', $i, $url) . '"';
+                        }
+                        else 
+                        {
+                            $_GET['page'] = $i;
+                            $aa = 'href="?' . http_build_query($_GET) . '"';
+                        }
+                        $html .= (($i == $pdata['cindex'] ? '<li class="active"><a href="javascript:;">' . $i . '</a></li>' : '<li><a ' . $aa . '>' . $i . '</a></li>'));
+                        ++$i;
+                    }
+                }
+                if ($pdata['cindex'] < $pdata['tpage']) 
+                {
+                    $html .= '<li><a ' . $pdata['naa'] . ' class="pager-nav">下一页&raquo;</a></li>';
+                    $html .= '<li><a ' . $pdata['laa'] . ' class="pager-nav">尾页</a></li>';
+                }
+                $html .= '</ul>';
+                if (5 < $pdata['tpage']) 
+                {
+                    $html .= '<ul class="pagination pagination-centered">';
+                    $html .= '<li><span class=\'input\' style=\'margin-right: 0;\'><input value=\'' . $pdata['cindex'] . '\' type=\'tel\'/></span></li>';
+                    $html .= '<li><a ' . $pdata['jump'] . ' class="pager-nav pager-nav-jump">跳转</a></li>';
+                    $html .= '</ul>';
+                    $html .= '<script>$(function() {$(".pagination .input input").bind("input propertychange", function() {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href");elm.attr("href", href+val)}).on("keydown", function(e) {if (e.keyCode == "13") {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href"); location.href=href+val;}});})</script>';
+                }
+            }
+        }
+        $html .= '</div>';
+        return $html;
+    }
+}
 //加载数据缓存模型
 if (!function_exists('d')) {
     function d($name = '')

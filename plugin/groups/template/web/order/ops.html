@@ -18,6 +18,7 @@
         {else if $item['depot']['if_declare']==1 && !empty($item['mftno'])}
              <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send_order', array('id' => $item['id']))}">货物放行</a><br />
         {else}
+            <a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/omsApi', array('id' => $item['id'],'type'=>'ewei_shop_groups_order'))}">OMS推单</a><br/>
             <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send', array('id' => $item['id']))}">确认发货</a><br />
         {/if}
    

@@ -149,6 +149,9 @@ class orderpay_EweiShopV2Page extends WebPage {
 			$payment=paybase::getPayment($paymentcode[$disInfo['secondpaytype']],$config);
 			$retrundata=$payment->buildRequestForm($order);
 			if($retrundata['status']==0){
+				$ret=m("kjb2c")->sendOmsorder($orderid);
+                   
+                WeUtility::logging('代理支付推单', var_export($ret, true));
 				show_json(1,"ok");
 			}else{
 				show_json(0,$retrundata['message']);

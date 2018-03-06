@@ -46,6 +46,8 @@
                 <option value='alipay' {if $_GPC['rechargetype']=='alipay'}selected{/if}>支付宝</option>
                 <option value='system' {if $_GPC['rechargetype']=='system'}selected{/if}>后台</option>
                 <option value='system1' {if $_GPC['rechargetype']=='system1'}selected{/if}>后台扣款</option>
+                <option value='exchange' {if $_GPC['rechargetype']=='exchange'}selected{/if}>兑换中心</option>
+                
                 {if p('ccard')}<option value='ccard' {if $_GPC['rechargetype']=='ccard'}selected{/if}>充值卡返佣</option>{/if}
             </select>
 
@@ -130,6 +132,8 @@
             <span class='label label-warning'>支付宝</span>
             {else if $row['rechargetype']=='wechat'}
             <span class='label label-success'>微信</span>
+            {else if $row['rechargetype']=='exchange'}
+            <span class='label label-primary'>兑换中心</span>
             {else if $row['rechargetype']=='system'}
             {if $row['money']>0}
             <span class='label label-primary'>后台</span>

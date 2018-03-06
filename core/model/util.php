@@ -12,31 +12,37 @@ if (!defined('IN_IA')) {
 class Util_EweiShopV2Model {
 
     function getExpressList($express, $expresssn) {
-
+        $kuaidi100key="rxPECPqf4944";
+        $customer="F297D63BAF65F1EC2C03E2991C2F53BF";
         $express = $express=="jymwl" ? "jiayunmeiwuliu" : $express;
         $express = $express=="TTKD" ? "tiantian" : $express;
         $express = $express=="jjwl" ? "jiajiwuliu" : $express;
 
         //$url = "http://wap.kuaidi100.com/wap_result.jsp?rand=" . time() . "&id={$express}&fromWeb=null&postid={$expresssn}";
-        $url = "https://www.kuaidi100.com/query?type={$express}&postid={$expresssn}&id=1&valicode=&temp=";
-        if($express=="shunfeng"){
-          $url="http://baidu.kuaidi100.com/query?type={$express}&postid={$expresssn}&id=4&valicode=&temp=0.5553617616442275&sessionid=";
-        }
+        $url = "http://poll.kuaidi100.com/poll/query.do";
+        //$url = "https://www.kuaidi100.com/query?type={$express}&postid={$expresssn}&id=1&valicode=&temp=";
+        // if($express=="shunfeng"){
+        //   $url="http://baidu.kuaidi100.com/query?type={$express}&postid={$expresssn}&id=4&valicode=&temp=0.5553617616442275&sessionid=";
+        // }
+       
+        $post_data=array(
+            'customer'=>$customer,
+            'param'=>json_encode(array("com"=>$express,'num'=>$expresssn))
+            );
+        $post_data["sign"] = md5($post_data["param"].$kuaidi100key.$post_data["customer"]);
+        $post_data["sign"] = strtoupper($post_data["sign"]);
         load()->func('communication');
-        $resp = ihttp_request($url);
+        $resp = ihttp_request($url,$post_data);
         $content = $resp['content'];
-
         if (empty($content)) {
             return array();
         }
-
         $info = json_decode($content, true);
+        
         if(empty($info) || !is_array($info) || empty($info['data'])){
             return array();
         }
-
         $list = array();
-
         foreach ($info['data'] as $index=>$data){
             $list[] = array(
                 'time' => trim($data['time']),

@@ -99,7 +99,7 @@ class SendOmsapi{
 
 		$this->params['tradeNum']=$params['paymentno'];
 		$this->params['goods_amount']=$params['goodsprice'];
-		$alldeduct=$params['deductenough']+$params['couponprice']+$params['buyagainprice']+$params['deductprice']+$params['seckilldiscountprice'];
+		$alldeduct=$params['deductenough']+$params['couponprice']+$params['buyagainprice']+$params['deductprice'];
 		$this->params['discount']=$alldeduct;
 		$this->params['order_amount']=$params['price'];
 		$this->params['shipping_fee']=$params['dispatchprice'];
