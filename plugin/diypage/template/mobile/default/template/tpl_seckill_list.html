@@ -2,8 +2,8 @@
     <div class="swiper-wrapper">
         {loop $times $time}
         <div class="swiper-slide goods-slide" data-timeid="{$time['id']}"
-             data-starttime="{$time['starttime']}"
-             data-endtime="{$time['endtime']}"
+             data-starttime="{php echo $time['starttime']-time();}"
+             data-endtime="{php echo $time['endtime']-time();}" 
              data-status="{$time['status']}">
             <div class='infinite-loading' ><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
         </div>

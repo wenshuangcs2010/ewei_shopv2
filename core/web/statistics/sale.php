@@ -41,7 +41,7 @@ class Sale_EweiShopV2Page extends WebPage {
 		$maxcount = 0;  //最高
 		$maxcount_date = ''; //最高的日期
 		$maxdate = '';    //最高的时间
-		$countfield = empty($type) ? 'sum(price)' : 'count(*)';
+		$countfield = empty($type) ? 'sum(price+deductcredit2)' : 'count(*)';
 		$typename = empty($type) ? '交易额' : '交易量';
 		$dataname = (!empty($year) && !empty($month)) ? '月份' : '日期';
 		

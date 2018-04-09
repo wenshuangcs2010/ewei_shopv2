@@ -25,6 +25,8 @@ class TaobaoModel extends PluginModel {
 		
 		load()->func('communication');
 		$response = ihttp_get($url);
+		var_dump($response);
+		die();
 		if (!isset($response['content'])) {
 			return array("result" => '0', "error" => '未从淘宝获取到商品信息!');
 		}
@@ -181,7 +183,7 @@ class TaobaoModel extends PluginModel {
 		
 		load()->func('communication');
 		$response = ihttp_get($url);
-	
+
 		/*
 		$response=json_decode($response['content'],true);
 		$response=$response['data']['pages'];

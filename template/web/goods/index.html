@@ -396,7 +396,8 @@
                       {/if}
                     {/if}' style='text-align: right;border-top:none;padding:5px 0;overflow:visible;position:relative' >
                         {if $_W['uniacid']==DIS_ACCOUNT}
-                         <a  class='btn btn-default btn-sm' data-toggle='ajaxPost' href="{php echo webUrl('http/httpdown', array('id' => $item['id']))}" ><i class='fa fa-globe'></i> 保税商品同步</a>
+                         <a  class='btn btn-default btn-sm' data-toggle='ajaxPost' href="{php echo webUrl('http/httpdown', array('id' => $item['id']))}" ><i class='fa fa-globe'></i> 保税同步</a>
+                        <a  class='btn btn-default btn-sm' data-toggle='ajaxPost' href="{php echo webUrl('http/httpdown/cnbuyersynch', array('id' => $item['id']))}" ><i class='fa fa-globe'></i> 同步商品到超市</a>
                         {/if}
                          {ifp 'goods.edit|goods.view'}
                             <a  class='btn btn-default btn-sm' href="{php echo webUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> {ifp 'goods.edit'}编辑{else}查看{/if}</a>

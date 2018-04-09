@@ -128,7 +128,13 @@
         <td style='text-align:right;border-left:none;'>{php echo number_format($g['realprice']/$g['total'],2)}<br/>x{$g['total']}</td>
 
         {if $k==0}
-        
+         <td rowspan="{php echo count($item['goods'])}"  style='text-align: center;' >
+           
+            <a href="{php echo webUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['nickname']}</a>
+          
+
+            <br/>
+            {$item['addressdata']['realname']}<br/>{$item['addressdata']['mobile']}</td>
         <td rowspan="{php echo count($item['goods'])}" style='text-align:center;' >
 
             {if $item['statusvalue'] > 0}

@@ -17,11 +17,10 @@ class MobilePage extends Page {
 
     public function __construct() {
         global $_W,$_GPC;
-
+        
         //检测商城是否关闭
         m('shop')->checkClose();
-       
-
+        
         $preview = intval($_GPC['preview']);
 
         $wap = m('common')->getSysset('wap');
@@ -36,11 +35,11 @@ class MobilePage extends Page {
         }else{
 
             if ($preview&&!is_weixin()) {
-                $_W['openid'] = "oIZ9Ks4s4bEqKnOEGC7iGvLdbIFc";
+                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
             }
             if (EWEI_SHOPV2_DEBUG)
             {
-                $_W['openid'] = "oIZ9Ks4s4bEqKnOEGC7iGvLdbIFc";
+                $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
             }
         }
         //var_dump($_W['openid']);
@@ -55,9 +54,6 @@ class MobilePage extends Page {
             $this->merch_user = pdo_fetch("select * from ".tablename('ewei_shop_merch_user')." where id=:id limit 1",array(':id'=>intval($_GPC['merchid'])));
         }
     }
-
-
-
     public function followBar($diypage=false, $merch=false) {
         global $_W, $_GPC;
 
@@ -299,7 +295,7 @@ class MobilePage extends Page {
             $_W['shopshare'] = array(
                 'title' => empty($set['share']['title']) ? $set['shop']['name'] : $set['share']['title'],
                 'imgUrl' => empty($set['share']['icon']) ? tomedia($set['shop']['logo']) : tomedia($set['share']['icon']),
-                'desc' => empty($set['share']['desc']) ? $set['shop']['description'] : $set['share']['desc'],
+                'desc' => empty($set['share']['desc']) ? json_encode($set['shop']['description']) : json_encode($set['share']['desc']),
                 'link' => empty($set['share']['url']) ? mobileUrl('',null,true) : $set['share']['url']
             );
             $plugin_commission = p('commission');
@@ -315,7 +311,7 @@ class MobilePage extends Page {
                             $_W['shopshare'] = array(
                                 'title' => $myshop['name'],
                                 'imgUrl' => tomedia($myshop['logo']),
-                                'desc' => $myshop['desc'],
+                                'desc' => json_encode($myshop['desc']),
                                 'link' =>mobileUrl('commission/myshop',array('mid'=>$member['id']),true)
                             );
                         } else {
@@ -333,7 +329,7 @@ class MobilePage extends Page {
                                 $_W['shopshare'] = array(
                                     'title' => $myshop['name'],
                                     'imgUrl' => tomedia($myshop['logo']),
-                                    'desc' => $myshop['desc'],
+                                    'desc' => json_encode($myshop['desc']),
                                     'link' => mobileUrl('commission/myshop',array('mid'=>$member['id']),true)
                                 );
                             } else {

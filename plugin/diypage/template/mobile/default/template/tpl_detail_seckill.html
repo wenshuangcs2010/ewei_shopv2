@@ -1,7 +1,7 @@
 {if !empty($seckillinfo) }
 <div class="seckill-container {if $seckillinfo['status']==1}notstart{/if}"
-     data-starttime="{$seckillinfo['starttime']}"
-     data-endtime="{$seckillinfo['endtime']}"
+     data-starttime="{php echo $seckillinfo['starttime']-time();}"
+     data-endtime="{php echo $seckillinfo['endtime']-time();}"
      data-status="{$seckillinfo['status']}"
 >
     <div class="fui-list seckill-list" style="background:{php echo $seckillinfo['status']==1?$diyitem['style']['bgleftwait']:$diyitem['style']['bgleft']}">

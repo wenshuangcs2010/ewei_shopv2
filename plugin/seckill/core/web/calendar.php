@@ -24,7 +24,12 @@ class Calendar_EweiShopV2Page extends SeckillWebPage  {
 
         $months = array();
         for($i=1;$i<=12;$i++){
-            $months[] = $i;
+            if($i<10){
+                $temp="0".$i;
+            }else{
+                 $temp=$i;
+            }
+            $months[] = $temp;
         }
 
 
@@ -33,6 +38,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage  {
     function dates(){
         global $_W,$_GPC;
         $redis_prefix = $this->model->get_prefix();
+
         $year = trim($_GPC['year']);
         $month = trim($_GPC['month']);
         $day  = get_last_day($year,$month);
@@ -94,6 +100,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage  {
         if(empty($task)){
             show_json(0, "任务未找到" );
         }
+      
         $rl=redis()->hSet("{$redis_prefix}calendar_{$year}_{$month}" , date('Y-m-d',$time), $taskid);
         show_json(1,array('taskid'=>$task['id'],'title'=>$task['title']));
     }

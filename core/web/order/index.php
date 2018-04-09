@@ -56,7 +56,7 @@ function test(){
             $createtime1 = strtotime(date('Y-m-d',time()));
             $createtime2 = strtotime(date('Y-m-d',time()+3600*24));
         }
-        $sql = 'select id,price,createtime from '.tablename('ewei_shop_order').' where uniacid = :uniacid and ismr=0 and isparent=0 and (status > 0 or ( status=0 and paytype=3)) and deleted=0 and createtime between :createtime1 and :createtime2';
+        $sql = 'select id,price,deductcredit2,createtime from '.tablename('ewei_shop_order').' where uniacid = :uniacid and ismr=0 and isparent=0 and (status > 0 or ( status=0 and paytype=3)) and deleted=0 and createtime between :createtime1 and :createtime2';
         $param = array(
             ':uniacid'=>$_W['uniacid'],
             ':createtime1'=>$createtime1,
@@ -65,7 +65,7 @@ function test(){
         $pdo_res = pdo_fetchall($sql,$param);
         $price = 0;
         foreach ($pdo_res as $arr){
-            $price += $arr['price'];
+            $price += $arr['price']+$arr['deductcredit2'];
         }
         $result = array(
             'price' => round($price,1),
@@ -97,7 +97,7 @@ function test(){
             {
                 if ( array_key_exists(date("Y-m-d",$value['createtime']),$transaction['price']) )
                 {
-                    $transaction['price'][date("Y-m-d",$value['createtime'])] += $value['price'];
+                    $transaction['price'][date("Y-m-d",$value['createtime'])] += $value['price']+$value['deductcredit2'];
                     $transaction['count'][date("Y-m-d",$value['createtime'])] += 1;
                 }
             }

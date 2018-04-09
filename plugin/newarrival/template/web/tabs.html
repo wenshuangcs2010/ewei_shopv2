@@ -1,0 +1,14 @@
+<div class='menu-header'>{php echo $this->plugintitle}</div>
+<ul>
+    <li {if strexists($_W['routes'],'newarrival.task')} class="active"{/if}><a href="{php echo webUrl('newarrival/task')}">活动管理</a></li>
+    <li {if strexists($_W['routes'],'newarrival.room')} class="active"{/if}><a href="{php echo webUrl('newarrival/room')}">会场管理</a></li>
+    <li {if $_GPC['r']=='newarrival.goods'} class="active"{/if}><a href="{php echo webUrl('newarrival/goods')}">商品管理</a></li>
+    <li {if $_GPC['r']=='newarrival.category'} class="active"{/if}><a href="{php echo webUrl('newarrival/category')}">分类管理</a></li>
+    <li {if strexists($_W['routes'],'newarrival.adv')} class="active"{/if}><a href="{php echo webUrl('newarrival/adv')}">广告管理</a></li>
+</ul>
+ <div class='menu-header'>设置</div>
+<ul>
+    <li {if $_W['routes']=='newarrival.calendar'} class="active"{/if}><a href="{php echo webUrl('newarrival/calendar')}">任务设置</a></li>
+    <li {if $_W['routes']=='newarrival.cover'} class="active"{/if}><a href="{php echo webUrl('newarrival/cover')}">入口设置</a></li>
+
+</ul>

@@ -48,8 +48,6 @@ class Goods_EweiShopV2Model {
             pdo_update("ewei_shop_keywordscount",$updatedata,array("id"=>$data['id']));
         }
     }
-
-
     public function searchKeyword(){
         global $_W, $_GPC;
         $params=array(
@@ -568,6 +566,7 @@ class Goods_EweiShopV2Model {
             "out" => pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_goods') . " where status > 0 and deleted=0 and total=0 and uniacid=:uniacid", array(':uniacid' => $_W['uniacid'])),
             "dis"=>pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_goods') . " where status > 0 and checked=0 and deleted=0 and total>0 and uniacid=:uniacid and isdis=1 ", array(':uniacid' => DIS_ACCOUNT)),
             "stock" => pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_goods') . " where (status=0 or checked=1) and deleted=0 and uniacid=:uniacid", array(':uniacid' => $_W['uniacid'])),
+            "cnbuyer" => pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_goods') . " where status=-1 and deleted=0 and uniacid=:uniacid", array(':uniacid' => $_W['uniacid'])),
             "cycle" => pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_goods') . " where deleted=1 and uniacid=:uniacid", array(':uniacid' => $_W['uniacid'])),
         );
     }

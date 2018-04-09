@@ -1,8 +1,23 @@
 {template '_header'}
+
 <script>document.title = "{$page_title}";</script>
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/static/js/dist/swiper/swiper.min.css">
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/seckill/template/mobile/default/static/css/common.css">
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css?v=201701041000"rel="stylesheet"type="text/css"/>
+<style type="text/css">
+    .goods-container .fui-list {background: {$diypage['seckill_list']['style']['bgcolor']};}
+    .goods-container .fui-list-group-title {background:{$diypage['seckill_list']['style']['topbgcolor']};color:{$diypage['seckill_list']['style']['topcolor']}}
+</style>
 <div class="fui-page seckill-page">
+    {if is_h5app()}
+        <div class="fui-header">
+            <div class="fui-header-left">
+                <a class="back"></a>
+            </div>
+            <div class="title">{$page_title}</div>
+            <div class="fui-header-right"></div>
+        </div>
+    {/if}
     <div class="fui-content {if $diypage['diymenu']>-1}navbar{/if}">
         <input type="hidden" id="currenttime" value="{$currenttime}" />
 
@@ -23,7 +38,7 @@
 <script type="text/html" id="tpl_seckill">
 
     <div class="fui-list-group time-group-<%time.id%>"   >
-        <div class="fui-list-group-title" style="background:{$diypage['seckill_list']['style']['topbgcolor']};color:{$diypage['seckill_list']['style']['topcolor']}">
+        <div class="fui-list-group-title" style="">
             <%if time.status>=0%>
             <span class="timer">
                                 <d style="color:{$diypage['seckill_list']['style']['topcolor']}">
@@ -42,7 +57,7 @@
         </div>
 
         <%each goods as g%>
-        <div class='fui-list align-start'  style="background:{$diypage['seckill_list']['style']['bgcolor']}">
+        <div class='fui-list align-start'>
             <div class='fui-list-media'>
                 <img src="<%g.thumb%>" />
             </div>

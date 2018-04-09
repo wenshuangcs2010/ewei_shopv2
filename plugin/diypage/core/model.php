@@ -143,6 +143,7 @@ public function exchangePage($pageid = 0)
                                     }else{
                                         $goods = pdo_fetchall("select id,brief_desc, title,isnodiscount,discounts, thumb, productprice, minprice, total, showlevels, showgroups, bargain, merchid from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
+
 									if(!empty($goods) && is_array($goods)) {
                                          $level = m('member')->getLevel($_W['openid']);
 
@@ -164,9 +165,10 @@ public function exchangePage($pageid = 0)
                                                         $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
                                                         $good['brief_desc']=$newStr;
                                                     }
+
                                                     $item['data'][$childid] = array(
                                                         'thumb'=>$good['thumb'],
-                                                        'brief_desc'=>empty($good['brief_desc']) ? "" : time($good['brief_desc']),
+                                                        'brief_desc'=>empty($good['brief_desc']) ? "" : trim($good['brief_desc']),
                                                         'title'=>$good['title'],
                                                         'price'=>$good['minprice'],
                                                         'gid'=>$good['id'],
@@ -177,6 +179,7 @@ public function exchangePage($pageid = 0)
                                                         'ctype'=>$good['type'],
                                                         'gtype'=>$good['goodstype']
                                                     );
+                                                      
 												}
 											}
 										}
@@ -478,6 +481,7 @@ public function exchangePage($pageid = 0)
 						if($item['params']['goodsdata']=='0') {
                             if(!empty($item['data']) && is_array($item['data'])) {
                                 $goodsids = array();
+
                                 foreach ($item['data'] as $index => $data) {
                                     if (!empty($data['gid'])) {
                                         $goodsids[] = $data['gid'];
@@ -490,12 +494,17 @@ public function exchangePage($pageid = 0)
                                     } else {
                                         $goods = pdo_fetchall("select id,brief_desc, showlevels, showgroups from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
-                            
+ 
                                     if (!empty($goods) && is_array($goods)) {
+
                                         foreach ($item['data'] as $childid=>$childgoods) {
+                                           
+                                   
                                             foreach ($goods as $index => $good) {
                                                 if ($good['id'] == $childgoods['gid']) {
+
                                                     $showgoods = m('goods')->visit($good, $this->member);
+
                                                     if (empty($showgoods)) {
                                                         unset($item['data'][$childid]);
                                                     }
@@ -503,6 +512,7 @@ public function exchangePage($pageid = 0)
                                             }
                                         }
                                     }
+
                                 }
                             }
                         }
@@ -551,6 +561,7 @@ public function exchangePage($pageid = 0)
                                                 $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
                                                 $good['brief_desc']=$newStr;
                                             }
+
                                             $item['data'][$childid] = array(
                                                 'thumb'=>$good['thumb'],
                                                 'brief_desc'=>empty($good['brief_desc']) ? "":trim($good['brief_desc']),
@@ -673,7 +684,10 @@ public function exchangePage($pageid = 0)
                                 }
                                 $goodslist = m('goods')->getList($args);
                                 $goods = $goodslist['list'];
+
+
                             }else{
+
                                 $condition = " and status=1 and deleted=0 and uniacid=:uniacid ";
                                 $params = array(
                                     'uniacid'=>$_W['uniacid'],
@@ -692,6 +706,7 @@ public function exchangePage($pageid = 0)
                             }
 
 							$item['data'] = array();
+
 							if(!empty($goods) && is_array($goods)) {
 							    unset($index);
 								foreach ($goods as $index=>$good) {
@@ -720,6 +735,7 @@ public function exchangePage($pageid = 0)
 								}
 							}
 						}
+
 					}
 					elseif($item['id']=='notice') {
 						if($item['params']['noticedata']=='0') {
@@ -809,6 +825,7 @@ public function exchangePage($pageid = 0)
                         }else{
                             $item['params']['linkurl'] = mobileUrl('member/bind');
                         }
+
                     }
                     elseif($item['id']=='logout'){
                         if(is_weixin()){
@@ -878,6 +895,7 @@ public function exchangePage($pageid = 0)
                         }else{
                             unset($page['data']['items'][$itemid]);
                         }
+
                     }
                     elseif($item['id']=='picturew' && !empty($item['params']['showtype'])){
                         if(!empty($item['data'])){
@@ -892,6 +910,7 @@ public function exchangePage($pageid = 0)
                                     $i=1; $k++;
                                 }
                             }
+
                             $item['data_temp'] = $data_temp;
                             unset($swiperpage, $data_temp, $k, $i);
                         }else{
@@ -903,14 +922,15 @@ public function exchangePage($pageid = 0)
 				}
 				unset($item);
 			}
-          
+            
 			if ($mobile && !empty($page['data'])){
                 $page['data'] = json_encode($page['data']);
                 $page['data'] = $this->url($page['data']);
                 $page['data'] = json_decode($page['data'], true);
             }
 		}
-         
+
+
 
 		return $page;
 	}
@@ -1789,7 +1809,44 @@ public function exchangePage($pageid = 0)
             'items'=>$pageitems
         );
     }
-
+    public function getStartAdv($id) 
+    {
+        global $_W;
+        global $_GPC;
+        if (empty($id)) 
+        {
+            return;
+        }
+        $startadv = p('diypage')->getStartAdvList($id);
+        if (empty($startadv)) 
+        {
+            return;
+        }
+        if ((0 < $startadv['params']['showtype']) && (0 < $startadv['params']['showtime'])) 
+        {
+            $second = $startadv['params']['showtime'] * 60;
+            $key = 'diyadv-' . $_W['uniacid'] . '-' . $id;
+            $cookie = $_GPC[$key];
+            if (!(empty($cookie)) && (time() < ($cookie + $second))) 
+            {
+                return;
+            }
+            isetcookie($key, time(), $second);
+        }
+        return $startadv;
+    }
+    public function getStartAdvList($id) 
+    {
+        global $_W;
+        $adv = pdo_fetch('SELECT * FROM' . tablename('ewei_shop_diypage_plu') . 'WHERE id=:id AND status=1 AND `type`=1 AND uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        if (empty($adv)) 
+        {
+            return;
+        }
+        $adv['data'] = base64_decode($adv['data']);
+        $adv['data'] = json_decode($adv['data'], true);
+        return $adv['data'];
+    }
     public function toArray($data){
         if(empty($data) || !is_array($data)){
             return array();

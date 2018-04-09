@@ -103,6 +103,18 @@
             </div>
         </div>
         {/if}
+
+        {if !empty($order['remark'])}
+        <div class='fui-list-group' style='margin-top:5px;'>
+            <div class='fui-list'>
+                <div class='fui-list-media'><i class='icon icon-wechat1'></i></div>
+                <div class='fui-list-inner'>
+                    <div class='title' style="font-size: 0.5rem;">留言</div>
+                    <div class='text'>{$order['remark']}</div>
+                </div>
+            </div>
+        </div>
+        {/if}
         {if !empty($carrier) ||!empty($store)}
 
         <div class='fui-list-group' style='margin-top:5px;'>
@@ -520,7 +532,7 @@
         {/if}
         {if $order['status']==3 && $order['iscomment']==0 && empty($_W['shopset']['trade']['closecomment'])}
         <a class="btn btn-default btn-default-o" href="{php echo mobileUrl('order/comment',array('id'=>$order['id']))}">评价</a>
-        <a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/newrefund',array('id'=>$order['id']))}">维权处理</a>
+        <!--<a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/newrefund',array('id'=>$order['id']))}">维权处理</a>-->
         
         {/if}
         {if $order['status']==2}
@@ -528,7 +540,7 @@
         {/if}
 
         {if $order['canrefund']}
-        <a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/newrefund',array('id'=>$order['id']))}">{if $order['status'] ==1}申请退款{else}申请售后{/if}{if $refundcount>0}中{/if}</a>
+        <a data-nocache="true" class="btn btn-default" href="{php echo mobileUrl('order/refund',array('id'=>$order['id']))}">{if $order['status'] ==1}申请退款{else}申请售后{/if}{if $refundcount>0}中{/if}</a>
         {/if}
         {else if $order['userdeleted']==1}
             <div class="btn btn-default btn-default-o order-deleted" data-orderid="{$order['id']}">彻底删除订单</div>

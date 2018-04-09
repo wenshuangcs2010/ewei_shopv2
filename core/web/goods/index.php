@@ -111,6 +111,9 @@ class Index_EweiShopV2Page extends WebPage {
         } else if ($goodsfrom == 'cycle') {
             $status = 0;
             $condition .= ' AND g.`deleted`=1';
+        }else if($goodsfrom=="cnbuyer"){
+            $condition .= ' AND g.`status` = -1 and g.`checked`=0 and g.`total`>0 and g.`deleted`=0';
+            $status = 0;
         }
         //wsq 获取当前公众号代理ID
         if($_W['uniacid']!=DIS_ACCOUNT){
@@ -148,7 +151,7 @@ class Index_EweiShopV2Page extends WebPage {
                 $de[$value['id']]=$value['title'];
             }
             $categorys = m('shop')->getFullCategory(true);
-            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.consumption_tax,g.vat_rate,g.subtitle,g.keywords,g.displayorder FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.productsn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.consumption_tax,g.vat_rate,g.subtitle,g.keywords,g.displayorder FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
             $goodslist=pdo_fetchall($sql,$params);
             $categorystemp=array();
             foreach ($categorys as $r) {
@@ -172,6 +175,7 @@ class Index_EweiShopV2Page extends WebPage {
             $columns = array(
                 array('title' => '排序', 'field' => 'displayorder', 'width' => 24),
                 array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
+                array('title' => '商品条码', 'field' => 'productsn', 'width' => 24),
                 array('title' => '商品名称', 'field' => 'title', 'width' => 124),
                 array('title' => '副标题', 'field' => 'subtitle', 'width' => 12),
                 array('title' => '关键字', 'field' => 'keywords', 'width' => 12),

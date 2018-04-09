@@ -17,6 +17,10 @@
     {if $_W['uniacid']!= DIS_ACCOUNT}
     <li {if $_GPC['goodsfrom'] == 'dis'} class="active" {/if}><a href="{php echo webUrl('disgoods',array('goodsfrom'=>'dis'))}">代理商品<span>{$totals['dis']}</span></a></li>
     {/if}
+
+    {if $_W['uniacid']== DIS_ACCOUNT}
+    <li {if $_GPC['goodsfrom'] == 'cnbuyer'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'cnbuyer'))}">保税超市产品<span>{$totals['cnbuyer']}</span></a></li>
+    {/if}
     <li {if $_GPC['goodsfrom'] == 'stock'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'stock'))}">仓库中<span>{$totals['stock']}</span></a></li>
     <li {if $_GPC['goodsfrom'] == 'cycle'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'cycle'))}">回收站<span  class='text-default'>{$totals['cycle']}</span></a></li>
      {ifp 'goods.category'}<li {if $_W['action'] == 'goods.category'} class="active" {/if}><a href="{php echo webUrl('goods/category')}">商品分类</a></li>{/if}

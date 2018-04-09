@@ -63,7 +63,7 @@ class Log_EweiShopV2Page extends PluginWebPage {
             $paras[':starttime'] = $starttime;
             $paras[':endtime'] = $endtime;
         }
-		$sql="SELECT o.* from ".tablename("ewei_shop_order")." as o "
+		$sql="SELECT o.*,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile from ".tablename("ewei_shop_order")." as o "
 		." LEFT JOIN ".tablename("ewei_shop_member")." as m ON o.openid=m.openid and m.uniacid =  o.uniacid"
 		." LEFT JOIN ".tablename("ewei_shop_member_group")."  as mg ON mg.id=m.groupid and mg.uniacid =  o.uniacid"
 		." where 1 {$condition}";
@@ -232,7 +232,7 @@ class Log_EweiShopV2Page extends PluginWebPage {
          	  unset($value);
          }
 
-         //var_dump($list);
+        
 		include $this->template("composter/list");
 	}
 }
