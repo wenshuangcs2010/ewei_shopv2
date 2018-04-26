@@ -72,6 +72,7 @@ class Group_EweiShopV2Page extends WebPage {
                 'levelsid'=>$_GPC['levelsid'],
                 'reccouponid'=>$_GPC['reccouponid'],
                 'reccouponnum'=>$_GPC['reccouponnum'],
+                'shopgoods_show'=>$_GPC['shopgoods_show'],
             );
            
             if (!empty($id)) {

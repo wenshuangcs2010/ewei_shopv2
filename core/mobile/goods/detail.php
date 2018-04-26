@@ -29,7 +29,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         }elseif(!empty($task_id)){
             $_SESSION[$id . '_task_id'] = $task_id;
         }
-
+        
         $err = false;
 
         //多商户
@@ -109,6 +109,7 @@ class Detail_EweiShopV2Page extends MobilePage {
 
 
         $member = m('member')->getMember($openid);
+
         if(com('coupon'))
         {
             $coupons =$this->getCouponsbygood($goods['id']);
@@ -272,6 +273,11 @@ class Detail_EweiShopV2Page extends MobilePage {
         $levelid = $member['level'];
         $groupid = $member['groupid'];
 
+        //查询会员组显示权限
+        $sql="SELECT shopgoods_show FROM ".tablename("ewei_shop_member_group")." where id=:id";
+        
+        $shopgoods_show=pdo_fetchcolumn($sql,array(':id'=>$groupid));
+      
         //判断会员权限
         $goods['levelbuy'] = '1';
         if ($goods['buylevels'] != '') {

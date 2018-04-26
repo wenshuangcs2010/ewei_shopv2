@@ -14,11 +14,9 @@ class Index_EweiShopV2Page extends WebPage {
 
    function test11(){
         global $_W, $_GPC;
-        
-        if (com('coupon')) {
-            com('coupon')->sendcouponsbytask(266); //订单支付
-        }
-        //var_dump($data);
+        //$order=pdo_fetch("SELECT * FROM ".tablename($order_table)." where id=:id",array(":id"=>43490));
+        $ret=m("kjb2c")->sendOmsorder(43490);
+        var_dump($ret);
    }
 
     function main() {
@@ -40,7 +38,7 @@ class Index_EweiShopV2Page extends WebPage {
             $depotACCOUNTlist=pdo_fetchall($depotsql,array(":uniacid"=>DIS_ACCOUNT));
             $depotlist = array_merge($depotlist, $depotACCOUNTlist);
         }
-      
+       
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
         $sqlcondition = $groupcondition = '';

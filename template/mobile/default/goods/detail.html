@@ -317,7 +317,13 @@
     {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
     <div class="fui-cell-group  fui-sale-group" style="margin-top:0">
         <div class="fui-cell">
-            <div class="fui-cell-text" style="white-space: normal;">您的会员等级是 <span class="text-danger">{$level['levelname']}</span> 可享受 <span class="text-danger">￥{$memberprice}</span> 的价格,普通会员价:<span class="text-danger">￥{$goods['minprice']}</span></div>
+            <div class="fui-cell-text" style="white-space: normal;">
+            {if empty($shopgoods_show)}
+            您的会员等级是 <span class="text-danger">{$level['levelname']}</span> 
+            {else}
+            {$shopgoods_show}
+            {/if}
+            可享受 <span class="text-danger">￥{$memberprice}</span> 的价格,普通会员价:<span class="text-danger">￥{$goods['minprice']}</span></div>
         </div>
     </div>
     {/if}

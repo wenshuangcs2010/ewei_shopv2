@@ -20,7 +20,7 @@ class SendOmsapi{
 		self::init($depot['app_id'],$depot['app_secret']);
 		$type=$this->getType($order,$depot);
 		$this->initPrarams($order,$type);
-		$this->init_out_goods($ordergoods);
+		$this->init_out_goods($ordergoods,$order['uniacid'],$order['isdisorder']);
 
 		
 		$orders=json_encode($this->get_values());
@@ -30,7 +30,6 @@ class SendOmsapi{
 			);
 		$token=self::getToken();
 		if(isset($token['error'])){
-		
 			return $token;
 		}
 
@@ -120,7 +119,8 @@ class SendOmsapi{
 			$this->params['shipping']=$params['express'];//指定配送方式
 		}
 		$this->params['disshipping_fee']=$params['dispatchprice'];
-		$this->params['disoutorder_amount']=$params['price']+$params['deductcredit2'];
+		$this->params['disoutorder_amount']=$params['price'];
+		$this->params['deduction']=$params['deductcredit2'];//余额优惠
 		if($params['isdisorder']==1){
 			$this->params['disshipping_fee']=$params['dis_shipping_fee'];
 			$this->params['disoutorder_amount']=$params['disorderamount'];
@@ -158,6 +158,7 @@ class SendOmsapi{
 				$goodstemp1[]=$goodstemp;
 			}
 		}
+		
 		$this->params['goods']=$goodstemp1;
 	}
 	public function get_values(){
