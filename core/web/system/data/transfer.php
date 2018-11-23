@@ -87,9 +87,9 @@ class Transfer_EweiShopV2Page extends SystemPage {
 						pdo_query('delete from  ' . tablename('ewei_shop_category') . " where 1 {$condition1}");
 
 						
-						$goods = pdo_fetchall('select * from ' . tablename('ewei_shop_goods') . " where uniacid=:uniacid and isdis=1", array(':uniacid' => $wechatid));
+						$goods = pdo_fetchall('select * from ' . tablename('ewei_shop_goods') . " where uniacid=:uniacid and status=1 and isdis=1", array(':uniacid' => $wechatid));
 						//pdo_debug();
-						
+
 						foreach ($goods as $g) {
 							$goodsid = $g['id'];
 							unset($g['id']);

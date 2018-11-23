@@ -18,6 +18,7 @@ class ExchangeProcessor extends PluginProcessor
 		$message = $obj->message;
 		$msgtype = strtolower($message['msgtype']);
 		$message['content'] = trim($message['content']);
+
 		m('member')->checkMember();
 		if ($msgtype == 'text')
 		{

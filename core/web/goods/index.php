@@ -622,4 +622,78 @@ update ".tablename('ewei_shop_goods')." set minprice = marketprice,maxprice = ma
         show_json(1);
     }
 
+    function stock(){
+        global $_W;
+        global $_GPC;
+        if ($_W['ispost'])
+        {
+            $rows = m('excel')->import('excelfile');
+            $num = count($rows);
+            $time = time();
+            $i = 0;
+            $err_array = array();
+
+
+            foreach ($rows as $rownum => $col )
+            {
+
+
+
+                $goodsn = trim($col[0]);
+
+
+                if(empty($goodsn)){
+                    continue;
+                }
+                $sql="SELECT id,consumption_tax,vat_rate,marketprice FROM ".tablename("ewei_shop_goods")." where hasoption=0 and goodssn =:goods_sn and uniacid=:uniacid and merchid=:merchid";
+                $goods = pdo_fetch($sql, array(':goods_sn' => $goodsn, ':uniacid' => $_W['uniacid'], ':merchid' => 0));
+
+                if(!empty($goods['id'])){
+                    $stock = !is_numeric($col[1]) ? "":trim($col[1]);
+                    $updatetimes=array(
+                        'total'=>$stock,
+                    );
+                    $cs=pdo_update("ewei_shop_goods",$updatetimes,array("id"=>$goods['id']));
+                    if($cs){
+                        ++$i;
+                    }else{
+                        $err_array[] = $goodsn;
+                    }
+                }else{
+                    $err_array[] = $goodsn;
+                }
+
+            }
+            $tip = '';
+            $msg = $i . '个商品更新成功！';
+            if ($i < $num)
+            {
+                $url = '';
+                if (!(empty($err_array)))
+                {
+                    $j = 1;
+                    $tip .= '<br>' . count($err_array) . '个商品,失败的商品编号: <br>';
+                    foreach ($err_array as $k => $v )
+                    {
+                        $tip .= $v . ' ';
+                        if (($j % 2) == 0)
+                        {
+                            $tip .= '<br>';
+                        }
+                        ++$j;
+                    }
+                }
+            }
+            else
+            {
+                $url = webUrl('goods/stock');
+            }
+            $this->message($msg . $tip, $url, '');
+
+        }
+        include $this->template();
+    }
+
+
+
 }

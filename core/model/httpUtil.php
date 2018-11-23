@@ -103,10 +103,11 @@ class HttpUtil_EweiShopV2Model
 		require_once(EWEI_SHOPV2_TAX_CORE."toerp/erpHttp.php");
 		$n=new ErpHttp();
 		$s=$n->getStoreRoom();
-		//var_dump($s);
+       
 		//die();
 		$retdata=$n->getGoodsStock($storeroomid,1,$goodssn,100);
-		//var_dump($retdata);
+
+
 		if($retdata['result']==500){
 		
 			return array();
@@ -123,50 +124,82 @@ class HttpUtil_EweiShopV2Model
 		
 		foreach ($goods_option as $key => $value) {
 			$options[]=array('optionid'=>$value['id'],'specs'=>explode("_",$value['specs']),'goodssn'=>$value['goodssn']);
+			$goodssn=$value['goodssn'];
+			$productprice=$value['productprice'];
 		}
-		foreach ($options as $key => $value) {
-			 $specs1[]=$value['specs'][1].'_'.$value['goodssn'];
-		}
+
 		foreach ($options as $key => $value) {
 			 $specs2[]=$value['specs'][0];
 		}
-		$specs1=array_unique($specs1);
 		$specs2=array_unique($specs2);
 		foreach ($specs2 as $key => $value) {
-			$size=pdo_fetchcolumn("SELECT title from ".tablename("ewei_shop_goods_spec_item")." where uniacid=:uniacid and id=:specsid",array(":specsid"=>$value,":uniacid"=>$_W['uniacid']));
-			$goodsspecsize[$size]=$value;
+			$size=pdo_fetch("SELECT title,specid from ".tablename("ewei_shop_goods_spec_item")." where uniacid=:uniacid and id=:specsid",array(":specsid"=>$value,":uniacid"=>$_W['uniacid']));
+			$goodsspecsize[$size['title']]=$value;
+			$specid=$size['specid'];
 		}
-		pdo_update("ewei_shop_goods_option",array("stock"=>0),array("goodsid"=>$id,"uniacid"=>$_W['uniacid']));
 	
-		foreach ($specs1 as $key => $value) {
-			$specs=explode("_", $value);
-			$goodssn=$specs[1];
-			$specsid=$specs[0];
-			$storeroom=$this->updateGoodsOption($goodssn,$storeroomid);
-			$result=$this->getGoodsList($goodssn);
-			 //  var_dump($result);
-			 //  var_dump($storeroom);
-			 // die();
-			
-			foreach($storeroom as $v){
-				$size=$v['size'];
+		pdo_update("ewei_shop_goods_option",array("stock"=>0),array("goodsid"=>$id,"uniacid"=>$_W['uniacid']));
+		$storeroom=$this->updateGoodsOption($goodssn,$storeroomid);
+		
+		$insert_spec_item=array();
+		foreach($storeroom as $v){
+			$size=$v['size'];
+			if(isset($goodsspecsize[$size])){
+				//更新
 				$specs1id=$goodsspecsize[$size];
-				$specs=$specs1id."_".$specsid;
+				$costprice=$v['discount']*$productprice;
 
-				$retailPrice=$result['goodsList'][0]['retailPrice'];
-				$conprice=$retailPrice*$v['discount'];
-				 //var_dump();
-				pdo_update("ewei_shop_goods_option",array("stock"=>$v['stock'],'costprice'=>$conprice),array("specs"=>$specs,"goodsid"=>$id,"uniacid"=>$_W['uniacid']));
+				pdo_update("ewei_shop_goods_option",array("stock"=>$v['stock'],'costprice'=>$costprice),array("specs"=>$specs1id,"goodsid"=>$id,"uniacid"=>$_W['uniacid']));
+			}else{
+				$insert_specid=array(
+					'uniacid'=>$_W['uniacid'],
+					'specid'=>$specid,
+					'title'=>$size,
+					'show'=>1,
+					);
+				$costprice=$v['discount']*$productprice;
+				pdo_insert("ewei_shop_goods_spec_item",$insert_specid);
+				$spec_item_id=pdo_insertid();
+				$insert_spec_item[]= $spec_item_id;
+				$insert_option=array(
+					'uniacid'=>$_W['uniacid'],
+					'goodsid'=>$id,
+					'title'=>$size,
+					'productprice'=>$productprice,
+					'costprice'=>$costprice,
+					'marketprice'=>$productprice,
+					'stock'=>$v['stock'],
+					'weight'=>500,
+					'specs'=>$spec_item_id,
+					'skuId'=>$v['goodsId'],
+					'goodssn'=>$v['goodsId'],
+					'productsn'=>$v['goodsId'],
+					'disoptionid'=>0,
+					);
+				pdo_insert("ewei_shop_goods_option",$insert_option);
 			}
-			//die();
 		}
+		if(!empty($insert_spec_item)){
+			$spec=pdo_fetch("SELECT * from ".tablename("ewei_shop_goods_spec")." where uniacid=:uniacid and id=:specsid",array(":specsid"=>$specid,":uniacid"=>$_W['uniacid']));
+			$array=unserialize($spec['content']);
+		    $content=serialize(array_merge($array,$insert_spec_item));
+		    pdo_update("ewei_shop_goods_spec",array("content"=>$content),array("id"=>$specid));
+		}
+	
+		/*
+		$specs=$specs1id."_".$specsid;
+			$retailPrice=$result['goodsList'][0]['retailPrice'];
+			$conprice=$retailPrice*$v['discount'];
+			pdo_update("ewei_shop_goods_option",array("stock"=>$v['stock'],'costprice'=>$conprice),array("specs"=>$specs,"goodsid"=>$id,"uniacid"=>$_W['uniacid']));
+		*/
 
+		
 		return true;
 	}
 	function getGoodsList($goodssn){
 		require_once(EWEI_SHOPV2_TAX_CORE."toerp/erpHttp.php");
 		$n=new ErpHttp();
-		return $n->getGoodsList(1,$goodssn,1);
+		return $n->getGoodsStock(1,$goodssn,1);
 	}
 	function oneupdateGoodsprice($godosid){
 		global $_W;

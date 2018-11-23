@@ -141,31 +141,39 @@ public function exchangePage($pageid = 0)
                                     if($creditshop){
                                         $goods = pdo_fetchall("select id,isnodiscount,discounts, title, thumb, price as productprice, minmoney as minprice, mincredit, total, showlevels, showgroups, `type`, goodstype from " . tablename('ewei_shop_creditshop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }else{
-                                        $goods = pdo_fetchall("select id,brief_desc, title,isnodiscount,discounts, thumb, productprice, minprice, total, showlevels, showgroups, bargain, merchid from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
+                                        $goods = pdo_fetchall("select * from " . tablename('ewei_shop_goods') . " where id in( $newgoodsids ) and status=1 and deleted=0 and checked=0 and uniacid=:uniacid order by displayorder desc ", array(':uniacid' => $_W['uniacid']));
                                     }
-
 									if(!empty($goods) && is_array($goods)) {
                                          $level = m('member')->getLevel($_W['openid']);
 
 										foreach ($goodsids as $goodsid) {
+
 											foreach ($goods as $index=>$good) {
 												if($good['id']==$goodsid){
-                                                   
-												    // 此处去掉判断权限
-                                                    /*
-                                                    $memberprice=0;
-                                                    $memberprice = m('goods')->getMemberPrice($good, $level);
-
-                                                    if($good['minprice']>$memberprice && $memberprice!=0){
-                                                        $good['minprice']=$memberprice;
-                                                    }*/
                                                     $childid = rand(1000000000, 9999999999);
                                                     $childid = 'C' . $childid;
                                                     if(isset($good['brief_desc']) && mb_strlen($good['brief_desc'],"utf-8")>38){
                                                         $newStr = mb_substr($good['brief_desc'],0,38,"UTF8").".....";
                                                         $good['brief_desc']=$newStr;
                                                     }
+                                                    $prices=array();
+                                                    if (!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])) {
+                                                        //统一促销
+                                                        $prices_array = m('order')->getGoodsDiscountPrice($good, $level, 1);
+                                                        $prices[] = $prices_array['price'];
 
+                                                    } else {
+                                                        //详细促销
+                                                        $goods_discounts = m('order')->getGoodsDiscounts($good, $isdiscount_discounts, $level['id']);
+                                                        $prices = $goods_discounts['prices'];
+                                                    }
+                                                    if(isset($prices) && !empty($prices)){
+                                                        $good['minprice'] = min($prices);
+                                                    }
+//                                                    if($id==2023){
+//                                                        var_dump($prices);
+//                                                        //die();
+//                                                    }
                                                     $item['data'][$childid] = array(
                                                         'thumb'=>$good['thumb'],
                                                         'brief_desc'=>empty($good['brief_desc']) ? "" : trim($good['brief_desc']),

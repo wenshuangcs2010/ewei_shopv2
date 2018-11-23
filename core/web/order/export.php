@@ -71,7 +71,7 @@ class Export_EweiShopV2Page extends WebPage {
             array('title' => '扣除佣金后利润', 'field' => 'commission4', 'width' => 12),
             array('title' => '扣除佣金及运费后利润', 'field' => 'profit', 'width' => 12),
             array('title' => '上级分销商姓名', 'field' => 'fxrealname', 'width' => 12),
-            array('title' => '身份证', 'field' => 'realname', 'width' => 12),
+            array('title' => '身份证', 'field' => 'imidrealname', 'width' => 12),
              array('title' => '身份证号码', 'field' => 'imid', 'width' => 12),
             array('title' => '上级分销商姓名', 'field' => 'fxrealname', 'width' => 12),
             array('title' => '上级分销商昵称', 'field' => 'fxnickname', 'width' => 12),
@@ -292,7 +292,7 @@ class Export_EweiShopV2Page extends WebPage {
             foreach ($depostlist as $key => $value) {
                 $de[$value['id']]=$value['title'];
             }
-            $sql = "select o.* , a.realname as arealname,ag.realname as fxrealname,ag.nickname as fxnickname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername from " . tablename('ewei_shop_order') . " o"
+            $sql = "select o.* ,o.realname as imidrealname, a.realname as arealname,ag.realname as fxrealname,ag.nickname as fxnickname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername from " . tablename('ewei_shop_order') . " o"
                 . " left join " . tablename('ewei_shop_order_refund') . " r on r.id =o.refundid "
                 . " left join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid "
                 . " left join " . tablename('ewei_shop_member_address') . " a on a.id=o.addressid "

@@ -10,16 +10,17 @@ class ErpHttp{
 		$this->postdata['userId']=$_config['erp']['userId'];
 	}
 	var $sdkpay="sdkj2014";
-	var $storeurl="http://ku.inshion.com:8006/OpenApi/StoreroomList.ashx";
+	var $storeurl="http://ku.inshion.com:30000/OpenApi/StoreroomList.ashx";
 	var $LogisticsListUrl="http://ku.inshion.com:8006/OpenApi/LogisticsList.ashx";
-	var $GoodsStock="http://ku.inshion.com:8006/OpenApi/GoodsStock.ashx";
-	var $GoodsListURl="http://ku.inshion.com:8006/OpenApi/GoodsList.ashx";
+	var $GoodsStock="http://ku.inshion.com:30000/OpenApi/GoodsStock.ashx";
+	var $GoodsListURl="http://ku.inshion.com:30000/OpenApi/GoodsList.ashx";
 	var $sendOrderUrl="http://ku.inshion.com:8006/OpenApi/ReceiveOrder.ashx";
 	public function  getStoreRoom(){
 		load()->func('communication');
 		$this->postdata['time']=date("Y/m/d H:i:s");
 		$this->postdata['yzm']=strtoupper(md5($this->postdata['secret'].$this->postdata['time']));
 		$resp = ihttp_request($this->storeurl, $this->postdata);
+
 		if(!empty($resp['content'])){
 			//$arr = (array) simplexml_load_string($resp['content'],null, LIBXML_NOCDATA);
 			$resp=json_decode($resp['content'], true);
@@ -51,10 +52,14 @@ class ErpHttp{
 		$this->postdata['clientName']=$_config['erp']['clientName'];//必填
 
 		load()->func('communication');
+
+
 		$resp = ihttp_request($this->GoodsStock, $this->postdata);
+		
 		if(!empty($resp['content'])){
 			//$arr = (array) simplexml_load_string($resp['content'],null, LIBXML_NOCDATA);
-			$resp=json_decode($resp['content'], true);;
+			$resp=json_decode($resp['content'], true);
+			
 			return $resp;
 		}
 	}

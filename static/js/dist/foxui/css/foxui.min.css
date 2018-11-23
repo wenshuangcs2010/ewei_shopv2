@@ -541,7 +541,7 @@ a {
 
 .fui-navbar ~ .fui-content,
 .fui-content.navbar{
-	bottom:2.5rem;
+	/*bottom:2.5rem;*/
 	padding-bottom:2.2rem;
 }
 .fui-content.pulldown{

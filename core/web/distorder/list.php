@@ -579,6 +579,7 @@ class List_EweiShopV2Page extends WebPage {
                 array('title' => '支付方式', 'field' => 'paytype', 'width' => 12),
                 array('title' => '商品小计', 'field' => 'goodsprice', 'width' => 12),
                 array('title' => '运费', 'field' => 'dispatchprice', 'width' => 12),
+                array('title' => '订单状态', 'field' => 'status', 'width' => 12),
                 array('title' => '余额抵扣', 'field' => 'deductcredit2', 'width' => 12),
                 array('title' => '满额立减', 'field' => 'deductenough', 'width' => 12),
                 array('title' => '优惠券优惠', 'field' => 'couponprice', 'width' => 12),

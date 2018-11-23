@@ -282,6 +282,7 @@ class Index_EweiShopV2Page extends WebPage {
 			}
 			if ($_FILES['weixin_root_file']['name']) {
 				$sec['root'] = $this->upload_cert('weixin_root_file');
+
 			}
             //子商户微信支付
             if ($_FILES['weixin_sub_cert_file']['name']) {

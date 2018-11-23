@@ -17,7 +17,7 @@ require_once EWEI_SHOPV2_INC.'com_model.php';
 class Ewei_shopv2ModuleProcessor extends Processor {
      
     public function respond() {
-    	
+
         return parent::respond();  
     }
     

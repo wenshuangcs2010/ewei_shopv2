@@ -55,7 +55,6 @@ abstract class customs{
 		}
 		return $para_filter;
 	}
-
 	/**
 	 * 签名字符串
 	 * @param $prestr 需要签名的字符串

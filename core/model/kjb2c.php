@@ -51,11 +51,14 @@ class Kjb2c_EweiShopV2Model {
 	}
 	function to_customs_new($orderid){
 		global $_W,$_GPC;
-			$order=pdo_fetch("SELECT zhuan_status,paymentno,uniacid,if_customs_z,isdisorder,isborrow,ordersn,paytype,price,depotid from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+			$order=pdo_fetch("SELECT zhuan_status,paymentno,uniacid,if_customs_z,isdisorder,isborrow,ordersn,paytype,price,depotid,deductcredit2 from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
 		$customs=m("kjb2c")->check_if_customs($order['depotid']);
 		if(!$customs){
 			show_json(0,"订单无需报关");
 		}
+        if($order['deductcredit2']>0){
+            return error(-1,"余额暂时不报关支付单");
+        }
 		$depot=m("kjb2c")->get_depot($order['depotid']);
 
 		 $params=array(
@@ -479,9 +482,11 @@ class Kjb2c_EweiShopV2Model {
 		}
 
 		$ret=$sendorder->sendorder($order,$ordergoods);
+
 		if(empty($ret)){
 			return array("status"=>1,"msg"=>"error");
 		}
+
 		if($ret['error']==0){
 			$order_sn='';
 			foreach ($ret['data'] as $key => $value) {

@@ -4,7 +4,7 @@ require_once("CryptAES.inc.php");
 class SendOmsapi{
 	private static $APP_ID="";
 	private static $APP_SECRET="";
-	private static $Send_ORDER_URL="http://oms.cnbuyers.cn/api/order/add";
+	private static $Send_ORDER_URL="http://oms.cnbuyers.cn/api/testorder/add";
 	var $params=array();
 	private  static function init($app_id,$app_secret){
 		self::$APP_ID=$app_id;
@@ -21,8 +21,13 @@ class SendOmsapi{
 		$type=$this->getType($order,$depot);
 		$this->initPrarams($order,$type);
 		$this->init_out_goods($ordergoods,$order['uniacid'],$order['isdisorder']);
+        $goodsamount=0;
+        foreach ($ordergoods as $goods){
+            $goodsamount+=$goods['realprice'];
+        }
+        $this->params['discount']=($goodsamount*100)+($order['dispatchprice']*100)-($order['price']*100)-($order['deductcredit2']*100);
+        $this->params['discount']= $this->params['discount']/100;
 
-		
 		$orders=json_encode($this->get_values());
 		$postData=array(
 			'app_id'=>self::$APP_ID,
@@ -54,7 +59,6 @@ class SendOmsapi{
 		$token=self::getToken();
 		$postData['access_token']=self::getToken();
 		if(isset($token['error'])){
-		
 			return $token;
 		}
 		return $this->iHttpPost($url,$postData);
@@ -66,16 +70,16 @@ class SendOmsapi{
 			case 22:
 				return "支付宝";
 			case 1:
-				return "盛付通";
+				return "易宝";
 			default:
 				# code...
-				return "盛付通";
+				return "易宝";
 		}
 	}
 	//检查是用签约版还是非签约版
 	private  function getType($order,$depot){
 
-		if($depot['if_customs']==1 && $order['if_customs_z']==0 && $order['deductcredit2']<=0){
+		if($order['deductcredit2']<=0){
 			return "T";
 		}
 		return "F";
@@ -84,7 +88,6 @@ class SendOmsapi{
 		load()->func('communication');
 		$resp = ihttp_request($url, $postData);
 		$content=(array)json_decode($resp['content'],true);
-
 		if($content['error']==401){
 			$this->delectRedisKey();
 		}
@@ -93,14 +96,12 @@ class SendOmsapi{
 	private  function initPrarams($params,$type){
 		$params['address']=unserialize($params['address']);
 		$this->params['order_sn']=$params['ordersn'];
-
 		$this->params['payment_name']=$this->getPayment_name($params['paytype']);
-
 		$this->params['tradeNum']=$params['paymentno'];
 		$this->params['goods_amount']=$params['goodsprice'];
 		$alldeduct=$params['deductenough']+$params['couponprice']+$params['buyagainprice']+$params['deductprice'];
 		$this->params['discount']=$alldeduct;
-		$this->params['order_amount']=$params['price'];
+		$this->params['order_amount']=$params['price']+$params['deductcredit2'];
 		$this->params['shipping_fee']=$params['dispatchprice'];
 		$this->params['province']=urlencode($params['address']['province']);
 		$this->params['city']=urlencode($params['address']['city']);

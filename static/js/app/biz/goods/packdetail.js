@@ -117,6 +117,7 @@ define(['core', 'tpl', 'biz/goods/picker'], function (core, tpl, picker, diyform
             backurl: modal.backurl,
             onConfirm: function (total, optionid, optiontitle) {
                 modal.total = total;
+                alert(modal.total);
                 modal.optionid = optionid;
                 $('.option-selector').html("已选: 数量x" + total + " " + optiontitle);
                 if (action == 'buy') {

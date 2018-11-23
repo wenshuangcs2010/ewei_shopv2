@@ -86,6 +86,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 'current' => $member['credit2']
             );
         }
+        //临时特殊控制
 
         //支付参数
         load()->model('payment');

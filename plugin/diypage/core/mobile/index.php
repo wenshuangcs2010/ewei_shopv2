@@ -49,7 +49,7 @@ class Index_EweiShopV2Page extends PluginMobilePage {
 		}
 
 		$diyitems = $page['data']['items'];
-        
+
 		//	设置分享信息
 		$this->model->setShare($page);
 

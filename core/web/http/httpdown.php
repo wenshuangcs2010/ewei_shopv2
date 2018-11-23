@@ -26,6 +26,8 @@ class Httpdown_EweiShopV2Page extends WebPage {
 		if(empty($goods['goodssn'])){
 			show_json(0,"参数丢失无法更新");
 		}
+
+		
 		if($depot['updateid']==1||$depot['updateid']==3){
 			$return=m("httpUtil")->updateGoods($goods['goodssn'],$goods['id']);
 		}elseif($depot['updateid']==2){
@@ -33,6 +35,7 @@ class Httpdown_EweiShopV2Page extends WebPage {
 			//m("httpUtil")->oneupdateGoodsprice($goods['id']);
 
 			$return=m("httpUtil")->updateAdressGoods($goods['goodssn'],$goods['id'],$depot['storeroomid']);
+			
 			//show_json(1,$retdata);
 		}
 		if($return){

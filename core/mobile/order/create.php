@@ -815,6 +815,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 }
             }
+
             //var_dump($deductcredit2);
             //商品数据
             $goodsdata = array();
@@ -1041,7 +1042,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 'mustbind' => 0
             );
         }
-
+//        //宁波仓库禁止
+//        if($depotid==21){
+//            $deductcredit2=0;//临时使用后期恢复
+//        }
 
         $_W['shopshare']['hideMenus'] = array('menuItem:share:qq', 'menuItem:share:QZone', 'menuItem:share:email', 'menuItem:copyUrl', 'menuItem:openWithSafari', 'menuItem:openWithQQBrowser', 'menuItem:share:timeline', 'menuItem:share:appMessage');
 

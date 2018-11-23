@@ -64,7 +64,7 @@ class Detail_EweiShopV2Page extends MobilePage {
         $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
         if($_W['uniacid']==DIS_ACCOUNT && !empty($goods['goodssn'])){
 
-            $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
+           // $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
            if(!empty($ret)){
                 if($ret['if_show']==0){
                     $goods['total']=0;
@@ -365,12 +365,13 @@ class Detail_EweiShopV2Page extends MobilePage {
         if (empty($is_task_goods)) {
             $memberprice = m('goods')->getMemberPrice($goods, $level);
         }
-        
+
         if($goods['isdiscount'] && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
             $goods['oldmaxprice'] = $maxprice;
             $prices = array();
        
             $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
+
             if (!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])) {
                 //统一促销
                 $prices_array = m('order')->getGoodsDiscountPrice($goods, $level, 1);
