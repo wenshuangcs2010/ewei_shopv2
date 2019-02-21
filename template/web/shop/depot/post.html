@@ -108,7 +108,8 @@
                 <option value="SHANGHAI" {if $item['customs_place'] == 'SHANGHAI'}selected="true"{/if}>上海</option>
                 <option value="GUANGZHOU_ZS" {if $item['customs_place'] == 'GUANGZHOU_ZS'}selected="true"{/if}>广州(总署版)</option>
                 <option value="SHANGHAI_ZS" {if $item['customs_place'] == 'SHANGHAI_ZS'}selected="true"{/if}>上海(总署版)</option>
-                
+                <option value="CHONGQING" {if $item['customs_place'] == 'CHONGQING'}selected="true"{/if}>重庆</option>
+
             </select>
         </div>
     </div>
@@ -229,7 +230,18 @@
             {/if}
         </div>
     </div>
-        <div class="form-group">
+<div class="form-group">
+    <label class="col-sm-2 control-label ">此仓库禁用余额购买</label>
+    <div class="col-sm-9 col-xs-12">
+        <label class='radio-inline'>
+            <input type='radio' name='isusebalance'  value='1' {if $item['isusebalance']==1}checked{/if} /> 是
+        </label>
+        <label class='radio-inline'>
+            <input type='radio' name='isusebalance' value='0' {if $item['isusebalance']==0}checked{/if} /> 否
+        </label>
+    </div>
+</div>
+     <div class="form-group">
         <label class="col-sm-2 control-label ">是否启用</label>
         <div class="col-sm-9 col-xs-12">
             <label class='radio-inline'>

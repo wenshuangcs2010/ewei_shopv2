@@ -3,7 +3,7 @@
 if (!defined('IN_IA')) {
     exit('Access Denied');
 }
-
+require_once(EWEI_SHOPV2_TAX_CORE."cnbuyerapi/sendOmsapi.php");
 class HttpUtil_EweiShopV2Model
 {
 
@@ -29,40 +29,32 @@ class HttpUtil_EweiShopV2Model
 		foreach ($disgoodslist as $v) {
 			pdo_update("ewei_shop_goods",array("total"=>$stock),array("id"=>$v));
 		}
-		
 	}
 
 	//更新保税超市库存
-	function updateGoods($goodssn,$goodsid){
-		if(is_array($goodssn)){
-
-		}
+	function updateGoods($goodssn,$goodsid,$depot){
+        global $_W;
 		load()->func('communication');
-		$goodsurl="http://www.cnbuyers.cn/index.php?app=webService&act=We7GetGoodsInfo&sku=".$goodssn;
-		$resp = ihttp_get($goodsurl);
-		$content = $resp['content'];
+        //$url="http://oms.cnbuyers.cn/api/stock";
+        $url="http://localhost/oms/api/stock";
+        SendOmsapi::init($depot['app_id'],$depot['app_secret']);
 
-		if (empty($content)) {
-	            return array();
-	      }
-	    $content=(array)@json_decode($content);
-	    $data=(array)$content['data'];
+        $token=SendOmsapi::getToken();
 
+        $resp = ihttp_post($url,array("access_token"=>$token,'only_sku'=>$goodssn));
+
+        $content=$resp['content'];
+
+	    $content=json_decode($content,true);
+
+        if($content['error']>0){
+            return array();
+        }
+        $data=$content['data'];
 	    if(empty($data)){return array();}
-	    if($data['if_show']==0){
-	    	$data['stock']=0;
-	    }
 	    $updatedata=array(
 	    	'total'=>$data['stock'],
-	    	'weight'=>$data['weight']*1000,
-	    	'consumption_tax'=>$data['consumption_tax'],
-	    	'vat_rate'=>$data['vat_rate'],
-	    	'tariffnum'=>$data['hs_code'],
-	    	'unit'=>$data['unit'],
-	    	'minbuy'=>$data['min_quantity'],
-	    	//'costprice'=>$data['cost_price'],
-	    	);
-
+        );
 	    pdo_update("ewei_shop_goods",$updatedata,array("id"=>$goodsid));
 	    $sql="select id from " . tablename('ewei_shop_goods') . " where disgoods_id=:disgoods_id";
 	    plog('goods.edit', "商品同步ID:{$goodsid}");
@@ -72,12 +64,6 @@ class HttpUtil_EweiShopV2Model
 		}
 	    $disdata=array(
 			'total'=>$data['stock'],
-	    	'weight'=>$data['weight']*1000,
-	    	'consumption_tax'=>$data['consumption_tax'],
-	    	'vat_rate'=>$data['vat_rate'],
-	    	'tariffnum'=>$data['hs_code'],
-	    	'unit'=>$data['unit'],
-	    	'minbuy'=>$data['min_quantity'],
 	    	);
 	    $sql="update ".tablename("ewei_shop_goods")." SET ";
 	    foreach($disdata as $k=>$v){
@@ -142,8 +128,10 @@ class HttpUtil_EweiShopV2Model
 		$storeroom=$this->updateGoodsOption($goodssn,$storeroomid);
 		
 		$insert_spec_item=array();
+		$stock=0;
 		foreach($storeroom as $v){
 			$size=$v['size'];
+            $stock+=$v['stock'];
 			if(isset($goodsspecsize[$size])){
 				//更新
 				$specs1id=$goodsspecsize[$size];
@@ -185,7 +173,7 @@ class HttpUtil_EweiShopV2Model
 		    $content=serialize(array_merge($array,$insert_spec_item));
 		    pdo_update("ewei_shop_goods_spec",array("content"=>$content),array("id"=>$specid));
 		}
-	
+	    pdo_update("ewei_shop_goods",array("total"=>$stock),array('id'=>$id));
 		/*
 		$specs=$specs1id."_".$specsid;
 			$retailPrice=$result['goodsList'][0]['retailPrice'];

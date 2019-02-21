@@ -21,23 +21,43 @@ class Test
         global $_W;
         $this->post = $_POST;
         if($this->post['type']=="shipping"){
-   
-        	foreach ($this->post['data'] as $key => $value) {
-        	   $order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where ordersn=:ordersn", array(":ordersn"=>$value['ordersn']));
-                if($order['status']!=1){
-                    continue;
+
+            global $_W;
+            $this->post = $_POST;
+            if($this->post['type']=="shipping"){
+
+
+                foreach ($this->post['data'] as $key => $value) {
+                    $order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where ordersn=:ordersn", array(":ordersn"=>$value['ordersn']));
+                    //WeUtility::logging('post_test', var_export($order,true));
+                    if($order['status']!=1){
+                        continue;
+                    }
+                    $data = array();
+                    $time=time();
+                    $data = array('sendtype' =>0, 'express' => trim( $value['logisticsCode']), 'expresscom' => trim($value['logisticsName']), 'expresssn' => trim($value['logisticsNo']), 'sendtime' => $time);
+                    if($value['sendtype']==1){
+                        $ogoods = pdo_fetchall('select sendtype from ' . tablename('ewei_shop_order_goods') . ' where orderid = ' .$order['id'] . ' order by sendtype desc ');
+                        $senddata = array('sendtype' => $ogoods[0]['sendtype'] + 1, 'sendtime' => $time);
+                        $data['sendtype'] = $ogoods[0]['sendtype'] + 1;
+
+                        foreach ($value['sendgoods'] as $only_sku){
+                            pdo_update('ewei_shop_order_goods', $data, array('goodssn' => $only_sku['only_sku'], 'orderid' => $order['id']));
+                        }
+                        $send_goods = pdo_fetch('select * from ' . tablename('ewei_shop_order_goods')  . ' where orderid = ' . $order['id'] . ' and sendtype = 0  limit 1 ');
+                        if (empty($send_goods))
+                        {
+                            $senddata['status'] = 2;
+                        }
+                        pdo_update('ewei_shop_order', $senddata, array('id' => $order['id']));
+                    }else{
+                        $data['status'] = 2;
+
+                        pdo_update('ewei_shop_order', $data, array('id' => $order['id']));
+                    }
+                    plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$value['logisticsName']} 快递单号: {$value['logisticsNo']}");
                 }
-        		$data = array();
-            	$data['status'] = 2;
-            	$data['express'] = $value['logisticsCode'];
-            	$data['expresscom'] = $value['logisticsName'];
-            	$data['expresssn'] = $value['logisticsNo'];
-                $data['mftno']=$value['mftno'];
-            	$data['sendtime'] = time();
-            	pdo_update('ewei_shop_order', $data, array('id' => $order['id']));
-            	m('notice')->sendOrderMessage($order['id']);
-            	plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$shipinfo['shipping_name']} 快递单号: {$shipinfo['invoice_no']}");
-        	}
+            }
         }
        	echo "SUCCESS";
     }

@@ -598,11 +598,26 @@ paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdelet
 
         //如果发货，查找第一条物流
         $express = false;
-        if ($order['status'] >= 2 && empty($order['isvirtual']) && empty($order['isverify'])) {
-            $expresslist = m('util')->getExpressList($order['express'], $order['expresssn']);
-            if (count($expresslist) > 0) {
+        $addressmpbilephone=$address['mobile'];
+        if ((2 <= $order['status']) && empty($order['isvirtual']) && empty($order['isverify']))
+        {
+
+            $expresslist = m('util')->getExpressList($order['express'], $order['expresssn'],$addressmpbilephone);
+            if (0 < count($expresslist))
+            {
                 $express = $expresslist[0];
             }
+        }
+        if ((0 < $order['sendtype']) && (1 <= $order['status']))
+        {
+            $order_goods = pdo_fetchall('select orderid,goodsid,sendtype,expresscom,expresssn,express,sendtime from ' . tablename('ewei_shop_order_goods') . "\r\n" . '            where orderid = ' . $orderid . ' and uniacid = ' . $uniacid . ' and sendtype > 0 group by sendtype order by sendtime asc ');
+
+            $expresslist = m('util')->getExpressList($order['express'], $order['expresssn'],$addressmpbilephone);
+            if (0 < count($expresslist))
+            {
+                $express = $expresslist[0];
+            }
+            $order['sendtime'] = $order_goods[0]['sendtime'];
         }
         $shopname = $_W['shopset']['shop']['name'];
 
@@ -616,36 +631,74 @@ paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdelet
     }
 
     function express() {
-        global $_W, $_GPC;
-
-        global $_W, $_GPC;
+        global $_W;
+        global $_GPC;
+        global $_W;
+        global $_GPC;
         $openid = $_W['openid'];
         $uniacid = $_W['uniacid'];
         $orderid = intval($_GPC['id']);
-
-        if (empty($orderid)) {
+        $sendtype = intval($_GPC['sendtype']);
+        $bundle = trim($_GPC['bundle']);
+        if (empty($orderid))
+        {
             header('location: ' . mobileUrl('order'));
-            exit;
+            exit();
         }
-        $order = pdo_fetch("select * from " . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1'
-            , array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
-        if (empty($order)) {
+        $order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
+        if (empty($order))
+        {
             header('location: ' . mobileUrl('order'));
-            exit;
+            exit();
         }
-        if (empty($order['addressid'])) {
+        $bundlelist = array();
+        if ((0 < $order['sendtype']) && ($sendtype == 0))
+        {
+            $i = 1;
+            while ($i <= intval($order['sendtype']))
+            {
+                $bundlelist[$i]['sendtype'] = $i;
+                $bundlelist[$i]['orderid'] = $orderid;
+                $bundlelist[$i]['goods'] = pdo_fetchall('select g.title,g.thumb,og.total,og.optionname as optiontitle,og.expresssn,og.express,' . "\r\n" . '                    og.sendtype,og.expresscom,og.sendtime from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.orderid=:orderid and og.sendtype = ' . $i . ' and og.uniacid=:uniacid ', array(':uniacid' => $uniacid, ':orderid' => $orderid));
+                if (empty($bundlelist[$i]['goods']))
+                {
+                    unset($bundlelist[$i]);
+                }
+                ++$i;
+            }
+            $bundlelist = array_values($bundlelist);
+        }
+        if (empty($order['addressid']))
+        {
             $this->message('订单非快递单，无法查看物流信息!');
         }
-        if ($order['status'] < 2) {
+        if (!(2 <= $order['status']) && !((1 <= $order['status']) && (0 < $order['sendtype'])))
+        {
             $this->message('订单未发货，无法查看物流信息!');
         }
-        //商品信息
-        $goods = pdo_fetchall("select og.goodsid,og.price,g.title,g.thumb,og.total,g.credit,og.optionid,og.optionname as optiontitle,g.isverify,g.storeids{$diyformfields}  from " . tablename('ewei_shop_order_goods') . " og "
-            . " left join " . tablename('ewei_shop_goods') . " g on g.id=og.goodsid "
-            . " where og.orderid=:orderid and og.uniacid=:uniacid ", array(':uniacid' => $uniacid, ':orderid' => $orderid));
-
-        $expresslist = m('util')->getExpressList($order['express'], $order['expresssn']);
-
+        $condition = '';
+        if (0 < $sendtype)
+        {
+            $condition = ' and og.sendtype = ' . $sendtype;
+        }
+        $goods = pdo_fetchall('select og.goodsid,og.price,g.title,g.thumb,og.total,g.credit,og.optionid,og.optionname as optiontitle,g.isverify,og.expresssn,og.express,' . "\r\n" . '            og.sendtype,og.expresscom,og.sendtime,g.storeids' . $diyformfields . "\r\n" . '            from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.orderid=:orderid ' . $condition . ' and og.uniacid=:uniacid ', array(':uniacid' => $uniacid, ':orderid' => $orderid));
+        if (0 < $sendtype)
+        {
+            $order['express'] = $goods[0]['express'];
+            $order['expresssn'] = $goods[0]['expresssn'];
+            $order['expresscom'] = $goods[0]['expresscom'];
+        }
+        $address=false;
+        if (!(empty($order['addressid'])))
+        {
+            $address = iunserializer($order['address']);
+            if (!(is_array($address)))
+            {
+                $address = pdo_fetch('select * from  ' . tablename('ewei_shop_member_address') . ' where id=:id limit 1', array(':id' => $order['addressid']));
+            }
+        }
+        $addressmpbilephone=$address['mobile'];
+        $expresslist = m('util')->getExpressList($order['express'], $order['expresssn'],$addressmpbilephone);
         include $this->template();
     }
 

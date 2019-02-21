@@ -575,6 +575,8 @@ class Common_EweiShopV2Model {
 			$package['sign'] = strtoupper(md5($string1));
 			$dat = array2xml($package);
 			$response = ihttp_request('https://api.mch.weixin.qq.com/pay/unifiedorder', $dat);
+            $requesturl='https://api.mch.weixin.qq.com/pay/unifiedorder?'.http_build_query($package);
+            m("realtimedataupload")->create_initalRequestdata($params['tid'],array("url"=>$requesturl),21);
 			if (is_error($response)) {
 				return $response;
 			}
@@ -642,6 +644,8 @@ class Common_EweiShopV2Model {
 		$package['sign'] = strtoupper(md5($string1));
 		$dat = array2xml($package);
 		$response = ihttp_request('https://api.mch.weixin.qq.com/pay/unifiedorder', $dat);
+        $requesturl='https://api.mch.weixin.qq.com/pay/unifiedorder?'.http_build_query($package);
+        m("realtimedataupload")->create_initalRequestdata($params['tid'],array("url"=>$requesturl),21);
 		if (is_error($response)) {
 			return $response;
 		}
@@ -724,6 +728,7 @@ class Common_EweiShopV2Model {
 		$dat = array2xml($package);
         load()->func('communication');
         $response = ihttp_request('https://api.mch.weixin.qq.com/pay/unifiedorder', $dat);
+
 		if (is_error($response)) {
 			return $response;
 		}

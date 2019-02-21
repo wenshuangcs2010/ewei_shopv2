@@ -15,6 +15,12 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage {
     {
         global $_W, $_GPC;
         $url = urldecode($_GPC['url']);
+        $orderid=$_GPC['orderid'];
+        $ordersn=pdo_fetchcolumn("select ordersn from ".tablename("ewei_shop_order")." where id=:orderid",array(":orderid"=>$orderid));
+        if(!empty($ordersn)){
+            m("realtimedataupload")->create_initalRequestdata($ordersn,array("url"=>$url),22);
+        }
+
         if(!is_weixin()){
             header('location: ' . $url);
             exit;

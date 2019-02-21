@@ -75,23 +75,43 @@
         {if !empty($address)}
         <div class='fui-list-group' style='margin-top:5px;'>
 
-            {if $order['status'] > 1}
-            <a href="{php echo mobileUrl('order/express',array('id'=>$order['id']))}">
-                <div class='fui-list'>
-                    <div class='fui-list-media'><i class='icon icon-deliver'></i></div>
-                    <div class='fui-list-inner'>
-                        {if empty($express)}
-                            <div class='text'><span>快递公司:{$order['expresscom']}</span></div>
-                            <div class='text'><span>快递单号:{$order['expresssn']}</span></div>
-                        {else}
-                            <div class='text'><span {if $express && strexists($express['step'],'已签收')}class='text-danger'{/if}>{$express['step']}</span></div>
-                            <div class='text'><span {if $express && strexists($express['step'],'已签收')}class='text-danger'{/if}>{$express['time']}</span></div>
-                        {/if}
-                    </div>
-                    <div class='fui-list-angle'><span class='angle'></span></div>
+            {if $order['status'] > 1 && $order['sendtype']==0  &&$order['city_express_state']==0}
+            <a class="fui-list" style="background: #fff;" href="{php echo mobileUrl('order/express',array('id'=>$order['id']))}">
+                <div class="fui-list-icon">
+                    <i class="icon icon-deliver" style="color: #ff5555;"></i>
                 </div>
+                <div class="fui-list-inner" style="font-size: 0.7rem;height: auto;line-height: 1.2rem;">
+                    {if empty($express)}
+                    <p style='color:#ff5555'>快递公司:{$order['expresscom']}</p>
+                    <p style='color:#999'>快递单号:{$order['expresssn']}</p>
+                    {else}
+                    <p style='color:#ff5555'>{$express['step']}</p>
+                    <p style='color:#999'>{$express['time']}</p>
+                    {/if}
+                </div>
+                <div class="fui-list-angle"><span class="angle"></span></div>
             </a>
             {/if}
+            {if $order['status'] > 0 && $order['sendtype']>0 && $order_goods  &&$order['city_express_state']==0}
+                {loop $order_goods $index $sg}
+                <a class="fui-list" style="background: #fff;" href="{php echo mobileUrl('order/express',array('id'=>$sg['orderid'],'sendtype'=>$sg['sendtype'],'bundle'=>chr($index+65)))}">
+                    <div class="fui-list-icon">
+                        <i class="icon icon-deliver" style="color: #ff5555;"></i>
+                    </div>
+                    <div class="fui-list-inner" style="font-size: 0.7rem;height: auto;line-height: 1.2rem;">
+                        {if empty($express)}
+                        <p style='color:#ff5555'>快递公司:{if $sg['expresscom']}{$sg['expresscom']}{else}其他快递{/if}</p>
+                        <p style='color:#999'>快递单号:{$sg['expresssn']}</p>
+                        {else}
+                        <p style='color:#ff5555'>{$express['step']}</p>
+                        <p style='color:#999'>{$express['time']}</p>
+                        {/if}
+                    </div>
+                    <div class="fui-list-angle"><span class="angle"></span></div>
+                </a>
+                {/loop}
+            {/if}
+
 
 
             <div class='fui-list'>

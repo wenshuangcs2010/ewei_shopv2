@@ -199,6 +199,7 @@ if ($_W['ispost']) {
         'tariffnum'=>$_GPC['tariffnum'],
         'originplace'=>$_GPC['originplace'],
         'shelflife'=>$_GPC['shelflife'],
+        'nosearch'=>$_GPC['nosearch'],
 
 //      'discounts' => is_array($_GPC['discounts']) ? json_encode($_GPC['discounts']) : json_encode(array()),
         'ednum' => intval($_GPC['ednum'])

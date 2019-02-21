@@ -358,7 +358,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     $changenum = false;
                 }
                 $goods[] = $data;
-
             }
 
             $goods = set_medias($goods, 'thumb');
@@ -815,7 +814,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 }
             }
-
+            if($deductcredit2>0 && $depotid==21){
+                $deductcredit2=0;
+            }
+            if($deductcredit>0 && $depotid==21){
+                $deductcredit2=0;
+            }
             //var_dump($deductcredit2);
             //商品数据
             $goodsdata = array();
@@ -1420,13 +1424,14 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 if (empty($goodsid)) {
                     $nowsendfree = true;
                 }
-                $sql = 'SELECT id as goodsid,title,type, weight,total,issendfree,isnodiscount,disgoods_id, thumb,marketprice,cash,isverify,goodssn,productsn,sales,istime,'
+                $sql = 'SELECT id as goodsid,title,type, weight,depotid,total,issendfree,isnodiscount,disgoods_id, thumb,marketprice,cash,isverify,goodssn,productsn,sales,istime,'
                     . ' timestart,timeend,usermaxbuy,maxbuy,unit,buylevels,buygroups,deleted,status,deduct,manydeduct,`virtual`,'
                     . ' discounts,deduct2,ednum,edmoney,edareas,diyformid,diyformtype,diymode,dispatchtype,dispatchid,dispatchprice,'
                     . ' isdiscount,isdiscount_time,isdiscount_stat_time,isdiscount_discounts ,virtualsend,merchid,merchsale,'
                     . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale,bargain'
                     . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
                 $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));
+                $depotid=$data['depotid'];
                 $data['seckillinfo'] = plugin_run('seckill::getSeckill', $goodsid, $optionid, true, $_W['openid']);
                 if(!empty($data['seckillinfo'])){
                     $check_buy = plugin_run('seckill::checkBuy', $data['seckillinfo'], $data['title']);
@@ -1758,6 +1763,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
         }
         if ($is_openmerch == 1) {
             $merchs = $merch_plugin->getMerchs($merch_array);
+        }
+        if($deductcredit2>0 && $depotid==21){
+            $deductcredit2=0;
+        }
+        if($deductcredit>0 && $depotid==21){
+            $deductcredit=0;
         }
 
         $return_array = array();

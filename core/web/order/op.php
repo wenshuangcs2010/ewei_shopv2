@@ -486,20 +486,38 @@ class Op_EweiShopV2Page extends WebPage {
             if (!empty($_GPC['isexpress']) && empty($_GPC['expresssn'])) {
                 show_json(0, '请输入快递单号！');
             }
-            if (!empty($item['transid'])) {
-                //changeWechatSend($item['ordersn'], 1);
+            $time = time();
+            $data = array('sendtype' => (0 < $item['sendtype'] ? $item['sendtype'] : intval($_GPC['sendtype'])), 'express' => trim($_GPC['express']), 'expresscom' => trim($_GPC['expresscom']), 'expresssn' => trim($_GPC['expresssn']), 'sendtime' => $time);
+            if ((intval($_GPC['sendtype']) == 1) || (0 < $item['sendtype']))
+            {
+                if (empty($_GPC['ordergoodsid']))
+                {
+                    show_json(0, '请选择发货商品！');
+                }
+                $ogoods = array();
+                $ogoods = pdo_fetchall('select sendtype from ' . tablename('ewei_shop_order_goods') . "\r\n" . '                    where orderid = ' . $item['id'] . ' and uniacid = ' . $_W['uniacid'] . ' order by sendtype desc ');
+                $senddata = array('sendtype' => $ogoods[0]['sendtype'] + 1, 'sendtime' => $data['sendtime']);
+                $data['sendtype'] = $ogoods[0]['sendtype'] + 1;
+                $goodsid = $_GPC['ordergoodsid'];
+                foreach ($goodsid as $key => $value )
+                {
+                    pdo_update('ewei_shop_order_goods', $data, array('id' => $value, 'uniacid' => $_W['uniacid']));
+                }
+                $send_goods = pdo_fetch('select * from ' . tablename('ewei_shop_order_goods') . "\r\n" . '                    where orderid = ' . $item['id'] . ' and sendtype = 0 and uniacid = ' . $_W['uniacid'] . ' limit 1 ');
+                if (empty($send_goods))
+                {
+                    $senddata['status'] = 2;
+                }
+                $senddata['refundid'] = 0;
+                pdo_update('ewei_shop_order', $senddata, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
+            }
+            else
+            {
+                $data['status'] = 2;
+                $data['refundid'] = 0;
+                pdo_update('ewei_shop_order', $data, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
             }
 
-            $time = time();
-            pdo_update(
-                'ewei_shop_order', array(
-                'status' => 2,
-                'express' => trim($_GPC['express']),
-                'expresscom' => trim($_GPC['expresscom']),
-                'expresssn' => trim($_GPC['expresssn']),
-                'sendtime' => $time
-            ), array('id' => $item['id'], 'uniacid' => $_W['uniacid'])
-            );
             //取消退款状态
             if (!empty($item['refundid'])) {
                 $refund = pdo_fetch('select * from ' . tablename('ewei_shop_order_refund') . ' where id=:id limit 1', array(':id' => $item['refundid']));
@@ -519,6 +537,20 @@ class Op_EweiShopV2Page extends WebPage {
             plog('order.op.send', "订单发货 ID: {$item['id']} 订单号: {$item['ordersn']} <br/>快递公司: {$_GPC['expresscom']} 快递单号: {$_GPC['expresssn']}");
             show_json(1);
         }
+        $noshipped = array();
+        $shipped = array();
+        if (0 < $item['sendtype'])
+        {
+            $noshipped = pdo_fetchall('select og.id,g.title,g.thumb,og.sendtype from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.sendtype = 0 and og.orderid=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $item['id']));
+            $i = 1;
+            while ($i <= $item['sendtype'])
+            {
+                $shipped[$i]['sendtype'] = $i;
+                $shipped[$i]['goods'] = pdo_fetchall('select g.id,g.title,g.thumb,og.sendtype from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.sendtype = ' . $i . ' and og.orderid=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $item['id']));
+                ++$i;
+            }
+        }
+        $order_goods = pdo_fetchall('select og.id,g.title,g.thumb,og.sendtype from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $item['id']));
         $address = iunserializer($item['address']);
         if (!is_array($address)) {
             $address = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_member_address') . " WHERE id = :id and uniacid=:uniacid", array(':id' => $item['addressid'], ':uniacid' => $_W['uniacid']));
@@ -542,45 +574,79 @@ class Op_EweiShopV2Page extends WebPage {
     }
 
     function changeexpress() {
-        global $_W, $_GPC;
+        global $_W;
+        global $_GPC;
         $opdata = $this->opData();
         extract($opdata);
-
+        $changeexpress = 1;
+        $sendtype = intval($_GPC['sendtype']);
         $edit_flag = 1;
-        if ($_W['ispost']) {
-
+        if ($_W['ispost'])
+        {
             $express = $_GPC['express'];
             $expresscom = $_GPC['expresscom'];
             $expresssn = trim($_GPC['expresssn']);
-
-            if (empty($id)) {
-                $ret = "参数错误！";
+            if (empty($id))
+            {
+                $ret = '参数错误！';
                 show_json(0, $ret);
             }
-
-            if (!empty($expresssn)) {
+            if (!(empty($expresssn)))
+            {
                 $change_data = array();
                 $change_data['express'] = $express;
                 $change_data['expresscom'] = $expresscom;
                 $change_data['expresssn'] = $expresssn;
-
-                pdo_update('ewei_shop_order', $change_data, array('id' => $id, 'uniacid' => $_W['uniacid']));
-				
-				plog('order.op.changeexpress', "修改快递状态 ID: {$item['id']} 订单号: {$item['ordersn']} 快递公司: {$expresscom} 快递单号: {$expresssn}");
-				
+                if (0 < $item['sendtype'])
+                {
+                    if (empty($sendtype))
+                    {
+                        if (empty($_GPC['bundle']))
+                        {
+                            show_json(0, '请选择您要修改的包裹！');
+                        }
+                        $sendtype = intval($_GPC['bundle']);
+                    }
+                    pdo_update('ewei_shop_order_goods', $change_data, array('orderid' => $id, 'sendtype' => $sendtype, 'uniacid' => $_W['uniacid']));
+                }
+                else
+                {
+                    pdo_update('ewei_shop_order', $change_data, array('id' => $id, 'uniacid' => $_W['uniacid']));
+                }
+                plog('order.op.changeexpress', '修改快递状态 ID: ' . $item['id'] . ' 订单号: ' . $item['ordersn'] . ' 快递公司: ' . $expresscom . ' 快递单号: ' . $expresssn);
                 show_json(1);
-            } else {
-                show_json(0, "请填写快递单号！");
+            }
+            else
+            {
+                show_json(0, '请填写快递单号！');
             }
         }
-
-        $address = iunserializer($item['address']);
-        if (!is_array($address)) {
-            $address = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_member_address') . " WHERE id = :id and uniacid=:uniacid", array(':id' => $item['addressid'], ':uniacid' => $_W['uniacid']));
+        $sendgoods = array();
+        $bundles = array();
+        if (0 < $sendtype)
+        {
+            $sendgoods = pdo_fetchall('select g.id,g.title,g.thumb,og.sendtype from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.orderid=:orderid and og.sendtype=' . $sendtype . ' ', array(':uniacid' => $_W['uniacid'], ':orderid' => $item['id']));
         }
-
+        else if (0 < $item['sendtype'])
+        {
+            $i = 1;
+            while ($i <= intval($item['sendtype']))
+            {
+                $bundles[$i]['goods'] = pdo_fetchall('select g.id,g.title,g.thumb,og.sendtype from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.orderid=:orderid and og.sendtype=' . $i . ' ', array(':uniacid' => $_W['uniacid'], ':orderid' => $item['id']));
+                $bundles[$i]['sendtype'] = $i;
+                if (empty($bundles[$i]['goods']))
+                {
+                    unset($bundles[$i]);
+                }
+                ++$i;
+            }
+        }
+        $address = iunserializer($item['address']);
+        if (!(is_array($address)))
+        {
+            $address = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_address') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $item['addressid'], ':uniacid' => $_W['uniacid']));
+        }
         $express_list = m('express')->getExpressList();
-
         include $this->template('order/op/send');
     }
 

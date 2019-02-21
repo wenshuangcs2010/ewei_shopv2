@@ -136,9 +136,10 @@ class Index_EweiShopV2Page extends MobilePage {
 
 	private function _condition($args)
 	{
-		global $_GPC;
+		global $_GPC, $_W;
 		$merch_plugin = p('merch');
 		$merch_data = m('common')->getPluginset('merch');
+        $set = m('common')->getSysset(array('shop', 'pay'));
 		if ($merch_plugin && $merch_data['is_openmerch']) {
 			$args['merchid'] = intval($_GPC['merchid']);
 		}
@@ -146,8 +147,24 @@ class Index_EweiShopV2Page extends MobilePage {
 		if (isset($_GPC['nocommission'])) {
 			$args['nocommission'] = intval($_GPC['nocommission']);
 		}
-
+        //查询禁用余额的仓库
+        $sql="select id from ".tablename("ewei_shop_depot")." where uniacid=:uniacid and isusebalance=1";
+        $idlist=pdo_fetchall($sql,array(':uniacid'=>$_W['uniacid']),'id');
+        if(!empty($idlist)){
+            $idlist=  array_keys($idlist);
+        }
 		$goods = m('goods')->getList($args);
+
+        foreach ($goods['list'] as &$good){
+            if( $set['pay']['credit'] == 1){
+                $good['creditsuccess']=1;
+            }
+
+            if(in_array($good['depotid'],$idlist)){
+                $good['creditsuccess']=0;
+            }
+        }
+        unset($good);
 		show_json(1, array('list' => $goods['list'], 'total' => $goods['total'], 'pagesize' => $args['pagesize']));
 	}
 

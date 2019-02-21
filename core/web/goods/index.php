@@ -15,7 +15,7 @@ class Index_EweiShopV2Page extends WebPage {
    function test11(){
         global $_W, $_GPC;
         //$order=pdo_fetch("SELECT * FROM ".tablename($order_table)." where id=:id",array(":id"=>43490));
-        $ret=m("kjb2c")->sendOmsorder(43490);
+      $ret= m("realTimeDataUpload")->init("SHCG120811324587",22);
         var_dump($ret);
    }
 
@@ -38,7 +38,6 @@ class Index_EweiShopV2Page extends WebPage {
             $depotACCOUNTlist=pdo_fetchall($depotsql,array(":uniacid"=>DIS_ACCOUNT));
             $depotlist = array_merge($depotlist, $depotACCOUNTlist);
         }
-       
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
         $sqlcondition = $groupcondition = '';

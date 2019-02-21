@@ -192,7 +192,12 @@ class EweiShopWechatPay
                         $record['tag'] = iserializer($log['tag']);
                         pdo_update('core_paylog', $record, array('plid' => $log['plid']));
                         pdo_update('ewei_shop_order', array('paytype' => 21,'isborrow'=>$isborrow,'borrowopenid'=>$borrowopenid, 'apppay'=>$this->isapp?1:0), array('ordersn' => $log['tid'],'uniacid'=>$log['uniacid']));
-                        
+                        $sql = 'SELECT id FROM ' . tablename('ewei_shop_pay_request') . ' WHERE `order_sn`=:tid and `pay_type`=:pay_type limit 1';
+                        $id=pdo_fetchcolumn($sql,array(":tid"=>$this->get['out_trade_no'],':pay_type'=>21));
+                        if($id){
+                            $data=array('initalResponse'=>json_encode($this->get),'status'=>1);
+                            pdo_update("ewei_shop_pay_request",$data,array("id"=>$id));
+                        }
                     }
                 }
             }

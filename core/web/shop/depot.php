@@ -104,6 +104,7 @@ class Depot_EweiShopV2Page extends WebPage {
             $data['orgkey'] = trim($_GPC['orgkey']);
             $data['ordershop'] = trim($_GPC['ordershop']);
             $data['orderfrom'] = trim($_GPC['orderfrom']);
+            $data['isusebalance'] = intval($_GPC['isusebalance']);
             if (!empty($id)) {
                 plog('shop.depot.edit',"修改仓库 ID: {$id}");
                 pdo_update('ewei_shop_depot', $data, array('id' => $id));

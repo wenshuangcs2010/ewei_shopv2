@@ -45,7 +45,7 @@ class aliApy
         $this->type = intval($this->strs[1]); //类型 0 购物 1 充值 2收银台
         
         $this->strs = explode(':', $this->body);
-       
+
         $this->total_fee= round($this->post['total_fee'],2);
         $_W['uniacid'] = $_W['weid'] = intval($this->strs[0]);
         $this->init();
@@ -56,7 +56,15 @@ class aliApy
     public function init()
     {
 
+
+
         if ($this->type == '0'){
+            $sql = 'SELECT id FROM ' . tablename('ewei_shop_pay_request') . ' WHERE `order_sn`=:tid and `pay_type`=:pay_type limit 1';
+            $id=pdo_fetchcolumn($sql,array(":tid"=>$this->post['out_trade_no'],':pay_type'=>22));
+            if($id){
+                $data=array('initalResponse'=>json_encode($this->post),'status'=>1);
+                pdo_update("ewei_shop_pay_request",$data,array("id"=>$id));
+            }
             $this->order();
         }elseif ($this->type == '1'){
             $this->recharge();

@@ -184,9 +184,12 @@
 			{else}
 			{if $goods['productprice']>0}<span  class="original">￥{$goods['productprice']}</span>{/if}
 			{/if}
+                {if $creditsuccess}
+                 <span style="margin-left: 4rem;" class="fui-label fui-label-danger">福利购</span>
+                {/if}
 			</span>
         </div>
-         {if $member['isagent']==1 && $member['status']==1 && $goods['hascommission']==1 && $_W['uniacid']!=DIS_ACCOUNT}
+         {if $member['isagent']==1 && $member['status']==1 && $_W['uniacid']!=DIS_ACCOUNT}
          {if $commissionprice>0}
                    分销佣金:￥{$commissionprice}
                    {/if}

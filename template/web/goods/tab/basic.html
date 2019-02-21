@@ -569,7 +569,18 @@
     </div>
 </div>
 {/if}
-
+<div class="form-group">
+    <label class="col-sm-2 control-label">主商城搜索结果中是否显示该商品</label>
+    <div class="col-sm-9 col-xs-12">
+        {ife 'goods' $item}
+        <label class="radio-inline"><input type="radio" name="nosearch" value="0" {if empty($item['nosearch'])}checked="true"{/if}/>  显示</label>
+        <label class="radio-inline"><input type="radio" name="nosearch" value="1" {if $item['nosearch'] == 1}checked="true"{/if}   />  隐藏</label>
+        <span class="help-block"></span>
+        {else}
+        <div class='form-control-static'>{if empty($item['nosearch'])}显示{else}隐藏{/if}</div>
+        {/if}
+    </div>
+</div>
 
 <div class="entity" {if ($item['type'] == 2 || $item['type'] == 3 || $item['type'] == 10)}style="display: none;"{/if}>
     <div class="form-group splitter"></div>

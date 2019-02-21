@@ -27,10 +27,10 @@ class Httpdown_EweiShopV2Page extends WebPage {
 			show_json(0,"参数丢失无法更新");
 		}
 
-		
-		if($depot['updateid']==1||$depot['updateid']==3){
-			$return=m("httpUtil")->updateGoods($goods['goodssn'],$goods['id']);
-		}elseif($depot['updateid']==2){
+
+		if($depot['updateid']==1||$depot['updateid']==3 && $goods['depotid']!=27){
+			$return=m("httpUtil")->updateGoods($goods['goodssn'],$goods['id'],$depot);
+		}elseif($goods['depotid']==27){
 			//同步成本
 			//m("httpUtil")->oneupdateGoodsprice($goods['id']);
 

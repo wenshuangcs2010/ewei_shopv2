@@ -80,7 +80,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 
         //是否可以余额支付
         $credit = array('success' => false);
-        if (isset($set['pay']) && $set['pay']['credit'] == 1) {
+        if (isset($set['pay']) && $set['pay']['credit'] == 1 && $order['depotid']!=21) {
             $credit = array(
                 'success' => true,
                 'current' => $member['credit2']
@@ -137,6 +137,10 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                     }
                 }
                 $wechat = m('common')->wechat_build($params, $options, 0);
+//                if($_W['openid']=="oIeNnwzHrT6vXpiIUss3l5lt_W2w"){
+//                    var_dump($options);
+//                die();
+//                }
                 if (!is_error($wechat)) {
                     $wechat['success'] = true;
                     $wechat['weixin'] = true;
@@ -215,6 +219,12 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                         $options = $setting['payment']['alipay'];
                         $alipay = m('common')->alipay_build($params, $options, 0, $_W['openid']);
                         if (!empty($alipay['url'])) {
+                            //if($_W['openid']=="oIeNnwzHrT6vXpiIUss3l5lt_W2w"){
+
+                               // die();
+                           // }
+
+
                             $alipay['url'] = urlencode($alipay['url']);
                             $alipay['success'] = true;
                         }

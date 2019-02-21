@@ -7,13 +7,13 @@
         <span class="icon icon-goods1"></span>
         <span class="label">{$p['credit']}{$p['sign']}</span>
     </a>
-
+    {if $_W['uniacid']!=26}
     <a href="{php echo mobileUrl('sign/rank')}"
        class="external nav-item {if $_W['routes'] == 'sign.rank'}active{/if}">
         <span class="icon icon-rank"></span>
         <span class="label">{$p['sign']}排行</span>
     </a>
-
+{/if}
 {if p('creditshop')}
     <a href="{php echo mobileUrl('creditshop')}"
        class="external nav-item {if $_W['routes'] == 'creditshop.sign'}active{/if}">
@@ -31,6 +31,4 @@
         <span class="icon icon-person2"></span>
         <span class="label">会员中心</span>
     </a>
-
-
 </div>

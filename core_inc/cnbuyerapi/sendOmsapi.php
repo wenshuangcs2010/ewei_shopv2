@@ -6,7 +6,7 @@ class SendOmsapi{
 	private static $APP_SECRET="";
 	private static $Send_ORDER_URL="http://oms.cnbuyers.cn/api/testorder/add";
 	var $params=array();
-	private  static function init($app_id,$app_secret){
+	public  static function init($app_id,$app_secret){
 		self::$APP_ID=$app_id;
 		self::$APP_SECRET=$app_secret;
 	}
@@ -25,7 +25,8 @@ class SendOmsapi{
         foreach ($ordergoods as $goods){
             $goodsamount+=$goods['realprice'];
         }
-        $this->params['discount']=($goodsamount*100)+($order['dispatchprice']*100)-($order['price']*100)-($order['deductcredit2']*100);
+        $this->params['discount']=intval($goodsamount*100)+intval($order['dispatchprice']*100)-intval($order['price']*100)-intval($order['deductcredit2']*100);
+
         $this->params['discount']= $this->params['discount']/100;
 
 		$orders=json_encode($this->get_values());
@@ -88,7 +89,7 @@ class SendOmsapi{
 		load()->func('communication');
 		$resp = ihttp_request($url, $postData);
 		$content=(array)json_decode($resp['content'],true);
-		if($content['error']==401){
+		if($content['error']==401 || $content['error']==403){
 			$this->delectRedisKey();
 		}
 		return $content;
@@ -114,6 +115,7 @@ class SendOmsapi{
 		$this->params['creattime']=$params['createtime'];
 		$this->params['disType']=$type;
 		$this->params['source']=1;
+        //$this->params['payinfo']=m('realtimedataupload')->init($params['ordersn'],$params['paytype']);
 		$this->params['disshipping_fee']=$params['dispatchprice'];
 		//如果是宁波保税仓的商品快递方式
 		if($params['depotid']==21){
@@ -174,15 +176,16 @@ class SendOmsapi{
 			$redis->delete($key);
 		}
 	}
-	private  static  function getToken(){
+	public  static  function getToken(){
 		$url="http://oms.cnbuyers.cn/accessToken";
+		//$url="http://localhost/oms/accessToken";
 		$open_redis = function_exists('redis') && !is_error(redis());
 		if($open_redis){
 			$redis = redis();
 			$key="token_accessToken_".self::$APP_ID;
 			//$redis->delete($key);
 			$token=$redis->get($key);
-	
+
 			if(empty($token) || $token==false){
 				 $data=array(
                 	'app_id'=>self::$APP_ID,

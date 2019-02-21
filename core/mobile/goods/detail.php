@@ -62,6 +62,14 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         //商品
         $goods = pdo_fetch("select * from " . tablename('ewei_shop_goods') . " where id=:id and uniacid=:uniacid limit 1", array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        $set = m('common')->getSysset(array('shop', 'pay'));
+        $creditsuccess=false;
+
+        //检查仓库是否支持余额购买
+        $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$goods['depotid']));
+        if (isset($set['pay']) && $set['pay']['credit'] == 1 && $depot_info['isusebalance']==0) {
+            $creditsuccess=true;
+        }
         if($_W['uniacid']==DIS_ACCOUNT && !empty($goods['goodssn'])){
 
            // $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
@@ -75,14 +83,14 @@ class Detail_EweiShopV2Page extends MobilePage {
         }
         if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
             
-            $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
-            if(!empty($ret)){
-                if($ret['if_show']==0){
-                    $goods['total']=0;
-                }else{
-                    $goods['total']=$ret['stock'];
-                }
-            }
+            //$ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
+//            if(!empty($ret)){
+//                if($ret['if_show']==0){
+//                    $goods['total']=0;
+//                }else{
+//                    $goods['total']=$ret['stock'];
+//                }
+//            }
         }
 
         $merchid = $goods['merchid'];
@@ -457,7 +465,14 @@ class Detail_EweiShopV2Page extends MobilePage {
                 $cset = p('commission')->getSet();
                 $opencommission = intval($cset['level']) > 0;
 
-               $commissionprice=Dispage::get_goods_commission_price($goods['id'],$openid);
+                 //$commissionprice=Dispage::get_goods_commission_price($goods['id'],$openid);
+                $commissionprice= p('commission')->getCommission($goods);
+//                if($_W['openid']=="oZjDswfbuiLInVQGRpD09O8bknIM"){
+//                    $commissionprice= p('commission')->getCommission($goods);
+//                    var_dump($commissionprice);
+//                    die();
+//                }
+
                 //是否是小店
                 if ($opencommission) {
                     if (empty($mid)) {
@@ -553,7 +568,7 @@ class Detail_EweiShopV2Page extends MobilePage {
             //统计
             if (empty($shop['selectgoods'])) {
                 $statics = array(
-                    'all'=>pdo_fetchcolumn('select count(1) from '.tablename('ewei_shop_goods')." where uniacid=:uniacid and merchid=:merchid and status=1 and deleted=0",array(':uniacid'=>$_W['uniacid'],':merchid'=>$goods['merchid'])),
+                    'all'=>pdo_fetchcolumn('select count(1) from '.tablename('ewei_shop_goods')." where uniacid=:uniacid and merchid=:merchid and status=1  and deleted=0",array(':uniacid'=>$_W['uniacid'],':merchid'=>$goods['merchid'])),
                     'new'=>pdo_fetchcolumn('select count(1) from '.tablename('ewei_shop_goods')." where uniacid=:uniacid and merchid=:merchid and isnew=1 and status=1 and deleted=0",array(':uniacid'=>$_W['uniacid'],':merchid'=>$goods['merchid'])),
                     'discount'=>pdo_fetchcolumn('select count(1) from '.tablename('ewei_shop_goods')." where uniacid=:uniacid and merchid=:merchid and isdiscount=1 and status=1 and deleted=0",array(':uniacid'=>$_W['uniacid'],':merchid'=>$goods['merchid']))
                 );

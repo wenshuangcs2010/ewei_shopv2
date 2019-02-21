@@ -127,8 +127,9 @@ class Goods_EweiShopV2Model {
             $is_openmerch = 0;
         }
 
-        $condition = ' and `uniacid` = :uniacid AND `deleted` = 0 and status=1';
+        $condition = ' and `uniacid` = :uniacid AND `deleted` = 0 and status=1 and nosearch=0 ';
         $params = array(':uniacid' => $_W['uniacid']);
+
 
         //指定商户
         $merchid= !empty($args['merchid']) ? trim($args['merchid']) : '';
@@ -286,18 +287,17 @@ class Goods_EweiShopV2Model {
             $condition.=" and ifnull(showlevels,'')='' ";
             $condition.=" and   ifnull(showgroups,'')='' ";
         }
-      
 
         $total = "";
 
         if (!$random) {
-            $sql = "SELECT id,title,thumb,brief_desc,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
+            $sql = "SELECT id,title,depotid,thumb,brief_desc,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
            
             $countsql="select count(*) from " . tablename('ewei_shop_goods') . " where 1 {$condition}";
           
             $total = pdo_fetchcolumn($countsql,$params);
         } else {
-            $sql = "SELECT id,title,thumb,brief_desc,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
+            $sql = "SELECT id,title,depotid,thumb,brief_desc,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
             $total  = $pagesize;
         }
         $level = m('member')->getLevel($openid);
@@ -372,7 +372,7 @@ class Goods_EweiShopV2Model {
             $is_openmerch = 0;
         }
 
-        $condition = ' and g.`uniacid` = :uniacid AND g.`deleted` = 0 and g.status=1';
+        $condition = ' and g.`uniacid` = :uniacid AND g.`deleted` = 0 and g.status=1 and g.nosearch =0 ';
         $params = array(':uniacid' => $_W['uniacid']);
 
         //指定商户

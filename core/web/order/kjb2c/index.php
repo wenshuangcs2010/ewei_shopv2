@@ -16,6 +16,7 @@ class Index_EweiShopV2Page extends WebPage
 		 $orderid=$_GPC['id'];
 
 		 $returndata=m("kjb2c")->to_customs_new($orderid);
+
 		 $paytype=$returndata['paytype'];
 		 $returndata=$returndata['returndata'];
 		 switch ($paytype) {

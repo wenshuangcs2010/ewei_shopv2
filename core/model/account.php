@@ -69,7 +69,6 @@ class Account_EweiShopV2Model {
 			isetcookie($key, $cookie,7 * 86400);
 		}
 	}
-
 	public function getSalt(){
 		$salt = random(16);
 		while(1)  {
