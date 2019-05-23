@@ -22,7 +22,9 @@ class realtimedataupload
     public function __construct()
     {
         global $_W;
+        global $_GPC;
         $this->post = $_POST;
+
         SendOmsapi::init(CNBUYERS_GOODS_APP_ID,CNBUYERS_GOODS_APP_SECRET);
         $this->init();
     }
@@ -30,6 +32,7 @@ class realtimedataupload
 
     public function init(){
         global $_W;
+
         $openReq=$this->post['openReq'];
         if(empty($openReq)){
             $json['code']=0;
@@ -50,11 +53,16 @@ class realtimedataupload
         }
         $data=m('realtimedataupload')->init($sessionid,$ordersn,$order_info['pay_type']);
         $str=m('realtimedataupload')->str_split($data);
+        //var_dump($str);
+
         $token=SendOmsapi::getToken();
         $postdata['access_token']=$token;
-        $postdata['postdata']=urlencode(base64_encode($str));
+        $token_str=base64_encode($str);
+        $postdata['postdata']=urlencode($token_str);
+        //var_dump($token_str);
         $header=array('Content-Type'=>'application/x-www-form-urlencoded');
         $resp = ihttp_request($url, $postdata,$header);
+
         $content=json_decode($resp['content'],true);
         if($content['error']==0){
            $certNo=$content['data']['certNo'];
@@ -64,9 +72,10 @@ class realtimedataupload
             //$signValue="BWKIkSIajoGuM8kn95hYz7WdlqWCcDEZoRpoRvwHrRk7hB48XfGEI83N7rT8JMdZYV/g8xokFlfbB/kneqc3jUARu49QNeP89ashAlbjCSClONNac+jcle10p81QXwVymvKpd6no8bLplPJhGWtSMT0rtfnzvJjs6sg4VP6DLjE=";
             m('realtimedataupload')->SetParams("signValue",$signValue);
             $data=m('realtimedataupload')->get_params();
+
             $testurl=m("realtimedataupload")->realTimeDataUpload_url;
             $realpost['payExInfoStr']=json_encode($data,320);
-
+           // var_dump($realpost['payExInfoStr']);
             $header=array('Content-Type'=>'application/x-www-form-urlencoded');
             $resp = ihttp_request($testurl, $realpost,$header);
             $content=json_decode($resp['content'],true);

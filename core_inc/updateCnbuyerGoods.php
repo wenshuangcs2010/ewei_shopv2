@@ -56,7 +56,10 @@ class updateCnbuyerGoods
                 if($allpage>1){
                     for ($i=2;$i<=$allpage;$i++){
                         $goods_list=$this->get_goods($item['id'],'',$i,$pagecount);
-                        $this->save_goods($goods_list['goods_list'],$item['id']);
+                        if(isset($goods_list['goods_list']) && empty($goods_list['goods_list'])){
+                            $this->save_goods($goods_list['goods_list'],$item['id']);
+                        }
+
                     }
                 }
             }
@@ -206,7 +209,7 @@ class updateCnbuyerGoods
         $content=json_decode($resp['content'],true);
 
         if(!isset($content['error']) && $content['error']>0){
-            var_dump($content);
+            //var_dump($content);
             return false;
         }
         return $content['data'];

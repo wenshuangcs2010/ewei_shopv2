@@ -36,7 +36,7 @@ class Realtimedataupload_EweiShopV2Model
                 'recpName'=>'浙江畅购天下电子商务有限公司',
             ),
             22=>array(
-                'payCode'=>"312226T001",
+                'payCode'=>"31222699S7",
                 'recpAccount'=>"nbcgtx@163.com",//支付账号
                 'recpCode'=>'91330201MA282A8G8F',
                 'recpName'=>'宁波畅购天下电子商务有限公司',//收款企业名称

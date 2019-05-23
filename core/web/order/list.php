@@ -85,7 +85,7 @@ class List_EweiShopV2Page extends WebPage {
             } else if ($searchfield == 'member') {
                 $condition .= " AND (locate(:keyword,m.realname)>0 or locate(:keyword,m.mobile)>0 or locate(:keyword,m.nickname)>0)";
             } else if ($searchfield == 'address') {
-                $condition .= " AND ( locate(:keyword,a.realname)>0 or locate(:keyword,a.mobile)>0 or locate(:keyword,o.carrier)>0)";
+                $condition .= " AND ( locate(:keyword,a.realname)>0 or locate(:keyword,a.mobile)>0 or locate(:keyword,o.carrier)>0 or locate(:keyword,o.address)>0) ";
             } else if ($searchfield == 'location') {
                 $condition .= " AND ( locate(:keyword,a.province)>0 or locate(:keyword,a.city)>0 or locate(:keyword,a.area)>0 or locate(:keyword,a.address)>0)";
             } else if ($searchfield == 'expresssn') {

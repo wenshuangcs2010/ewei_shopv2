@@ -26,13 +26,16 @@ class Test
             $this->post = $_POST;
             if($this->post['type']=="shipping"){
 
+                $post_data=json_decode($this->post['data'],true);
 
-                foreach ($this->post['data'] as $key => $value) {
+                foreach ($post_data as $key => $value) {
+
                     $order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where ordersn=:ordersn", array(":ordersn"=>$value['ordersn']));
                     //WeUtility::logging('post_test', var_export($order,true));
-                    if($order['status']!=1){
+                    if($order['status']>1){
                         continue;
                     }
+                    pdo_begin();
                     $data = array();
                     $time=time();
                     $data = array('sendtype' =>0, 'express' => trim( $value['logisticsCode']), 'expresscom' => trim($value['logisticsName']), 'expresssn' => trim($value['logisticsNo']), 'sendtime' => $time);
@@ -52,9 +55,9 @@ class Test
                         pdo_update('ewei_shop_order', $senddata, array('id' => $order['id']));
                     }else{
                         $data['status'] = 2;
-
                         pdo_update('ewei_shop_order', $data, array('id' => $order['id']));
                     }
+                    pdo_commit();
                     plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$value['logisticsName']} 快递单号: {$value['logisticsNo']}");
                 }
             }

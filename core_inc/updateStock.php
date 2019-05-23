@@ -146,7 +146,6 @@ class updateStock
             if(!empty($disgoods_id)){
                 $disgoods_ids[]=array("goodsids"=>$disgoods_id,'stock'=>$item['stock']);
             }
-
         }
         $updatesql=substr($updatesql,0,strlen($updatesql)-1);
         $updatesql.=" on duplicate key update stock=values(stock)";

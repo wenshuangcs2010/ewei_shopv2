@@ -394,14 +394,11 @@ class Op_EweiShopV2Page extends WebPage {
         }
         include $this->template();
     }
-
     //虚拟商品收获
     function fetch() {
-
         global $_W, $_GPC;
         $opdata = $this->opData();
         extract($opdata);
-
         if ($item['status'] != 1) {
             message('订单未付款，无法确认取货！');
         }

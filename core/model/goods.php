@@ -70,7 +70,6 @@ class Goods_EweiShopV2Model {
     /**
      * 获取标题的搜索结果
      */
-    
     public function searchTitle($keywords){
         global $_W;
         if (!empty($keywords)) {
@@ -126,11 +125,8 @@ class Goods_EweiShopV2Model {
         } else {
             $is_openmerch = 0;
         }
-
         $condition = ' and `uniacid` = :uniacid AND `deleted` = 0 and status=1 and nosearch=0 ';
         $params = array(':uniacid' => $_W['uniacid']);
-
-
         //指定商户
         $merchid= !empty($args['merchid']) ? trim($args['merchid']) : '';
         if (!empty($merchid)) {
@@ -145,18 +141,15 @@ class Goods_EweiShopV2Model {
                 $condition .= ' and `checked` = 0';
             }
         }
-
         // 类型
         if(empty($args['type'])){
             $condition.=" and type !=10 ";
         }
-
         //指定ID
         $ids = !empty($args['ids']) ? trim($args['ids']) : '';
         if (!empty($ids)) {
             $condition.=" and id in ( " . $ids . ")";
         }
-
         //新品
         $isnew = !empty($args['isnew']) ? 1 : 0;
         if (!empty($isnew)) {
@@ -291,13 +284,13 @@ class Goods_EweiShopV2Model {
         $total = "";
 
         if (!$random) {
-            $sql = "SELECT id,title,depotid,thumb,brief_desc,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
+            $sql = "SELECT id,title,depotid,thumb,hasoption,brief_desc,marketprice,isnodiscount,discounts,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
            
             $countsql="select count(*) from " . tablename('ewei_shop_goods') . " where 1 {$condition}";
           
             $total = pdo_fetchcolumn($countsql,$params);
         } else {
-            $sql = "SELECT id,title,depotid,thumb,brief_desc,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
+            $sql = "SELECT id,title,depotid,thumb,hasoption,brief_desc,marketprice,isdiscount_stat_time,productprice,minprice,maxprice,isdiscount,isdiscount_time,isnodiscount,discounts,isdiscount_discounts,sales,total,description,bargain,type FROM " . tablename('ewei_shop_goods') . " where 1 {$condition} ORDER BY rand() LIMIT " . $pagesize;
             $total  = $pagesize;
         }
         $level = m('member')->getLevel($openid);
@@ -308,7 +301,6 @@ class Goods_EweiShopV2Model {
             return array("list"=>array(),"total"=>0);
         }
         foreach ($list as $key=>$goods) {
-
            if($goods['isdiscount']==1 && $goods['isdiscount_stat_time']<=time() && $goods['isdiscount_time']>=time()){
                 $list[$key]['isdiscount']=1;
                 $isdiscount_discounts = json_decode($goods['isdiscount_discounts'],true);
@@ -321,7 +313,6 @@ class Goods_EweiShopV2Model {
                     $goods_discounts = m('order')->getGoodsDiscounts($goods, $isdiscount_discounts, $levelid);
                     $prices = $goods_discounts['prices'];
                 }
- 
                $minprice = min($prices);
                $prices="";
                $list[$key]['minprice']=$minprice;
@@ -769,6 +760,7 @@ class Goods_EweiShopV2Model {
             } else {
                 //详细折扣
                 $options = m('goods')->getOptions($goods);
+
                 $marketprice =  array();
                 foreach ($options as $option){
                     $discount = trim($discounts[$key]['option' . $option['id']]);
@@ -802,8 +794,11 @@ class Goods_EweiShopV2Model {
         $id = $goods['id'];
         $specs =false;
         $options = false;
+
         if (!empty($goods) && $goods['hasoption']) {
             $specs = pdo_fetchall('select* from ' . tablename('ewei_shop_goods_spec') . ' where goodsid=:goodsid and uniacid=:uniacid order by displayorder asc', array(':goodsid' => $id, ':uniacid' => $_W['uniacid']));
+
+
             foreach($specs as &$spec) {
                 $spec['items'] = pdo_fetchall('select * from '.tablename('ewei_shop_goods_spec_item')." where specid=:specid order by displayorder asc",array(':specid'=>$spec['id']));
             }

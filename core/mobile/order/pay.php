@@ -80,7 +80,9 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 
         //是否可以余额支付
         $credit = array('success' => false);
-        if (isset($set['pay']) && $set['pay']['credit'] == 1 && $order['depotid']!=21) {
+        $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$order['depotid']));
+        if (isset($set['pay']) && $set['pay']['credit'] == 1 && $depot_info['isusebalance']==0) {
+        //if (isset($set['pay']) && $set['pay']['credit'] == 1) {
             $credit = array(
                 'success' => true,
                 'current' => $member['credit2']

@@ -146,7 +146,10 @@ class Kjb2c_EweiShopV2Model {
 		}
 
 		$coustoms=customs::getObject($paytype,$config);
+
+		
 		$retrundata=(array)$coustoms->to_customs($params);
+
         if(isset($retrundata['is_success'])){
             $response=(array)$retrundata['response'];
             $response=(array)$response['alipay'];

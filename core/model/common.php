@@ -1125,7 +1125,10 @@ class Common_EweiShopV2Model {
 		$billno = date('mdHis') . random(2, true);
 		while (1) {
 			$count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_' . $table) . " where {$field}=:billno limit 1", array(':billno' => $billno));
-			if ($count <= 0) {
+            $abc=substr($billno,-4);
+            //使用到9号
+
+			if ($count <= 0 && ($abc!='0401') ) {
 				break;
 			}
 			$billno = date('YmdHis') . random(1, true);

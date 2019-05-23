@@ -26,9 +26,14 @@ class SendOmsapi{
             $goodsamount+=$goods['realprice'];
         }
         $this->params['discount']=intval($goodsamount*100)+intval($order['dispatchprice']*100)-intval($order['price']*100)-intval($order['deductcredit2']*100);
-
         $this->params['discount']= $this->params['discount']/100;
-
+        if($this->params['discount']<0 || $this->params['discount']<0.03){
+            $this->params['discount']=0;
+        }
+        if($this->params['price']==0){
+            $this->params['price']=$order['price']+$order['deductcredit2'];
+            $this->params['disoutorder_amount']=$order['price']+$order['deductcredit2'];
+        }
 		$orders=json_encode($this->get_values());
 		$postData=array(
 			'app_id'=>self::$APP_ID,
@@ -38,10 +43,8 @@ class SendOmsapi{
 		if(isset($token['error'])){
 			return $token;
 		}
-
 		$postData['access_token']=$token;
 		$postData['orders']=Security::encrypt($postData['orders'],self::$APP_SECRET);
-
 		return $this->iHttpPost(self::$Send_ORDER_URL,$postData);
 	}
 	public function selectOrderShipping($depotid,$ordersn){
@@ -74,7 +77,7 @@ class SendOmsapi{
 				return "易宝";
 			default:
 				# code...
-				return "易宝";
+				return "开联通支付";
 		}
 	}
 	//检查是用签约版还是非签约版
@@ -123,7 +126,7 @@ class SendOmsapi{
 		}
 		$this->params['disshipping_fee']=$params['dispatchprice'];
 		$this->params['disoutorder_amount']=$params['price'];
-		$this->params['deduction']=$params['deductcredit2'];//余额优惠
+		$this->params['deduction']=$params['ductcredit2'];//余额优惠
 		if($params['isdisorder']==1){
 			$this->params['disshipping_fee']=$params['dis_shipping_fee'];
 			$this->params['disoutorder_amount']=$params['disorderamount'];

@@ -18,30 +18,33 @@ class Index_EweiShopV2Page extends WebPage
 		 $returndata=m("kjb2c")->to_customs_new($orderid);
 
 		 $paytype=$returndata['paytype'];
-		 $returndata=$returndata['returndata'];
+
+		 $returndata=$returndata['retrundata'];
+
+
 		 switch ($paytype) {
 			case 'wx':
-			if($retrundata['return_code']=="FAIL"){
-                	show_json(0,$retrundata['return_msg']);
+			if($returndata['result_code']=="FAIL"){
+                	show_json(0,$returndata['err_code_des']);
              }else{
-                	if($retrundata['result_code']=="FAIL"){
-						show_json(0,$retrundata['err_code_des']);
+                	if($returndata['result_code']=="FAIL"){
+						show_json(0,$returndata['err_code_des']);
                 	}
-					show_json(1,$retrundata['return_msg']);
+					show_json(1,$returndata['return_msg']);
                 }
                 if(isset($retrundata['errno'])){
-		 			show_json(0,$retrundata['message']);
+		 			show_json(0,$returndata['message']);
 		 		}
 				break;
 			case 'shenfupay':
-				show_json(0,$retrundata['message']);
+				show_json(0,$returndata['message']);
 				break;
 
 			case "alipay":
-				if($retrundata['is_success']=="F"){
+				if($returndata['is_success']=="F"){
 					show_json(0,"失败");
 				}else{
-					$response=(array)$retrundata['response'];
+					$response=(array)$returndata['response'];
 					$alipay=(array)$response['alipay'];
 					show_json(1,$alipay['result_code']);
 				}

@@ -174,8 +174,34 @@ class Excel_EweiShopV2Model {
             $values[] = $rowValue;
         }
         return $values;
+    }
 
+    public function importurl($uploadfile,$ext){
+        global $_W;
+        require_once  IA_ROOT . '/framework/library/phpexcel/PHPExcel.php';
+        require_once  IA_ROOT . '/framework/library/phpexcel/PHPExcel/IOFactory.php';
+        require_once  IA_ROOT . '/framework/library/phpexcel/PHPExcel/Reader/Excel5.php';
+        $reader = PHPExcel_IOFactory::createReader($ext=='xls'?'Excel5':'Excel2007');//use excel2007 for 2007 format
+        $excel = $reader->load($uploadfile);
+        $sheet = $excel->getActiveSheet();
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnCount= PHPExcel_Cell::columnIndexFromString($highestColumn);
+        $values = array();
+        for ($row = 2;$row <= $highestRow;$row++)
+        {
+            $rowValue = array();
+            //注意highestColumnIndex的列数索引从0开始
+            for ($col = 0;$col < $highestColumnCount;$col++)
+            {
 
+                $rowValue[] = $sheet->getCellByColumnAndRow($col, $row)->getValue();
+            }
+            $values[] = $rowValue;
+            yield $rowValue;
+
+        }
+        //return $values;
     }
 
 

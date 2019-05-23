@@ -35,8 +35,8 @@ class HttpUtil_EweiShopV2Model
 	function updateGoods($goodssn,$goodsid,$depot){
         global $_W;
 		load()->func('communication');
-        //$url="http://oms.cnbuyers.cn/api/stock";
-        $url="http://localhost/oms/api/stock";
+        $url="http://oms.cnbuyers.cn/api/stock";
+        //$url="http://localhost/oms/api/stock";
         SendOmsapi::init($depot['app_id'],$depot['app_secret']);
 
         $token=SendOmsapi::getToken();
@@ -139,6 +139,9 @@ class HttpUtil_EweiShopV2Model
 
 				pdo_update("ewei_shop_goods_option",array("stock"=>$v['stock'],'costprice'=>$costprice),array("specs"=>$specs1id,"goodsid"=>$id,"uniacid"=>$_W['uniacid']));
 			}else{
+                if($productprice<=0){
+                    continue;
+                }
 				$insert_specid=array(
 					'uniacid'=>$_W['uniacid'],
 					'specid'=>$specid,
