@@ -1,0 +1,41 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current" >
+
+
+    <div id="fui-page-current" class="fui-content">
+        <div class="fui-cell-group input_suggest" >
+
+            <div class="fui-cell must" >
+                <div class="fui-cell-label">标题</div>
+                <div class="fui-cell-info"><input type="text" class="fui-input" id="title" name="title" placeholder="标题" value="{$post['title']}"></div>
+            </div>
+
+            <div class="fui-cell must">
+                <div class="fui-cell-label">详情</div>
+                <div class="fui-cell-info"><textarea id="description" style="border: 1px solid #c3c3c3;line-height: 1.2rem;" class="form-control" rows="15">{$post['description']}</textarea></div>
+            </div>
+            <input type="hidden" id="id" value="{$post['id']}">
+        </div>
+        <a href="#" id="btnSubmit" class="btn btn-danger block">立即发布</a>
+    </div>
+
+</div>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.suggestions_init();
+    });
+</script>
+<style>
+    .fui-cell-group .fui-cell.must .fui-cell-label:after{
+        right: 0.7rem;
+    }
+    .fui-cell-group .fui-cell .fui-cell-label{
+        width: 3rem;
+    }
+</style>
+
+

@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+</head>
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>员工风采 <i class="fa fa-angle-right"></i> {$title}</li>
+            </ol>
+
+            <div class="grid-form1">
+                <h3>{$title}</h3>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="horizontal-form">
+                        <form action="" method="post" class="form-horizontal">
+
+                            <input type="hidden" name="i"  value="{$_W['uniacid']}" />
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="displayorder" value="{$vo['displayorder']}" class="form-control1" required=""  placeholder="请输入标题">
+                                </div>
+                                <div class="col-sm-2">
+                                    <p class="help-block">这里是通用排序!</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">标题</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="title" value="{$vo['title']}" class="form-control1" required=""  placeholder="请输入标题">
+                                </div>
+                                <div class="col-sm-2">
+                                    <p class="help-block">这里是公文的标题!</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">姓名/团队名</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="teamname" value="{$vo['teamname']}" class="form-control1" required=""  placeholder="请输入姓名/团队名">
+                                </div>
+                                <div class="col-sm-2">
+                                    <p class="help-block">这里是姓名/团队名!</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">员工部门</label>
+                                <div class="col-sm-8">
+                                    <select name="department_id"  class="form-control1">
+                                        <option value="0">请选择</option>
+                                        {loop $department $row}
+                                        <option value="{$row['id']}" {if isset($vo) && $vo['department_id']==$row['id']}selected{/if}>{$row['name']}</option>
+                                        {/loop}
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div  class="form-group">
+
+                                <label for="focusedinput" class="col-sm-2 control-label">头像</label>
+                                <div class="col-sm-8">
+                                    <div style="position:relative;width:500px">
+                                        <div class="input-group">
+                                            <input class="layui-input" readonly name="images" value="{$vo['header_imageurl']}" placeholder="请选择头像" type="text">
+                                            <a class="input-group-addon" data-file="one"  data-field="images" data-type="jpg,png,jpeg" data-uptype="local" >
+                                                <i class="fa fa-file"></i>
+                                            </a>
+                                        </div>
+                                        <div class="input-group multi-img-details ui-sortable">
+                                            {if $vo['header_imageurl']}
+                                            <div class="multi-item" style="width: 180px;">
+                                                <img src="{$vo['header_imageurl']}"  class="img-responsive img-thumbnail">
+                                                <em class="close" title="删除这张图片">×</em>
+                                            </div>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="radio" class="col-sm-2 control-label">是否激活</label>
+                                <div class="col-sm-8">
+                                    <div class="radio block"><label><input name="is_publish" value="0" {if $vo['is_publish']==0 || !isset($vo)}checked=""  {/if}type="radio"> 否</label></div>
+                                    <div class="radio block"><label><input name="is_publish" value="1" type="radio"{if isset($vo) && $vo['is_publish']==1}checked=""  {/if} > 是</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="disabledinput" class="col-sm-2 control-label">正文内容</label>
+                                <div class="col-md-8">
+                                    <textarea id="editor" name='description'>{$vo['description']}</textarea>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+                                        <button class="btn-primary btn">提交</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--//grid-->
+
+            <!--inner block start here-->
+            <div class="inner-block">
+
+            </div>
+            <!--inner block end here-->
+            <!--copy rights start here-->
+            {template 'footer'}
+            <!--COPY rights end here-->
+        </div>
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+
+</body>
+<script type="text/javascript">
+
+    require(['ueditor'], function () {
+
+        var ue = UE.getEditor('editor');
+
+        require(['jquery'], function () {
+            var tpl = '<div class="multi-item" style="width: 180px;" >\n' +
+                '                        <img src=""  class="img-responsive img-thumbnail">\n' +
+                '                        <em class="close" title="删除这张图片">×</em>\n' +
+                '                    </div>';
+
+            $('[name="images"]').on('change', function () {
+                var input = this, values = [], srcs = this.value.split('|');
+                if($(input).parent().children("a").data("file")=="one"){
+                    $(this).parent().next().children(".multi-item").remove();
+                }
+                values.reverse();
+                for (var i in srcs) {
+                    values.push(srcs[i]);
+                }
+                this.value = values.join('|');
+                for (var i in values) {
+                    var $tpl=$(tpl);
+                    $tpl.children("img").attr('src',values[i]);
+                    $tpl.children("input").val(values[i]);
+                    $(input).data('input', input).data('srcs', values).data('index', i);
+                    console.log($(input).data());
+                    $tpl.on('click', 'em', function (e) {
+                        e.stopPropagation();
+                        var $cur = $(this).parent();
+                        $.msg.confirm('确定要移除这张图片吗？', function () {
+                            var data = $(input).data("srcs");
+                            delete data[$(input).data('index')];
+                            $(input).data('input').value=data.join('|');
+                            $cur.remove();
+                        });
+                    });
+                    $(this).parent().next(".multi-img-details").append($tpl);
+                }
+            });
+
+        });
+
+        });
+</script>
+</html>

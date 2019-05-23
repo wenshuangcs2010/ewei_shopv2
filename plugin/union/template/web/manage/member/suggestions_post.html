@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+</head>
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>建言 <i class="fa fa-angle-right"></i> {$title}</li>
+            </ol>
+
+            <div class="grid-form1">
+                <h3>{$title}</h3>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="horizontal-form">
+                        <form action="" method="post" class="form-horizontal">
+
+                            <input type="hidden" name="i"  value="{$_W['uniacid']}" />
+
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">标题</label>
+                                <div class="col-sm-8">
+
+                                        <p class="form-control-static">{$vo['title']}</p>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">建言人姓名</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{$vo['name']}</p>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="focusedinput" class="col-sm-2 control-label">内容</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{$vo['description']}</p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="radio" class="col-sm-2 control-label">是否采纳</label>
+                                <div class="col-sm-8">
+                                    <div class="radio block"><label><input name="status" value="2" {if $vo['status']==2 || !isset($vo)}checked=""  {/if}type="radio"> 采纳</label></div>
+                                    <div class="radio block"><label><input name="status" value="3" type="radio"{if isset($vo) && $vo['status']==3}checked=""  {/if} > 不采纳</label></div>
+
+                                </div>
+                            </div>
+
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+                                        <button class="btn-primary btn">提交</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--//grid-->
+
+            <!--inner block start here-->
+            <div class="inner-block">
+
+            </div>
+            <!--inner block end here-->
+            <!--copy rights start here-->
+            {template 'footer'}
+            <!--COPY rights end here-->
+        </div>
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+
+</body>
+
+</html>

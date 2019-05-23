@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+{template 'header'}
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+		   <!--header start here-->
+		   {template 'header_main'}
+			<!--heder end here-->
+		<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a> <i class="fa fa-angle-right"></i></li>
+            </ol>
+<!--four-grids here-->
+		<div class="four-grids">
+					<div class="col-md-3 four-grid">
+						<div class="four-agileits">
+							<div class="icon">
+								<i class="glyphicon glyphicon-user" aria-hidden="true"></i>
+							</div>
+							<div class="four-text">
+								<h3>工会人员</h3>
+								<h4> {$union_members['count']}</h4>
+								
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-md-3 four-grid">
+						<div class="four-agileinfo">
+							<div class="icon">
+								<i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>
+							</div>
+							<div class="four-text">
+								<h3>待处理建言</h3>
+								<h4>{$total1}</h4>
+
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-md-3 four-grid">
+						<div class="four-w3ls">
+							<div class="icon">
+								<i class="glyphicon glyphicon-folder-open" aria-hidden="true"></i>
+							</div>
+							<div class="four-text">
+								<h3>福利申请</h3>
+								<h4>{$total2}</h4>
+								
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-md-3 four-grid">
+						<div class="four-wthree">
+							<div class="icon">
+								<i class="glyphicon glyphicon-briefcase" aria-hidden="true"></i>
+							</div>
+							<div class="four-text">
+								<h3>工会动态</h3>
+								<h4>{$total3}</h4>
+								
+							</div>
+							
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+<!--//four-grids here-->
+
+<!--photoday-section-->	
+			
+                        
+                    	<div class="col-sm-4 wthree-crd">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="widget widget-report-table">
+                                        <header class="widget-header m-b-15">
+                                        </header>
+                                        
+                                        <div class="row m-0 md-bg-grey-100 p-l-20 p-r-20">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 w3layouts-aug">
+                                                <h3>福利申请</h3>
+
+                                            </div>
+
+                                        </div>
+                                        
+                                        <div class="widget-body p-15">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>申请人</th>
+                                                        <th>金额</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+												{loop $welfares $row}
+                                                    <tr>
+                                                        <td>{$row['id']}</td>
+                                                        <td>{$row['name']}</td>
+                                                        <td>{$row['money']}</td>
+                                                    </tr>
+												{/loop}
+
+                                                </tbody>
+                                            </table>    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4 w3-agileits-crd">
+						
+                            <div class="card card-contact-list">
+							<div class="agileinfo-cdr">
+                                <div class="card-header">
+                                    <h3>建言献策</h3>
+                                </div>
+                                <div class="card-body p-b-20">
+                                    <div class="list-group">
+                                        {loop $suggestions $s}
+                                        <a class="list-group-item media" href="">
+                                            <div class="media-body">
+                                                <div class="pull-left">
+                                                	<div class="lg-item-heading">{$s['title']}</div>
+                                                	<small class="lg-item-text">{$s['description']}</small>
+                                                </div>
+                                                <div class="pull-right">
+                                                	<div class="lg-item-heading">{$s['realname']}</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        {/loop}
+                                   	</div>
+                                </div>
+                            </div>
+							</div>
+                      	</div>
+                    	<div class="col-sm-4 w3-agile-crd">
+                            <div class="card">
+                                <div class="card-body card-padding">
+                                    <div class="widget">
+                                        <header class="widget-header">
+                                            <h4 class="widget-title">工会动态</h4>
+                                        </header>
+                                        <hr class="widget-separator">
+                                        <div class="widget-body">
+                                            <div class="streamline">
+												{loop $dynamics $key $d}
+
+												{if $key==0}
+												<div class="sl-item sl-primary">
+												{elseif $key==1}
+													<div class="sl-item sl-danger">
+														{elseif $key==2}
+														<div class="sl-item sl-success">
+															{elseif $key==3}
+															<div class="sl-item">
+																{elseif $key==4}
+																<div class="sl-item sl-warning">
+																	{else}
+																	<div class="sl-item">
+												{/if}
+
+													<div class="sl-content">
+														<small class="text-muted">{php echo date('Y-m-d',$d['createtime'])}</small>
+														<p>{$d['title']}</p>
+													</div>
+												</div>
+												{/loop}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="clearfix"></div>
+
+	<!--//photoday-section-->	
+
+
+<div class="inner-block">
+
+</div>
+<!--inner block end here-->
+<!--copy rights start here-->
+		   {template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+  <!--//content-inner-->
+
+	   {template 'sidebar_menu'}
+			<!--/sidebar-menu-->
+
+
+
+</body>
+<script>
+	require(['index'],function(modal){
+        modal.init();
+	})
+</script>
+</html>

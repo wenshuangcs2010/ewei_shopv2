@@ -1,0 +1,238 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class='fui-page  fui-page-current'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">发布征婚</div>
+        <div class="fui-header-right"></div>
+    </div>
+
+    <div class='fui-content member-page navbar'>
+
+
+
+
+        <div class="fui-cell-group">
+            <div class="fui-cell must ">
+                <div class="fui-cell-icon">
+                    <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/frendship/ic_name.png">
+                </div>
+                <div class="fui-cell-label ">姓名</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='name' name='name' placeholder="请输入您的姓名"  value="{$member['name']}" /></div>
+            </div>
+            <div class="fui-cell must">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_gender.png">
+                </div>
+                <div class="fui-cell-label">性别</div>
+                <div class="fui-cell-info">
+                    <select name="sex">
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_age.png">
+                </div>
+                <div class="fui-cell-label">年龄</div>
+                <div class="fui-cell-info"><input type="number" class='fui-input' id='age' name='age' placeholder="请输入年龄"  value="{$member['age']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_marry.png">
+                </div>
+                <div class="fui-cell-label ">婚姻状况</div>
+                <div class="fui-cell-info">
+                    <select name="maritalstatus">
+                        <option value="0">未婚</option>
+                        <option value="1">离异</option>
+                        <option value="2">丧偶</option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_statue.png">
+                </div>
+                <div class="fui-cell-label ">身高</div>
+                <div class="fui-cell-info"><input type="number" class='fui-input' id='height' name='height' placeholder="请输入您的身高"  value="{$member['height']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_edution.png">
+                </div>
+                <div class="fui-cell-label ">学历</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='education' name='education' placeholder="请输入您的学历"  value="{$member['education']}" /></div>
+             </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_address.png">
+                </div>
+                <div class="fui-cell-label ">现居地</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='address' name='address' placeholder="请输入您的现居地"  value="{$member['address']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_work.png">
+                </div>
+                <div class="fui-cell-label ">工作单位</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='work' name='work' placeholder="请输入您的现居地"  value="{$member['work']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_income.png">
+                </div>
+                <div class="fui-cell-label ">收入</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='income' name='income' placeholder="请输入您的收入"  value="{$member['income']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_character.png">
+                </div>
+                <div class="fui-cell-label ">性格</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='character' name='character' placeholder="请输入您的性格"  value="{$member['character']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_others.png">
+                </div>
+                <div class="fui-cell-label ">其他条件</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='other' name='other' placeholder="请输入您的其他条件"  value="{$member['other']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_contact.png">
+                </div>
+                <div class="fui-cell-label ">联系方式</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='contact' name='contact' placeholder="请输入您的联系方式"  value="{$member['contact']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_declarer.png">
+                </div>
+                <div class="fui-cell-label ">征婚宣言</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='declaration' name='declaration' placeholder="征婚宣言"  value="{$member['declaration']}" /></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_head.png">
+                </div>
+                <div class="fui-cell-label">头像</div>
+                <div class="fui-cell-info">
+                    <ul class="fui-images fui-images-sm" id="images">
+                        {if $member['header_imageurl']}
+                        <li style="background-image:url({php echo tomedia($member['header_imageurl'])})" class="image image-sm" data-filename="{$member['header_imageurl']}"><span class="image-remove">x</i></span></li>
+                        {/if}
+                    </ul>
+                    <div class="fui-uploader fui-uploader-sm refund-container-uploader" {if count($refund['imgs'])==1}style='display:none'{/if}
+                    data-name="images[]"
+                    data-max="1"
+                    data-count="{php echo count($refund['imgs'])}">
+                        <input type="file" name='imgFile0' id='imgFile0' multiple="" accept="image/*" >
+                    </div>
+                </div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_picture.png">
+                </div>
+                <div class="fui-cell-label">生活照</div>
+                <div class="fui-cell-info">
+                    <ul class="fui-images fui-images-sm" id="images1">
+                        {loop $life_images $k $v}
+
+                        <li style="background-image:url({php echo tomedia($v)})" class="image image-sm" data-filename="{$v}"><span class="image-remove">X</span></li>
+                        {/loop}
+                    </ul>
+                    <div class="fui-uploader fui-uploader-sm refund-container-uploader" {if count($refund['imgs'])==5}style='display:none'{/if}
+                    data-name="life_images[]"
+                    data-max="5"
+                    data-count="{php echo count($refund['imgs'])}">
+                    <input type="file" name='imgFile1' id='imgFile1' multiple="" accept="image/*" >
+                    </div>
+                </div>
+            </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_age.png">
+            </div>
+            <div class="fui-cell-label ">对方年龄</div>
+            <div class="fui-cell-info"><input type="text" class='fui-input' id='otherage' name='otherage' placeholder="请输入您的要求的对方年龄"  value="{$member['otherage']}" /></div>
+        </div>
+    <div class="fui-cell">
+        <div class="fui-cell-icon">
+            <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_statue.png">
+        </div>
+        <div class="fui-cell-label ">对方身高</div>
+        <div class="fui-cell-info"><input type="text" class='fui-input' id='otherheight' name='otherheight' placeholder="请输入您的要求对方身高"  value="{$member['otherheight']}" /></div>
+    </div>
+    <div class="fui-cell">
+        <div class="fui-cell-icon">
+            <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_edution.png">
+        </div>
+        <div class="fui-cell-label ">对方学历</div>
+        <div class="fui-cell-info"><input type="text" class='fui-input' id='othereducation' name='othereducation' placeholder="请输入您要求对方学历"  value="{$member['othereducation']}" /></div>
+    </div>
+    <div class="fui-cell">
+        <div class="fui-cell-icon">
+            <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_address.png">
+        </div>
+        <div class="fui-cell-label ">期望居住地</div>
+        <div class="fui-cell-info"><input type="text" class='fui-input' id='otheraddress' name='otheraddress' placeholder="请输入您的期望居住地"  value="{$member['otheraddress']}" /></div>
+    </div>
+    <div class="fui-cell">
+        <div class="fui-cell-icon">
+            <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_work.png">
+        </div>
+        <div class="fui-cell-label ">工作要求</div>
+        <div class="fui-cell-info"><input type="text" class='fui-input' id='otherwork' name='otherwork'  value="{$member['otherwork']}" /></div>
+    </div>
+    <div class="fui-cell">
+        <div class="fui-cell-icon">
+            <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_income.png">
+        </div>
+        <div class="fui-cell-label ">收入要求</div>
+        <div class="fui-cell-info"><input type="text" class='fui-input' id='otherincome' name='otherincome'  value="{$member['otherincome']}" /></div>
+    </div>
+    <div class="fui-cell">
+        <div class="fui-cell-icon">
+            <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_character.png">
+        </div>
+        <div class="fui-cell-label ">对方性格</div>
+        <div class="fui-cell-info"><input type="text" class='fui-input' id='othercharacter' name='othercharacter'  value="{$member['othercharacter']}" /></div>
+    </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_others1.png">
+            </div>
+            <div class="fui-cell-label ">对方其他条件</div>
+            <div class="fui-cell-info"><input type="text" class='fui-input' id='othercondition' name='othercondition' placeholder="对方其他条件"  value="{$member['othercondition']}" /></div>
+        </div>
+
+
+        </div>
+        <input type="hidden" id="id" value="{$id}">
+        <a href='#' id='btn-submit' class='btn btn-success block'>发布</a>
+    </div>
+
+
+</div>
+
+{template 'union/_footer'}
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.add_friendship_init();
+        $('.refund-container-uploader').uploader({
+            uploadUrl: core.getUrl('util/uploader'),
+            removeUrl: core.getUrl('util/uploader/remove')
+        });
+    });
+</script>

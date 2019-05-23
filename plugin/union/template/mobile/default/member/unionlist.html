@@ -1,0 +1,92 @@
+{template '_header'}
+<script>document.title = "{$_W['cashieruser']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current page-goods-list" >
+
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">
+            <form method="post" action="./index.php?i=5&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=goods">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <i class="icon icon-search"></i>
+                        <input type="search" id="searchtitle" autofocus="true" name="keywords" placeholder="输入关键字..." value="">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="fui-header-right" style="padding-right: 0;" data-nomenu="true">
+            <a href="javascript:;"></a>
+        </div>
+    </div>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa;top:2.2rem">
+        <div class="fui-content navbar" style="top:0">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="goods-list-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type='text/html' id='tpl_goods_list'>
+    <%each list as row%>
+    <a class="fui-cell-group union_info" data-unionid="<%row.id%>" href="#">
+        <div class="fui-cell">
+
+            <div class="fui-cell-text">
+                <span class="texthead" style="line-height: 2rem;"><%row.title%></span>
+                <div class="online_li">
+                              </div>
+            </div>
+            <div>
+                <%if row.is_default==1%>
+                <span class="default" >默认</span>
+                <%/if%>
+                <%if row.is_default==0 && row.activate==1 %>
+                <span class="default defaultset" >设置默认</span>
+                <%/if%>
+                <%if row.is_default==0 && row.activate==0 %>
+                <span class="default sign" >未审核</span>
+                <%/if%>
+            </div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.unionlist_init({});
+    });
+</script>
+<style>
+    .default{
+        width: 2.2rem;
+        border: 1px solid;
+        border-radius: 4px;
+        color: #DC3C26;
+        border-color: #DC3C26;
+        font-size: 0.7rem;
+        display: block;
+        text-align: center;
+    }
+    .sign{
+        color: #5A9BFE;
+        border-color: #5A9BFE;
+    }
+    .defaultset{
+        width: 4rem;
+        color: white;
+        background-color: #DC3C26;
+    }
+</style>
+{template 'union/_footer'}

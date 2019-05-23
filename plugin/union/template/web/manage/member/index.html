@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{template 'header'}
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+<body>
+<style>
+.bt-list li{
+	width: auto!important;
+
+}
+.layui-btn{
+	font-size: 12px!important;
+}
+</style>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+             <!--header start here-->
+		   {template 'header_main'}
+			<!--heder end here-->
+			<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{$_W['union_name']}会员</li>
+            </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <ul class="bt-list">
+					   <li style="margin-left: 0.2rem">
+						   <button data-href="{php echo unionUrl('member/index/export')}" data-title=" 下载{$_W['union_name']}会员模板" class="layui-btn layui-btn-small">
+							   <i class="fa fa-cloud-download"></i>  下载会员导出模板
+						   </button>
+					   </li>
+					   <li style="margin-left: 0.2rem">
+						   <button data-modal="{php echo unionUrl('member/index/import')}" data-title="导入{$_W['union_name']}会员" class='layui-btn layui-btn-small'><i
+								   class='fa fa-plus'></i> 导入{$_W['union_name']}会员
+						   </button>
+					   </li>
+					   <li style="margin-left: 0.2rem">
+						   <button data-modal="{php echo unionUrl('member/index/add')}" data-title="添加新的{$_W['union_name']}会员" class='layui-btn layui-btn-small'><i
+								   class='fa fa-plus'></i> 添加新的{$_W['union_name']}会员
+						   </button>
+					   </li>
+				   </ul>
+			   </div>
+			   <div class="col-adjust-10">
+			   <form class="animated form-search" action="{php echo unionUrl('member/index')}" onsubmit="return false" method="get">
+				   <div class="row">
+					   <div class="col-xs-2">
+						   <select name="selector1" id="selector1" class="form-control1">
+							   <option value="">请选择部门</option>
+							   {loop $department $p}
+							   <option value="{$p['id']}">{$p['name']}</option>
+							   {/loop}
+						   </select>
+					   </div>
+					   <div class="col-xs-2">
+						   <input type="text" name="mobile" value="{$mobile}" placeholder="手机号" class="form-control">
+					   </div>
+					   <div class="col-xs-2">
+						   <input type="text" name="name" value="{$name}" placeholder="姓名" class="form-control">
+					   </div>
+					   <div class="col-xs-1">
+						   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+					   </div>
+				   </div>
+			   </form>
+			   </div>
+		   </div>
+<div class="agile-grids" style="min-height: 800px">
+	<div class="agile-tables">
+		<div class="w3l-table-info">
+
+			<table id="table">
+				<thead>
+				<tr>
+					<th>排序</th>
+					<th>处事/部门</th>
+					<th>姓名</th>
+					<th>手机号</th>
+					<th>性别</th>
+					<th>状态</th>
+					<th>员工类型</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody>
+                {loop $list $row}
+				<tr>
+					<td> <a data->{$row['sort']}</a></td>
+					<td>{$row['dname']}</td>
+					<td>{$row['name']}</td>
+					<td>{$row['mobile_phone']}</td>
+					<td>{$row['sex']}</td>
+					<td>{if $row['activate']==0}未激活{else}激活{/if}</td>
+					<td>{$row['type']}</td>
+					<td><a data-modal="{php echo unionUrl('member/index/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a></td>
+				</tr>
+                {/loop}
+				</tbody>
+			</table>
+            {$pager}
+        </div>
+        {if !$list}
+        <div class="panel panel-default" style="background-color: #fff;">
+            <div class="panel-body" style="text-align: center;padding:30px;">
+                没有任何数据!
+            </div>
+        </div>
+        {/if}
+
+   </div>
+
+
+<!--copy rights start here-->
+	{template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','jquery.basictable'],function(modal){
+        modal.init();
+        $('#table').basictable();
+    })
+</script>
+</html>

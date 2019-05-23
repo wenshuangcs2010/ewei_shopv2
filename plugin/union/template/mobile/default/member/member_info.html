@@ -1,0 +1,61 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back" ></a>
+        </div>
+        <div class="title">会员中心</div>
+        <div class="fui-header-right"></div>
+    </div>
+
+    <div class='fui-content member-page navbar'>
+
+
+    <div class="fui-cell-group">
+        <div class="fui-cell must ">
+            <div class="fui-cell-label ">姓名</div>
+            <div class="fui-cell-info"><input type="text" class='fui-input' id='realname' name='realname' placeholder="请输入您的姓名"  value="{$member['realname']}" /></div>
+        </div>
+        <div class="fui-cell must">
+            <div class="fui-cell-label">手机号</div>
+            <div class="fui-cell-info">{if empty($member['mobile'])}未绑定手机号{else}{$member['mobile']}{/if}{if !empty($member['mobileverify'])}(已绑定){/if}</div>
+            <a class="fui-cell-remark external" href="{php echo mobileUrl('member/bind')}">{if empty($member['mobile'])}绑定{else}更换绑定{/if}</a>
+        </div>
+
+        <div class="fui-cell">
+            <div class="fui-cell-label">出生日期</div>
+            <div class="fui-cell-info"><input type="text"  class='fui-input'  id='birthday' name='birthday' placeholder="请选择出生日期"  value="{$member['birthday']}" readonly/></div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-label ">邮箱</div>
+            <div class="fui-cell-info"><input type="text" class='fui-input' id='mail' name='mail' placeholder="请输入您的邮箱"  value="{php echo $this->member['mail']}" /></div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-label ">微信</div>
+            <div class="fui-cell-info"><input type="text" class='fui-input' id='wechat' name='wechat' placeholder="请输入您的微信号"  value="{php echo $this->member['wechat']}" /></div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-label ">单位</div>
+            <div class="fui-cell-info"><p>{$union_memebr['title']}</p></div>
+         </div>
+        <div class="fui-cell">
+            <div class="fui-cell-label ">部门</div>
+            <div class="fui-cell-info"><p>{$department['name']}</p></div>
+        </div>
+    </div>
+    <a href='#' id='btn-submit' class='btn btn-success block'>确认修改</a>
+    </div>
+
+
+</div>
+
+{template 'union/_footer'}
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.member_info_init({});
+        require(['foxui','foxui.picker'], function () {
+            $('#birthday').datePicker();
+        });
+    });
+</script>

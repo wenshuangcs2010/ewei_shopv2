@@ -1,0 +1,248 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('friendship/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入员工姓名" placeholder="请输入员工姓名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            <select name="sex" class="form-control select2" tabindex="-1" title="">
+                <option value="0" {if isset($vo['sex']) && $vo['sex']==1 }selected{/if}>男</option>
+                <option value="1" {if isset($vo['sex']) && $key==$vo['sex']=2 }selected{/if}>女</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-block">
+            <input type="text" name="age" value="{$vo['age']}" required="required" title="请输入员工年龄" placeholder="请输入员工年龄" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">身高</label>
+        <div class="layui-input-block">
+            <input type="text" name="height" value="{$vo['height']}"  title="请输入员工身高(cm)" placeholder="请输入员工身高(cm)" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">婚姻状况</label>
+        <div class="layui-input-block">
+        <select name="maritalstatus" class="form-control select2" tabindex="-1" title="">
+            <option value="0" {if isset($vo['maritalstatus']) && 0==$vo['maritalstatus'] }selected{/if}>未婚</option>
+            <option value="1" {if isset($vo['maritalstatus']) && 1==$vo['maritalstatus'] }selected{/if}>离异</option>
+            <option value="2" {if isset($vo['maritalstatus']) && 2==$vo['maritalstatus'] }selected{/if}>丧偶</option>
+        </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">头像</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" readonly name="images" value="{$vo['header_imageurl']}" placeholder="请选择头像" type="text">
+                    <a class="input-group-addon" data-file="one"  data-field="images" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+                <div class="input-group multi-img-details ui-sortable">
+                    {if $vo['header_imageurl']}
+                    <div class="multi-item">
+                        <img src="{$vo['header_imageurl']}"  class="img-responsive img-thumbnail">
+                         <em class="close" title="删除这张图片">×</em>
+                    </div>
+                    {/if}
+                   </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">全身照</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" readonly name="life_images" value="{$vo['life_images']}" placeholder="请选择全身照" type="text">
+                    <a class="input-group-addon" data-file="mutl"  data-field="life_images" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+                <div class="input-group multi-img-details ui-sortable">
+                    {if $vo['thumbs']}
+                    {loop $vo['thumbs'] $key $thumb}
+                    <div class="multi-item">
+                        <img src="{$thumb}"  class="img-responsive img-thumbnail">
+                        <em class="close"  data-index="{$key}" title="删除这张图片">×</em>
+                    </div>
+                    {/loop}
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">收入</label>
+        <div class="layui-input-block">
+            <input type="text" name="income" value="{$vo['income']}"  title="收入" placeholder="收入" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">学历</label>
+        <div class="layui-input-block">
+            <input type="text" name="education" value="{$vo['education']}"  title="学历" placeholder="学历" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">居住地</label>
+        <div class="layui-input-block">
+            <input type="text" name="address" value="{$vo['address']}"  title="居住地" placeholder="居住地" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作</label>
+        <div class="layui-input-block">
+            <input type="text" name="work" value="{$vo['work']}"  title="工作" placeholder="工作" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性格</label>
+        <div class="layui-input-block">
+            <input type="text" name="character" value="{$vo['character']}"  title="性格" placeholder="性格" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">其他条件</label>
+        <div class="layui-input-block">
+            <input type="text" name="other" value="{$vo['other']}"  title="其他条件" placeholder="其他条件" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">补充说明</label>
+        <div class="layui-input-block">
+            <input type="text" name="additional" value="{$vo['additional']}"  title="补充说明" placeholder="补充说明" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系方式</label>
+        <div class="layui-input-block">
+            <input type="text" name="contact" value="{$vo['contact']}"  title="联系方式" placeholder="联系方式" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">征婚宣言</label>
+        <div class="layui-input-block">
+           <textarea name="declaration" class="layui-textarea">{$vo['declaration']}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">对方年纪</label>
+        <div class="layui-input-block">
+            <input type="text" name="otherage" value="{$vo['otherage']}"  title="对方年纪" placeholder="对方年纪" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">对方条件</label>
+        <div class="layui-input-block">
+            <input type="text" name="othercondition" value="{$vo['othercondition']}"  title="对方条件" placeholder="对方条件" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">对方的补充说明</label>
+        <div class="layui-input-block">
+            <input type="text" name="otheradditional" value="{$vo['otheradditional']}"  title="对方的补充说明" placeholder="对方的补充说明" class="layui-input">
+        </div>
+    </div>
+
+
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+        laydate.render({
+            elem: '#date'
+        });
+
+        require(['jquery'], function () {
+            var tpl = '<div class="multi-item">\n' +
+                '                        <img src=""  class="img-responsive img-thumbnail">\n' +
+                '                        <em class="close" title="删除这张图片">×</em>\n' +
+                '                    </div>';
+
+            $('[name="images"]').on('change', function () {
+                var input = this, values = [], srcs = this.value.split('|');
+                if($(input).parent().children("a").data("file")=="one"){
+                    $(this).parent().next().children(".multi-item").remove();
+                }
+                values.reverse();
+                for (var i in srcs) {
+                    values.push(srcs[i]);
+                }
+                this.value = values.join('|');
+                for (var i in values) {
+                    var $tpl=$(tpl);
+                    $tpl.children("img").attr('src',values[i]);
+                    $tpl.children("input").val(values[i]);
+                    $(input).data('input', input).data('srcs', values).data('index', i);
+                    console.log($(input).data());
+                    $tpl.on('click', 'em', function (e) {
+                        e.stopPropagation();
+                        var $cur = $(this).parent();
+                        $.msg.confirm('确定要移除这张图片吗？', function () {
+                            var data = $(input).data("srcs");
+                            delete data[$(input).data('index')];
+                            $(input).data('input').value=data.join('|');
+                            $cur.remove();
+                        });
+                    });
+                    $(this).parent().next(".multi-img-details").append($tpl);
+                }
+            });
+
+            $('[name="life_images"]').on('change', function () {
+                var input = this, values = [], srcs = this.value.split('|');
+                if($(input).parent().children("a").data("file")=="one"){
+                    $(this).parent().next().children(".multi-item").remove();
+                }
+                values.reverse();
+                for (var i in srcs) {
+                    values.push(srcs[i]);
+                }
+                this.value = values.join('|');
+                $(input).data('input', input).data('srcs', values);
+                for (var i in values) {
+                    var $tpl=$(tpl);
+                    $tpl.children("img").attr('src',values[i]);
+                    $tpl.children("em").data('index', i);
+                    $(this).parent().next(".multi-img-details").append($tpl);
+                }
+            });
+            var values =$("input[name='life_images']").val().split('|');
+            for (var i in values) {
+                $("input[name='life_images']").data('srcs', values).data('index', i);
+            }
+            $(document).on('click', 'em', function (e) {
+                e.stopPropagation();
+                var $cur = $(this).parent();
+                var input=$(this).parent().parent().prev().children("input");
+                var index=$(this).data("index");
+                $.msg.confirm('确定要移除这张图片吗？', function () {
+                    var data = input.data("srcs");
+                    delete data[index];
+                   // console.log(data);
+                    $("input[name='life_images']").val(data.join('|'));
+                    $cur.remove();
+                });
+            })
+
+
+        });
+    </script>
+</form>

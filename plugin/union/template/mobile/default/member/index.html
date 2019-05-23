@@ -1,0 +1,78 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back" onclick='location.back()'></a>
+        </div>
+        <div class="title">会员中心</div>
+        <div class="fui-header-right"></div>
+    </div>
+
+    <div class='fui-content member-page navbar'>
+        <div style="overflow: hidden;position: relative;background: #fff">
+            <div class="headinfo" style="z-index:100;border: none;">
+                <a class="setbtn" style="width: 4rem;
+    top: .5rem;
+    font-size: 0.7rem;
+    background-color: #d4633b;
+    border-radius: 20px;" href="{php echo mobileUrl('union/member/member_info')}" data-nocache='true'>
+                   我的资料>
+                </a>
+
+                <div class="child userinfo" style="width: 30%">
+                    <a href="{php echo mobileUrl('union/member/member_info')}" data-nocache="true" style="color: white;">
+                        <div  style="width: 3rem;height: 3rem;border:0" class="face"><img style="width: 3.2rem;height: 3.2rem" src="{$member['avatar']}" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/></div>
+                    </a>
+                </div>
+                <div class="info" style="width: 75%;color: #FFFFFF;height: 4rem;font-size: 0.7rem;">
+                    <div class="name">{if $member['realname']}{$member['realname']}{else}{$member['nickname']}{/if}</div>
+                    <div class="name">{$member['mobile']}</div>
+                    <div class="name">{$company['title']}</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {if !$member['mobileverify'] && !empty($wapset['open'])}
+    <div class="fui-cell-group fui-cell-click external">
+        <a class="fui-cell"  href="{php echo mobileUrl('member/bind')}">
+            <div class="fui-cell-icon"><i class="icon icon-mobile"></i></div>
+            <div class="fui-cell-text"><p class="text text-danger">绑定手机号</p></div>
+            <div class="fui-cell-remark"></div>
+        </a>
+        <div class="fui-cell-tip">如果您用手机号注册过会员或您想通过微信外购物请绑定您的手机号码</div>
+    </div>
+
+    {/if}
+    <div class="fui-cell-group fui-cell-click" style="margin-top: 0">
+        <a class="fui-cell external" href="{php echo mobileUrl('order')}">
+            <div class="fui-cell-icon"><span class="span_icon"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_dingdag.png"/></span></div>
+            <div class="fui-cell-text fui-cell-text-member" >我的订单</div>
+            <div class="fui-cell-remark" style="font-size: 0.65rem;"></div>
+        </a>
+        <a class="fui-cell external" href="{php echo mobileUrl('index')}">
+            <div class="fui-cell-icon"><span class="span_icon"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_fuli.png"/></span></div>
+            <div class="fui-cell-text fui-cell-text-member" >我的福利</div>
+            <div class="fui-cell-remark" style="font-size: 0.65rem;"></div>
+        </a>
+    </div>
+    <div class="fui-cell-group fui-cell-click " style="margin-top: 0">
+        <a class="fui-cell external" href="{php echo mobileUrl('union/member/unionlist')}">
+            <div class="fui-cell-icon"><span class="span_icon"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_danwe.png"/></span></div>
+            <div class="fui-cell-text fui-cell-text-member" >我的单位</div>
+            <div class="fui-cell-remark" style="font-size: 0.65rem;">{$company['title']}</div>
+        </a>
+
+    </div>
+</div>
+</div>
+
+<style>
+    .info .name{
+        height: 1rem;
+    }
+</style>
+{template 'union/_footer'}

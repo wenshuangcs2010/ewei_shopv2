@@ -1,0 +1,112 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{$action}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="number" name="sort" value="{$vo['sort']}"  title="请输入单位" placeholder="请输入单位" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">单位</label>
+        <div class="layui-input-block">
+            <input type="text" name="company" value="{$vo['company']}" title="请输入单位" placeholder="请输入单位" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">处事/部门</label>
+        <div class="layui-input-block">
+            <select name="department" class="form-control select2" tabindex="-1" title="">
+                {loop $department $row}
+                <option value="{$row['id']}" {if isset($vo['department']) && $row['id']==$vo['department'] }selected{/if}>{$row['name']}</option>
+                {/loop}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">职务</label>
+        <div class="layui-input-block">
+            <input type="text" name="duties" value="{$vo['duties']}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入员工姓名" placeholder="请输入员工姓名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="mobile_phone" value="{$vo['mobile_phone']}" {if isset($vo['id'])} disabled  {/if} required="required" title="请输入电话" placeholder="请输入员工电话" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">固定电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="telephone" value="{$vo['telephone']}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+        <select name="sex" class="form-control select2" tabindex="-1" title="">
+            {loop $this->membersex $key $row}
+            <option value="{$key}" {if isset($vo['sex']) && $key==$vo['sex'] }selected{/if}>{$row}</option>
+            {/loop}
+        </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">员工类型</label>
+        <div class="layui-input-block">
+            <select name="type" class="form-control select2" tabindex="-1" title="">
+                {loop $this->membertype $key $row}
+                <option value="{$key}" {if isset($vo['type']) && $key==$vo['type'] }selected{/if}>{$row}</option>
+                {/loop}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">出生日期</label>
+        <div class="layui-input-block">
+            <input type="text" name="date" id="date" value="{$vo['birthday']}" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" lay-key="1">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea name="remk" placeholder="请输入内容" class="layui-textarea">{$vo['remk']}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">激活状态</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['activate']) && $vo['activate'] == 1}
+                <input type="radio" checked name="activate" value="1" title="激活">
+                <input type="radio" name="activate" value="0" title="未激活">
+                {else}
+                <input type="radio" name="activate" value="1" title="激活">
+                <input type="radio" checked name="activate" value="0" title="未激活">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+        laydate.render({
+            elem: '#date'
+        });
+    </script>
+</form>

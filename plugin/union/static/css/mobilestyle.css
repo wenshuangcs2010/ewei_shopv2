@@ -1,0 +1,621 @@
+.fui-blank{
+    height: 30px;
+    background:url(../../template/mobile/default/static/images/bg_title.png) no-repeat center top;
+    background-size:contain
+
+}
+.shutiaotiao {
+    width: 4px;
+    height: 30px;
+    background: rgba(216,30,6,1);
+    border-radius: 2px;
+    display: block;
+}
+.fui-goods-item a{
+    display: block;
+}
+
+.headinfo {
+    height: 8.4rem;
+    background-image: url(../../template/mobile/default/static/images/bg.png);
+    background-repeat: no-repeat;
+     background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+}
+
+.document{
+     background-image: url(../../template/mobile/default/static/images/document.png);
+ }
+.member_ac{
+    background-image: url(../../template/mobile/default/static/images/memberac.png);
+}
+.venue_page{
+     background-image: url(../../template/mobile/default/static/images/bg_vuenu.png);
+ }
+.dynamic{
+    background-image: url(../../template/mobile/default/static/images/dynamic_header.png);
+}
+.suggestions{
+    background-image: url(../../template/mobile/default/static/images/suggestions.png);
+}
+
+.d_simp{
+    background-image: url(../../template/mobile/default/static/images/d_simp.png);
+}
+.commission_head .fui-header-left {
+    left: 0;
+    padding-left: .3rem;
+    height: 2.2rem;
+    line-height: 2.2rem;
+    z-index: 2;
+}
+.commission_head .fui-header-left a {
+    height: 2.2rem;
+    line-height: 2.2rem;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    color: #ffffff;
+    display: block;
+    padding: 0 .5rem;
+    font-size: .7rem;
+    width: 2rem;
+}
+.commission_head .fui-header-left a.back:before{
+    border-color: #FFFFFF;
+}
+.fui-cell-group{
+    display: block;
+}
+.fui-cell-group .fui-cell .fui-cell-icon{
+    width: auto;
+}
+.fui-cell-text .online_li .span_img{
+    width: 1.2rem;
+    display: inline-block;
+    vertical-align:middle
+}
+.fui-cell-text .online_li .span_text{
+    margin-left: 0.2rem;
+    display: inline-block;
+    vertical-align:middle
+}
+.fui-cell-text .online_li span img{
+    width: 1.2rem;
+    vertical-align:middle;
+    margin-right: 0.3rem;
+}
+
+.fui-cell .fui-cell-text{
+    margin-left: 0.6rem;
+}
+
+.fui-cell .fui-cell-text-member{
+    margin-left: 0;
+    font-size: 0.7rem!important;
+}
+.personnelmien_info_content {
+    #background-image: url(../../template/mobile/default/static/images/personnelmien_info_content.png);
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    -moz-background-size: 100% auto;
+    margin: 0.2rem 0.2rem 0.2rem 0.2rem ;
+
+}
+
+.fui-cell-text .texthead{
+    color: #333333;
+    overflow: hidden;
+    height: 2rem;
+    display: block;
+}
+
+.fui-cell-group:not(.fui-cell-group-o):before {
+    border-top: 0px solid #D9D9D9;
+}
+
+.fui-cell-group:after{
+     border-bottom:0px solid #D9D9D9;
+}
+.fui-cell-text .online_li .span_text1{
+    margin-left: 0.2rem;
+    display: inline-block;
+    vertical-align:middle;
+    font-size: 0.5rem;
+    color: #D71F06;
+    border: #D71F06 solid 0.03rem;
+    border-radius: 0.1rem;
+    width: 2rem;
+    text-align: center;
+}
+.fui-cell-text .online_li .span_text2{
+    color: #AAAAAA;
+
+    display: inline-block;
+    vertical-align:middle;
+
+    font-size: 0.7rem;
+
+}
+.fui-cell-text .online_li .span_text3{
+    margin-left: 0rem;
+    right: 0;
+    float: right;
+}
+.fui-cell-text .online_li .span_text4{
+    font-size: 0.7rem;
+    border: #00CAFC 0.06rem solid;
+    color: #00CAFC;
+    border-radius: 0.2rem;
+    line-height: 0.9rem;
+    width: 2.5rem;
+    display: block;
+    text-align: center;
+}
+.fui-cell-text .online_li .span_active1{
+    border-color: #DC3C26;
+    color: #DC3C26;
+}
+.fui-cell-text .online_li .span_active2{
+    border-color: #ADADAD;
+    color: #ADADAD;
+}
+
+.icon_time{
+    width: 1rem;
+    display: inline-block;
+    vertical-align:middle;
+}
+.fui-blank_content {
+    height: 30px;
+    background: url(../../template/mobile/default/static/images/ic_download.png) no-repeat center;
+    background-size: contain;
+
+}
+.fui-blank_text {
+    height: 30px;
+    text-align: center;
+    color: #000000;
+    font-size: 0.4rem;
+    line-height: 30px;
+}
+.input_suggest{
+
+}
+.fui-cell-icon .span_icon{
+    display: inline-block;
+    width: 1.2rem;
+}
+.dynamic_content .container .fui-cell-remark:after{
+    width: 0.6rem;
+    height: 0.6rem;
+}
+.fui-cell-icon img{
+    width: 1.2rem;
+    vertical-align: middle;
+}
+
+.fui-uploader.fui-uploader-sm {
+    width: 2rem;
+    height: 2rem;
+    float: right;
+}
+.fui-images.fui-images-sm .image.image-sm {
+    width: 4rem;
+    height: 4rem;
+    margin-left: 0.3rem;
+}
+.fui-images .image .image-remove {
+    top: -.3rem;
+    right: -.3rem;
+    background-color: #9a9797;
+    border-radius: 5rem;
+    width: 0.9rem;
+    height: 01rem;
+    color: #FFFFFF;
+    text-align: center;
+}
+.header_list{
+    position: absolute;
+    top: 0.8rem;
+    right: 1.2rem;
+    width: 5rem;
+}
+.header_list a{
+    display: block;
+}
+.watext{
+    font-size: 0.6rem;
+    color: #666666;
+    margin-top: 0.1rem;
+}
+.watfont{
+    font-size: 0.8rem;
+}
+.welborder{
+    color: #2D94FF;
+    width: 2.5rem;
+    text-align: center;
+    border:solid 0.05rem #2D94FF;
+    border-radius: 0.2rem;
+}
+.welborder_red{
+    border-color: red;
+    color: red;
+}
+.welborder_lost{
+    color: #6c6c6c;
+    border-color: #6c6c6c;
+}
+.lastwaltext{
+    color: #DC3C26;
+}
+.welfare_view .class_status{
+    border-width: 0.1rem;
+    border-radius: 0.5rem;
+    border-style: dashed;
+    width: 4rem;
+    border-color: #44abf7;
+    color: #44abf7;
+    text-align: center;
+    position: absolute;
+    top: 1rem;
+    z-index: 999;
+    right: 6rem;
+    transform: rotate(30deg);
+    font-size: 0.8rem;
+}
+.welfare_view{
+    bottom: 2.5rem;
+}
+.welfare_view .status_lost{
+    border-color: #878889;
+    color: #878889;
+}
+.welfare_view .status_success{
+    border-color: red;
+    color: red;
+}
+.welfare_view .table{
+    width: 100%;
+}
+.welfare_view table,.welfare_view  table tr th, .welfare_view table tr td { border:1px solid #9f9f9f;height: 2.4rem; }
+.welfare_view table { width: 200px; min-height: 25px; line-height: 25px; text-align: center; border-collapse: collapse; font-size: 0.6rem }
+.welfare_view table tr td:first-child{
+    font-size: 0.8rem;
+    font-weight: 900;
+
+}
+.welfare_view table tr img{
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.welfare_view table tr td:nth-child(3){
+    font-size: 0.8rem;
+    font-weight: 900
+}
+.welfare_view table tr td img{
+    width: 5rem;
+    float: left;
+}
+
+.commission_head .setbtn {
+
+    position: absolute;
+    top: 0.2rem;
+    right: 0.5rem;
+    font-size: 1.2rem;
+    color: #fff;
+    line-height: 1.2rem;
+    text-align: center;
+}
+.commission_head .setbtn img{
+    vertical-align: -webkit-baseline-middle;
+}
+
+ul,li {
+    list-style:none
+}
+.menu_list {
+    left:0;
+    top:1rem;
+}
+.setbtn.commission_head a>li {
+    float:left;
+    position:relative
+}
+.menu_list li{
+    border-top-style: solid;
+    border-top-color: #0a0a0a;
+    border-top-width: 0.01rem;
+    padding-top: 0.05rem;
+}
+.menu_list li a {
+    height: 1.5rem;
+    line-height: 1.5rem;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    color: #000000;
+    display: block;
+    font-size: 0.7rem;
+    background-color: #FFFF;
+}
+
+.menu_list li a span img {
+    vertical-align: middle;
+    width: 1rem;
+}
+
+.friendship .fui-list-media img {
+    width: 4.5rem;
+}
+.copy {
+    width: 45px;
+    height: 20px;
+    border: 1px solid rgba(153,153,153,1);
+    text-align: center;
+    line-height: 20px;
+    font-family: PingFangSC-Regular;
+    font-weight: 400;
+    color: #333333;
+    font-size: 0.6rem;
+}
+.fui-list-angle .btn{
+    height: 1.3rem;
+    line-height: 1.3rem;
+}
+
+.tabs-container .tabs-left > .nav-tabs {
+}
+.nav-tabs {
+    border-color: #efefef;
+}
+
+.tab-goods .nav li {
+    float: left;
+}
+.nav-tabs>li {
+    float: left;
+    margin-bottom: -1px;
+}
+.nav>li {
+    position: relative;
+    display: block;
+}
+.nav-tabs>li.active>span{
+    color: #DC3C26;
+    cursor: default;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    text-align: center;
+}
+.nav-tabs>li>span {
+    border: none !important;
+    position: relative;
+}
+.nav>li>span {
+    padding: 0;
+    padding: 10px 10px;
+    margin: 0px 15px;
+    color: #666;
+}
+.nav-tabs>li>span {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+}
+.nav>li>span {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.nav:before{
+    display: table;
+    content: " ";
+}
+.nav-tabs>li.active>span:before {
+    content: '';
+    position: absolute;
+    width: 60%;
+    border-top: 2px solid #DC3C26;
+    left: 22%;
+    bottom: 0;
+}
+.tab-pane{
+    display: none;
+}
+.tab-content .active{
+    display: block;
+}
+.message-item {
+    width: 100%;
+    min-height: 7rem;
+    margin-top: .625rem;
+    background-image: url(../../template/mobile/default/static/images/meaage_bg.png);
+    background-size: cover;
+    padding-bottom: 1rem;
+}
+.master-info {
+    width: auto;
+    margin-left: .625rem;
+    margin-right: .625rem;
+    padding-top: .625rem;
+    display: flex;
+    align-items: center;
+}
+.master-info .avatar {
+    width: 1.5625rem;
+    height: 1.5625rem;
+    border-radius: 50%;
+    margin-right: .625rem;
+    background-color: #f8f8f8;
+}
+
+.message-item .master-info .name {
+    font-size: 13px;
+    color: #333;
+}
+
+.message-item .master-info .male {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.message-item .message-content {
+    width: auto;
+    min-height: 3.75rem;
+    border: .0625rem dotted #B7B7B7;
+    margin: 0 auto;
+    margin-left: .625rem;
+    margin-right: .625rem;
+    margin-top: .3125rem;
+    font-size: .625rem;
+    color: #333;
+
+
+    text-overflow: ellipsis;
+
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+#tab_param .fui-navbar .button_add{
+    display: block;
+}
+.friendaddmessage{
+
+    height: 8rem;
+
+}
+.tab-pane .fui-navbar{
+    z-index: 99998;
+}
+
+.venue_page_mylist .fui-list-inner .row{
+    height: 1.3rem;
+    line-height: 1.3rem;
+}
+
+.venue_page_mylist .fui-list-media img {
+    width: 4rem;
+}
+.venue_page_mylist  .last-angle{
+    position: absolute;
+    top: 1.1rem;
+    right: 0;
+    height: 1.3rem;
+    display: block;
+    line-height: 1.3rem;
+}
+.venue_page_mylist .last-angle .btn{
+    height: 1.3rem;
+    line-height: 1.3rem;
+}
+
+.uses{
+    border: solid 1px #219BFF;
+    width: 2rem;
+    text-align: center;
+    display: block;
+    font-size: 0.6rem;
+    padding-top: 0.02rem;
+    padding-bottom: 0.02rem;
+    border-radius: 0.2rem;
+    color: #219BFF;
+}
+.notuse{
+    border: solid 1px #D71F06;
+    color: #D71F06;
+}
+.yuding{
+    background-color: #DC3C26;
+    color: #FFFFFF;
+    border-radius: 0.2rem;
+    width: 2.4rem;
+    text-align: center
+}
+.assocjoin{
+    color: #DC3C26;
+    border-radius: 0.2rem;
+    width: 3rem;
+    text-align: center;
+    border: 1px solid #DC3C26;
+}
+.active_sh{
+    color: #008CFF;
+    border-color: #008CFF;
+}
+.content_header{
+    text-align: center;
+    background-color: #FFFFFF;
+}
+.content_header .head_one{
+    font-size: 1rem;
+    margin-top: 0.3rem;
+}
+.content_header .head_two{
+    font-size: 0.7rem;
+}
+.baosgin{
+    display: block;
+    color: aliceblue;
+    background-color: #DC3C26;
+    border-radius: 5px;
+    width: 2.5rem;
+    text-align: center;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-size: 0.7rem;
+}
+.jiezhisign{
+    display: block;
+    color: aliceblue;
+    background-color: #ADADAD;
+    border-radius: 5px;
+    width: 2.5rem;
+    text-align: center;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-size: 0.7rem;
+}
+.header_bottom{
+    z-index: 996;
+    width: 100%;
+    height: 2rem;
+    position: absolute;
+    color: #FFFF;
+    line-height: 2rem;
+    background-color: rgba(0,0,0,0.5);
+    top: 6.4rem;
+    text-align: center;
+    overflow: hidden;
+}
+.fui-cell-info p{
+    font-size: 0.7rem;
+}
+.fui-cell .right span{
+    background-color: #0a0a0a;
+    color: white;
+    display: -webkit-inline-box;
+    width: 1.4rem;
+    text-align: -webkit-center;
+    border-radius: 3px;
+    font-size: 0.7rem;
+}
+.member-view-page .fui-cell-group .fui-cell:before{
+    border: 0;
+}
+.member-view-page .fui-article-page .fui-article-content{
+    text-indent:1.6rem;
+    font-size: 0.8rem;
+}

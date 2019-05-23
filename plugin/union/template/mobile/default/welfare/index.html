@@ -1,0 +1,211 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<script>document.title = "{$_W['union']['title']}"; </script>
+<div class='fui-page'>
+    {if is_mobile() && !is_weixin() }
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">福利申请</div>
+        <div class="fui-header-right"></div>
+    </div>
+    {/if}
+    <div class='fui-content member-page navbar' {if is_weixin()} style="top:0" {/if}>
+        <div class="" style="position: relative;">
+            {if $type==1}
+            <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/jihun.png">
+            {elseif $type==2}
+            <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/bg_birth.png">
+            {elseif $type==3}
+            <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h.png">
+            {elseif $type==4}
+            <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_bg.png">
+            {elseif $type==5}
+            <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_bg.png">
+            {/if}
+            <div class="header_list"><a  data-nocache="true" class="location_url" href="{php echo mobileUrl('union/welfare/walist',array('type'=>$type))}"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_record.png"></a></div>
+        </div>
+    <div class="fui-cell-group">
+        <div class="fui-cell">
+
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_fuli_font.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_type.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_type.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_type.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_ic_type.png">
+                {/if}
+            </div>
+            <div class="fui-cell-label ">福利类型</div>
+            <div class="fui-cell-info"><p>{$typename}</p></div>
+         </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_ic_date.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_birth.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_hotel.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_date.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_sangjia.png">
+                {/if}
+            </div>
+            <div class="fui-cell-label ">{$typename}日期</div>
+            <div class="fui-cell-info">
+                <input type="text"  class='fui-input'  id='datetime' name='datetime' placeholder="请选择日期"  value="{$member['birthday']}" readonly/>
+            </div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_ic_money.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_money.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_money.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_money.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_ic_money.png">
+                {/if}
+            </div>
+            <div class="fui-cell-label ">福利金额</div>
+            <div class="fui-cell-info">
+                <input type="number" class='fui-input' id='money' name='money'  value="{$member['money']}" /></div>
+            <a class="external">元</a>
+        </div>
+
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_ic_zheng.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_picture.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_picture.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_picture.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_ic_picture.png">
+                {/if}
+            </div>
+            <div class="fui-cell-label">照片</div>
+            <div class="fui-cell-info">
+                <ul class="fui-images fui-images-sm" id="images">
+                    {loop $refund['imgs'] $k $v}
+                    <input type="hidden" name="images[]" value="{$v}" />
+                    <li style="background-image:url({php echo tomedia($v)})" class="image image-sm" data-filename="{$v}"><span class="image-remove"><i class="icon icon-roundclose"></i></span></li>
+                    {/loop}
+                </ul>
+                <div class="fui-uploader fui-uploader-sm refund-container-uploader" {if count($refund['imgs'])==5}style='display:none'{/if}
+                data-name="images[]"
+                data-max="5"
+                data-count="{php echo count($refund['imgs'])}">
+                <input type="file" name='imgFile0' id='imgFile0' multiple="" accept="image/*" >
+                </div>
+            </div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_ic_quan.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_quan.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_quan.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_quan.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_ic_quan.png">
+                {/if}
+            </div>
+            <div class="fui-cell-label">福利形式</div>
+            <div class="fui-cell-info">
+                <select  id="moneytype" name="moneytype">
+                    {loop $moneytype $row}
+                        {if $row==1}
+                        <option value="{$row}" data-name="现金">现金</option>
+                        {/if}
+                        {if $row==2}
+                        <option value="{$row}" data-name="福利券">福利券</option>
+                        {/if}
+                    {/loop}
+                </select>
+            </div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_ic_person.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_apply.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_person.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_person.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_ic_person.png">
+
+                {/if}
+            </div>
+            <div class="fui-cell-label">申请人</div>
+            <div class="fui-cell-info">
+            本人
+            </div>
+        </div>
+        <div class="fui-cell">
+            <div class="fui-cell-icon">
+                {if $type==1}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_ic_remark.png">
+                {elseif $type==2}
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_ic_remark.png">
+                {elseif $type==3}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_ic_remark.png">
+                {elseif $type==4}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/t_ic_remark.png">
+                {elseif $type==5}
+                <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/z_ic_remark.png">
+                {/if}
+            </div>
+            <div class="fui-cell-label">备注</div>
+            <div class="fui-cell-info">
+                <input type="text" class='fui-input' id='remarks' name='remarks'  value="" /></div>
+            </div>
+        </div>
+
+        <input type="hidden" id="type" value="{$type}"/>
+        <a href='#' id='btn-submit' class='btn btn-success block'>立即申请</a>
+    </div>
+
+    </div>
+</div>
+
+</div>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js','foxui.picker'], function (modal) {
+            modal.welfare_init();
+            $('.refund-container-uploader').uploader({
+                uploadUrl: core.getUrl('util/uploader'),
+                removeUrl: core.getUrl('util/uploader/remove')
+            });
+            $('#datetime').datePicker();
+
+        $(".location_url").click(function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var href=$(this).attr('href');
+            window.location.href=href;
+        })
+    });
+
+</script>
+{template 'union/_footer'}

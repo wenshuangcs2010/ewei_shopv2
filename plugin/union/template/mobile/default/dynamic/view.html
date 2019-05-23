@@ -1,0 +1,54 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/article/template/mobile/default/images/mobile.css" />
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current article-index-page'>
+    {if !is_weixin()}
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">详情</div>
+        <div class="fui-header-right"></div>
+    </div>
+    {/if}
+    <div class='fui-content' style="background: #FFFFFF;">
+        <div class="fui-article-page">
+            <div class="fui-article-title">{$article['title']}</div>
+            <div class="fui-article-subtitle">
+                <div class="nav">
+                    <i class="icon icon_time">
+                        <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_read.png"/>
+                    </i>
+                    <span> {$article['showcount']} </span></div>
+
+                <div class="nav" style="float: right">
+                    <i class="icon icon_time"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic-history.png"/></i>
+                    <span>{php echo date('Y-m-d',$article['createtime'])}</span></div>
+            </div>
+            <div class="fui-article-content">
+                {$article['description']}
+            </div>
+
+            <a class="fui-cell-group" href="{php echo mobileUrl('union/readmember/members',array('readtype'=>3))}">
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <span class="icon icon-person2"></span>
+                    </div>
+                    <div class="fui-cell-text" style="font-size: 0.6rem">
+                        接收人:{loop $readmember['memberlist'] $m}
+                        {$m['realname']},
+                        {/loop}等{$allcount}人
+                    </div>
+                    <div class="fui-cell-remark" style="font-size: 0.5rem;">{$notreadcount}人未读</div>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+
+</div>
+{template 'union/_footer'}
+

@@ -1,0 +1,63 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current page-goods-list" >
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="fui-header">
+            <div class="fui-header-left">
+                <a class="back"></a>
+            </div>
+            <div class="title">我的协会</div>
+            <div class="fui-header-right"></div>
+        </div>
+        <div class="fui-content navbar" style="position: relative;top:2.2rem">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="asso-list-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type='text/html' id='tpl_asso_list'>
+    <%each list as row%>
+    <a class="fui-cell-group" data-nocache="true" href="{php echo mobileUrl('union/association/assview')}&id=<%row.id%>">
+        <div class="fui-cell">
+            <div class="fui-cell-icon" style="width: 2.8rem" >
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png">
+            </div>
+            <div class="fui-cell-text">
+                <span class="texthead"><%row.title%></span>
+                <div class="online_li">
+                    <span class="span_text2" style="margin:0;padding: 0">已加入<span style="color: red;"><%row.count%></span>人</span>
+                </div>
+
+            </div>
+            <div data-status="<%row.status%>"  data-id="<%row.id%>" class="assocjoin <%if row.status==0%>active_sh<%/if%> "><%if row.status==0%>
+                待审核
+            <%/if%>
+                <%if row.status==1%>
+                已加入
+                <%/if%>
+                <%if row.status==-1%>
+                加入
+                <%/if%>
+            </div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.assocmy_init({});
+    });
+</script>
+
+{template 'union/_footer'}

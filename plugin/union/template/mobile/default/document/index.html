@@ -1,0 +1,80 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current page-goods-list" >
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="headinfo document">
+            <div class="commission_head">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                    <div class="search">
+                        <form method="post" action="index.html">
+                            <div class="searchbar">
+                                <div class="search-input">
+                                    <i class="icon icon-search"></i>
+                                    <input type="search" class="serchinput" id="keywords" name="keywords" placeholder="输入关键字...">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fui-content navbar" style="position: relative;top:0">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="goods-list-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type='text/html' id='tpl_goods_list'>
+    <%each list as row%>
+    <a class="fui-cell-group" href="{php echo mobileUrl('union/document/view')}&id=<%row.id%>">
+        <div class="fui-cell">
+            <div class="fui-cell-icon" style="width: 2.8rem" >
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png">
+            </div>
+            <div class="fui-cell-text">
+                <span class="texthead"><%row.title%></span>
+                <div class="online_li">
+
+                    <span class="span_text2"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_read.png"/><%row.read_count%></span>
+                    <span class="span_text2 span_text3"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic-history.png"/><%row.datetime%></span>
+                </div>
+            </div>
+            <div class="fui-cell-remark" style="font-size: 0.5rem;"></div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.document_init({});
+    });
+</script>
+<style>
+    .search{
+        position: absolute;
+        width: 80%;
+        top: 0.4rem;
+        left: 2rem;
+    }
+    .serchinput{
+        width: 100%;
+        background-color: rgba(0,0,0,0.5)!important;
+        border:2px solid rgba(255,255,255,1);
+        opacity:0.6;
+        border-radius:6px;
+        color: #FFFFFF!important;
+    }
+</style>
+{template 'union/_footer'}

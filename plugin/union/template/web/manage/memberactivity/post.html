@@ -1,0 +1,128 @@
+
+<style>
+    .select2{
+        margin:0;
+        width:100%;
+        height:34px;
+        border-radius: 3px;
+        border-color: rgb(229, 230, 231);
+    }
+    .select2 .select2-choice{
+        height: 34px;
+        line-height: 32px;
+        border-radius: 3px;
+        border-color: rgb(229, 230, 231);
+    }
+    .select2 .select2-choice .select2-arrow{
+        background: #fff;
+    }
+    .form-group .radio-inline{
+        padding-top: 0px;;
+    }
+    .select2-container{
+    z-index: 88888888;
+    }
+    .layui-select-title{
+        display: none;
+    }
+</style>
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('memberactivity/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$vo['title']}" required="required" title="请输入活动标题" placeholder="请输入活动标题" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">发起人</label>
+        <div class="layui-input-block">
+            <input type="text" name="originator" value="{$vo['originator']}" required="required" title="请输入活动发起人" placeholder="请输入活动发起人" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" value="{$vo['phone']}" required="required" title="请输入联系电话" placeholder="请输入联系电话人" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动开始时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="start" id="start"  value="{$vo['start_time']}" lay-verify="start" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="1">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动结束时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="end" id="end"  value="{$vo['end_time']}" lay-verify="end" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="2">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">报名开始时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="signstart" id="signstart"  value="{$vo['a_start_time']}" lay-verify="signstart" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="4">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">报名结束时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="signend" id="signend"  value="{$vo['a_end_time']}" lay-verify="signend" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="5">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动说明</label>
+        <div class="layui-input-block">
+            <textarea name="declaration" class="layui-textarea">{$vo['declaration']}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['status']) && $vo['status'] == 1}
+                <input type="radio" checked name="status" value="1" title="是">
+                <input type="radio" name="status" value="0" title="否">
+                {else}
+                <input type="radio" name="status" value="1" title="是">
+                <input type="radio" checked name="status" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+        laydate.render({
+            elem: '#start',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#end',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#signstart',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#signend',
+            type: 'datetime'
+        });
+        require(['jquery','select2'],function () {
+            $("#partpeople").select2();
+            $("#imppeople").select2();
+        })
+    </script>
+</form>

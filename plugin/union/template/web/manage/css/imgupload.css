@@ -1,0 +1,22 @@
+.multi-img-details, .multi-audio-details {
+    margin-top: .5em;
+    max-width: 700px;
+    padding: 0;
+}
+
+.multi-img-details .multi-item {
+    max-height: 100px;
+    max-width: 100px;
+    position: relative;
+    float: left;
+    margin-right: 18px;
+}
+.multi-img-details .multi-item img {
+    width: 100px;
+    max-height: 120px
+}
+.multi-img-details .multi-item em {
+    position: absolute;
+    top: 0;
+    right: -14px;
+}

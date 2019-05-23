@@ -1,0 +1,252 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<script>document.title = "{$_W['union']['title']}"; </script>
+<div class='fui-page  fui-page-current'>
+    {if !is_weixin()}
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">征婚详情</div>
+        <div class="fui-header-right"></div>
+    </div>
+    {/if}
+    <div class='fui-content friendship' >
+        {if $life_images && count($life_images)>1}
+        <div class="fui-swipe" style="background-color: #FFFFFF;">
+            <div class="fui-swipe-wrapper" style="transition-duration: 300ms; transform: translate3d(-375px, 0px, 0px);">
+                {loop $life_images $v}
+                <div class="fui-swipe-item" ><img src="{$v}" style="display: block; width:auto;margin: auto;height: 225px;"></div>
+                {/loop}
+
+            </div>
+            <style>
+                .fui-swipe-page .fui-swipe-bullet {background: #ffffff; opacity: 0.8;}
+                .fui-swipe-page .fui-swipe-bullet.active {opacity: 1;}
+            </style>
+            <div class="fui-swipe-page left rectangle" style="padding: 0 5px; bottom: 5px; text-align: center;">
+                {loop $life_images $v}
+                <div class="fui-swipe-bullet" style="height:7px;"></div>
+                {/loop}
+            </div>
+        </div>
+        {else}
+        <div>
+            <img src="{$life_images[0]}" style="display: block; height: 225px;">
+        </div>
+        {/if}
+        <div class="tabs-container tab-goods" style="">
+            <div class="tabs-left" style="">
+                <ul class="nav nav-tabs" style="width: 100%;display: -webkit-box;background-color: white" id="myTab">
+                    <li class="active"><span data-href="tab_basic">我的信息</span></li>
+                    <li><span data-href="tab_option">我的要求</span></li>
+                    <li><span data-href="tab_param">留言版</span></li>
+                </ul>
+                <div class="tab-content" style="">
+                    <div class="tab-pane   active" id="tab_basic">
+                        <div class="fui-cell-group">
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/frendship/ic_name.png">
+                                </div>
+                                <div class="fui-cell-label ">姓名</div>
+                                <div class="fui-cell-info">{$member['name']}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_gender.png">
+                                </div>
+                                <div class="fui-cell-label">性别</div>
+                                <div class="fui-cell-info">
+                                   {if $member['sex']==0}男{else}女{/if}
+                                </div>
+                            </div>
+                            {if $member['age']}
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_age.png">
+                                </div>
+                                <div class="fui-cell-label">年龄</div>
+                                <div class="fui-cell-info">{$member['age']}</div>
+                            </div>
+                            {/if}
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_marry.png">
+                                </div>
+                                <div class="fui-cell-label ">婚姻状况</div>
+                                <div class="fui-cell-info">
+                                    {if $member['maritalstatus']==0}
+                                    未婚
+                                    {elseif $member['maritalstatus']==1}
+                                    离异
+                                    {elseif $member['maritalstatus']==2}
+                                    丧偶
+                                    {/if}
+                                </div>
+                            </div>
+
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_statue.png">
+                                </div>
+                                <div class="fui-cell-label ">身高</div>
+                                <div class="fui-cell-info"> {if $member['height']}{$member['height']}{else}保密{/if}</div>
+                            </div>
+
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_edution.png">
+                                </div>
+                                <div class="fui-cell-label ">学历</div>
+                                <div class="fui-cell-info">{if $member['education']}{$member['education']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_address.png">
+                                </div>
+                                <div class="fui-cell-label ">现居地</div>
+                                <div class="fui-cell-info">{if $member['address']}{$member['address']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_work.png">
+                                </div>
+                                <div class="fui-cell-label ">工作单位</div>
+                                <div class="fui-cell-info">{if $member['work']}{$member['work']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_income.png">
+                                </div>
+                                <div class="fui-cell-label ">收入</div>
+                                <div class="fui-cell-info">{if $member['income']}{$member['income']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_character.png">
+                                </div>
+                                <div class="fui-cell-label ">性格</div>
+                                <div class="fui-cell-info">{if $member['character']}{$member['character']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_others.png">
+                                </div>
+                                <div class="fui-cell-label ">其他条件</div>
+                                <div class="fui-cell-info"> {if $member['other']}{$member['other']}{else}保密{/if}</div>
+                            </div>
+
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_contact.png">
+                                </div>
+                                <div class="fui-cell-label ">联系方式</div>
+                                <div class="fui-cell-info">{if $member['contact']}{$member['contact']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_declarer.png">
+                                </div>
+                                <div class="fui-cell-label ">征婚宣言</div>
+                                <div class="fui-cell-info">{if $member['declaration']}{$member['declaration']}{else}保密{/if}</div>
+                            </div>
+                            <div class="fui-cell" style="height: 2.8rem"></div>
+                        </div>
+                        {template 'union/_footer'}
+                    </div>
+                    <div class="tab-pane" id="tab_option">
+                        <div class="fui-cell-group">
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_age1.png">
+                                </div>
+                                <div class="fui-cell-label ">年龄要求</div>
+                                <div class="fui-cell-info">{if $member['otherage']}{$member['otherage']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_statue.png">
+                                </div>
+                                <div class="fui-cell-label ">身高要求</div>
+                                <div class="fui-cell-info">{if $member['otherheight']}{$member['otherheight']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_edution.png">
+                                </div>
+                                <div class="fui-cell-label ">学历要求</div>
+                                <div class="fui-cell-info">{if $member['othereducation']}{$member['othereducation']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_address.png">
+                                </div>
+                                <div class="fui-cell-label ">理想居住地</div>
+                                <div class="fui-cell-info">{if $member['otheraddress']}{$member['otheraddress']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_work.png">
+                                </div>
+                                <div class="fui-cell-label ">工作要求</div>
+                                <div class="fui-cell-info">{if $member['otherwork']}{$member['otherwork']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_income.png">
+                                </div>
+                                <div class="fui-cell-label ">收入要求</div>
+                                <div class="fui-cell-info">{if $member['otherincome']}{$member['otherincome']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_character.png">
+                                </div>
+                                <div class="fui-cell-label ">性格</div>
+                                <div class="fui-cell-info">{if $member['othercharacter']}{$member['othercharacter']}{else}不限{/if}</div>
+                            </div>
+                            <div class="fui-cell">
+                                <div class="fui-cell-icon">
+                                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_others1.png">
+                                </div>
+                                <div class="fui-cell-label ">对方其他条件</div>
+                                <div class="fui-cell-info">{if $member['othercondition']}{$member['othercondition']}{else}无{/if}</div>
+                            </div>
+                            <div class="fui-cell" style="height: 2.8rem"></div>
+                        </div>
+
+                        {template 'union/_footer'}
+                    </div>
+                    <div class="tab-pane" id="tab_param">
+                        {loop $massgalist $msg}
+                        <div class="message-item">
+                            <div class="master-info">
+                                <img class="avatar"  onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/sex.png'" src="{$msg['avatar']}">
+                                <span class="name">{if $msg['realname']}{$msg['realname']}{else}{$msg['nickname']}{/if}</span>
+
+                            </div>
+                            <div class="message-content">{$msg['message']}
+                            </div>
+                        </div>
+                        {/loop}
+                        <div class="fui-cell" style="height: 2.8rem"></div>
+                        <div class="fui-navbar" style="height: 2.8rem">
+                           <a href="{php echo mobileUrl('union/friendship/addmessage',array('friendship_id'=>$id))}" class="button_add"> <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/addf.png"></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.friendship_view();
+    });
+</script>
+
+

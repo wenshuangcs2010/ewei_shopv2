@@ -1,0 +1,31 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">发布留言</div>
+        <div class="fui-header-right"></div>
+    </div>
+    <div class='fui-content member-page navbar'>
+        <div class="fui-cell-group">
+             <div class="fui-cell ">
+                <textarea class="col-5 friendaddmessage"></textarea>
+             </div>
+        </div>
+        <input type="hidden" id="id" value="{$id}">
+        <a href='#' id='btn-submit' class='btn btn-success block'>发布</a>
+    </div>
+
+
+</div>
+
+{template 'union/_footer'}
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.add_message_init({friendship_id:"{$friendship_id}"});
+
+    });
+</script>

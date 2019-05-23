@@ -19,11 +19,9 @@
 <!--快递 发货-->
 {ifp 'order.op.send'}
 {if $item['if_customs']==1}
-	{if $item['if_customs_z']==0 && $item['zhuan_status']==0}
+
 	<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_customs', array('id' => $item['id']))}">报关</a><br/>
-	{elseif $item['if_customs_z']==1 && $item['zhuan_status']==1}
-	<a class="btn btn-primary btn-xs" data-toggle="ajaxPost"  href="{php echo webUrl('order/kjb2c/to_customs', array('id' => $item['id']))}">报关</a><br/>
-	{/if}
+
 {/if}
 {if $item['ismygoods']==1 }
 	{if $item['updateid']==1}

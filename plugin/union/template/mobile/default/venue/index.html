@@ -1,0 +1,66 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current page-goods-list" >
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="headinfo venue_page">
+            <div class="commission_head">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+                <ul class="setbtn">
+                    <li><a class="togele" href="#"><img  style="width: 1.3rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_more.png"></a>
+                        <ul class="menu_list" style="display: none">
+                            <li><a data-nocache="true" href="{php echo mobileUrl('union/venue/mylist')}" href=""><img style="width: 0.9rem"src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_mine.png">我的预订</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="fui-content navbar" style="position: relative;top:0">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="venue-list-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type='text/html' id='tpl_venue_list'>
+    <%each list as row%>
+    <a class="fui-cell-group" href="{php echo mobileUrl('union/venue/add')}&id=<%row.id%>">
+        <div class="fui-cell">
+            <div class="fui-cell-icon" style="width: 2.8rem" >
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png">
+            </div>
+            <div class="fui-cell-text">
+                <span class="texthead" style="height: 1rem"><%row.title%></span>
+                <div class="online_li">
+                   <%if row.status==1%>
+                    <span class="uses" >使用中</span>
+                    <%/if%>
+                    <%if row.status==0%>
+                    <span class="uses notuse">空闲</span>
+                    <%/if%>
+                </div>
+                <div class="online_li">
+                    当前预订 <span><%row.count%></span> 人
+                </div>
+            </div>
+            <div class="yuding">预订</div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.venue_init({});
+    });
+</script>
+
+{template 'union/_footer'}

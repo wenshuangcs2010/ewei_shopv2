@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+   {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+</head>
+<body>
+<style>
+    ul.bt-list li{
+        width: 20%;
+        margin: 1rem 0;
+    }
+</style>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">首页</a><i class="fa fa-angle-right"></i>{$_W['union_name']}部门管理</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                    <div class="col-adjust-10">
+                        <ul class="bt-list">
+                            <li style="margin-left: 0.2rem">
+                                <button data-modal="{php echo unionUrl('member/department/add')}" data-title="添加新部门" class='layui-btn layui-btn-small'><i
+                                        class='fa fa-plus'></i> 添加新部门
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+            </div>
+            <div class="agile-grids">
+                <div class="agile-tables">
+                    <div class="w3l-table-info">
+                        <h2>{$_W['union_name']}部门管理</h2>
+                        <table id="table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>部门名称</th>
+                                <th>上级</th>
+                                <th>状态</th>
+                                <th>编辑</th>
+                            </tr>
+                            </thead>
+                            {if $department}
+                            <tbody>
+                            {loop $department $row}
+                            <tr>
+                                <td>{$row['id']}</td>
+                                <td>{$row['name']}</td>
+                                <td>{if !$row['parent_id']} 顶级{else}{$row['parent_id']}{/if}</td>
+                                <td>{if $row['enable']}已启用{else}不启用{/if}</td>
+                                <td> <a data-modal="{php echo unionUrl('member/department/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a></td>
+                            </tr>
+                            {/loop}
+                            </tbody>
+                            {/if}
+                        </table>
+                    </div>
+                    {if !$department}
+                    <div class="panel panel-default" style="background-color: #fff;">
+                        <div class="panel-body" style="text-align: center;padding:30px;">
+                            没有任何数据!
+                        </div>
+                    </div>
+                    {/if}
+                </div>
+
+
+                <!--copy rights start here-->
+                {template 'footer'}
+                <!--COPY rights end here-->
+            </div>
+        </div>
+        <!--//content-inner-->
+        <!--/sidebar-menu-->
+        {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','jquery.basictable'],function(modal){
+        modal.init();
+        $('#table').basictable();
+    })
+</script>
+</html>

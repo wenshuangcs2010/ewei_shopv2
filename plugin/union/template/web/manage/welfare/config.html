@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{template 'header'}
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+             <!--header start here-->
+		   {template 'header_main'}
+			<!--heder end here-->
+			<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>全部福利基础配置</li>
+            </ol>
+		   <div class="grid-form1">
+			   <h3>福利配置</h3>
+			   <div class="tab-content">
+				   <div class="tab-pane active" >
+					   <form  id="horizontal-form" action="" method="post" class="form-horizontal">
+						   <div class="form-group">
+							   <label for="radio" class="col-sm-2 control-label">结婚福利启用</label>
+							   <div class="col-sm-8">
+								   <div class="radio-inline"><label><input name="marry" {if empty($config['marry']) || $config['marry']==0 } checked{/if} value="0" type="radio"> 是</label></div>
+								   <div class="radio-inline"><label><input  name="marry" {if isset($config) && $config['marry']==1} checked{/if}  value="1" type="radio"> 否</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="checkbox" class="col-sm-2 control-label">结婚福利金额类型</label>
+							   <div class="col-sm-8">
+								   <div class="checkbox-inline"><label><input name="marry_moneytype[]"  {if (isset($config) && in_array(1,$config['marry_moneytype']))} checked {/if} value="1" type="checkbox"> 现金</label></div>
+								   <div class="checkbox-inline"><label><input name="marry_moneytype[]" {if (isset($config) && in_array(2,$config['marry_moneytype'])) || empty($config['marry_moneytype'])} checked {/if}  value="2" type="checkbox" >福利券</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="radio" class="col-sm-2 control-label">生育福利启用</label>
+							   <div class="col-sm-8">
+								   <div class="radio-inline"><label><input name="birth" {if empty($config['birth']) || $config['birth']==0 } checked{/if} value="0"  type="radio"> 是</label></div>
+								   <div class="radio-inline"><label><input  name="birth"  {if isset($config) && $config['birth']==1} checked{/if} value="1" type="radio" > 否</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="checkbox" class="col-sm-2 control-label">生育福利金额类型</label>
+							   <div class="col-sm-8">
+								   <div class="checkbox-inline"><label><input name="birth_moneytype[]"  {if (isset($config) && in_array(1,$config['birth_moneytype'])) || empty($config['birth_moneytype'])} checked {/if} value="1" type="checkbox"> 现金</label></div>
+								   <div class="checkbox-inline"><label><input name="birth_moneytype[]" {if (isset($config) && in_array(2,$config['birth_moneytype']))} checked {/if}  value="2" type="checkbox" checked="">福利券</label></div>
+							   </div>
+						   </div>
+
+						   <div class="form-group">
+							   <label for="radio" class="col-sm-2 control-label">住院福利启用</label>
+							   <div class="col-sm-8">
+								   <div class="radio-inline"><label><input name="hospitalization"  {if empty($config['hospitalization']) || $config['hospitalization']==0 } checked{/if}  value="0"  type="radio"> 是</label></div>
+								   <div class="radio-inline"><label><input  name="hospitalization"  {if isset($config) && $config['hospitalization']==1} checked{/if} value="1" type="radio" > 否</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="checkbox" class="col-sm-2 control-label">住院福利金额类型</label>
+							   <div class="col-sm-8">
+								   <div class="checkbox-inline"><label><input name="hospitalization_moneytype[]" value="1" {if (isset($config) && in_array(1,$config['hospitalization_moneytype'])) || empty($config['hospitalization_moneytype'])} checked {/if} type="checkbox"> 现金</label></div>
+								   <div class="checkbox-inline"><label><input name="hospitalization_moneytype[]" value="2" {if (isset($config) && in_array(2,$config['hospitalization_moneytype']))} checked {/if}  type="checkbox" >福利券</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="radio" class="col-sm-2 control-label">退休福利启用</label>
+							   <div class="col-sm-8">
+								   <div class="radio-inline"><label><input name="retire"  {if empty($config['retire']) || $config['retire']==0} checked{/if}  value="0" type="radio"> 是</label></div>
+								   <div class="radio-inline"><label><input  name="retire" {if isset($config) && $config['retire']==1} checked{/if} value="1" type="radio" > 否</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="checkbox" class="col-sm-2 control-label">退休福利金额类型</label>
+							   <div class="col-sm-8">
+								   <div class="checkbox-inline"><label><input name="retire_moneytype[]" {if (isset($config) && in_array(1,$config['retire_moneytype'])) || empty($config['retire_moneytype'])} checked {/if}  value="1"  type="checkbox"> 现金</label></div>
+								   <div class="checkbox-inline"><label><input name="retire_moneytype[]" {if (isset($config) && in_array(2,$config['retire_moneytype']))} checked {/if} value="2" type="checkbox" >福利券</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="radio" class="col-sm-2 control-label">丧葬帮扶启用</label>
+							   <div class="col-sm-8">
+								   <div class="radio-inline"><label><input name="funeral" {if empty($config['funeral']) || $config['funeral']==0} checked{/if} value="0" type="radio"> 是</label></div>
+								   <div class="radio-inline"><label><input  name="funeral" {if isset($config) && $config['funeral']==1} checked{/if} value="1" type="radio" > 否</label></div>
+							   </div>
+						   </div>
+						   <div class="form-group">
+							   <label for="checkbox" class="col-sm-2 control-label">丧葬帮扶金额类型</label>
+							   <div class="col-sm-8">
+								   <div class="checkbox-inline"><label><input name="funeral_moneytype[]" value="1" {if (isset($config) && in_array(1,$config['funeral_moneytype'])) || empty($config['funeral_moneytype'])} checked {/if}  type="checkbox"> 现金</label></div>
+								   <div class="checkbox-inline"><label><input name="funeral_moneytype[]" value="2"  {if (isset($config) && in_array(2,$config['funeral_moneytype']))} checked {/if}  type="checkbox" >福利券</label></div>
+							   </div>
+						   </div>
+					   </form>
+				   </div>
+			   </div>
+			   <div class="panel-footer">
+				   <div class="row">
+					   <div class="col-sm-8 col-sm-offset-2">
+						   <button class="btn-primary btn">确定</button>
+					   </div>
+				   </div>
+			   </div>
+		   </div>
+</div>
+</div>
+   </div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+</body>
+<script>
+	require(['jquery'],function(){
+        $(".btn-primary").click(function(){
+            $("#horizontal-form").submit();
+        })
+	})
+
+</script>
+</html>

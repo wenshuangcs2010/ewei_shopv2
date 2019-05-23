@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{template 'header'}
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+             <!--header start here-->
+		   {template 'header_main'}
+			<!--heder end here-->
+			<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>签到人员</li>
+            </ol>
+
+<div class="agile-grids">
+	<div class="agile-tables">
+		<div class="w3l-table-info">
+
+			<table id="table">
+				<thead>
+				<tr>
+					<th>ID</th>
+					<th>名称</th>
+
+					<th>签到时间</th>
+
+
+				</tr>
+				</thead>
+				<tbody>
+                {loop $list $row}
+				<tr>
+					<td>{$row['id']}</td>
+					<td>{$row['m_name']}</td>
+
+					<td>{php echo date('Y-m-d H:i',$row['add_time'])}</td>
+
+
+
+				</tr>
+                {/loop}
+				</tbody>
+			</table>
+            {$pager}
+        </div>
+        {if !$list}
+        <div class="panel panel-default" style="background-color: #fff;">
+            <div class="panel-body" style="text-align: center;padding:30px;">
+                没有任何数据!
+            </div>
+        </div>
+        {/if}
+
+   </div>
+
+
+<!--copy rights start here-->
+	{template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','jquery.basictable'],function(modal){
+        modal.init();
+        $('#table').basictable();
+    })
+</script>
+</html>

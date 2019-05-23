@@ -1,0 +1,45 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/article/template/mobile/default/images/mobile.css" />
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current article-index-page'>
+    {if is_mobile() && !is_weixin()}
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">详情</div>
+        <div class="fui-header-right"></div>
+    </div>
+    {/if}
+
+    <div class='fui-content'>
+        <div class="fui-article-page">
+            <div class="fui-article-title">{$article['title']}</div>
+            <div class="fui-article-subtitle">
+                <div class="nav">
+                    <i class="icon icon_time">
+                        <img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_read.png"/>
+                    </i>
+                    <span> {$article['readcount']} </span></div>
+
+                <div class="nav" style="float: right">
+                    <i class="icon icon_time"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic-history.png"/></i>
+                    <span>{php echo date('Y-m-d',$article['create_time'])}</span></div>
+            </div>
+
+            <div class="fui-article-content">
+                {$article['description']}
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+

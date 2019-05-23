@@ -1,0 +1,45 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{$action}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">部门名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入部门名称" placeholder="请输入部门名称" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">请选择上级部门</label>
+        <div class="layui-input-block">
+        <select name="parent_id" class="form-control select2" tabindex="-1" title="">
+            <option value="0" >顶级</option>
+            {loop $department $row}
+            <option value="{$row['id']}" {if isset($vo['parent_id']) && $row['id']==$vo['parent_id'] }selected{/if}>{$row['name']}</option>
+            {/loop}
+        </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">启用</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['enable']) && $vo['enable'] == 1}
+                <input type="radio" checked name="enable" value="1" title="启用">
+                <input type="radio" name="enable" value="0" title="不启用">
+                {else}
+                <input type="radio" name="enable" value="1" title="启用">
+                <input type="radio" checked name="enable" value="0" title="不启用">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>window.form.render();</script>
+</form>

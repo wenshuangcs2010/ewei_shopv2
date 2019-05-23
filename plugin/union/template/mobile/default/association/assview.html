@@ -1,0 +1,80 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/article/template/mobile/default/images/mobile.css" />
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+
+
+
+
+<div class="fui-page  fui-page-current asssview-index-page" >
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="fui-header">
+            <div class="fui-header-left">
+                <a class="back"></a>
+            </div>
+            <div class="title">协会详情</div>
+            <div class="fui-header-right"></div>
+        </div>
+        <div class="fui-list no-border" style="top:2.2rem;text-align: center;
+    display: block;">
+           {$vo['title']}
+        </div>
+        <div class="fui-list no-border" style="top:2.2rem">
+            {$vo['declaration']}
+        </div>
+        <div class="fui-list no-border" style="background: #D9D9D9;margin-top: .1rem;top: 2.2rem;">
+            全部成员
+        </div>
+        <div class="fui-content navbar" style="position: relative">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="view-list-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type='text/html' id='tpl_view_list'>
+        <%each list as row%>
+        <div class="fui-list-group" href="#">
+            <div class="fui-list no-border" style="background: #ffffff;margin-top: .1rem">
+                <div class="fui-list-media" style="padding-top: 0.2rem;padding-bottom: 0.2rem;">
+                    <img onerror="this.src='../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/noface.png'" src="<%row.avatar%>">
+                </div>
+                <div class="fui-list-inner">
+                    <div class="row">
+                        <div class="row-text" style="font-size: .6rem;color: #666666"><%row.name%>
+                        </div>
+                        <div class="fui-list-angle" style="margin: 0;font-size: .6rem; color:#b2b2b2;">加入时间：<%row.add_time%></div>
+                    </div>
+                    <div class="row">
+                        <div class="row-text" style="font-size: .6rem;color: #666666">
+                            单位:<%row.dname%>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="row-text" style="font-size: .6rem;color: #666666">
+                           部门:<%row.udname%>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.assview_init({"id":"{$id}"});
+    });
+</script>
+
+
+
+
+

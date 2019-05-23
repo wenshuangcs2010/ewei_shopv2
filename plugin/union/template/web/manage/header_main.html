@@ -1,0 +1,27 @@
+<div class="header-main">
+
+    <div class="profile_details w3l" style="float: right;">
+        <ul>
+            <li class="dropdown profile_details_drop">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <div class="profile_img">
+                        <span class="prfil-img"><img src="{php echo $this->member_info['avatar']}" alt=""> </span>
+                        <div class="user-name">
+                            <p>{php echo $this->user_info['username']}</p>
+                            <span>管理员</span>
+                        </div>
+                        <i class="fa fa-angle-down"></i>
+                        <i class="fa fa-angle-up"></i>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+                <ul class="dropdown-menu drp-mnu">
+                    <li> <a href="{php echo unionUrl('union_config/password')}"><i class="fa fa-cog"></i> 修改密码</a> </li>
+                    <li> <a href="{php echo unionUrl('quit')}"><i class="fa fa-sign-out"></i> 退出登录</a> </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="clearfix"> </div>
+</div>

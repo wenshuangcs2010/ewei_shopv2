@@ -20,6 +20,7 @@ define(['core', 'tpl', 'biz/goods/picker'], function (core, tpl, picker) {
         } else {
             modal.toGoods = false
         }
+
         modal.getList();
         $('form').submit(function () {
             $('.container').empty();
@@ -92,6 +93,7 @@ define(['core', 'tpl', 'biz/goods/picker'], function (core, tpl, picker) {
         $('.fui-content').infinite({
             onLoading: function () {
                 modal.getList()
+
             }
         });
         modal.bindEvents()

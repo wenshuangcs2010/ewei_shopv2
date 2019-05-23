@@ -1,0 +1,23 @@
+<div class="fui-navbar">
+
+	<a href="{php echo mobileUrl('union/index')}" class="external nav-item {if $_W['routes']=='' ||  $_W['routes']=='shop' ||  $_W['routes']=='commission.myshop'}active{/if}">
+		<span class="icon icon-home"></span>
+		<span class="label">首页</span>
+	</a>
+
+
+	<a href="{php echo mobileUrl('union/dynamic')}" class="external nav-item {if $_W['routes']=='goods'}active{/if}" >
+		<span class="icon icon-list"></span>
+		<span class="label">工会动态</span>
+	</a>
+
+	<a href="{php echo mobileUrl('index')}" class="external nav-item {if $_W['routes']=='member.cart'}active{/if}" id="menucart">
+		<span class="icon icon-cart"></span>
+		<span class="label">福利商城</span>
+		{if $cartcount>0}<span class="badge">{$cartcount}</span>{/if}
+	</a>
+	<a href="{php echo mobileUrl('union/member')}" class="external nav-item  {if $_W['routes']=='member'}active{/if}">
+		<span class="icon icon-person2"></span>
+		<span class="label">会员中心</span>
+	</a>
+</div>

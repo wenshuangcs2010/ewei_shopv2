@@ -1,0 +1,94 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<script>document.title = "{$_W['union']['title']}"; </script>
+<div class='fui-page  fui-page-current'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back" ></a>
+        </div>
+        <div class="title">{$title}</div>
+        <div class="fui-header-right"></div>
+    </div>
+    <div class='fui-content friendship' style="top:2.5rem;bottom: 2.4rem;">
+
+        <div class='fui-content-inner'>
+            <div class='content-empty' style='display:none;'>
+                <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+            </div>
+            <div class="fui-goods-group container block" id="list-container"></div>
+            <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+            <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+        </div>
+    </div>
+</div>
+<script type='text/html' id='tpl_type_f_list'>
+    <%each list as row%>
+    <a class="fui-list-group" href="#">
+        <div class="fui-list no-border" style="background: #ffffff;height: 6.25rem;margin-top: .1rem">
+            <div class="fui-list-media"  style="padding-top: 0.2rem;padding-bottom: 0.2rem;">
+                <%if row.sex==1%>
+                <img  onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/sex.png'" src="<%row.header_imageurl%>">
+                <%/if%>
+                <%if row.sex==0%>
+                <img  onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/noface.png'" src="<%row.header_imageurl%>">
+                <%/if%>
+            </div>
+            <div class="fui-list-inner">
+                <div class="row">
+                    <div class="row-text" style="font-size: .6rem;color: #666666"><%row.name%>
+                        <span>
+                            <%if row.sex==1%>
+                        <img style="width: 1rem;vertical-align: middle;" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_female.png">
+                            <%/if%>
+                             <%if row.sex==0%>
+                        <img style="width: 1rem;vertical-align: middle;" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_male.png">
+                            <%/if%>
+                        </span>
+                    </div>
+                    <div class="fui-list-angle" style="margin: 0;font-size: .6rem; color:#b2b2b2;">发布时间：<%row.add_time%></div>
+                </div>
+                <div class="row"><div class="row-text" style="font-size: .6rem;color: #666666">年龄：<%row.age%>岁</div></div>
+                <div class="row"><div class="row-text" style="font-size: .6rem;color: #666666">婚姻状况:<%row.maritalstatus%></div></div>
+                <div class="row"><div class="row-text" style="font-size: .6rem;color: #666666">性格：<%row.character%></div></div>
+                <div class="row"><div class="row-text" style="font-size: .6rem;color: #666666">宣言：<%row.declaration%></div></div>
+            </div>
+        </div>
+        <div class="fui-list" style="height: 2.0rem;background: #ffffff;">
+            <div class="fui-list-media fabulous_click" data-fabulous="<%row.fabulous%>" data-friend_id="<%row.id%>" >
+                <%if row.fabulous==0%>
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_like_unselected.png" class="round" style="width:1.4rem;height:1.4rem;border-radius: 50%">
+                <%/if%>
+                <%if row.fabulous==1%>
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_like_selected.png" class="round" style="width:1.4rem;height:1.4rem;border-radius: 50%">
+                <%/if%>
+            </div>
+            <div class="fui-list-inner">
+                <div class="row">
+                    <div class="row-text" style="font-size: .6rem;color: #666666">点赞</div>
+                </div>
+            </div>
+            <div class="fui-list-media follow_click" data-follow="<%row.follow%>" data-friend_id="<%row.id%>" >
+                <%if row.follow==0%>
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_attetion_unselected.png" class="round" style="width:1.4rem;height:1.4rem;border-radius: 50%">
+                <%/if%>
+                <%if row.follow==1%>
+                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_attetion_selected.png" class="round" style="width:1.4rem;height:1.4rem;border-radius: 50%">
+                <%/if%>
+            </div>
+            <div class="right" style="width: 3rem;">
+                <div class="row">
+                    <div class="row-text" style="font-size: .6rem;color: #666666">关注<span class="allfollow"><%row.allfollow%></span></div>
+                </div>
+
+            </div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.friendship_type_f_init({"type":{$type}});
+    });
+</script>
+{template 'union/_footer'}

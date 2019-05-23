@@ -1,0 +1,69 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current page-goods-list" >
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="headinfo venue_page">
+            <div class="commission_head">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+
+            </div>
+        </div>
+        <div class="fui-content navbar venue_page_mylist" style="position: relative;top:0">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="venue-mylist-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type='text/html' id='tpl_mylist_list'>
+    <%each list as row%>
+    <div class="fui-list-group" href="#">
+        <div class="fui-list no-border" style="background: #ffffff;margin-top: .1rem">
+            <div class="fui-list-media" style="padding-top: 0.2rem;padding-bottom: 0.2rem;">
+                <img onerror="this.src='../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/noface.png'" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png">
+            </div>
+            <div class="fui-list-inner">
+                <div class="row">
+                    <div class="row-text" style="font-size: .6rem;color: #666666"><%row.title%>
+                    </div>
+                    <div class="fui-list-angle" style="margin: 0;font-size: .6rem; color:#b2b2b2;">预订时间：<%row.create_time%></div>
+                </div>
+                <div class="row">
+                    <div class="row-text" style="font-size: .6rem;color: #666666"> <span>
+                        <img style="width: 1rem;vertical-align: middle;" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/venue/ic_date.png">
+                        </span><%row.date%>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row-text" style="font-size: .6rem;color: #666666">
+                    <span>
+                        <img style="width: 1rem;vertical-align: middle;" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/venue/ic_time.png">
+                        </span>
+                    <%row.start_time%>-<%row.end_time%>
+                </div>
+            </div>
+                <div class="last-angle" >
+                    <a href='#' data-id="<%row.id%>"  class='btn btn-cancel block'>取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.venue_mylist_init({});
+    });
+</script>
+
+{template 'union/_footer'}

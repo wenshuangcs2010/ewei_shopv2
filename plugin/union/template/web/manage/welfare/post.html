@@ -1,0 +1,141 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('welfare/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">申请人</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入申请人姓名" placeholder="请输入申请人姓名" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">福利金额</label>
+        <div class="layui-input-block">
+            <input type="text" name="money" value="{$vo['money']}" required="required" title="请输入帮扶金额" placeholder="请输入帮扶金额" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">{$title}日期</label>
+        <div class="layui-input-block">
+            <input type="text" name="date" id="date" value="{$vo['time']}" required="required" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" lay-key="1">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">{$title}福利金额类型</label>
+        <div class="layui-input-block">
+            <div class="col-sm-8">
+                {if isset($vo['amounttype']) && $vo['amounttype'] ==0}
+                <input type="radio" checked name="amounttype" value="0" title="现金">
+                <input type="radio" name="amounttype" value="1" title="福利券">
+                {else}
+                <input type="radio" name="amounttype" value="0" title="现金">
+                <input type="radio" checked name="amounttype" value="0" title="福利券">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" readonly name="life_images" value="{$vo['images_url']}" placeholder="请选择图片" type="text">
+                    <a class="input-group-addon" data-file="mutl"  data-field="life_images" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+                <div class="input-group multi-img-details ui-sortable">
+                    {if $vo['thumbs']}
+                    {loop $vo['thumbs'] $key $thumb}
+                    <div class="multi-item">
+                        <img src="{$thumb}"  class="img-responsive img-thumbnail">
+                        <em class="close"  data-index="{$key}" title="删除这张图片">×</em>
+                    </div>
+                    {/loop}
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+           <textarea name="remarks" class="layui-textarea">{$vo['remarks']}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">审核状态</label>
+        <div class="layui-input-block">
+            <div class="col-sm-8">
+                {if isset($vo['status']) && $vo['status'] ==1}
+                <input type="radio" checked name="status" value="1" title="待审核">
+                <input type="radio" name="status" value="2" title="通过">
+                {else}
+                <input type="radio" name="status" value="1" title="待审核">
+                <input type="radio" checked name="status" value="2" title="通过">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <input type='hidden' value="{$type}" name='type'/>
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+        laydate.render({
+            elem: '#date'
+        });
+
+        require(['jquery'], function () {
+            var tpl = '<div class="multi-item">\n' +
+                '                        <img src=""  class="img-responsive img-thumbnail">\n' +
+                '                        <em class="close" title="删除这张图片">×</em>\n' +
+                '                    </div>';
+            $('[name="life_images"]').on('change', function () {
+                var input = this, values = [], srcs = this.value.split('|');
+                if($(input).parent().children("a").data("file")=="one"){
+                    $(this).parent().next().children(".multi-item").remove();
+                }
+                values.reverse();
+                for (var i in srcs) {
+                    values.push(srcs[i]);
+                }
+                this.value = values.join('|');
+                $(input).data('input', input).data('srcs', values);
+                for (var i in values) {
+                    var $tpl=$(tpl);
+                    $tpl.children("img").attr('src',values[i]);
+                    $tpl.children("em").data('index', i);
+                    $(this).parent().next(".multi-img-details").append($tpl);
+                }
+            });
+            var values =$("input[name='life_images']").val().split('|');
+            for (var i in values) {
+                $("input[name='life_images']").data('srcs', values).data('index', i);
+            }
+            $(document).on('click', 'em', function (e) {
+                e.stopPropagation();
+                var $cur = $(this).parent();
+                var input=$(this).parent().parent().prev().children("input");
+                var index=$(this).data("index");
+                $.msg.confirm('确定要移除这张图片吗？', function () {
+                    var data = input.data("srcs");
+                    delete data[index];
+                   // console.log(data);
+                    $("input[name='life_images']").val(data.join('|'));
+                    $cur.remove();
+                });
+            })
+
+
+        });
+    </script>
+</form>

@@ -1,0 +1,39 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('dynamic/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$vo['title']}" required="required" title="请输入标题" placeholder="请输标题" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+    <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+            <textarea id="editor" name='description'>{$vo['description']}</textarea>
+        </div>
+    </div>
+
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        layui.use('layedit', function(){
+            var layedit = layui.layedit;
+            layedit.set({
+                uploadImage: {
+                    url: 'http://localhost/we7new/addons/ewei_shopv2//plugin/union/template/web/manage/js/plugs/ueditor/php/controller.php?uniacid=5&unionid=3&action=uploadimage' //接口url
+                    ,type: 'post' //默认post
+                }
+            });
+            layedit.build('editor'); //建立编辑器
+        });
+        window.form.render();
+    </script>
+</form>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>用户登录&nbsp;·&nbsp;云工会管理平台</title>
+
+
+    <link rel="stylesheet" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/login.css">
+
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+    <!-- Custom CSS -->
+    <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/style.css" rel='stylesheet' type='text/css' />
+    <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/morris.css" rel='stylesheet' type='text/css' />
+    <!-- Graph CSS -->
+    <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/font-awesome.css" rel='stylesheet' type='text/css' />
+    <!-- lined-icons -->
+    <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/icon-font.min.css" rel='stylesheet' type='text/css' />
+    <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/jquery-ui.css" rel='stylesheet' type='text/css' />
+
+
+    <!-- lined-icons -->
+    <script src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/require/require.js?ver={php echo time()}"></script>
+    <script src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/app.js?ver={php echo time()}"></script>
+    <script type="text/javascript" charset="utf-8" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/jquery/jquery-2.1.4.min.js"></script>
+    <!-- //lined-icons -->
+
+</head>
+
+<body>
+
+<div class="login-container" style="height:100%">
+
+    <!-- 动态云层动画 开始 -->
+    <div class="clouds clouds-footer"></div>
+    <div class="clouds"></div>
+    <div class="clouds clouds-fast"></div>
+    <!-- 动态云层动画 结束 -->
+
+    <!-- 顶部导航条 开始 -->
+    <div class="header">
+        <span>欢迎登录云工会管理界面</span>
+        <ul>
+
+            <li><a target="_blank" href="http://www.cnbuyers.cn/"><b style="color:#fff">保税超市</b></a></li>
+        </ul>
+    </div>
+    <!-- 顶部导航条 结束 -->
+
+    <!-- 页面表单主体 开始 -->
+    <div class="container" style="top:50%;margin-top:-300px">
+
+        <form onsubmit="return false;" data-time="0.001" data-auto="true" method="post" class="content layui-form">
+            <div class="people">
+                <div class="tou"></div>
+                <div id="left-hander" class="initial_left_hand transition"></div>
+                <div id="right-hander" class="initial_right_hand transition"></div>
+            </div>
+            <ul>
+                <li>
+                    <input required="required"
+                           pattern="^\S{3,}$"
+                           title="请输入3位及以上的字符"
+                           type="text"
+                           name="username"
+                           value=""
+                           autocomplete="off"
+                           autofocus="autofocus"
+                           class="login-input username"
+                           placeholder="请输入用户名/手机号码"/>
+                </li>
+                <li>
+                    <input required="required"
+                           pattern="^\S{4,}$"
+                           title="请输入4位及以上的字符"
+                           type="password"
+                           name="password"
+                           value=""
+                           autocomplete="off"
+                           class="login-input password"
+                           placeholder="请输入密码"/>
+                </li>
+                <li class="text-center">
+                    <button type="submit" class="layui-btn layui-disabled" data-form-loaded="立 即 登 入">正 在 载 入</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- 页面表单主体 结束 -->
+
+    <!-- 底部版权信息 开始 -->
+    <div class="footer">浙江畅购天下电子商务有限公司</div>
+    <!-- 底部版本信息 结束 -->
+
+</div>
+
+
+<script>
+    if (window.location.href.indexOf('#') > -1) {
+        window.location.href = window.location.href.split('#')[0];
+    }
+    require(['jquery','login'], function ($,modal) {
+        $('[name="password"]').on('focus', function () {
+            $('#left-hander').removeClass('initial_left_hand').addClass('left_hand');
+            $('#right-hander').removeClass('initial_right_hand').addClass('right_hand')
+        }).on('blur', function () {
+            $('#left-hander').addClass('initial_left_hand').removeClass('left_hand');
+            $('#right-hander').addClass('initial_right_hand').removeClass('right_hand')
+        });
+        modal.init({submitUrl:"{$submitUrl}"});
+    });
+
+</script>
+<style>
+    .layui-btn {
+        display: inline-block;
+        height: 38px;
+        line-height: 38px;
+        padding: 0 18px;
+        background-color: #009688;
+        color: #fff;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 14px;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        opacity: .9;
+        filter: alpha(opacity=90);
+    }
+</style>
+</body>
+
+</html>

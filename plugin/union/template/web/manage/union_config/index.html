@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>单位管理</li>
+            </ol>
+            <div class="grid-form1">
+                <h3>单位管理</h3>
+                <div class="tab-content">
+                    <form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('union_config/post')}" data-auto="true" method="post">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">单位名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" value="{$union_info['title']}" required="required" title="请输入问卷标题" placeholder="请输入问卷标题" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">单位联系人</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="name" value="{$union_info['name']}" required="required" title="单位联系人" placeholder="单位联系人" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">联系人电话</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="mobile" value="{$union_info['mobile']}" required="required" title="联系人电话" placeholder="联系人电话" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="layui-form-item text-center">
+                            {if isset($union_info['id'])}<input type='hidden' value="{$union_info['id']}" name='id'/>{/if}
+                            <button class="layui-btn" type='submit'>保存数据</button>
+                            <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+</body>
+<script>
+    require(['jquery'],function(){
+        $(".btn-primary").click(function(){
+            $("#horizontal-form").submit();
+        })
+    })
+
+</script>
+</html>

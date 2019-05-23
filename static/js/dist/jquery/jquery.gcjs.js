@@ -68,7 +68,7 @@ jQuery.extend({
         return /^\s*[A-Za-z0-9_-]{6,20}\s*$/.test($.trim(str));
     },
     isMobile: function(str) {
-        return $.trim(str) !== '' && /^1[3|4|5|7|8|9][0-9]\d{8}$/.test($.trim(str));
+        return $.trim(str) !== '' && /^1[3|4|5|6|7|8|9][0-9]\d{8}$/.test($.trim(str));
     },
     isChinese: function(str) {
         return $.trim(str) != '' & !/[^\u4e00-\u9fa5]/.test($.trim(str));
