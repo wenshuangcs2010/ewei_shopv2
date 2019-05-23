@@ -80,6 +80,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         $giftid = intval($_GPC['giftid']);
         $giftGood = array();
         $depotid=intval($_GPC['depotid']);
+        $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$depotid));
         //允许参加优惠
         $allow_sale = true;
         $ifidentity=Dispage::check_readname($depotid);//wsq
@@ -258,6 +259,9 @@ class Create_EweiShopV2Page extends MobileLoginPage
                     . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
                 $data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $id));
                 $depotid=$data['depotid'];//wsq
+                if(empty($depot_info)){
+                    $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$depotid));
+                }
                 $ifidentity=Dispage::check_readname($data['depotid']);//wsq
 
                 if($member['showifidentity']==1){
@@ -673,6 +677,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
                             if ($g['deduct2'] == 0) {
                                 //全额抵扣
                                 $deductprice2 += $g['ggprice'];
+
                             } else if ($g['deduct2'] > 0) {
                                 //最多抵扣
                                 if ($g['deduct2'] > $g['ggprice']) {
@@ -814,10 +819,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
                 }
             }
-            if($deductcredit2>0 && $depotid==21){
+            if($deductcredit2>0 && $depot_info['isusebalance']==1){
                 $deductcredit2=0;
             }
-            if($deductcredit>0 && $depotid==21){
+            if($deductcredit>0 &&  $depot_info['isusebalance']==1){
                 $deductcredit2=0;
             }
             //var_dump($deductcredit2);
@@ -1047,9 +1052,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
             );
         }
 //        //宁波仓库禁止
-//        if($depotid==21){
-//            $deductcredit2=0;//临时使用后期恢复
-//        }
+        $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$depotid));
+        if($depot_info['isusebalance']==1){
+            $deductcredit2=0;//临时使用后期恢复
+        }
 
         $_W['shopshare']['hideMenus'] = array('menuItem:share:qq', 'menuItem:share:QZone', 'menuItem:share:email', 'menuItem:copyUrl', 'menuItem:openWithSafari', 'menuItem:openWithQQBrowser', 'menuItem:share:timeline', 'menuItem:share:appMessage');
 
@@ -1764,10 +1770,12 @@ class Create_EweiShopV2Page extends MobileLoginPage
         if ($is_openmerch == 1) {
             $merchs = $merch_plugin->getMerchs($merch_array);
         }
-        if($deductcredit2>0 && $depotid==21){
+        $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$depotid));
+
+        if($deductcredit2>0 && $depot_info['isusebalance']==1){
             $deductcredit2=0;
         }
-        if($deductcredit>0 && $depotid==21){
+        if($deductcredit>0 && $depot_info['isusebalance']==1){
             $deductcredit=0;
         }
 

@@ -1392,6 +1392,9 @@ if (!function_exists("redis")) {
                 return error(-1, "redis 无法正常工作，请检查 redis 服务");
             }
             $redis = $redis_temp;
+            if(isset($config['selectdb'])){
+                $redis->select($config['selectdb']);
+            }
         }
         return $redis;
 
