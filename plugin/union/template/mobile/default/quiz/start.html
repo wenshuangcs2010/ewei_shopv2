@@ -1,0 +1,74 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<style>
+    {if $view['header_image']!=""}
+    .quiz{
+        background-image:url("{php echo tomedia($view['header_image'])}");!important;
+    }
+    {else}
+    .quiz{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/quiz/timg.jpg");
+    }
+    {/if}
+</style>
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+
+        <div class='fui-content quiz_bg' style="top:0">
+            <div class="quizheader" {if $view['type']==1} style="display: none" {/if} >
+                <div style="font-size: 0.9rem">{if $view['type']==0}考试{else}调研{/if}剩余时间</div>
+                <div class="lasttimes"></div>
+            </div>
+            {loop $qu_list $index $quinfo}
+            <div class="list-number" data-index="{php echo $index+1}" id="list_index_{$index}" {if ($key)!= $index+1}style="display:none"{/if} >
+                <div class="content_top">第{php echo $index+1}/{php echo count($qu_list)}题</div>
+                <div class="fui-card" style="padding-top: 2rem;border-radius: 0.7rem;">
+                    <div class="fui-card-title">
+                        <span class="title" style="line-height: 1.4rem;font-size: .7rem;"><span style="font-size: 0.8rem;font-weight: 600;display: inline;margin-right: 0.5rem;;color: #5b5b5b">{if $quinfo['qus_type']==1}[单选]{else}[多选]{/if}</span>{$quinfo['title']}</span>
+                    </div>
+                    <div class="fui-card-content">
+                        <div class="fui-cell-group">
+                            {loop $quinfo['answerlist'] $item}
+                            <div class="fui-cell answer" data-quizid="{$quinfo['id']}" data-qus_type="{$quinfo['qus_type']}" data-selected="0" data-id="{$item['key']}" style=" white-space: initial; margin-bottom: 0.2rem;">
+                                <div class="fui-cell-info" style="white-space: initial;font-size: .7rem"><span>{$item['title']}</span> {$item['value']}</div>
+                                <div class="external" style="display: none;" >
+                                    <img style="width: 1.3rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/quiz/selected.png">
+                                </div>
+                            </div>
+                            {/loop}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/loop}
+
+            <a href="#" data-nocache="true" data-type="1" data-submit="0" id="btn-submit" class="btn btn-success block">{if count($qu_list)==1}提交{else}下一题{/if}</a>
+        </div>
+    </div>
+
+</div>
+<style>
+    .clear{
+        background-color:white!important;
+        color: #0a0a0a!important;
+    }
+</style>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.quizinit({act_id:"{$id}"});
+        modal.loadqutime({$view['count_times']},"{$id}");
+    });
+    window.addEventListener("popstate", function (e) {
+        console.log(window.items);
+        window.clearInterval(window.items);
+    }, false);
+    window.addEventListener('pageshow', function( e ){
+        if (e.persisted) {
+            window.location.reload()
+        }
+    })
+
+</script>
+

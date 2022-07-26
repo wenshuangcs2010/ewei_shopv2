@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en" style="font-size: 529.167%;"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+<title>主页</title>
+<script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/responsiveslides.min.js"></script>
+
+<script type="text/javascript">
+$(function () {
+	// Slideshow 
+	$("#slider").responsiveSlides({
+		auto: true,
+		pager: false,
+		nav: true,
+		speed: 500,
+		timeout:4000,
+		pager: true, 
+		pauseControls: true,
+		namespace: "callbacks"
+	});
+});
+</script>
+
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/new.css">
+
+<body style="">
+
+<div class="search"></div>
+
+<input class="search_input" type="text" name="searchContent" id="searchContent" placeholder=" 请输入标题、景区、特色菜">
+<button type="submit" id="searchBtn" class="search_bottom">搜索</button>
+
+<script>
+	$("#searchContent").click(function () {
+		window.location.href="{php echo mobileUrl('union.lyhome.lyaddress')}";
+    })
+</script>
+
+<div class="lunhuan">
+
+  <!-- Slideshow -->
+<div class="callbacks_container">
+	<ul class="rslides callbacks callbacks1" id="slider">
+
+		{loop $advlist $row}
+		<li class="">
+		<a href="{$row['link']}"><img style="height: 5rem" src="{php echo tomedia($row['thumb'])}"></a>
+		</li>
+		{/loop}
+
+		</ul>
+		<a href="#" class="callbacks_nav callbacks1_nav prev">Previous</a>
+		<a href="#" class="callbacks_nav callbacks1_nav next">Next</a>
+
+</div>
+
+</div>
+
+<!--广告条-->
+<div style=" width:7.5rem; height:0.2rem;">
+  <!--<a href="../wapred"><img style=" width:7.5rem; height:1.8rem;" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/top_red_img.jpg"></a>-->
+</div>
+
+<div class="nav_box">
+	<div class="shouye">
+
+		 <a href="{php echo mobileUrl('union/lyhome/lynews')}">
+			<dl>
+				<dt><img src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/zhengc.jpg" alt="" /></dt>
+				<dd><h2>最新政策</h2><span>职工疗休养新政解读</span></dd>
+			</dl>
+		</a>
+		<a href="{php echo mobileUrl('union/lyhome/lyaddress')}">
+			<dl>
+				<dt><img src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/images/lxyd.jpg" alt=""></dt>
+				<dd><h2>疗休养点</h2><span>和我们一起去探索美丽的村庄</span></dd>
+			</dl>
+		</a>
+		 <a href="{php echo mobileUrl('union/lyhome/xiujia')}">
+			<dl>
+				<dt><img src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/xiujia.jpg" alt="" /></dt>
+				<dd><h2>带薪休假</h2><span>留恋舌尖上的味道</span></dd>
+			</dl>
+		</a>
+		<a href="{php echo mobileUrl('union/lyhome/lyaddressline')}">
+			<dl>
+				<dt><img src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/images/lxyxl.jpg" alt=""></dt>
+				<dd><h2>精品线路</h2><span>成长的路途，生命的印记</span></dd>
+			</dl>
+		</a>
+
+
+	</div>
+</div>
+<!--<div class="nav_box">-->
+<!--   <a href="nj.php"><img src="img/nj_img.png"></a>-->
+<!--   <p class="h_2"></p>-->
+<!--   <a href="lx.php"><img src="img/xl_img.png"></a>-->
+<!--  <p class="h_2"></p>-->
+<!--   <a href="news.php"><img src="img/new_img.png"></a>-->
+<!--</div>
+<div id="listdata">
+	{loop $ly_addresslist $item}
+	<div class="nj_list">
+			<a href="{php echo mobileUrl('union.lyhome.lyaddress.view',array('id'=>$item['id']))}">
+				<img class="img_pic" src="{php echo tomedia($item['header_image'])}">
+				<p class="img_tag">
+					{if $item['is_dscount']==1}
+					<span class="img_greed">有折扣</span>
+					{/if}
+					{if $item['is_hot']==1}
+					<span class="img_red">热销</span>
+					{/if}
+
+				</p>
+				<p class="img_title">{$item['title']}</p>
+				<p class="img_type">地址：{$item['address']}</p>
+				<p class="img_type">联系电话：{$item['mobilephone']}</p>
+				<p class="img_pj">
+					<span class="blue_title h_siz_26">5.0</span><span class="gray_title h_siz_26">/5分 </span>
+					<span class="h_siz_26 blue_title"> 0条评价</span>
+				</p>
+			</a>
+	</div>
+	{/loop}
+
+	{loop $ly_address_onlelist $item}
+		<div class="nj_list">
+			<a href="{php echo mobileUrl('union.lyhome.lyaddressline.view',array('id'=>$item['id']))}">
+				<img class="img_pic " src="{php echo tomedia($item['header_image'])}">
+				<p class="img_title">{$item['title']}</p>
+				<p class="img_price">
+					<span class="red_title h_siz_26">￥</span>
+					<span class="red_title h_siz_42">{$item['price']}</span>
+					<span class="h_siz_26 gray_title">元</span>
+				</p>
+				<p class="img_type">承办单位：{$item['unitname']}</p>
+				<p class="img_type">联系电话：{$item['mobilephone']}</p>
+				<p class="img_pj">
+					<span class="blue_title h_siz_26">5.0</span>
+					<span class="gray_title h_siz_26">/5分 </span>
+					<span class="h_siz_26 blue_title"> 0条评价</span>
+				</p>
+			</a>
+		</div>
+	{/loop}
+</div>
+-->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+
+
+</body>
+
+</html>

@@ -3,8 +3,21 @@
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 
+
+
+<style>
+    {if $category['head_images']!=""}
+    .document{
+        background-image:url("{php echo tomedia($category['head_images'])}");!important;
+    }
+    {else}
+    .document{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/pixun.jpg");
+    }
+    {/if}
+</style>
 <div class="fui-page  fui-page-current page-goods-list" >
-    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0; {if $category['head_images']!=""} background-image:url("{php echo tomedia($category['head_images'])}");!important;{/if}">
         <div class="headinfo document">
             <div class="commission_head">
                 <div class="fui-header-left">
@@ -12,7 +25,16 @@
                 </div>
             </div>
         </div>
-
+        <div >
+            <div class="fui-icon-group noborder col-3 " style="background: #ffffff">
+                {loop $categorylist  $item}
+                <a class="fui-icon-col external" href="{php echo mobileUrl('union.memberactivity',array('id'=>$item['id']))}" data-nocache="true">
+                    <div class="icon"><img src="{php echo tomedia($item['images'])}"></div>
+                    <div class="text" style="color: #666666;">{$item['catename']}</div>
+                </a>
+                {/loop}
+            </div>
+        </div>
 
         <div class="fui-content navbar" style="position: relative;top:0">
             <div class='fui-content-inner'>
@@ -20,7 +42,7 @@
                 <a class="fui-cell-group" href="{php echo mobileUrl('union/memberactivity/view',array('id'=>$row['id']))}">
                     <div class="fui-cell">
                         <div class="fui-cell-icon" style="width: 3rem" >
-                            <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png">
+                            <img style="width: 100%" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png'"  src="{php echo tomedia($row['images'])}">
                         </div>
                         <div class="fui-cell-text">
                             <span class="texthead" style="height: 1rem">{$row['title']}</span>
@@ -37,20 +59,27 @@
                             </div>
                         </div>
                         <div>
-                            {if empty($row['mystatus'])}
-                                <span data-id="{$row['id']}" class="baosgin">报名</span>
+                            {if $row['show']}
+                                {if empty($row['mystatus'])}
+                                    <span data-id="{$row['id']}" class="{if $row['a_end_time']>time()}baosgin{else}jiezhisign{/if}">报名</span>
+                                {/if}
+                                {if $row['mystatus']==2 || $row['mystatus']==1 || $row['mystatus']==-1}
+                                    <span class="jiezhisign">已报名</span>
+                                {/if}
+
+                            {else}
+                                <span data-id="{$row['id']}" class="jiezhisign">已满</span>
                             {/if}
-                            {if $row['mystatus']==2}
-                                <span class="jiezhisign">已报名</span>
-                            {/if}
-
-
-
                         </div>
                     </div>
                 </a>
                 {/loop}
             </div>
+            {if empty($list)}
+            <div class='content-empty' >
+                <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+            </div>
+            {/if}
         </div>
     </div>
 </div>

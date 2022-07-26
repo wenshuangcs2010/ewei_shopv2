@@ -1,0 +1,46 @@
+
+{template '_header'}
+<script>document.title = "工会矩阵"; </script>
+<style>
+    .name_img {
+        height: 2.3rem;
+        width: 2.3rem;
+        border-radius: 1.3rem;
+        line-height: 2.3rem;
+        text-align: center;
+        background-color: #0099e7;
+        color: white;
+        display: inline-block;
+    }
+    .fui-icon-group .fui-icon-col .icon div {
+        height: 2.2rem;
+        width: 2.2rem;
+    }
+</style>
+<div class="fui-page  fui-page-current" >
+    <div class='fui-content member-page navbar' style="background:#F8F8F8;top:0">
+        {loop $list $key $item}
+        <div class="fui-cell-group">
+            <div class="fui-cell">
+                <div class="fui-cell-icon ">
+                    <i class="shutiaotiao" style="height: 20px;"></i>
+                </div>
+                <div class="fui-cell-text" style="text-align: center">{$item['name']}</div>
+            </div>
+        </div>
+        <div class="fui-icon-group noborder col-4 " style="background: #ffffff">
+            {loop $item['children'] $child}
+            <a class="fui-icon-col external" href="{php echo mobileUrl('union/maillist/matrix',array('categoryid'=>$child['id']))}" data-nocache="true">
+                <div class="icon">
+                    <div class="name_img">
+                        {$child['tag_name']}
+                    </div>
+                </div>
+                <div class="text"  style="height: 3rem;text-overflow: unset;white-space: normal;" > {$child['name']}</div>
+            </a>
+            {/loop}
+        </div>
+        {/loop}
+    </div>
+</div>
+{template 'union/_footer'}

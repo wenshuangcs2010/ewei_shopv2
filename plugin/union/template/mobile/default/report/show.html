@@ -1,0 +1,63 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/index.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<script>document.title = "{$_W['union']['title']}"; </script>
+<style>
+    .report_header {
+        background-image: url({php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/report.jpg);
+    }
+</style>
+    <div class="fui-page fui-page-current page-goods-list" >
+        <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+            <div class="headinfo report_header" style="position: relative">
+                <div class="commission_head">
+                    <div class="fui-header-left">
+                        <a class="back" ></a>
+                    </div>
+                </div>
+            </div>
+            <div class="fui-content navbar dynamic_content" style="position: relative;top:0">
+
+                <div class='fui-content-inner'>
+                    {if empty($list)}
+                    <div class='content-empty' >
+                        <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                    </div>
+                    {/if}
+                    <div class="fui-goods-group container block" id="goods-list-container">
+                        {loop $list $row}
+                        <a class="fui-cell-group" href="{php echo mobileUrl('union/report/view',array('id'=>$row['id']))}">
+                            <div class="fui-cell">
+                                <div class="fui-cell-text">
+                                    <span class="texthead" style="height: 1rem">{$row['title']}</span>
+                                    <div class="online_li" style="font-size: .65rem;color: #8e7f7f;">
+                                        签到截止时间:{php echo date("Y-m-d H:i",$row['endtime'])} </div>
+                                </div>
+                                <div>
+
+                                    {if $row['endtime']>TIMESTAMP && $row['starttime']<time() && $row['has_points']==1 && $row['sign_in']==1}
+                                    <span data-id="3" class="baosgin">已签到</span>
+                                    {elseif $row['endtime']>TIMESTAMP && $row['starttime']<time() && $row['has_points']==1 && $row['sign_in']==0}
+                                    <span data-id="3" class="baosgin">未签到</span>
+                                    {elseif $row['endtime']>TIMESTAMP && $row['starttime']<TIMESTAMP}
+                                    <span data-id="3" class="baosgin">查看</span>
+                                        {elseif $row['endtime']<TIMESTAMP}
+                                    <span data-id="3" class="jiezhisign">已截止</span>
+                                        {elseif $row['starttime']>TIMESTAMP}
+                                    <span data-id="3" class="baosgin">未开始</span>
+                                        {/if}
+
+                                </div>
+                            </div>
+                        </a>
+                        {/loop}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{template 'union/_footer'}

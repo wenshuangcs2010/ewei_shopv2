@@ -1,0 +1,59 @@
+<!DOCTYPE html><html style="font-size: 625%;"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <title>酒店详情</title>
+    <script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/sowin.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/index.css">
+</head>
+
+<body>
+
+<div class="lx_box">
+    <img class="ncp_bg" src="{php echo tomedia($item['header_image'])}" width="100%" height="542">    </div>
+<div class="lx_title">
+    <div class="lx_title_lt">{$item['title']}</div>
+    <div class="lx_title_rt">
+        <div class="sc collect">
+            <img src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/sc_s1.png" date-value="0">收藏				</div>
+    </div>
+
+    <div class="lx_title_lt1 lx_title_ltl_1">
+        <span></span>详细地址：{$item['address']}			</div>
+</div>
+
+<div class="lx_hd mt_up_15">
+    介绍
+</div>
+<div class="lx_all_bg mt_up_1">
+  {$item['description']}
+</div>
+<div class="lx_hd mt_up_15">
+    重要提示
+</div>
+<div class="lx_all_bg mt_up_1">
+    <div class="title_txt title_txt1">
+        {$item['hints']}
+    </div>
+</div>
+<div class="xximg">
+    周边景区
+</div>
+{if $item['activity_id']}
+<div class="subscribe">
+    <a href="{php echo mobileUrl('union/memberactivity/view',array('id'=>$item['activity_id']))}">预订</a>
+</div>
+{/if}
+<div class="lx_all_bg">
+    <div class="title_txt title_txt1">
+       {$item['spot']}			</div>
+</div>
+<!-- 栏目 -->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+<script>
+    $('.lx_all_bg img').each(function(){
+        $(this).css("width", '100%');
+    });
+</script></body></html>

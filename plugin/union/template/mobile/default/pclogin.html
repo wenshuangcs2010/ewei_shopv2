@@ -1,0 +1,76 @@
+{template '_header'}
+<script>document.title = "PC扫码登录"; </script>
+
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="quiz">
+            <div class="commission_head " style="background-image: url('../index/resource/images/index.jpg');height: 9rem;background-size: 100% 100%;" >
+
+            </div>
+        </div>
+        <div class='fui-content' style="background: #FFFFFF;top:8.5rem">
+            <div class="fui-article-list template-1" id="container">
+
+                <div class="list-number">
+                    <div class="">
+                        <div class="fui-card">
+                            <div class="fui-card-content">用户PC登录授权</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" data-nocache="true" id="btn-submit" class="btn btn-success block">立即登录</a>
+            <a href="#" data-nocache="true" id="btn-clare" class="btn btn-success block">取消登录</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    {if is_weixin()}
+    wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: "{$jssdkconfig['appId']}", // 必填，公众号的唯一标识
+        timestamp:"{$jssdkconfig['timestamp']}" , // 必填，生成签名的时间戳
+        nonceStr: "{$jssdkconfig['nonceStr']}", // 必填，生成签名的随机串
+        signature: "{$jssdkconfig['signature']}",// 必填，签名
+        jsApiList: ['closeWindow'] // 必填，需要使用的JS接口列表
+    });
+    {/if}
+
+
+
+    require(['core'], function (core) {
+        wx.ready(function(){
+        });
+
+        $(".btn-clare").click(function () {
+            wx.closeWindow();
+        })
+
+            $("#btn-submit").click(function () {
+                core.json('union/pclogin/login', {
+                    sessionid: "{$sessionid}",
+                }, function (pay_json) {
+                if(pay_json.status==1){
+
+                    wx.closeWindow();
+                }else if(pay_json.status==2){
+                    FoxUI.confirm("您需要先去注册！","提示",function(){
+                        window.location.href="{php echo mobileUrl('union/member')}"
+                    })
+                }
+                else{
+                    FoxUI.alert(pay_json.result.message);
+                }
+
+                }, true, true);
+
+            })
+
+
+    });
+
+
+</script>
+
+

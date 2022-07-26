@@ -1,0 +1,125 @@
+<!DOCTYPE html><html style="font-size: 625%;"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <title>酒店</title>
+    <script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/sowin.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/index.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.css">
+    <script src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.js"></script>
+</head>
+<body>
+
+<div class="ly-class">
+    <ul>
+        <li class=""><a href="{php echo mobileUrl('union/lyhome/lyaddress')}">疗养点</a></li>
+        <li class="selected"><a href="{php echo mobileUrl('union/lyhome/lyhotel')}">酒店</a></li>
+    </ul>
+</div>
+<div class="nj_box nj_box1">
+    <ul>
+        <li>
+            <a id="price">价格</a>
+        </li>
+        <i></i>
+        <div class="dianji_1" id="price_list">
+            <a class="dianji_2" data-id="0">全部</a>
+            <a class="dianji_2" data-id="1">100以下</a>
+            <a class="dianji_2" data-id="2">100-200</a>
+            <a class="dianji_2" data-id="3">200以上</a>
+        </div>
+        <li class="shaixuan shaixuan1">
+            <a id="sort">排序</a>
+        </li>
+        <i class="jiage"></i>
+        <div class="dianji_1" id="sort_list" style="left: 2.1rem;">
+            <a class="dianji_2" data-id="0">全部</a>
+            <a class="dianji_2" data-id="1">价格最低</a>
+            <a class="dianji_2" data-id="2">价格最高</a>
+        </div>
+    </ul>
+</div>
+
+<div id="listdata">
+
+
+</div>
+
+<!-- 栏目 -->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+
+<script type="text/javascript">
+
+    $("#price").click(function(event){
+        $("#price_list").toggle();
+    });
+    $("#sort").click(function(event){
+        $("#sort_list").toggle();
+    });
+
+    $("#price_list a").click(function(event){
+        var id=$(this).attr('data-id');
+        var data={page:1,price:id};
+        $('#listdata').html("");
+        selectConvalesceList(data);
+    });
+
+    $("#sort_list a").click(function(event){
+        var id=$(this).attr('data-id');
+        $('#listdata').html("");
+        var data={page:1,pricesort:id};
+        selectConvalesceList(data);
+    });
+
+
+    var currentPage=1;
+    $('#listdata').dropload({
+        scrollArea : window,
+        loadDownFn : function(me){
+            currentPage++;
+            selectConvalesceList({page:currentPage});
+            me.resetload();
+        }
+    });
+    selectConvalesceList(1);
+    function selectConvalesceList(data) {
+        $.ajax({
+            type: 'get',
+            url: "{php echo mobileUrl('union/lyhome/lyhotel/getlist')}",
+            data:data,
+            dataType: 'json',
+            success: function(ret){
+                var data=ret.result.list;
+                var result = '';
+                for(var i = 0; i < data.length; i++){
+                    result+="<div class=\"nj_list test\">";
+                    result+="<a href=\"{php echo mobileUrl('union/lyhome/lyhotel/view')}&id="+data[i].id+"\">";
+                    result+="<img class=\"img_pic img_pic1\" src=\""+data[i].header_image+"\">";
+                    result+="<p class=\"img_title\">"+data[i].title+"</p>";
+                    result+="<p class=\"img_tag\">";
+                    result+="<span class=\"img_tag1\">￥</span>";
+                    result+="<span class=\"red_title h_siz_42 h_siz_img\">"+data[i].price+"</span>";
+                    result+="</p>";
+                    result+="<div style=\"margin-top:0.15rem;\">";
+                    result+="<p class=\"img_type\">";
+                    result+="<span class=\"imp_tupe_ditu\">"+data[i].address+"</span></p>";
+                    result+="<p class=\"img_type1\">"+data[i].mobilephone+"</p>";
+                    result+="</div>";
+                    result+="</a>";
+                    result+="</div>";
+                }
+                setTimeout(function(){
+                    $('#listdata').append(result);
+                },100);
+            },
+            error: function(xhr, type){
+                alert('Ajax error 401!');
+                //location.reload();
+            }
+        });
+
+    }
+</script></body></html>

@@ -1,0 +1,109 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current'>
+    <div id="m_common_header" class="m_item_header" style="z-index: 99999">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"  ><span></span></a>
+            </div>
+        </header>
+    </div>
+
+    <style>
+       .fui-list-inner .subtitle{
+            font-size: 0.75rem;
+        }
+    </style>
+    <div class='fui-content member-page navbar' style="background:#F8F8F8;top:0">
+
+
+
+        <div style="overflow: hidden;position: relative;background: #F8F8F8;height: 9.4rem;margin-bottom: 0.7rem;">
+
+            <div class="bg_member_headinfo bg-blur" style="background-image: url({php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/member/bg3x.png)" ></div>
+            <div class="memberheadinfo" style="border: none;height: 8.4rem;">
+                <div class="child userinfo">
+                    <div  style="" class="face"><img style="width: 3.2rem;height: 3.2rem" src="{$member['avatar']}" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/noface.png'"/></div>
+                </div>
+                <div class="info" style="height: 4rem;font-size: 0.7rem;">
+                    <div class="info_box" >
+                        <div class="name"> {if empty($member['realname'])}{$unionmember['name']}{else}{$member['realname']}{/if}</div>
+                        <div class="name">{if empty($member['mobile'])}{$unionmember['mobile_phone']}{else}{$member['mobile']}{/if}</div>
+                        <div class="name">{$company['title']}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fui-cell-group fui-cell-click" style="margin-top: 0;margin-left: 0.5rem;margin-right: 0.5rem;background-color: #F8f8f8;">
+            <div class="fui-cell external" href="tel::$member['mobile']">
+                <div class="fui-list-inner">
+                    <div class="row">
+                        <div class="row-text" style="font-size: 0.5rem;color: #7f7f7f">
+                            企业/组织
+                        </div>
+                    </div>
+                    <div class="subtitle">
+                        {$company['title']}
+                    </div>
+                </div>
+            </div>
+            <div class="fui-cell external" href="tel::$member['mobile']">
+                <div class="fui-list-inner">
+                    <div class="row">
+                        <div class="row-text" style="font-size: 0.5rem;color: #7f7f7f">
+                            姓名
+                        </div>
+                    </div>
+                    <div class="subtitle">
+                        {if empty($member['realname'])}{$unionmember['name']}{else}{$member['realname']}{/if}
+                    </div>
+                </div>
+            </div>
+            <a class="fui-cell external" href="tel::{if empty($member['mobile'])}{$unionmember['mobile_phone']}{else}{$member['mobile']}{/if}">
+                <div class="fui-list-inner">
+                    <div class="row">
+                        <div class="row-text" style="font-size: 0.5rem;color: #7f7f7f">
+                            联系电话
+                        </div>
+                    </div>
+                    <div class="subtitle">
+                        {if empty($member['mobile'])}{$unionmember['mobile_phone']}{else}{$member['mobile']}{/if}
+                    </div>
+                </div>
+            </a>
+            <div class="fui-cell external" href="tel::$member['mobile']">
+                <div class="fui-list-inner">
+                    <div class="row">
+                        <div class="row-text" style="font-size: 0.5rem;color: #7f7f7f">
+                            部门
+                        </div>
+                    </div>
+                    <div class="subtitle" style="white-space:inherit">
+                        {$departmentname}
+                    </div>
+                </div>
+            </div>
+            <div class="fui-cell external" href="tel::$member['mobile']">
+                <div class="fui-list-inner">
+                    <div class="row">
+                        <div class="row-text" style="font-size: 0.5rem;color: #7f7f7f">
+                            职务
+                        </div>
+                    </div>
+                    <div class="subtitle">
+                        {if $unionmember['duties']}{$unionmember['duties']}{else}-{/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<style>
+    .info .name{
+        height: 1rem;
+    }
+</style>
+{template 'union/_footer'}

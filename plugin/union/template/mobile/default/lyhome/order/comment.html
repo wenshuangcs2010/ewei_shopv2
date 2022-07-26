@@ -1,0 +1,66 @@
+{template '_header'}
+<div class='fui-page  fui-page-current order-comment-page'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back" ></a>
+        </div>
+        <div class="title">评价</div>
+        <div class="fui-header-right">&nbsp;</div>
+    </div>
+    <div class='fui-content margin navbar'>
+        <div class="fui-list-group goods-list-group">
+            <div class="fui-list-group-title"><i class="icon icon-shop"></i> {$_W['shopset']['shop']['name']}</div>
+            <div class="fui-list goods-list" data-goodsid="{$g['goodsid']}">
+                <a class="fui-list-media" href="{php echo mobileUrl('union/lyhome/lyaddressline/view',array('id'=>$lyaddressinfo['addressid']))}">
+                    <img src="{php echo tomedia($lyaddressinfo['header_image'])}" class="round">
+                </a>
+                <a class="fui-list-inner" href="{php echo mobileUrl('union/lyhome/lyaddressline/view',array('id'=>$lyaddressinfo['addressid']))}">
+                    <div class="text goodstitle">{$lyaddressinfo['title']}</div>
+                </a>
+                <div class='fui-list-angle'>
+                    <p>￥<span class='marketprice'>{$lyaddressinfo['price']}<br/>x1</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="fui-title">整单评价</div>
+        <div class="fui-cell-group">
+            {if $order['iscomment']==0}
+            <div class='fui-cell must'>
+                <div class='fui-cell-label'>评分</div>
+                <div class='fui-cell-info'>
+                    <div class='fui-stars warning'  data-value='0'>
+                        <span class='stars'></span>
+                        <span class='fui-label fui-default'>没有评分</span>
+                        <i class='icon icon-roundclose clear'></i>
+                    </div>
+                </div>
+            </div>
+            {/if}
+            <div class='fui-cell'>
+                <div class='fui-cell-label'>晒图</div>
+                <div class='fui-cell-info'>
+                    <ul class="fui-images fui-images-sm" id="images"></ul>
+                    <div class="fui-uploader fui-uploader-sm"
+                         data-max="5"
+                         data-count="0">
+                        <input type="file" name='imgFile0' id='imgFile0' multiple="" accept="image/*" >
+                    </div>
+                </div>
+            </div>
+            <div class='fui-cell must'>
+                <div class='fui-cell-label '>评论</div>
+                <div class='fui-cell-info'><textarea rows="3" placeholder="说点什么吧" id='comment'></textarea></div>
+            </div>
+        </div>
+
+    </div>      <div class='fui-footer'>
+    <a class='btn btn-danger btn-submit block'>提交评价</a>
+</div>
+    <script language='javascript'>require(['../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/comment.js'], function (modal) {
+        modal.init({
+            orderid: {php echo intval($lyaddressinfo['id'])},
+            iscomment:{php echo intval($lyaddressinfo['iscomment'])},
+    });
+    });</script>
+</div>
+{template '_footer'}

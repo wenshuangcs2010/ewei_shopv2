@@ -1,0 +1,63 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+<style>
+    {if $view['header_image']!=""}
+    .quiz{
+        background-image:url("{php echo tomedia($view['header_image'])}");!important;
+    }
+    {else}
+    .quiz{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/quiz/timg.jpg");
+    }
+    {/if}
+
+</style>
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="quiz">
+            <div class="commission_head ">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+                <div class="header_bottom">{$view['title']}</div>
+            </div>
+        </div>
+        <div class='fui-content' style="background: #FFFFFF;top:8.5rem">
+            <div class="fui-article-list template-1" id="container">
+
+                <div class="list-number">
+                    <div class="">
+                        <div class="fui-card">
+
+
+                            <div class="fui-card-content">{$view['description']}</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <a href="{php echo mobileUrl('union/quiz/start',array('id'=>$view['id']))}" data-nocache="true" id="btn-submit" class="btn btn-success block">{$bottontext}</a>
+
+        </div>
+    </div>
+
+</div>
+<style>
+    .clear{
+        background-color:white!important;
+        color: #0a0a0a!important;
+    }
+</style>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/util.js'], function (modal) {
+        modal.init_data({lasttime:"{php echo $view['a_end_time']-time()}"});
+
+    });
+</script>
+

@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="en" style="font-size: 625%;"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+<title>精品线路</title>
+<script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.css">
+<script src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.js"></script>
+</head>
+
+<body>
+
+<div class="fui-header">
+    <div class="fui-header-left">
+        <a class="back" onclick="history.back();"></a>
+    </div>
+    <div class="title">精品线路</div>
+    <div class="fui-header-right"></div>
+</div>
+
+<!-- 搜索 -->
+<div class="search_bg"></div>
+<div class="search" style="top:0.89rem"></div>
+<form method="get" action="" onsubmit="return false">
+<input class="search_input" type="text" style="top: 0.95rem" name="searchContent" id="searchContent" value="" placeholder=" 请输入标题、承办单位">
+<button type="submit" id="searchBtn" class="search_bottom">搜索</button>
+</form>
+<div class="nj_box">
+  <ul>
+        <li class="on" data-type="zh">综合</li>
+        <li data-value="1" data-type="volume" >销量</li>
+        <li data-value="1"   data-type="evaluate" >评价</li>
+        <li data-value="1"  data-type="activity" >活动</li>
+
+      </ul>
+  <p class="sx_bg">筛选</p>
+</div>
+<div id="listdata">
+ 
+
+</div>
+
+<!-- 栏目 -->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+<div class="search_box_mask" style="display: none;"></div>
+<div class="search_box">
+  <div class="search_xs">
+      <div class="titl_hd">目的地</div>
+      <div class="search_show areaCode" data-value="">
+            <ul class="search_txt">
+                <li class="on" data-value="0">不限</li>
+                {loop $citylist $ci}
+                <li class="" data-value="{$ci}">{$ci}</li>
+                {/loop}
+            </ul>
+      </div>
+
+      <div class="titl_hd">行程天数</div>
+      <div class="search_show xingcheng" data-value="">
+          <ul class="search_txt">
+              <li class="on" data-value="0">不限</li>
+              {loop $dayvalelist $ci}
+              <li class="" data-value="{$ci}">{$ci}</li>
+              {/loop}
+          </ul>
+      </div>
+
+
+      <div class="titl_hd">主题</div>
+      <div class="search_show theme" data-value="0">
+        <ul class="search_txt">
+          <li class="on" data-value="0">不限</li>
+		  {loop $theme $k $v}
+            <li data-value="{$k}">{$v}</li>
+            {/loop}
+		  </ul>
+      </div>
+      <div class="titl_hd">交通</div>
+      <div class="search_show traffic" data-value="0">
+        <ul class="search_txt">
+          <li class="on" data-value="0">不限</li>
+            {loop $traffic $k $v}
+            <li  data-value="{$k}">{$v}</li>
+            {/loop}
+        </ul>
+      </div>
+      <div class="titl_hd">景区</div>
+      <div class="search_show scenic" data-value="0">
+          <ul class="search_txt">
+              <li class="on" data-value="0">不限</li>
+              <li class="" data-value="2">有</li>
+              <li class="" data-value="1">无</li>
+          </ul>
+      </div>
+      <div class="titl_hd">线路分类</div>
+      <div class="search_show type" data-value="0">
+          <ul class="search_txt">
+              <li class="on" data-value="0">不限</li>
+              <li class="" data-value="1">市内</li>
+              <li class="" data-value="2">市外</li>
+          </ul>
+      </div>
+ </div>
+  <div class="search_bu"></div>
+  <div class="search_brn_box">
+   <a class="blue">重置</a>
+   <a class="red">确定</a>
+ </div>
+</div>
+
+
+<script type="text/javascript">
+  var currentPage=1;
+  /*
+  $('#listdata').dropload({
+    scrollArea : window,
+    loadDownFn : function(me){
+        currentPage++;
+        selectConvalesceList({page:currentPage});
+        me.resetload();
+    }
+  });*/
+  selectConvalesceList({});
+  function selectConvalesceList(data) {
+      {if $addressid!=''}
+      data.addressid='{$addressid}';
+      {/if}
+          console.log(data);
+    $.ajax({
+            type: 'post',
+            url: "{php echo mobileUrl('union/lyhome/lyaddressline/getlist')}",
+            data:data,
+            dataType: 'json',
+            success: function(res){
+                var result = '';
+                var now = $.now();
+                var data=res.result.list;
+                console.log(data);
+                for(var i = 0; i < data.length; i++){
+                     result+="<div class=\"nj_list\">";
+                     result+="<a href=\"{php echo mobileUrl('union/lyhome/lyaddressline/view')}&id="+data[i].id+"\">";
+                     result+="<img class=\"img_pic \" src=\""+data[i].header_image+"\">";
+                     result+="<p class=\"img_title\">"+data[i].title+"</p>";
+                     result+="<p class=\"img_price\">";
+                     result+="";
+                    if (data[i].activity_is_show == 1 && (!data[i].activity_start_time || now >= data[i].activity_start_time) && (!data[i].activity_end_time || now <= data[i].activity_end_time)) {
+                        result+="<span class=\"img_red act_greed\">活动</span>";
+                    }
+                     result+="</p>";
+                     result+="<p class=\"img_type\">承办单位："+data[i].unitname+"</p>";
+                     result+="<p class=\"img_type\">联系电话："+data[i].mobilephone+"</p>";
+                     result+="<p class=\"img_pj\">";
+                     result+="<span class=\"blue_title h_siz_26\">"+data[i].evaluate+"</span><span class=\"gray_title h_siz_26\">/5分 </span> <span class=\"h_siz_26 blue_title\"> "+data[i].evaluate_num+"条评价</span>";
+                     result+="</p>";
+                     result+="</a>";
+                     result+="</div>";
+                }
+                setTimeout(function(){
+                    $('#listdata').append(result);
+                },100);
+            },
+            error: function(xhr, type){
+                alert('网络延迟，确认重新加载!');
+                location.reload();
+            }
+        });
+   
+  }
+
+  $(".nj_box li").click(function(event) {
+
+
+      $("#listdata").html("");
+      var type=$(this).attr("data-type");
+      var vaule=$(this).attr("data-value");
+
+      $(".nj_box li").removeClass("on");
+      if(vaule==1){
+          $(this).addClass("on");
+          $(this).attr("data-value",0);
+      }else{
+
+          $(this).attr("data-value",1);
+      }
+
+      var data={page:1,type:type,vaule:vaule};
+      selectConvalesceList(data);
+  });
+
+
+  $("#searchBtn").click(function () {
+      var keywords=$("#searchContent").val();
+      $("#listdata").html("");
+
+      selectConvalesceList({page:1,keywords:keywords});
+  })
+
+
+  $(".sx_bg").click(function(event) {
+      $(".search_box_mask").fadeIn(300);
+      $(".search_box").show();
+      $(".search_box").animate({left:'1.6rem'});
+  });
+  $(".search_box_mask").click(function(event) {
+      $(this).fadeOut(300);
+      $(".search_box").animate({left:'7.5rem'});
+      $(".search_box").hide();
+  });
+
+  $(".search_show").delegate("li","click",function(event) {
+       $(this).siblings().removeClass('on');
+       $(this).addClass('on');
+       $(this).closest(".search_show").attr('data-value', $(this).attr('data-value'));
+       
+       if($(this).closest(".search_show").hasClass('areaCode')){
+        $(this).closest('ul').nextAll().remove();
+        if($(this).html()!="不限"){
+          var areaCode=$(this).attr('data-value');
+        }  
+       }
+  }); 
+
+
+  $(".search_brn_box .blue").click(function(event) {
+     $(".search_show li").removeClass('on');
+     $(".search_box .areaCode").find('ul:gt(0)').remove();
+     // $(".search_show [data-value='33']").addClass('on');
+     $(".search_show [data-value='0']").addClass('on');
+     $(".search_show").attr('data-value', '0');
+     $(".search_box .areaCode").attr('data-value', '0');
+     $(".search_box .xingcheng").attr('data-value', '0');
+
+  });
+
+
+    $(".search_brn_box .red").click(function(event) {
+        var data={};
+      var areaCode=$.trim($(".search_box .areaCode").attr('data-value'));
+      if(areaCode!="0"){
+          data.areaCode=areaCode;
+      }
+      var theme=$.trim($(".search_box .theme").attr('data-value'));
+      if(theme!="0"){
+          data.theme=theme;
+      }
+      var traffic=$.trim($(".search_box .traffic").attr('data-value'));
+      if(traffic!="0"){
+          data.traffic=traffic;
+      }
+      var scenic=$.trim($(".search_box .scenic").attr('data-value'));
+      if(scenic!="0"){
+          data.has_scenic=scenic
+      }
+      var type=$.trim($(".search_box .type").attr('data-value'));
+      if(type!="0"){
+         data.traffic_type=type;
+      }
+      var xingcheng=$.trim($(".search_box .xingcheng").attr('data-value'));
+        if(xingcheng!="0"){
+            data.xingcheng=xingcheng;
+        }
+        $('#listdata').html("");
+         data.page=1;
+
+        selectConvalesceList(data);
+
+        $(".search_box_mask").hide();
+        $(".search_box").animate({left:'7.5rem'});
+        $(".search_box").hide();
+  });
+</script></body></html>

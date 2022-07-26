@@ -1,5 +1,5 @@
 {template '_header'}
-<script>document.title = "员工风采详情"; </script>
+<script>document.title = "职工风采详情"; </script>
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 <link href="http://localhost/we7new/addons/ewei_shopv2//plugin/union/template/web/manage/js/plugs/ueditor/themes/default/css/ueditor.css" rel="stylesheet" type="text/css"/>
@@ -11,24 +11,20 @@
             <div class="fui-header-left">
                 <a class="back" ></a>
             </div>
-            <div class="title">员工风采详情</div>
+            <div class="title">职工风采详情</div>
             <div class="fui-header-right"></div>
         </div>
         {/if}
         <div class="fui-content navbar personnelmien_info_content" style="position: relative;{if is_mobile() &&!is_weixin()}top:2.2rem{else}top:0{/if}">
-            <div class="fui-list no-border">
+            <div class="fui-list no-border" >
                 <div><img style="width: 4rem" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/bg2.png'"  src="{$personnelmien_info['header_imageurl']}"></div>
                 <div class="fui-list-inner" style="margin-left: 0.75rem;">
                     <div>{$personnelmien_info['title']}</div>
                     <div style="margin-top: 1.2rem;"><span class="span_img" style="width: 1.5rem;display: -webkit-box;float: left;margin-right: 0.5rem"> <img width="100%" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_chamption.png"></span>{$personnelmien_info['teamname']}</div>
                 </div>
-
             </div>
-
-
-
-            <div class="description">{$personnelmien_info['description']}</div>
-            <a class="fui-cell-group" href="{php echo mobileUrl('union/readmember/members',array('readtype'=>2))}">
+            <div class="description" style="white-space: inherit;word-wrap: break-word;word-break: break-all;overflow: hidden;">{$personnelmien_info['description']}</div>
+            <a class="fui-cell-group" href="{php echo mobileUrl('union/readmember/members',array('readtype'=>2,'articleid'=>$personnelmien_info['id']))}">
                 <div class="fui-cell">
                     <div class="fui-cell-icon">
                         <span class="icon icon-person2"></span>

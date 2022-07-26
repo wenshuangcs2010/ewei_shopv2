@@ -1,0 +1,132 @@
+<!DOCTYPE html><html ><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <title>最新政策</title>
+    <script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/sowin.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/index.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.css">
+    <script src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.js"></script>
+</head>
+<style>
+    .fui-header {
+        height: 0.8rem;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: .4rem;
+        position: absolute;
+        top: 0;
+        margin: 0;
+        z-index: 1;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        background: #f7f7f7;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+    }
+    .fui-header .fui-header-left {
+        position: absolute;
+        left: 0;
+        padding-left: .3rem;
+        height: 0.8rem;
+        line-height: 0.8rem;
+        z-index: 2;
+    }
+    .fui-header .title {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 0.8rem;
+        line-height: 0.8rem;
+        color: #000;
+        text-align: center;
+        position: absolute;
+        display: block;
+        width: 100%;
+        padding: 0;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+    .fui-header .fui-header-right {
+        position: absolute;
+        right: 0;
+        padding-right: .3rem;
+        height: 0.8rem;
+        line-height: 0.8rem;
+        z-index: 2;
+        font-size: .7rem;
+    }
+    .fui-header a {
+        height: 0.8rem;
+        line-height: 0.8rem;
+
+        margin: 0;
+        top: 0;
+        color: #999;
+        display: block;
+        padding: 0 .1rem;
+        font-size: .4rem;
+    }
+    .fui-header a.back:before {
+        content: " ";
+        display: inline-block;
+        -webkit-transform: rotate(
+                45deg
+        );
+        -ms-transform: rotate(45deg);
+        transform: rotate(
+                45deg
+        );
+        height: 0.3rem;
+        width: 0.3rem;
+        border-width: 0 0 2px 2px;
+        border-color: #666;
+        border-style: solid;
+        position: relative;
+        top: 0;
+    }
+</style>
+<style>
+    ul {}
+    li {
+        border-bottom: 1px solid #ddd;
+        padding: 0 0.6rem;
+    }
+    a {display: block;height: 1rem;line-height: 1rem;font-size: 0.3rem;}
+
+
+</style>
+<body>
+
+<div class="fui-header">
+    <div class="fui-header-left">
+        <a class="back" onclick="history.back();"></a>
+    </div>
+    <div class="title">最新政策</div>
+    <div class="fui-header-right"></div>
+</div>
+<div class="list_1" style="padding-top: 1rem;">
+    <ul>
+        <li><a href="{php echo mobileUrl('union/lyhome/policyview1')}">1) 1_2020年职工疗休养新政解读</a></li>
+        <li><a href="{php echo mobileUrl('union/lyhome/policyview2')}">2) 1_tpyrced_关于调整职工疗休养政策的通知</a></li>
+
+    </ul>
+</div>
+
+
+<!-- 栏目 -->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+</body></html>

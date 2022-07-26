@@ -2,6 +2,20 @@
 <script>document.title = "{$_W['union']['title']}"; </script>
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+<style>
+    {if $view['images']!=""}
+    .member_ac{
+        background-image:url("{php echo tomedia($view['images'])}");!important;
+    }
+    {else}
+    .member_ac{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/pixun.jpg");
+    }
+    {/if}
+
+</style>
 <div class='fui-page  fui-page-current member-view-page'>
     <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
         <div class="headinfo member_ac">
@@ -31,6 +45,24 @@
                     <div class="fui-cell-info"><p>报名倒计时</p></div>
                     <div class="right"><span class="day">00</span><span class="clear">天</span><span class="hour">00</span>:<span class="minute">00</span>:<span class="second">00</span></div>
                 </div>
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_daojishi.png">
+                    </div>
+
+                    <div class="fui-cell-info" ><p>活动时间</p></div>
+                    <div class="right">{php echo date('Y.m.d',$view['start_time'])} 至 {php echo date('Y.m.d',$view['end_time'])}</div>
+                </div>
+                {if $view['address']}
+                <a class="fui-cell" href="{php echo mobileUrl('union/map',array('id'=>$view['id']))}">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_daojishi.png">
+                    </div>
+
+                    <div class="fui-cell-info" style="overflow: inherit;"><p>活动地址</p></div>
+                    <div class="right">{$view['address']}</div>
+                </a>
+                {/if}
             </div>
             <div class="fui-list" style="height: 2.0rem;background:#F8F8F8;font-size: 0.6rem">
                 发起人信息
@@ -49,7 +81,7 @@
                     </div>
 
                     <div class="fui-cell-info"><p>联系方式</p></div>
-                    <div class="right">{$view['phone']}</div>
+                    <div class="right"  >{$view['phone']}</div>
                 </a>
             </div>
             <div class="fui-list" style="height: 2.0rem;background:#F8F8F8;font-size: 0.6rem">
@@ -61,14 +93,40 @@
                     {$view['declaration']}
                 </div>
             </div>
-            {if $view['a_end_time']>time() && $mycount==0}
-            <a href="{php echo mobileUrl('union/memberactivity/post',array('id'=>$view['id']))}" data-nocache="true" id="btn-submit" class="btn btn-success block">立即报名</a>
+            {if $bottontext}
+                {if $view['a_end_time']>time() && empty($mycount)}
+                <a href="{php echo mobileUrl('union/memberactivity/post',array('id'=>$view['id']))}" data-nocache="true" id="btn-submit" class="btn btn-success block">报名</a>
+                {/if}
+                {if $mycount['status']==1}
+                <a href="#" data-nocache="true"  class="btn btn-close block">待审核</a>
+                {/if}
+                {if $mycount['status']==-1}
+                <a href="#" data-nocache="true"  class="btn btn-close block">审核不通过</a>
+                {/if}
+                {if $mycount['status']==2}
+                <a href="#" data-nocache="true"  class="btn btn-close block">已报名</a>
+                {/if}
+            {else}
+            <a href="#" data-nocache="true"  class="btn btn-close block">报名人数已满</a>
             {/if}
-            {if $mycount>=1}
-            <a href="#" data-nocache="true"  class="btn btn-close block">已报名</a>
-            {/if}
+            <a class="fui-cell-group" data-nocache="true" href="{php echo mobileUrl('union/readmember/members',array('readtype'=>3,'articleid'=>$view['id']))}">
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <span class="icon icon-person2"></span>
+                    </div>
+                    <div class="fui-cell-text" style="font-size: 0.6rem">
+                        接收人:{loop $readmember['memberlist'] $m}
+                        {$m['realname']},
+                        {/loop}等{$allcount}人
+                    </div>
+                    <div class="fui-cell-remark" style="font-size: 0.5rem;">{$notreadcount}人未读</div>
+                </div>
+            </a>
+
         </div>
+
     </div>
+
 
 </div>
 <style>
@@ -79,8 +137,14 @@
 </style>
 <script language='javascript'>
     require(['../addons/ewei_shopv2/plugin/union/static/js/util.js'], function (modal) {
+
+        clearInterval(window.timesindex);
+        //console.log(window.timesindex);
+        console.log(window.timesindex);
         modal.init_data({lasttime:"{php echo $view['a_end_time']-time()}"});
+
+
 
     });
 </script>
-
+{template '_share'}

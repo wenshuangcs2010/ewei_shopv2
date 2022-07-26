@@ -1,0 +1,83 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<style>
+    {if $view['header_image']!=""}
+    .quiz{
+        background-image:url("{php echo tomedia($view['header_image'])}");!important;
+    }
+    {else}
+    .quiz{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/quiz/timg.jpg");
+    }
+    {/if}
+
+</style>
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="quiz">
+            <div class="commission_head ">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+                <div class="header_bottom">{$view['title']}</div>
+            </div>
+        </div>
+        <div class='fui-content' style="background: #FFFFFF;top:8.5rem">
+            <div class="fui-article-list template-1" id="container">
+
+                {loop $qu_list $index $quinfo}
+                <div class="list-number"  >
+                    <div class="content_top">第{php echo $index+1}/{php echo count($qu_list)}题</div>
+                    <div class="fui-card" style="padding-top: 2rem;border-radius: 0.7rem;">
+                        <div class="fui-card-title">
+                            <span class="title" style="line-height: 1.4rem;font-size: .7rem;"><span style="font-size: 0.8rem;font-weight: 600;display: inline;margin-right: 0.5rem;;color: #5b5b5b">{if $quinfo['qus_type']==1}[单选]{else}[多选]{/if}</span>{$quinfo['title']}</span>
+                        </div>
+                        <div class="fui-card-content">
+                            <div class="fui-cell-group">
+                                {loop $quinfo['answerlist'] $item}
+                                <div class="fui-cell answer"  style=" white-space: initial; margin-bottom: 0.2rem;">
+                                    <div class="fui-cell-info" style="white-space: initial;font-size: .7rem"><span>{$item['title']}</span> {$item['value']}</div>
+                                    <div class="external" {if $item['user_check']==0}style="display: none;"{/if} >
+                                        <img style="width: 1.3rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/quiz/selected.png">
+                                    </div>
+                                </div>
+                                {/loop}
+                            </div>
+                        </div>
+                    {if $view['type']==0}
+                        <div class="fui-card-content">正确答案是
+                            {loop $quinfo['answerlist'] $item}
+                                    {if $item['yes']==1}
+                            <span style="color:red;">{$item['title']}</span>
+                                    {/if}
+                            {/loop}
+                            您的回答{if $quinfo['is_ok']==1}正确{else}错误{/if}
+                        </div>
+                    {/if}
+                    </div>
+
+                </div>
+                {/loop}
+            </div>
+
+
+
+        </div>
+    </div>
+
+</div>
+<style>
+    .clear{
+        background-color:white!important;
+        color: #0a0a0a!important;
+    }
+</style>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/util.js'], function (modal) {
+        modal.init_data({lasttime:"{php echo $view['a_end_time']-time()}"});
+
+    });
+</script>
+

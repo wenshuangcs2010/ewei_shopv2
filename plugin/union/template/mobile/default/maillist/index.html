@@ -1,0 +1,162 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css">
+<script>document.title = "{$union_title}"; </script>
+<div class='fui-page  fui-page-current'>
+
+<style>
+    .fui-list-media img.round{
+        border-radius: 1.3rem;
+    }
+    .name_img{
+        height: 2.3rem;
+        width: 2.3rem;
+        border-radius: 1.3rem;
+        line-height: 2.3rem;
+        text-align: center;
+
+        background-color: #0099e7;
+    }
+    .fui-list .fui-list-inner .subtitle {
+        font-size: 0.45rem;
+        color: #999;
+    }
+    .fui-list-inner .row .row-text{
+        font-size: 0.7rem;
+    }
+    .search-input i{
+        line-height: 1.7rem;
+    }
+    .searchbar .search-input input{
+        height: 1.7rem;
+    }
+    .searchbar.searchbar-active .searchbar-cancel {
+        right: 0.5rem;
+        opacity: 1;
+        color: #5f646e;
+        height: 1.7rem;
+        font-size: 0.7rem;
+        line-height: 1.7rem;
+    }
+
+     .searchbtn {
+        background: none;
+        border: 0;
+    }
+    .fui-searchbar .searchbar {
+        margin: 0 -0.5rem;
+        padding: 0.4rem 0.6rem;
+        background: #e8e8e8;
+
+    }
+   .fui-header-left {
+        left: 0;
+        padding-left: .3rem;
+        height: 2.2rem;
+        line-height: 2.2rem;
+        z-index: 2;
+    }
+    .fui-header-left a.back:before {
+        border-color: #0c78c2;
+    }
+    .fui-header-left a {
+        height: 2.2rem;
+        line-height: 2.5rem;
+        margin: 0;
+        top: 0;
+        color: #ffffff;
+        display: block;
+        padding: 0 .5rem;
+        font-size: .7rem;
+        width: 2rem;
+    }
+    .search {
+        position: absolute;
+        width: 80%;
+        top: 0.4rem;
+        left: 2rem;
+    }
+</style>
+    <div class='fui-content' style="background:#F8F8F8;bottom: 2.5rem;">
+
+            <div class="fui-header-left">
+                <a class="back"></a>
+                <div class="search">
+                    <form method="post" action="{php echo mobileUrl('union/maillist')}">
+                        <div class="searchbar">
+                            <div class="search-input">
+                                <i class="icon icon-search"></i>
+                                <input type="search" class="serchinput" id="keywords" name="keywords" placeholder="输入关键字...">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
+
+
+            {if empty($list)}
+            <div class="fui-cell-group fui-cell-click">
+                <a class="fui-cell" data-nocache="true" href="{php echo mobileUrl('union/maillist',array('categoryid'=>0))}">
+                    <div class="fui-cell-icon"><i class="iconfont icontongxunlu"></i></div>
+                    <div class="fui-cell-text"><p>{$union_title}</p></div>
+                    <div class="fui-cell-remark"></div>
+                </a>
+            </div>
+            {else}
+                 <div class="fui-cell-group fui-cell-click">
+                    {loop $list['categorylist'] $row}
+                        <a class="fui-cell" data-nocache="true" href="{php echo mobileUrl('union/maillist',array('categoryid'=>$row['id']))}">
+
+                            <div class="fui-cell-text"><p>{$row['name']}({$row['count']})</p></div>
+                            <div class="fui-cell-remark"></div>
+                        </a>
+                    {/loop}
+                 </div>
+                <div class="fui-cell-group fui-cell-click">
+                    {loop $list['memberlist'] $row}
+                    <a class="fui-list fui-cell" data-nocache="true" href="{php echo mobileUrl('union/maillist/memberinfo',array('id'=>$row['id']))}">
+                        {if !empty($row['avatar'])}
+                        <div class="fui-list-media">
+                            <img class="round" src="{$row['avatar']}" data-lazyloaded="true">
+                        </div>
+                        {else}
+                        <div class="fui-list-media" style="color: #FFFFFF">
+                            <div class="name_img">
+                                {$row['title_name']}
+                            </div>
+                        </div>
+                        {/if}
+                        <div class="fui-list-inner">
+                            <div class="row">
+                                <div class="row-text">
+                                    {$row['name']}
+                                    <i class="icon icon-favor text-danger"></i>
+                                </div>
+                            </div>
+                            <div class="subtitle">
+                                {$row['duties']}
+                            </div>
+                        </div>
+                        <div class="fui-cell-remark"></div>
+                    </a>
+
+                    {/loop}
+                </div>
+            {/if}
+        {if empty($list['categorylist']) && empty($list['memberlist']) && empty($union_title)}
+            <div class="content-empty" style="display: block">
+                <i class="icon icon-searchlist"></i><br>暂时没有任何数据
+            </div>
+        {/if}
+    </div>
+</div>
+
+<style>
+    .info .name{
+        height: 1rem;
+    }
+</style>
+{template 'union/_footer'}

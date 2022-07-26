@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en" style="font-size: 625%;"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+<title>WECHAT_EMPTY_TITLE</title>
+<script type="text/javascript" src="js/js.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+<link rel="stylesheet" href="css/coalsun.css">
+<link rel="stylesheet" href="js/dist/dropload.min.css">
+<script src="js/dist/dropload.min.js"></script>
+</head>
+
+<body>
+
+  
+<!-- 搜索 -->
+<div class="search_bg"></div>
+<div class="search"></div>
+<form method="get" action="news.php">
+<input class="search_input" type="text" name="searchContent" id="searchContent" value="" placeholder=" 请输入标题">
+<button type="submit" id="searchBtn" class="search_bottom">搜索</button>
+</form>
+<div class="nj_box">
+  <div class="news_hd h_siz_34">资讯列表</div>
+</div>
+<div id="listdata">
+ 
+<div class="news_list">
+<a href="newinfo.html">
+<p class="news_title">春暖花开,我们走起!</p>
+<p class="news_di"><span class="h_siz_26 gray_title mp_20">文章来源：丽水市总工会</span><span class="h_siz_26 gray_title">时间：2019-02-26</span></p></a></div><div class="news_list"><a href="news_show.php?id=28"><p class="news_title">景宁县总工会智慧工会暨疗休养网上商城启动</p><p class="news_di"><span class="h_siz_26 gray_title mp_20">文章来源：景宁工会</span><span class="h_siz_26 gray_title">时间：2018-12-25</span></p></a></div><div class="news_list"><a href="news_show.php?id=25"><p class="news_title">周边五省(市)线路上线,跨省疗休养可以走起啦</p><p class="news_di"><span class="h_siz_26 gray_title mp_20">文章来源：</span><span class="h_siz_26 gray_title">时间：2018-08-03</span></p></a></div><div class="news_list"><a href="news_show.php?id=26"><p class="news_title">丽水代表团在全省职工疗休养产品设计决赛中斩获佳绩!</p><p class="news_di"><span class="h_siz_26 gray_title mp_20">文章来源：</span><span class="h_siz_26 gray_title">时间：2018-08-03</span></p></a></div><div class="news_list"><a href="news_show.php?id=27"><p class="news_title">“魅力成都 巴适康养”跨省疗休养首发团满意而归!</p><p class="news_di"><span class="h_siz_26 gray_title mp_20">文章来源：</span><span class="h_siz_26 gray_title">时间：2018-08-03</span></p></a></div></div>
+
+<!-- 栏目 -->
+<div class="bu"></div>
+<div class="bottom">
+  <a href="index.php"></a>
+<!--  <a href="nj.php"></a>-->
+<!--  <a href="lx.php"></a>-->
+  <a href="home.php"></a>
+</div>
+<script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1273235203'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s22.cnzz.com/stat.php%3Fid%3D1273235203' type='text/javascript'%3E%3C/script%3E"));
+</script><span style="display:none;" id="cnzz_stat_icon_1273235203"><a href="https://www.cnzz.com/stat/website.php?web_id=1273235203" target="_blank" title="站长统计">站长统计</a></span><script src=" http://s22.cnzz.com/stat.php?id=1273235203" type="text/javascript"></script><script src="http://c.cnzz.com/core.php?web_id=1273235203&amp;t=z" charset="utf-8" type="text/javascript"></script>
+
+<script>
+   var currentPage=1;
+  $('#listdata').dropload({
+    scrollArea : window,
+    loadDownFn : function(me){
+        currentPage++;
+        selectConvalesceList(currentPage);
+        me.resetload();
+    }
+  });
+  selectConvalesceList(1);
+  function selectConvalesceList(currentPage) {
+  /*
+    $.ajax({
+            type: 'get',
+            url: "dateAjax.php",
+            data: {ajaxType:'selectInfoList',currentPage:currentPage,},
+            dataType: 'json',
+            success: function(data){
+                var result = '';
+                for(var i = 0; i < data.length; i++){
+                     result+="<div class=\"news_list\">";
+                     result+="<a href=\"news_show.php?id="+data[i].id+"\">";
+                     result+="<p class=\"news_title\">"+data[i].title+"</p>";
+                     result+="<P class=\"news_di\"><span class=\"h_siz_26 gray_title mp_20\">文章来源："+data[i].source+"</span><span class=\"h_siz_26 gray_title\">时间："+data[i].posttime+"</span></P>";
+                     result+="</a>";
+                     result+="</div>";
+                }
+                setTimeout(function(){
+                    $('#listdata').append(result);
+                },100);
+            },
+            error: function(xhr, type){
+                alert('网络延迟，确认重新加载!');
+                location.reload();
+            }
+        });
+	*/
+  }
+</script></body></html>
