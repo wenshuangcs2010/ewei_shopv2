@@ -18,9 +18,7 @@ class Test
 
     public function __construct()
     {
-        global $_W;
-        $this->post = $_POST;
-        if($this->post['type']=="shipping"){
+
 
             global $_W;
             $this->post = $_POST;
@@ -61,7 +59,7 @@ class Test
                     plog('order.op.send', "订单发货 ID: {$order['id']} 订单号: {$order['ordersn']} <br/>快递公司: {$value['logisticsName']} 快递单号: {$value['logisticsNo']}");
                 }
             }
-        }
+
        	echo "SUCCESS";
     }
 }
