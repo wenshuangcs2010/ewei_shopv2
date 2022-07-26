@@ -155,6 +155,37 @@ class Balance_EweiShopV2Page extends PluginWebPage
 			}
 		}
 	}
+
+	private function getSanc($type){
+        global $_W;
+        if (empty($type))
+        {
+            $scene = rand(100001, 2147483647);
+        }
+        else
+        {
+            $scene = rand(1, 100000);
+        }
+
+
+        while (1)
+        {
+            $exist = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('qrcode') . ' WHERE qrcid = :qrcid AND uniacid = :uniacid', array(':qrcid' => $scene, ':uniacid' => $_W['uniacid']));
+            if ($exist <= 0) {
+                break;
+            }
+            if (empty($type))
+            {
+                $scene = rand(100001, 2147483647);
+            }
+            else
+            {
+                $scene = rand(1, 100000);
+            }
+        }
+        return $scene;
+    }
+
 	public function creat() 
 	{
 		global $_GPC;
@@ -203,18 +234,9 @@ class Balance_EweiShopV2Page extends PluginWebPage
 				$rand = $this->getRandChar($length, $shuzi, $daxie, $xiaoxie);
 				$key = $qianzhui . $rand;
 				$serial = 'DH' . date('Ymd', time()) . $rand_id;
-				if (empty($res['code_type'])) 
-				{
-					$scene = rand(100001, 2147483647);
-				}
-				else 
-				{
-					$scene = rand(1, 100000);
-				}
-				$exist = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('qrcode') . ' WHERE qrcid = :qrcid AND uniacid = :uniacid', array(':qrcid' => $scene, ':uniacid' => $_W['uniacid']));
-				while (!(empty($exist))) 
-				{
-				}
+                $scene=$this->getSanc($res['code_type']);
+
+
 				pdo_update('ewei_shop_exchange_code', array('key' => $key, 'scene' => $scene, 'serial' => $serial), array('id' => $rand_id));
 				$insert = array('uniacid' => $_W['uniacid'], 'name' => 'ewei_shopv2:exchange:balance', 'module' => 'news', 'displayorder' => $rand_id, 'status' => 1);
 				if (IMS_VERSION == '1.0') 

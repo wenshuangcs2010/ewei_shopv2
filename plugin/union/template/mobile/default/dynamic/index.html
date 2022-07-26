@@ -1,11 +1,12 @@
 {template '_header'}
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/index.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <script>document.title = "{$_W['union']['title']}"; </script>
 
     <div class="fui-page fui-page-current page-goods-list" >
         <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
-            <div class="headinfo dynamic" style="position: relative">
+            <div class="headinfo dynamic_header" style="position: relative">
                 <div class="commission_head">
                     <div class="fui-header-left">
                         <a class="back" ></a>
@@ -25,23 +26,57 @@
         </div>
     </div>
 <script type='text/html' id='tpl_goods_list'>
-    <%each list as row%>
-    <a class="fui-cell-group" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>">
-        <div class="fui-cell">
-            <div class="fui-cell-icon" style="width: 2.8rem" >
-                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png">
-            </div>
-            <div class="fui-cell-text">
-                <span class="texthead"><%row.title%></span>
-                <div class="online_li" style="line-height: 1.5rem;">
-                    <span class="span_text2" style="margin: 0;padding: 0"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic-history.png"/><%row.datetime%></span>
+    <%each list as row index%>
 
-                    <span class="span_text2 span_text3"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_read.png"/><%row.showcount%></span>
+    <%if index%2==0%>
+    <div class="dynamic">
+        <div class="dynamic-info">
+            <a class="img-box" data-nocache="true" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>">
+                <img class="dynamic-info-img" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'"  src="<%row.header_image%>">
+                <img class="dynamic-info-img imgposition" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'"  src="<%row.header_image%>">
+            </a>
+            <div class="info-detail">
+                <p class="title"><a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>"><%row.title%></a></p>
+                <a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>"><img class="ic-enter" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_enter_right.png" alt=""></a>
+                <div class="data-state-box">
+                    <div class="data-box">
+                        <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_eye.png" class="ic-browse data-ic">
+                        <span class="amount"><%row.showcount%></span>
+                    </div>
+                    <div class="data-box follow" data-followid="<%row.id%>" data-status="<%row.status%>" >
+                        <img src="<%if row.status==1%>{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love_selected.png<%else%>{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love.png<%/if%>" class="ic-collect data-ic">
+                        <span class="amount"><%row.like_count%></span>
+                    </div>
                 </div>
             </div>
-            <div class="fui-cell-remark" ></div>
         </div>
-    </a>
+    </div>
+    <%else%>
+    <div class="dynamic">
+        <div class="dynamic-info">
+            <div class="info-detail re-info-detail">
+                <p class="title"><a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>"><%row.title%></a></p>
+                <a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>"><img class="ic-enter re-ic-enter" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_enter.png" alt=""></a>
+                <div class="data-state-box1 re-data-state-box">
+                    <div class="data-box re-data-box">
+                        <img  src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_eye.png" class="ic-browse data-ic">
+                        <span class="amount"><%row.showcount%></span>
+                    </div>
+                    <div class="data-box re-data-box follow" data-followid="<%row.id%>" data-status="<%row.status%>"  >
+                        <img src="<%if row.status==1%>{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love_selected.png<%else%>{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love.png<%/if%>" class="ic-collect data-ic">
+                        <span class="amount"><%row.like_count%></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="re-img-box" data-nocache="true" href="{php echo mobileUrl('union/dynamic/view')}&id=<%row.id%>">
+            <img class="dynamic-info-img" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'" src="<%row.header_image%>">
+            <img class="dynamic-info-img re-imgposition" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'" src="<%row.header_image%>">
+        </a>
+    </div>
+
+    <%/if%>
+
     <%/each%>
 </script>
 <script language='javascript'>

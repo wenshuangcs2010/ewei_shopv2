@@ -1,17 +1,23 @@
 {template '_header'}
-<script>document.title = "{$_W['union']['title']}"; </script>
+<script>document.title = "发布"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
-
+<style>
+    a.back:before{
+        left: 5px;
+        border-color: #FFFF;
+    }
+</style>
 <div class='fui-page  fui-page-current'>
-    <div class="fui-header">
-        <div class="fui-header-left">
-            <a class="back"></a>
-        </div>
-        <div class="title">发布征婚</div>
-        <div class="fui-header-right"></div>
-    </div>
 
-    <div class='fui-content member-page navbar'>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"></a>
+            </div>
+        </header>
+    </div>
+    <div class='fui-content member-page navbar' style="top:0">
 
 
 
@@ -37,7 +43,7 @@
                 </div>
             </div>
 
-            <div class="fui-cell">
+            <div class="fui-cell must">
                 <div class="fui-cell-icon">
                     <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_age.png">
                 </div>
@@ -84,7 +90,7 @@
                     <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_work.png">
                 </div>
                 <div class="fui-cell-label ">工作单位</div>
-                <div class="fui-cell-info"><input type="text" class='fui-input' id='work' name='work' placeholder="请输入您的现居地"  value="{$member['work']}" /></div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='work' name='work' placeholder="请输入您的工作单位"  value="{$member['work']}" /></div>
             </div>
             <div class="fui-cell">
                 <div class="fui-cell-icon">
@@ -118,8 +124,8 @@
                 <div class="fui-cell-icon">
                     <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_declarer.png">
                 </div>
-                <div class="fui-cell-label ">征婚宣言</div>
-                <div class="fui-cell-info"><input type="text" class='fui-input' id='declaration' name='declaration' placeholder="征婚宣言"  value="{$member['declaration']}" /></div>
+                <div class="fui-cell-label ">交友宣言</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='declaration' name='declaration' placeholder="交友宣言"  value="{$member['declaration']}" /></div>
             </div>
             <div class="fui-cell">
                 <div class="fui-cell-icon">
@@ -135,7 +141,7 @@
                     <div class="fui-uploader fui-uploader-sm refund-container-uploader" {if count($refund['imgs'])==1}style='display:none'{/if}
                     data-name="images[]"
                     data-max="1"
-                    data-count="{php echo count($refund['imgs'])}">
+                    data-count="{php echo count($member['header_imageurl'])}">
                         <input type="file" name='imgFile0' id='imgFile0' multiple="" accept="image/*" >
                     </div>
                 </div>
@@ -155,7 +161,7 @@
                     <div class="fui-uploader fui-uploader-sm refund-container-uploader" {if count($refund['imgs'])==5}style='display:none'{/if}
                     data-name="life_images[]"
                     data-max="5"
-                    data-count="{php echo count($refund['imgs'])}">
+                    data-count="{php echo count($life_images)}">
                     <input type="file" name='imgFile1' id='imgFile1' multiple="" accept="image/*" >
                     </div>
                 </div>

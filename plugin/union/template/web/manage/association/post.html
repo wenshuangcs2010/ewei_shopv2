@@ -8,14 +8,77 @@
     </div>
 
     <div class="layui-form-item">
+        <label class="layui-form-label">标题图片</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input"  name="header_image" value="{$vo['header_image']}" placeholder="标题图片" type="text">
+                    <a class="input-group-addon" data-file="one"  data-field="header_image" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {if $_W['asoconfig']['usetime']==1}
+    <div class="layui-form-item">
+        <label class="layui-form-label">报名开始时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="start_time" id="start_time"  value="{$vo['start_time']}" lay-verify="signstart" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="4">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">报名结束时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="end_time" id="end_time"  value="{$vo['end_time']}" lay-verify="signend" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="5">
+        </div>
+    </div>
+    {/if}
+    {if $_W['asoconfig']['asocount']==1}
+    <div class="layui-form-item">
+        <label class="layui-form-label">人数上限</label>
+        <div class="layui-input-block">
+            <input type="text" name="assocount" value="{$vo['assocount']}" required="required" title="人数上限" placeholder="人数上限" class="layui-input">
+        </div>
+    </div>
+    {/if}
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系人</label>
+        <div class="layui-input-block">
+            <input type="text" name="contacts" value="{$vo['contacts']}" title="联系人" placeholder="联系人" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="contactsphone" value="{$vo['contactsphone']}"  title="联系电话" placeholder="联系电话" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">协会描述</label>
         <div class="layui-input-block">
            <textarea name="declaration" class="layui-textarea">{$vo['declaration']}</textarea>
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">小组审核人</label>
+        <div class="layui-input-block">
+            <div class="input-group">
+                <input class="layui-input" value="{$vo['auditor']}" readonly="" name="auditor" type="hidden">
+                <input class="layui-input" value="{$auditorname}" readonly="" placeholder="请选择用户..." type="text">
+                <a class="input-group-addon" data-values="{$vo['auditor']}" data-selectleng="1" data-selectmember="{php echo unionUrl('member.selectmember')}">
+                    <i class="fa fa-list"></i>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+
 
     <div class="hr-line-dashed"></div>
-
+    <script type="text/javascript" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"></script>
     <div class="layui-form-item text-center">
         {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
         <button class="layui-btn" type='submit'>保存数据</button>
@@ -24,5 +87,15 @@
 
     <script>
         window.form.render();
+        {if $_W['asoconfig']['usetime']==1}
+        laydate.render({
+            elem: '#start_time',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#end_time',
+            type: 'datetime'
+        });
+        {/if}
     </script>
 </form>

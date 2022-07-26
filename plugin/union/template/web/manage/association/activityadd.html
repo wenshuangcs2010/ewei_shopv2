@@ -1,4 +1,4 @@
-<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('association/activityadd')}" data-auto="true" method="post">
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('association/activityadd')}"  enctype="multipart/form-data" method="post">
 
     <div class="layui-form-item">
         <label class="layui-form-label">标题</label>
@@ -7,7 +7,7 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">所属协会</label>
+        <label class="layui-form-label">所属小组</label>
         <div class="layui-input-block">
             <select name="association_id">
                 {loop $list $l}
@@ -19,7 +19,7 @@
     <div class="layui-form-item">
     <label class="layui-form-label">通知内容</label>
         <div class="layui-input-block">
-            <textarea id="editor" name='description'>{$vo['description']}</textarea>
+            <textarea id="editor" data-required="true" name='description'>{$vo['description']}</textarea>
         </div>
     </div>
 
@@ -28,21 +28,19 @@
 
     <div class="layui-form-item text-center">
         {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
-        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn"  type='submit'>保存数据</button>
         <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
     </div>
 
     <script>
+        window.form.render();
         layui.use('layedit', function(){
             var layedit = layui.layedit;
-            layedit.set({
-                uploadImage: {
-                    url: 'http://localhost/we7new/addons/ewei_shopv2//plugin/union/template/web/manage/js/plugs/ueditor/php/controller.php?uniacid=5&unionid=3&action=uploadimage' //接口url
-                    ,type: 'post' //默认post
-                }
-            });
-            layedit.build('editor'); //建立编辑器
+
+            layedit.build('editor',{
+                tool: ['left', 'center', 'right', '|', 'face']
+            }); //建立编辑器
         });
-        window.form.render();
+
     </script>
 </form>

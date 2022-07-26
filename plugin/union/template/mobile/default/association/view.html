@@ -1,17 +1,15 @@
 {template '_header'}
-<script>document.title = "{$_W['union']['title']}"; </script>
+<script>document.title = "活动详情"; </script>
 <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/article/template/mobile/default/images/mobile.css" />
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 <div class='fui-page  fui-page-current article-index-page'>
-    {if is_mobile() && !is_weixin()}
-    <div class="fui-header">
-        <div class="fui-header-left">
-            <a class="back"></a>
-        </div>
-        <div class="title">详情</div>
-        <div class="fui-header-right"></div>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"><span></span></a>
+            </div>
+        </header>
     </div>
-    {/if}
 
     <div class='fui-content'>
         <div class="fui-article-page">

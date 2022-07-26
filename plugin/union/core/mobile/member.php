@@ -14,8 +14,10 @@ class Member_EweiShopV2Page extends UnionMobilePage
         global $_W;
         global $_GPC;
         $member=m("member")->getmember($_W['openid']);
+        $unionmember=$this->model->get_member($_W['openid'],$_W['union_id']);
         $_W['union']['title']="会员中心";
         $company=$this->model->get_union_info($_W['unionid']);
+        $set = m('common')->getPluginset('union');
         include $this->template();
     }
 
@@ -42,6 +44,7 @@ class Member_EweiShopV2Page extends UnionMobilePage
         $sql="select um.id,um.title,IFNULL(ums.is_default,-1) as is_default,IFNULL(ums.activate,-1) as activate from ".tablename("ewei_shop_union_user")." as um ".
             " LEFT JOIN ".tablename("ewei_shop_union_members")." as ums ON ums.union_id=um.id "
             ." where 1 ".$condition."ORDER BY ums.is_default desc,ums.activate desc LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
+
         $countsql="select count(*) from ".tablename('ewei_shop_union_user')." um ".
             " LEFT JOIN ".tablename("ewei_shop_union_members")." as ums ON ums.union_id=um.id ". " where 1 ".$condition;
 
@@ -58,12 +61,55 @@ class Member_EweiShopV2Page extends UnionMobilePage
         global $_GPC;
         $member=m("member")->getmember($_W['openid']);
         $union_memebr=$this->model->get_union_info($_W['unionid']);
-        $member['birthday']=$member['birthyear']."-".$member['birthmonth'].'-'.$member['birthday'];
         //查询用火所在的部门
-
+        $backurl=base64_encode(mobileUrl("union/member/member_info",array(),true));
         if($this->member['department']){
             $department=pdo_fetch("select * from ".tablename("ewei_shop_union_department")." where id=:id",array(':id'=>$this->member['department']));
         }
+        $member['birthday']=$member['birthyear']."-".$member['birthmonth'].'-'.$member['birthday'];
+        //根据用户填写的手机号填写查询工会信息
+        if($member['mobile']){
+           $union_member_info=  pdo_fetch("select * from ".tablename("ewei_shop_union_members")." where mobile_phone=:mobile_phone and is_default=1",array(":mobile_phone"=>$member['mobile']));
+
+           if(empty($union_member_info)){
+                $union_member_info=  pdo_fetch("select * from ".tablename("ewei_shop_union_members")." where mobile_phone=:mobile_phone limit 1",array(":mobile_phone"=>$member['mobile']));
+                if(!empty($union_member_info)){
+                   $union_memebr=$this->model->get_union_info($union_member_info['union_id']);
+                   $department=pdo_fetch("select * from ".tablename("ewei_shop_union_department")." where id=:id",array(':id'=>$union_member_info['department']));
+                   $member['birthday']=$union_member_info['year']."-".$union_member_info['moth'].'-'.$union_member_info['day'];
+                }
+           }
+
+
+            //如果还是没有账号
+            if(empty($union_member_info)){
+                $union_member_info=$this->model->get_member($_W['openid']);
+                if(!empty($union_member_info)){
+                    $department=pdo_fetch("select * from ".tablename("ewei_shop_union_department")." where id=:id",array(':id'=>$union_member_info['department']));
+                    $member['birthday']=$union_member_info['year']."-".$union_member_info['moth'].'-'.$union_member_info['day'];
+                }
+            }
+            //这个是有手机号的情况
+            if(empty($union_member_info)){
+                $union_memebr=$this->model->get_union_info($_W['defaultunionid']);
+                $union_member_info=array(
+                   'uniacid'=>$_W['uniacid'],
+                   'union_id'=>$_W['defaultunionid'],
+                   'mobile_phone'=>$member['mobile'],
+                   'activate'=>1,
+                   'add_time'=>TIMESTAMP,
+                   'openid'=>$_W['openid'],
+                   'type'=>1,
+                   'entrytime'=>TIMESTAMP,
+                   'status'=>1,
+                   'is_default'=>1,
+                );
+                pdo_insert("ewei_shop_union_members",$union_member_info);
+                $union_member_info['id']=pdo_insertid();
+            }
+
+        }
+
         include $this->template();
     }
     //数据更新
@@ -71,44 +117,65 @@ class Member_EweiShopV2Page extends UnionMobilePage
         global $_W;
         global $_GPC;
         $openid=$_W['openid'];
+
         $member_info=m("member")->getMember($openid);
+
         if(empty($member_info['mobile'])){
             show_json(0, "请先绑定手机号");
         }
-        if(empty($this->member)){
-            show_json(0, "还未加入工会,请先加入工会后做操作");
+        //检查手机号是否修改
+
+        $sql="select * from ".tablename("ewei_shop_union_members")." where openid=:openid and union_id=:union_id and uniacid =:uniacid ";
+        $nowMember=pdo_fetch($sql,array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':openid'=>$openid));
+
+        if(!empty($nowMember) && $nowMember['mobile_phone']!=$member_info['mobile']){
+            //用户进行了手机号更新需要更新工会手机号
+            pdo_update("ewei_shop_union_members",array('mobile_phone'=>$member_info['mobile']),array('mobile_phone'=>$nowMember['mobile_phone'],'uniacid'=>$_W['uniacid']));
+
         }
 
-        $member_update=array(
-            'realname'=>trim($_GPC['realname']),
-            'birthyear'=>isset($_GPC['birthday'][0]) ? $_GPC['birthday'][0]:'',
-            'birthmonth'=>isset($_GPC['birthday'][1]) ? $_GPC['birthday'][1]:'',
-            'birthday'=>isset($_GPC['birthday'][2])?$_GPC['birthday'][2]:'',
-        );
-        if($member_info['level']!=30){
-            $member_update['level']=30;
+        //查询当前手机号在几个工会中存在
+        $sql="select * from ".tablename("ewei_shop_union_members")." where mobile_phone=:mobile_phone and uniacid =:uniacid ";
+        $mobile_list=pdo_fetchall($sql,array(':mobile_phone'=>$member_info['mobile'],":uniacid"=>$_W["uniacid"]));
+        $union_member_info=$this->model->get_member($_W['openid']);
+
+        if(empty($mobile_list) && empty($union_member_info)){
+            show_json(0, "您还未加入工会,请联系贵工会管理员");
         }
-        $union_memberdata=array(
-            'uniacid'=>$_W['uniacid'],
-            'mobile_phone'=>$member_info['mobile'],
-            'name'=>trim($_GPC['realname']),
-            'year'=>isset($_GPC['birthday'][0]) ? $_GPC['birthday'][0]:'',
-            'moth'=>isset($_GPC['birthday'][1]) ? $_GPC['birthday'][1]:'',
-            'day'=>isset($_GPC['birthday'][2])?$_GPC['birthday'][2]:'',
-            'nick_name'=>$member_info['nick_name'],
-            'add_time'=>time(),
-            'openid'=>$openid,
-            'wechat'=>$_GPC['wechat'],
-            'mail'=>$_GPC['mail'],
-        );
-        pdo_begin();
-        if($this->member){
-            unset($union_memberdata['add_time']);
-            pdo_update('ewei_shop_union_members',$union_memberdata,array('id'=>$this->member['id']));
-        }
-        pdo_update("ewei_shop_member",$member_update,array("openid"=>$openid,'uniacid'=>$_W['uniacid']));
-        pdo_commit();
-        show_json(1, "公司已经切换");
+        //查询有没有 默认工会的存在
+        $sql="select id from ".tablename("ewei_shop_union_members")." where mobile_phone=:mobile_phone and uniacid =:uniacid and is_default=1 ";
+        $is_default_id=pdo_fetchcolumn($sql,array(':mobile_phone'=>$member_info['mobile'],":uniacid"=>$_W["uniacid"]));
+
+       foreach ($mobile_list as $key=>$value){
+           $member_update=array(
+               'realname'=>trim($_GPC['realname']),
+               'birthyear'=>isset($_GPC['birthday'][0]) ? $_GPC['birthday'][0]:'',
+               'birthmonth'=>isset($_GPC['birthday'][1]) ? $_GPC['birthday'][1]:'',
+               'birthday'=>isset($_GPC['birthday'][2])?$_GPC['birthday'][2]:'',
+           );
+           $union_memberdata=array(
+               'uniacid'=>$_W['uniacid'],
+               'mobile_phone'=>$member_info['mobile'],
+               'name'=>trim($_GPC['realname']),
+               'year'=>isset($_GPC['birthday'][0]) ? $_GPC['birthday'][0]:'',
+               'moth'=>isset($_GPC['birthday'][1]) ? $_GPC['birthday'][1]:'',
+               'day'=>isset($_GPC['birthday'][2])?$_GPC['birthday'][2]:'',
+               'nick_name'=>$member_info['nick_name'],
+               'add_time'=>time(),
+               'openid'=>$openid,
+               'status'=>1,
+
+           );
+            if($key==0 && empty($is_default_id)){
+                $union_memberdata['is_default']=1;
+            }
+           pdo_begin();
+           unset($union_memberdata['add_time']);
+           pdo_update('ewei_shop_union_members',$union_memberdata,array('id'=>$value['id']));
+           pdo_update("ewei_shop_member",$member_update,array("openid"=>$openid,'uniacid'=>$_W['uniacid']));
+           pdo_commit();
+       }
+        show_json(1, array('message'=>"用户绑 定成功",'url'=>mobileUrl("union")));
     }
 
     public function joinunion(){
@@ -125,17 +192,15 @@ class Member_EweiShopV2Page extends UnionMobilePage
             show_json(1);
         }
         if(empty($union_member["openid"])){//绑定OPENID
-            pdo_update('ewei_shop_union_members',array("openid"=>$openid),array('id'=>$union_member['id']));
+            pdo_update('ewei_shop_union_members',array("openid"=>$openid,"status"=>1),array('id'=>$union_member['id']));
         }
-        if($union_member['status']==0 || $union_member['activate']==0){
-            show_json(0, "您的账号正在审核中");
+        if($union_member['activate']==0){
+            show_json(0,  "您的账号正在审核中");
         }
-        if($member_info['level']!=30){
-            pdo_update("ewei_shop_member",array("level"=>30),array("id"=>$member_info['id']));
-        }
+
         pdo_update('ewei_shop_union_members',array("is_default"=>0),array('mobile_phone'=>$member_info['mobile']));
         pdo_update('ewei_shop_union_members',array("is_default"=>1),array('id'=>$union_member['id']));
-        show_json(0, "已切换默认默认公司");
+        show_json(0, "已切换默认公司");
     }
 
     public function join_union(){
@@ -146,6 +211,7 @@ class Member_EweiShopV2Page extends UnionMobilePage
         $openid=$_W['openid'];
         //检查用户有没有绑定手机号
         $member=m("member")->getMember($openid);
+
         $sql="select * from ".tablename("ewei_shop_union_department")." where union_id=:union_id and uniacid=:uniacid";
         $department=pdo_fetchall($sql,array(":union_id"=>$unionid,':uniacid'=>$_W['uniacid']));
         include $this->template();

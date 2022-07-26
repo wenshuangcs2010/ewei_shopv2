@@ -1,3 +1,9 @@
+<style>
+    .layui-input-block p{
+        display: block;
+        line-height: 35px;
+    }
+</style>
 <form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{$action}" data-auto="true" method="post">
 
     <div class="layui-form-item">
@@ -6,18 +12,22 @@
             <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入部门名称" placeholder="请输入部门名称" class="layui-input">
         </div>
     </div>
-
     <div class="layui-form-item">
-        <label class="layui-form-label">请选择上级部门</label>
+        <label class="layui-form-label">排序字段</label>
         <div class="layui-input-block">
-        <select name="parent_id" class="form-control select2" tabindex="-1" title="">
-            <option value="0" >顶级</option>
-            {loop $department $row}
-            <option value="{$row['id']}" {if isset($vo['parent_id']) && $row['id']==$vo['parent_id'] }selected{/if}>{$row['name']}</option>
-            {/loop}
-        </select>
+            <input type="text" name="displayorder" value="{if empty($vo)}0{else}{$vo['displayorder']}{/if}" required="required" title="数字越大排序越高" placeholder="数字越大排序越高" class="layui-input">
         </div>
     </div>
+    {if $parent}
+    <div class="layui-form-item">
+        <label class="layui-form-label">上级部门</label>
+        <div class="layui-input-block">
+            <input type="hidden" name="parent_id" value="{$parent['id']}" >
+            <p>{$parent['name']}</p>
+        </div>
+    </div>
+    {/if}
+
     <div class="layui-form-item">
         <label class="layui-form-label">启用</label>
         <div class="layui-input-block">

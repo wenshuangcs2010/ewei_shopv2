@@ -2,6 +2,7 @@
 <html>
 <head>
     {template 'header'}
+    <script type="text/javascript" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"></script>
 </head>
 <body>
 <div class="page-container">
@@ -54,6 +55,19 @@
                                     <div class="radio block"><label><input name="status" value="2" {if $vo['status']==2 || !isset($vo)}checked=""  {/if}type="radio"> 采纳</label></div>
                                     <div class="radio block"><label><input name="status" value="3" type="radio"{if isset($vo) && $vo['status']==3}checked=""  {/if} > 不采纳</label></div>
 
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="radio" class="col-sm-2 control-label">可查看用户</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input class="layui-input" value="{$vo['memberlist']}" readonly="" name="memberlist" type="hidden">
+                                        <input class="layui-input"  name="memberlistname" value="{$vo['memberlistname']}" readonly="" placeholder="请选择用户..." type="text">
+                                        <a class="input-group-addon" data-values="{$vo['memberlist']}" data-selectleng="0" data-selectmember="{php echo unionUrl('member.selectmember')}">
+                                            <i class="fa fa-list"></i>
+                                        </a>
+
+                                    </div>
                                 </div>
                             </div>
 

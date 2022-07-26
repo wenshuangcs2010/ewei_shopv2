@@ -3,15 +3,20 @@
 
 <script>document.title = "{$_W['union']['title']}"; </script>
 <div class='fui-page  fui-page-current'>
-    <div class="fui-header">
-        <div class="fui-header-left">
-            <a class="back"></a>
-        </div>
-        <div class="title">{$title}</div>
-        <div class="fui-header-right"></div>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"><span></span></a>
+            </div>
+            <div class="jd-header-new-title">
+            </div>
+            <div id="m_common_header_jdkey" class="jd-header-icon-new-shortcut J_ping">
+                <span></span>
+            </div>
+        </header>
     </div>
 
-    <div class='fui-content member-page' style="background-color: #ffffff">
+    <div class='fui-content member-page' style="background-color: #ffffff;top:0">
 
         <div class='fui-content-inner'>
             <div class='content-empty' style='display:none;'>
@@ -25,7 +30,7 @@
 </div>
 <script type='text/html' id='tpl_list'>
     <%each list as row%>
-    <a class="fui-cell-group" style="border: 2px solid #fafafa;border-radius: 10px;" href="{php echo mobileUrl('union/welfare/view')}&id=<%row.id%>">
+    <a class="fui-cell-group" data-nocache="true" style="border: 2px solid #fafafa;border-radius: 10px;" href="{php echo mobileUrl('union/welfare/view')}&id=<%row.id%>">
         <div class="fui-cell">
             <div class="fui-cell-icon" style="width: 4rem" >
                 <%if row.type==1%>
@@ -52,7 +57,7 @@
             </div>
             <div>
                 <p class="watext">金额:<span class="lastwaltext"><%row.money%></span></p>
-                <p class="watext">福利形式:<span  class="lastwaltext"><%if row.amounttype==1%>现金<%else%>券<%/if%></span></p>
+                <p class="watext">慰问形式:<span  class="lastwaltext"><%if row.amounttype==1%>现金<%else%>券<%/if%></span></p>
             </div>
         </div>
     </a>

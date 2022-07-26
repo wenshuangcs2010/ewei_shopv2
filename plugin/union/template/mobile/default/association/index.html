@@ -1,29 +1,94 @@
 {template '_header'}
-<script>document.title = "{$_W['union']['title']}"; </script>
+<script>document.title = "{$_W['asoconfig']['title']}公告"; </script>
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<style>
+    .document{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/xinquxiaoz.jpg");
+    }
 
+
+     .header_list a{
+         background-color: #0b0b0b;
+         text-align: center;
+         color: white;
+         font-size: 0.7rem;
+         opacity: 0.7;
+         height: 1.3rem;
+
+         padding-left: .3rem;
+         padding-right: .3rem;
+     }
+    .header_list a span{
+        display: block;
+        float: left;
+        line-height: 1.3rem;
+        height:1.3rem ;
+    }
+    .name_img {
+        height: 2.3rem;
+        width: 2.3rem;
+        border-radius: 1.3rem;
+        line-height: 2.3rem;
+        text-align: center;
+        background-color: #0099e7;
+        color: white;
+        display: inline-block;
+    }
+</style>
 <div class="fui-page  fui-page-current page-goods-list" >
-    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+
         <div class="headinfo document">
             <div class="commission_head">
                 <div class="fui-header-left">
                     <a class="back" onclick="location.back()"></a>
                 </div>
-                <div class="header_list"><a data-nocache="true" href="{php echo mobileUrl('union/association/myass')}"><img width="100%" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/assoc_hd.png"></a></div>
+                <div class="header_list" style="width: auto">
+                    <a data-nocache="true" class="location_url" href="{php echo mobileUrl('union/association/myass')}">
+                        <span>
+<svg t="1563758447558" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1381" width="1.3rem" height="1.3rem"><path d="M879.616 849.92h-742.4c-12.8 0-19.968 11.776-19.968 26.112s7.68 26.112 19.968 26.112h742.4c12.8 0 19.968-11.776 19.968-26.112s-6.656-26.112-19.968-26.112zM166.4 798.208c2.048 0 3.584 0 5.632-1.024l122.88-35.328c3.072-1.024 6.144-2.56 8.704-5.12l387.072-386.56c7.68-7.68 7.68-20.48 0-28.16s-20.48-7.68-28.16 0L327.68 676.864l-65.024-65.024c-2.048-2.048-5.12-4.096-8.192-4.608l327.168-327.168c7.68-7.68 7.68-20.48 0-28.16s-20.48-7.68-28.16 0l-384 384c-3.072 3.072-5.12 7.168-5.632 11.264l-17.408 129.024c-1.024 6.656 1.536 13.312 6.656 17.92 4.096 2.56 8.704 4.096 13.312 4.096z m43.52-134.144l22.016-22.016c1.024 2.56 2.048 4.608 4.096 6.656l54.272 54.272-16.896 16.896-73.728 20.992 10.24-76.8z m491.008-334.848c4.096 3.584 8.704 5.12 13.312 5.12 5.632 0 10.752-2.048 14.848-6.656l70.656-76.288c3.584-4.096 5.632-9.216 5.12-14.336 0-5.12-2.56-10.24-6.656-13.824L701.44 134.144c-8.192-7.68-20.992-7.168-28.16 1.024l-70.656 76.288c-7.68 8.192-7.168 20.992 1.024 28.16l97.28 89.6zM691.2 185.344l56.832 52.736-36.864 39.936L654.336 225.28l36.864-39.936z" p-id="1382" fill="#ffffff"></path></svg>
+                        </span>
+                        <span>{$_W['asoconfig']['title']}列表</span>
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="fui-content navbar" style="position: relative;top:0">
+
+        <div class="fui-content navbar" style="top:9rem">
+            <div class="fui-tab fui-tab-warning" id="tabjoin">
+                <a class="active" href="javascript:void(0)" data-tab='level1'>我的</a>
+                <a href="javascript:void(0)" data-tab='level2'>更多</a>
+                <a href="javascript:void(0)" data-tab='level3'>通知公告</a>
+            </div>
+            <div class="fui-icon-group noborder col-5 " style="background: #ffffff;display: none">
+                <a class="fui-icon-col external" data-id="0">
+                    <div class="icon">
+                        <div class="name_img">
+                            全                    </div>
+                    </div>
+                    <div class="text"> 全部</div>
+                </a>
+                {if count($alllist)>1}
+                    {loop $alllist $item}
+
+                    <a class="fui-icon-col external" href="#" data-id="{$item['id']}">
+                        <div class="icon"><img  onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/20191205091012.jpg'"  src="{php echo tomedia($item['header_image'])}"></div>
+                        <div class="text">{$item['title']}</div>
+
+                    {/loop}
+                {/if}
+
+            </div>
             <div class='fui-content-inner'>
                 <div class='content-empty' style='display:none;'>
-                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                    <i class='icon icon-searchlist'></i><br/><span id="empty_show_text">你还没有参加任何</span>{$_W['asoconfig']['title']}
                 </div>
-                <div class="fui-goods-group container block" id="goods-list-container"></div>
+                <div class="fui-goods-group container block" id="tpl-list-container"></div>
                 <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
                 <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
             </div>
         </div>
-    </div>
+
 </div>
 
 <script type='text/html' id='tpl_goods_list'>
@@ -31,7 +96,7 @@
     <a class="fui-cell-group" href="{php echo mobileUrl('union/association/view')}&id=<%row.id%>">
         <div class="fui-cell">
             <div class="fui-cell-icon" style="width: 2.8rem" >
-                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png">
+                <img style="width: 100%" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/20191205091012.jpg'" src="<%row.header_image%>">
             </div>
             <div class="fui-cell-text">
                 <span class="texthead" style="height: 1rem;"><%row.title%></span>
@@ -43,6 +108,34 @@
                 </div>
             </div>
             <div class="fui-cell-remark" style="font-size: 0.5rem;"></div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script type='text/html' id='tpl_asso_list'>
+    <%each list as row%>
+    <a class="fui-cell-group" data-nocache="true" href="{php echo mobileUrl('union/association/assview')}&id=<%row.id%>">
+        <div class="fui-cell">
+            <div class="fui-cell-icon" style="width: 2.8rem" >
+                <img style="width: 100%" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/20191205091012.jpg'"  src="<%row.header_image%>">
+            </div>
+            <div class="fui-cell-text">
+                <span class="texthead"><%row.title%></span>
+                <div class="online_li">
+                    <span class="span_text2" style="margin:0;padding: 0">已加入<span style="color: red;"><%row.count%></span>人</span>
+                </div>
+
+            </div>
+            <div data-status="<%row.status%>"  data-id="<%row.id%>" class="assocjoin <%if row.status==0%>active_sh<%/if%> "><%if row.status==0%>
+                待审核
+                <%/if%>
+                <%if row.status==1%>
+                已加入
+                <%/if%>
+                <%if row.status==-1%>
+                查看
+                <%/if%>
+            </div>
         </div>
     </a>
     <%/each%>

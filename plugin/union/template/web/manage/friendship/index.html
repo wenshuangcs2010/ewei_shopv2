@@ -16,21 +16,36 @@
 			<ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>单身联谊</li>
             </ol>
-		   <div class="panel1 panel-widget top-grids" style="padding:0">
-			   <div class="col-adjust-10">
-				   <ul class="bt-list">
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('friendship/add')}" data-title="添加新的征婚人员" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 添加新的征婚人员
-						   </button>
-					   </li>
-				   </ul>
-			   </div>
-		   </div>
+           <div class="panel1 panel-widget top-grids" style="padding:0">
+               <div class="col-adjust-10">
+                   <div class="ibox-title">
+                       <h5>单身联谊</h5>
+                       <div class="nowrap pull-right" >
+                           <ul class="bt-list">
+                               <button data-modal="{php echo unionUrl('friendship/add')}" data-title="添加新的征婚人员" class='layui-btn layui-btn-small'><i
+                                       class='fa fa-plus'></i> 添加新的联谊人员
+                               </button>
+                           </ul>
+                       </div>
+                   </div>
+				   <form class="animated form-search" action="{php echo unionUrl('friendship')}" onsubmit="return false" method="get">
+					   <div class="row">
+
+						   <div class="col-xs-2">
+							   <input type="text" name="keywordes" value="{$_GPC['keywordes']}" placeholder="姓名" class="form-control">
+						   </div>
+						   <div class="col-xs-1">
+							   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+						   </div>
+					   </div>
+				   </form>
+               </div>
+           </div>
+
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-			<h2>人员管理</h2>
+
 			<table id="table">
 				<thead>
 				<tr>
@@ -38,6 +53,7 @@
 					<th>姓名</th>
 					<th>年龄</th>
 					<th>性别</th>
+					<th>状态</th>
 					<th>操作</th>
 				</tr>
 				</thead>
@@ -48,10 +64,12 @@
 					<td>{$row['name']}</td>
 					<td>{$row['age']}</td>
 					<td>{if $row['sex']==0}男{else}女{/if}</td>
+					<td>{if $row['verification']==0}待审核{elseif $row['verification']==1}审核通过{else}审核不通过{/if}</td>
 
 					<td>
-						<a target="_blank" data-modal="{php echo unionUrl('friendship/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
-						<a target="_blank" data-load="{php echo unionUrl('friendship/delete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
+						<a  data-modal="{php echo unionUrl('friendship/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
+						<!--<a target="_blank" data-modal="{php echo unionUrl('friendship/message')}&id={$row['id']}" href="javascript:void(0)">留言管理</a> |-->
+						<a  data-load="{php echo unionUrl('friendship/delete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
 					</td>
 				</tr>
                 {/loop}

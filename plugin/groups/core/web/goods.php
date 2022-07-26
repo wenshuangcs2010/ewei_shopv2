@@ -126,6 +126,7 @@ class Goods_EweiShopV2Page extends PluginWebPage {
 				'headsdiscount' => intval($_GPC['headsdiscount']),
 				'isverify' => intval($_GPC['isverify']),
 				'verifytype' => intval($_GPC['verifytype']),
+				'dispatchid' => intval($_GPC['dispatchid']),
 				'verifynum' => intval($_GPC['verifynum']),
 				'storeids' => is_array($_GPC['storeids']) ? implode(',', $_GPC['storeids']) : '',
 			);

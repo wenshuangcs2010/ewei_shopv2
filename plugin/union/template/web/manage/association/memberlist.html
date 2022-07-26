@@ -13,21 +13,51 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>协议人员</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}<i class="fa fa-angle-right"></i>{$title}成员</li>
             </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>小组成员</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-open="{php echo unionUrl('association/memberlist',array('export'=>1,'id'=>$id))}" data-title="导出小组成员" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 导出小组成员
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
+				   <form class="animated form-search" action="{php echo unionUrl('association/memberlist')}" onsubmit="return false" method="get">
+					   <div class="row">
+						   <div class="col-xs-2">
+							   <select name="asso_id" id="asso_id" style="background-color: white" class="form-control1">
+								   <option value="">请选择{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}</option>
+								   {loop $activelist $key $p}
+								   <option {if $_GPC['asso_id']==$p['id']} selected {/if} value="{$p['id']}">{$p['title']}</option>
+								   {/loop}
+							   </select>
+						   </div>
 
+						   <div class="col-xs-2">
+							   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+						   </div>
+					   </div>
+				   </form>
+			   </div>
+		   </div>
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-			<h2>协会成员</h2>
+
 			<table id="table">
 				<thead>
 				<tr>
 					<th>ID</th>
 					<th>名称</th>
-					<th>协会名称</th>
-					<th>加入时间</th>
 					<th>状态</th>
+					<th>小组名称</th>
+					<th>加入时间</th>
+					<th>备注</th>
 					<th>操作</th>
 				</tr>
 				</thead>
@@ -36,22 +66,20 @@
 				<tr>
 					<td>{$row['id']}</td>
 					<td>{$row['mname']}</td>
+					<td>{if $row['status']==0}待审核{elseif $row['status']==1}审核通过{else}审核不通过{/if}</td>
 					<td>{$row['title']}</td>
 					<td>{php echo date('Y-m-d H:i',$row['add_time'])}</td>
 
-					<td>{if $row['status']==0}
-						待审核
-						{elseif $row['status']==1}
-						审核通过
-						{elseif $row['status']==-1}
-						审核不通过
-						{/if}
+					<td>
+						{$row['desc']}
 					</td>
 					<td>
-						<a target="_blank" data-load="{php echo unionUrl('association/status',array('status'=>1))}&id={$row['id']}" data-confirm="确定通过审核？" href="javascript:void(0)">通过审核</a>
+						{if $row['status']==0}
+						<a data-load="{php echo unionUrl('association/auditor')}&id={$row['id']}" data-confirm="确定通过审核？" href="javascript:void(0)">通过审核</a>
 						|
-						<a target="_blank" data-load="{php echo unionUrl('association/status',array('status'=>-1))}&&id={$row['id']}" data-confirm="确定审核不通过？" href="javascript:void(0)">审核不通过</a>
-					</td>
+						{/if}
+						<a  data-load="{php echo unionUrl('association/memberdeleted')}&id={$row['id']}" data-confirm="确认删除成员？" href="javascript:void(0)">删除成员</a>
+						</td>
 				</tr>
                 {/loop}
 				</tbody>

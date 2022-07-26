@@ -1,84 +1,214 @@
 {template '_header'}
 <script>document.title = "{$_W['union']['title']}"; </script>
+<style>
+    .fui-icon-group  .fui-icon-col .text{
+        font-size: 0.7rem!important;
+        color: #0a0a0a;
+    }
+    .row-text{
+        font-size: 0.7rem;
+    }
+    .fui-cell-group .fui-cell .fui-cell-text {
+
+        font-weight: bold;
+    }
+    .fui-cell-group .fui-cell .fui-cell-icon {
+
+        margin-right: 0;
+
+    }
+    .fui-list-inner .row .row-text {
+        font-size: 0.75rem;
+        color: #000;
+
+    }
+    .fui-swipe-bullet {
+        background: #FFFFFF none repeat scroll 0 0;
+
+    }
+</style>
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/index.css" rel="stylesheet" type="text/css"/>
 
     <div class="fui-page  fui-page-current page-goods-list" >
-        <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
-        <div class="fui-picture" style="padding-bottom: 0px; background: ;">
-            <a href="" style="display: block; padding: 0px 0px;" data-nocache="true">
-                <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/index_header.png" data-lazyloaded="true">
-            </a>
+        <div id="fui-page-current" class="fui-content navbar" style="background-color: #F8F8F8; padding-bottom: 2.5rem;top:0;">
+            {if !$advs}
+
+            <div class='fui-swipe' >
+                <div class='fui-swipe-wrapper' style="height: 8rem;">
+
+                    <div class='fui-swipe-item'><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/index_header.png" /></div>
+
+                </div>
+
+                <div class='fui-swipe-page' style="height: 30px;line-height: 30px"></div>
+            </div>
+            {else}
+                <div class='fui-swipe' >
+                    <div class='fui-swipe-wrapper' style="height: 8rem;">
+                        {loop $advs $item}
+                        <div class='fui-swipe-item' {if !empty($item['link'])}onclick="location.href='{$item['link']}'"{/if}><img style="height: 100%;" src="{php echo tomedia($item['thumb'])}" /></div>
+                    {/loop}
+                </div>
+            <div class='fui-swipe-page'  style="height: 30px;line-height: 30px"></div>
+            </div>
+            {/if}
+
+                <div class="fui-blank" style="height: 10px; background: #ffffff;"></div>
+                <div class="fui-notice">
+                    <div class="icon"><i class="icon icon-notification1" style="font-size: 0.7rem;"></i></div>
+                    <div class="text scrollBox"  style="overflow:hidden">
+                        <ul>
+                            {loop $advmessage $row}
+                            <li >
+                                <a data-nocache="true" style="font-size: 0.7rem" href="{$row['link']}">{$row['title']}</a>
+                            </li>
+                            {/loop}
+                        </ul>
+                    </div>
+                </div>
+                <div class="fui-blank" style="height: 10px; background: #ffffff;"></div>
+            <div class="fui-icon-group noborder col-4 " style="background: #ffffff">
+                {loop $menu $key $item}
+
+                        <a class="fui-icon-col external" href="{$item['link_url']}" data-nocache="true">
+                            <div class="icon"><img src="{php echo tomedia($item['icon_url'])}"></div>
+                            <div class="text"  >{$item['title']}</div>
+                        </a>
+                {/loop}
+            </div>
+
+            {if $dynamiclist}
+                <div style="background-color: white;padding-bottom: 0.01rem;">
+                <div class="fui-cell-group">
+                    <div class="fui-cell">
+                        <div class="fui-cell-icon ">
+                            <i class="shutiaotiao" style="height: 20px;"></i>
+                        </div>
+                        <div class="fui-cell-text">工会动态</div>
+
+                    </div>
+                </div>
+            {loop $dynamiclist $k $d}
+                {if $k%2==0}
+                    <div class="dynamic">
+                        <div class="dynamic-info">
+                            <a class="img-box" data-nocache="true" href="{php echo mobileUrl('union/document/view',array('id'=>$d['id']))}">
+                                <img class="dynamic-info-img" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'"  src="{php echo tomedia($d['header_image'])}">
+                                <img class="dynamic-info-img imgposition" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'"  src="{php echo tomedia($d['header_image'])}">
+                            </a>
+                            <div class="info-detail">
+                                <p class="title"><a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/document/view',array('id'=>$d['id']))}">{$d['title']}</a></p>
+                                <!--
+                                <a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/document/view',array('id'=>$d['id']))}"><img class="ic-enter" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_enter_right.png" alt=""></a>
+                                -->
+                                <div class="data-state-box">
+                                    <div class="data-box">
+                                        <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_eye.png" class="ic-browse data-ic">
+                                        <span class="amount">{$d['showcount']}</span>
+                                    </div>
+                                    <div class="data-box follow" data-followid="{$d['id']}" data-status="{$d['status']}" >
+                                        <img src="{if $d['status']}{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love_selected.png{else}{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love.png{/if}" class="ic-collect data-ic">
+                                        <span class="amount">{$d['like_count']}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            {else}
+
+            <div class="dynamic">
+                <div class="dynamic-info">
+                    <div class="info-detail re-info-detail">
+                        <p class="title" style="margin-left:0"><a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/document/view',array('id'=>$d['id']))}">{$d['title']}</a></p>
+                        <!--
+                        <a data-nocache="true" style="color: #0a0a0a" href="{php echo mobileUrl('union/dynamic/view',array('id'=>$d['id']))}"><img class="ic-enter re-ic-enter" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_enter.png" alt=""></a>
+                        -->
+                        <div class="data-state-box1 re-data-state-box">
+                            <div class="data-box re-data-box">
+                                <img  src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_eye.png" class="ic-browse data-ic">
+                                <span class="amount">{$d['showcount']}</span>
+                            </div>
+                            <div class="data-box re-data-box follow" data-followid="{$d['id']}" data-status="{$d['status']}"  >
+                                <img src="{if $d['status']}{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love_selected.png{else}{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static//images/ic_love.png{/if}" class="ic-collect data-ic">
+                                <span class="amount">{$d['like_count']}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="re-img-box"  data-nocache="true" href="{php echo mobileUrl('union/document/view',array('id'=>$d['id']))}">
+                    <img class="dynamic-info-img" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'" src="{php echo tomedia($d['header_image'])}">
+                    <img class="dynamic-info-img re-imgposition" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png'" src="{php echo tomedia($d['header_image'])}">
+                </a>
+            </div>
+                {/if}
+            {/loop}
+                </div>
+            {/if}
+            {if $memberactivity_list}
+                <div style="background-color: white">
+                    <div class="fui-cell-group">
+                        <div class="fui-cell">
+                            <div class="fui-cell-icon ">
+                                <i class="shutiaotiao" style="height: 20px;"></i>
+                            </div>
+                            <div class="fui-cell-text">工会活动</div>
+
+                        </div>
+                    </div>
+                {loop $memberactivity_list $item}
+                    <a data-nocache="true" href="{php echo mobileUrl('union/memberactivity/view',array('id'=>$item['id']))}" class="fui-icon-group imageView member_activity" style="background: #ffffff">
+                        <div class="icon"> <img onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/memberac.png'" src="{php echo tomedia($item['images'])}"></div>
+                        <div class="fui-list" style="height: 1.5rem;background: #ffffff;padding-bottom: 0;padding-top: 0;padding-left: 0.5rem;padding-right: 0.5rem">
+                            <div class="fui-list-inner">
+                                <div class="row">
+                                    <div class="row-text">{$item['title']}</div>
+                                </div>
+                            </div>
+                            <div class="fui-list-media follow_click" data-clickcount="{$item['chick_count']}"  data-activityid="{$item['id']}" >
+                                <img src="{if $item['chick_count']==0 }../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_love.png{else}../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_love_selected.png {/if}" class="round" style="width:1.4rem;height:1.4rem;border-radius: 50%">
+                            </div>
+                            <div class="right">
+                                <div class="row">
+                                    <div class="row-text" ><span class="chick_count">{$item['likecount']}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {/loop}
+                </div>
+            {/if}
+            <div class="fui-blank" style="height: 10px; background: #ffffff;"></div>
         </div>
-        <div class="fui-icon-group noborder col-4 " style="background: #ffffff">
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/personnelmien')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_staff.png"></div>
-                <div class="text" style="color: #666666;">员工风采</div>
-            </a>
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/index/suggestions')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_suggestion.png"></div>
-                <div class="text" style="color: #666666;">建言献策</div>
-            </a>
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/document')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_search.png"></div>
-                <div class="text" style="color: #666666;">公文查询</div>
-            </a>
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/dynamic')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_wenjuan.png"></div>
-                <div class="text" style="color: #666666;">工会动态</div>
-            </a>
-            <!--
-            <a class="fui-icon-col external" href="" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_wenjuan.png"></div>
-                <div class="text" style="color: #666666;">问卷调查</div>
-            </a>
-            <a class="fui-icon-col external" href="" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_vote.png"></div>
-                <div class="text" style="color: #666666;">投票调查</div>
-            </a>-->
-        </div>
-        <div class="fui-icon-group noborder col-4 " style="background: #ffffff">
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/friendship')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_lianyi.png"></div>
-                <div class="text" style="color: #666666;">单身联谊</div>
-            </a>
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/venue')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_venue.png"></div>
-                <div class="text" style="color: #666666;">场馆预订</div>
-            </a>
-            <!--
-            <a class="fui-icon-col external" href="" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_competition.png"></div>
-                <div class="text" style="color: #666666;">知识竞赛</div>
-            </a>-->
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/association')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_xiehui.png"></div>
-                <div class="text" style="color: #666666;">文体协会</div>
-            </a>
-            <a class="fui-icon-col external" href="{php echo mobileUrl('union/memberactivity')}" data-nocache="true">
-                <div class="icon"><img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_apply.png"></div>
-                <div class="text" style="color: #666666;">活动报名</div>
-            </a>
-        </div>
-        <div class="fui-blank"></div>
-        <div class="welfarecontainer"></div>
-        </div>
+
 </div>
-<script id='tpl_welfare_list' type='text/html'>
-    <div class="fui-icon-group noborder col-<%total%> " style="background: #ffffff">
-        <%each list as item%>
-        <a class="fui-icon-col external" href="<%item.url%>" data-nocache="true">
-            <div class="icon"><img src="<%item.imgurl%>"></div>
-            <div class="text" style="color: #666666;"><%item.text%></div>
-        </a>
-        <%/each%>
-    </div>
-</script>
+
+<script language='javascript'>require(['../addons/ewei_shopv2/plugin/union/static/js/index.js'], function (modal) {
+    modal.init();
+
+    function autoscroll(){
+        var obj=".scrollBox";
+        var n=$(obj).find("li").height();
+
+        $(obj).find("ul").animate({
+            marginTop:-n
+        },500,"linear",function(){
+
+            $(this).css({marginTop:"0px"}).find("li:first").appendTo(this);
+        })
+    }
+    $(function(){
+
+        if(typeof(window.setinterid)=="undefined"){
+            window.setinterid=setInterval(autoscroll,3000);
+        }
+    })
+    function sss(){
+        console.log("sss");
+    }
+});
 
 
-<script language='javascript'>
-    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
-        modal.init();
-    });
 </script>
 {template 'union/_footer'}

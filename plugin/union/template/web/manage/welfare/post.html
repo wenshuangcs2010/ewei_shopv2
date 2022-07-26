@@ -23,19 +23,31 @@
         <label class="layui-form-label">{$title}福利金额类型</label>
         <div class="layui-input-block">
             <div class="col-sm-8">
-                {if isset($vo['amounttype']) && $vo['amounttype'] ==0}
-                <input type="radio" checked name="amounttype" value="0" title="现金">
-                <input type="radio" name="amounttype" value="1" title="福利券">
+                {if isset($vo['amounttype']) && $vo['amounttype'] ==1}
+                <input type="radio" checked name="amounttype" value="1" title="现金">
+                <input type="radio" name="amounttype" value="2" title="实物">
                 {else}
-                <input type="radio" name="amounttype" value="0" title="现金">
-                <input type="radio" checked name="amounttype" value="0" title="福利券">
+                <input type="radio" name="amounttype" value="1" title="现金">
+                <input type="radio" checked name="amounttype" value="2" title="实物">
                 {/if}
             </div>
         </div>
         <div class="layui-form-mid layui-word-aux"></div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">图片</label>
+        <label class="layui-form-label">开户行名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="bankname" value="{$vo['bankname']}"  title="请输入开户行名称" placeholder="请输入开户行名称" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">银行卡号</label>
+        <div class="layui-input-block">
+            <input type="text" name="bankcard" value="{$vo['bankcard']}" title="请输入银行卡号" placeholder="请输入银行卡号" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">材料上传</label>
         <div class="layui-input-block">
             <div style="position:relative;width:500px">
                 <div class="input-group">
@@ -68,12 +80,26 @@
         <label class="layui-form-label">审核状态</label>
         <div class="layui-input-block">
             <div class="col-sm-8">
-                {if isset($vo['status']) && $vo['status'] ==1}
+                {if isset($vo['status']) && ($vo['status'] ==0 || $vo['status'] ==1)}
                 <input type="radio" checked name="status" value="1" title="待审核">
                 <input type="radio" name="status" value="2" title="通过">
-                {else}
+                <input type="radio" name="status" value="4" title="审核拒绝">
+                <input type="radio" name="status" value="5" title="已完成">
+                {elseif isset($vo['status']) && $vo['status'] ==2}
                 <input type="radio" name="status" value="1" title="待审核">
                 <input type="radio" checked name="status" value="2" title="通过">
+                <input type="radio" name="status" value="4" title="审核拒绝">
+                <input type="radio" name="status" value="5" title="已完成">
+                {elseif isset($vo['status']) && $vo['status'] ==4}
+                <input type="radio" name="status" value="1" title="待审核">
+                <input type="radio"  name="status" value="2" title="通过">
+                <input type="radio" checked name="status" value="4" title="审核拒绝">
+                <input type="radio" name="status" value="5" title="已完成">
+                {elseif isset($vo['status']) && $vo['status'] ==5}
+                <input type="radio" name="status" value="1" title="待审核">
+                <input type="radio"  name="status" value="2" title="通过">
+                <input type="radio" name="status" value="4" title="审核拒绝">
+                <input type="radio" checked name="status" value="5" title="已完成">
                 {/if}
             </div>
         </div>

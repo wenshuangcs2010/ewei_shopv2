@@ -47,14 +47,14 @@ class Category_EweiShopV2Page extends PluginWebPage
 			if (!(empty($id))) 
 			{
 				pdo_update('ewei_shop_union_category', $data, array('id' => $id));
-				plog('union.category.edit', '修改收银台分类 ID: ' . $id);
+				plog('union.category.edit', '修改会分类 ID: ' . $id);
 			}
 			else 
 			{
 				$data['createtime'] = time();
 				pdo_insert('ewei_shop_union_category', $data);
 				$id = pdo_insertid();
-				plog('union.category.add', '添加收银台分类 ID: ' . $id);
+				plog('union.category.add', '添加工会分类 ID: ' . $id);
 			}
 			show_json(1, array('url' => webUrl('union/category')));
 		}

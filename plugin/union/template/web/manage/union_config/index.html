@@ -16,10 +16,21 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>单位管理</li>
             </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>单位基础信息设置</h5>
+
+                    </div>
+                </div>
+            </div>
             <div class="grid-form1">
-                <h3>单位管理</h3>
+
                 <div class="tab-content">
                     <form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('union_config/post')}" data-auto="true" method="post">
+
+
+
 
                         <div class="layui-form-item">
                             <label class="layui-form-label">单位名称</label>
@@ -37,6 +48,33 @@
                             <label class="layui-form-label">联系人电话</label>
                             <div class="layui-input-block">
                                 <input type="text" name="mobile" value="{$union_info['mobile']}" required="required" title="联系人电话" placeholder="联系人电话" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">是否启用商城菜单</label>
+                            <div class="layui-input-block">
+                                <div class='col-sm-8'>
+                                    {if isset($union_info['shopstatus']) && $union_info['shopstatus'] == 1}
+                                    <input type="radio" checked name="shopstatus" value="1" title="是">
+                                    <input type="radio" name="shopstatus" value="0" title="否">
+                                    {else}
+                                    <input type="radio" name="shopstatus" value="1" title="是">
+                                    <input type="radio" checked name="shopstatus" value="0" title="否">
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商城名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="shopname" value="{$union_info['shopname']}" title="商城名称" placeholder="福利商城" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商城URL地址</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="shopurl" value="{$union_info['shopurl']}"title="商城URL地址 需要完整链接（http://||https://）" placeholder="商城URL地址址 需要完整链接（http://||https://）" class="layui-input">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>

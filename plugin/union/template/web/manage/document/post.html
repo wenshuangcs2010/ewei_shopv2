@@ -2,7 +2,14 @@
 <html>
 <head>
 	{template 'header'}
-</head> 
+</head>
+
+
+<style>
+	.layui-form-selected dl {
+		z-index: 9999999;
+	}
+</style>
 <body>
    <div class="page-container">
    <!--/content-inner-->
@@ -12,23 +19,114 @@
 		   {template 'header_main'}
 <!--heder end here-->
 	<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>公文管理 <i class="fa fa-angle-right"></i> {$title}</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>文章管理 <i class="fa fa-angle-right"></i> 添加文章</li>
             </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>添加文章</h5>
 
+				   </div>
+			   </div>
+		   </div>
   		<div class="grid-form1">
-  	       <h3>{$title}</h3>
+
   	         <div class="tab-content">
 						<div class="tab-pane active" id="horizontal-form">
-							<form action="" method="post" class="form-horizontal">
+							<form action="" method="post" class=" layui-form form-horizontal">
 
 								<input type="hidden" name="i"  value="{$_W['uniacid']}" />
 								<div class="form-group">
-									<label for="focusedinput" class="col-sm-2 control-label">公文标题</label>
+									<label for="focusedinput" class="col-sm-2 control-label">文章排序</label>
+									<div class="col-sm-8">
+										<input type="text" name="displayorder" value="{$vo['displayorder']}" class="form-control1"  id="displayorder" placeholder="请输入文章排序">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是文章排序!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">文章标题</label>
 									<div class="col-sm-8">
 										<input type="text" name="title" value="{$vo['title']}" class="form-control1" required="" id="focusedinput" placeholder="请输入公文标题">
 									</div>
 									<div class="col-sm-2">
-										<p class="help-block">这里是公文的标题!</p>
+										<p class="help-block">这里是文章标题!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">标题图片</label>
+									<div class="col-sm-8">
+										<div style="position:relative;width:500px">
+											<div class="input-group">
+												<input class="layui-input"  name="header_image" value="{$vo['header_image']}" placeholder="标题图片" type="text">
+												<a class="input-group-addon" data-file="one"  data-field="header_image" data-type="jpg,png,jpeg" data-uptype="local" >
+													<i class="fa fa-file"></i>
+												</a>
+											</div>
+											<div class="input-group multi-img-details ui-sortable" style="width: 80px;">
+												{if $vo['header_image']}
+												<div class="multi-item">
+													<img src="{php echo tomedia($vo['header_image'])}"  class="img-responsive img-thumbnail">
+
+												</div>
+												{/if}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">文章分类</label>
+									<div class="col-sm-8">
+										<div class="layui-input-inline">
+											<select name="category_id" class="form-control" style="    z-index: 999999;"  >
+												<option value="">请选择</option>
+												{loop $category $item}
+												  {if isset($item['children'])}
+												   <optgroup label="{$item['catename']}">
+													   {loop $item['children'] $child}
+													    {if isset($child['children'])}
+													       <optgroup label="{$child['catename']}">
+															   {loop $child['children'] $third}
+															   <option  {if isset($vo['category_id']) && $vo['category_id']==$third['id']}selected{/if} value="{$third['id']}">{$third['catename']}</option>
+															   {/loop}
+														   </optgroup>
+															   {else}
+															   <option  {if isset($vo['category_id']) && $vo['category_id']==$child['id']}selected{/if} value="{$child['id']}">{$child['catename']}</option>
+													    {/if}
+													   {/loop}
+												   </optgroup>
+															   {else}
+															   <option  {if isset($vo['category_id']) && $vo['category_id']==$item['id']}selected{/if} value="{$item['id']}">{$item['catename']}</option>
+												  {/if}
+												{/loop}
+
+											</select>
+										</div>
+
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是文章分类!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">是否是热点内容</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="ishot"  value="0" {if empty($vo) ||  $vo['ishot'] ==0} checked {/if} type="radio"> 否</label></div>
+										<div class="radio-inline"><label><input  name="ishot" value="1"  {if isset($vo) && $vo['ishot'] ==1 } checked="" {/if} type="radio">是</label></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">热点推荐结束时间</label>
+									<div class="col-sm-8">
+										<input type="text" name="endtime" id="endtime"  value="{$vo['endtime']}" lay-verify="endtime" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" lay-key="4">
+
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">文章链接</label>
+									<div class="col-sm-8">
+										<input type="text" name="link" value="{$vo['link']}" placeholder="需要完整的链接地址带有http://" class="form-control1" >
 									</div>
 								</div>
 								<div class="form-group">
@@ -48,11 +146,53 @@
 										<textarea id="editor" name='description'>{$vo['description']}</textarea>
 									</div>
 								</div>
+
+								{if $status}
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">发布权限</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="show_type"  value="0" {if empty($vo) ||  $vo['show_type'] ==0} checked {/if} type="radio"> 本公会</label></div>
+										<div class="radio-inline"><label><input  name="show_type" value="1"  {if isset($vo) && $vo['show_type'] ==1 } checked="" {/if} type="radio">直属下级工会</label></div>
+									</div>
+								</div>
+								<div class="form-group"  id="show_type" style="display: none">
+									<label for="focusedinput" class="col-sm-2 control-label">指定接收工会</label>
+									<div class="col-sm-8">
+										<select type="text" name="show_typevalue[]" id="show_typevalue"  multiple="" class="form-control1 select2">
+											{loop $union_list $item}
+											<option value="{$item['id']}"  {if is_array($vo['show_typevalue']) &&  in_array($item['id'],$vo['show_typevalue'])}selected{/if}   >{$item['title']}</option>
+											{/loop}
+										</select>
+									</div>
+								</div>
+								{/if}
+
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">指定接收人</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="peopletype" value="0" {if $vo['peopletype']==0 || empty($vo)}checked=""{/if} type="radio"> 全体</label></div>
+										<div class="radio-inline"><label><input name="peopletype" value="1" type="radio"  {if $vo['peopletype']==1 }checked=""{/if} >指定用户</label></div>
+									</div>
+								</div>
+								<div class="form-group" id="peopleid" style="display: none">
+									<label for="focusedinput" class="col-sm-2 control-label">指定接收人</label>
+									<div class="col-sm-8">
+										<div class="ww_groupSelBtn_item">
+											{loop $peoplevale $item}
+											<span class="ww_groupSelBtn_item_text">{$item['name']}</span>
+											{/loop}
+										</div>
+										<input type="hidden" id="peoplevale" name="peoplevale" value="{$vo['peoplevale']}">
+										<a data-modal="{php echo unionUrl('member.getmemberlist',array('deid'=>$vo['id']))}" data-title="选择会员" class="layui-btn layui-btn-normal">选择</a>
+
+									</div>
+								</div>
+
 								<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-8 col-sm-offset-2">
 											{if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
-											<button class="btn-primary btn">提交</button>
+											<button id="btnsubmit" class="btn-primary btn">提交</button>
 										</div>
 									</div>
 								</div>
@@ -78,11 +218,71 @@
 	   {template 'sidebar_menu'}
 
 </body>
+
+<style>
+	.ww_groupSelBtn_item_text{
+		margin-left: 6px;
+		border: 1px solid;
+		background-color: #F0f0f0;
+	}
+	.ww_groupSelBtn_item{
+
+	}
+</style>
+
+<script type="text/javascript" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"></script>
 <script type="text/javascript">
 
-    require(['ueditor'], function () {
+
+
+    require(['jquery','ueditor'], function () {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#endtime',
+                type: 'datetime'
+            });
+		})
+		$("#btnsubmit").click(function () {
+		    	if($("input[name='ishot'][checked]").val()==1 && ($("#endtime").val()=="" ||  $("#endtime").val()==0)){
+                    layer.alert('请选择热点推荐结束时间');
+                    return false;
+				}
+        })
 
         var ue = UE.getEditor('editor');
+        $('input:radio[name="peopletype"]').click(function(){
+            var checkValue = $('input:radio[name="peopletype"]:checked').val();
+            if(checkValue==1){
+				$("#peopleid").show();
+			}else{
+                $("#peopleid").hide();
+			}
+        });
+        $('input:radio[name="show_type"]').click(function(){
+            var checkValue = $('input:radio[name="show_type"]:checked').val();
+            if(checkValue==1){
+                $("#show_type").show();
+            }else{
+                $("#show_type").hide();
+            }
+
+        });
+        if( $('input:radio[name="peopletype"]:checked').val()==1){
+            $("#peopleid").show();
+
+		}
+        if( $('input:radio[name="show_type"]:checked').val()==1){
+            $("#show_type").show();
+            $('#show_typevalue').select2({
+                search: true,
+                placeholder: "请选择接工会不选择将会发送到全部直属下级",
+                allowClear: true
+            });
+        }
+
+
     });
+
 </script>
 </html>

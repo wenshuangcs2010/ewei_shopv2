@@ -14,19 +14,43 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>活动管理</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>活动模块<i class="fa fa-angle-right"></i>活动管理</li>
             </ol>
 		   <div class="panel1 panel-widget top-grids" style="padding:0">
 			   <div class="col-adjust-10">
-				   <ul class="bt-list">
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('memberactivity/add')}" data-title="添加新的活动" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 添加新的活动
-						   </button>
-					   </li>
-				   </ul>
+				   <div class="ibox-title">
+					   <h5>活动管理</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-modal="{php echo unionUrl('memberactivity/add')}" data-title="添加新的活动" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 添加新的活动
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
 			   </div>
 		   </div>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <form class="animated form-search" action="{php echo unionUrl('memberactivity')}" onsubmit="return false" method="get">
+				   <div class="row">
+					   <div class="col-xs-2">
+						   <select name="categoryid" id="categoryid" class="form-control1">
+							   <option value="">请选择分类</option>
+							   {loop $categorylist $key $p}
+							   <option {if $_GPC['categoryid']==$p['id']} selected {/if} value="{$p['id']}">{$p['catename']}</option>
+							   {/loop}
+						   </select>
+					   </div>
+					   <div class="col-xs-2">
+						   <input type="text" name="keywordes" value="{$_GPC['keywordes']}" placeholder="标题" class="form-control">
+					   </div>
+					   <div class="col-xs-1">
+						   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+					   </div>
+				   </div>
+			   </form>
+		   </div>
+
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
@@ -36,8 +60,9 @@
 				<tr>
 					<th>ID</th>
 					<th>活动名称</th>
-					<th>开始时间</th>
-					<th>结束时间</th>
+					<th>报名开始时间</th>
+					<th>报名结束时间</th>
+					<th>分类</th>
 					<th>状态</th>
 					<th>操作</th>
 				</tr>
@@ -47,12 +72,15 @@
 				<tr>
 					<td>{$row['id']}</td>
 					<td>{$row['title']}</td>
-					<td>{php echo date('Y-m-d H:i',$row['start_time'])}</td>
-					<td>{php echo date('Y-m-d H:i',$row['end_time'])}</td>
+					<td>{php echo date('Y-m-d H:i',$row['a_start_time'])}</td>
+					<td>{php echo date('Y-m-d H:i',$row['a_end_time'])}</td>
+					<td>{$row['catename']}</td>
 					<td>{if $row['status']==0}未启用{else}已启用{/if}</td>
 					<td>
+						<a data-open="{php echo unionUrl('memberactivity/qrcode')}&id={$row['id']}" href="javascript:void(0)">活动二维码</a>|
 						<a data-modal="{php echo unionUrl('memberactivity/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
 						<a data-open="{php echo unionUrl('memberactivity/showpeople')}&id={$row['id']}" href="javascript:void(0)">报名人数({$row['signcount']})</a>
+
 					</td>
 				</tr>
                 {/loop}
@@ -82,6 +110,7 @@
 </body>
 <script>
     require(['index','jquery.basictable'],function(modal){
+
         modal.init();
         $('#table').basictable();
     })

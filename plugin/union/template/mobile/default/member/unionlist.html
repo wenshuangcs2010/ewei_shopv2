@@ -1,5 +1,5 @@
 {template '_header'}
-<script>document.title = "{$_W['cashieruser']['title']}"; </script>
+<script>document.title = "选择默认单位"; </script>
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 
@@ -50,10 +50,10 @@
             </div>
             <div>
                 <%if row.is_default==1%>
-                <span class="default" >默认</span>
+                <span class="default defaultset" >默认</span>
                 <%/if%>
                 <%if row.is_default==0 && row.activate==1 %>
-                <span class="default defaultset" >设置默认</span>
+                <span class="default " >设置默认</span>
                 <%/if%>
                 <%if row.is_default==0 && row.activate==0 %>
                 <span class="default sign" >未审核</span>
@@ -70,7 +70,7 @@
 </script>
 <style>
     .default{
-        width: 2.2rem;
+        width: 4rem;
         border: 1px solid;
         border-radius: 4px;
         color: #DC3C26;
@@ -84,7 +84,7 @@
         border-color: #5A9BFE;
     }
     .defaultset{
-        width: 4rem;
+        width: 2.2rem;
         color: white;
         background-color: #DC3C26;
     }

@@ -4,13 +4,35 @@
    {template 'header'}
     <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
     <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/static/js/nestable/nestable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/static/fonts/v3/iconfont.css" />
 </head>
 <body>
 <style>
     ul.bt-list li{
         width: 20%;
-        margin: 1rem 0;
+        margin: 5px 0;
     }
+
+     .dd {
+         position: relative;
+         display: block;
+         margin: 0;
+         padding: 0;
+         max-width:100%;
+         list-style: none;
+         font-size: 13px;
+         line-height: 20px;
+     }
+    .dd-handle {
+        height: 40px;
+        line-height: 30px;
+    }
+    .agile-grids{
+        padding: 20px 30px;
+        background-color: white;
+    }
+
 </style>
 <div class="page-container">
     <!--/content-inner-->
@@ -20,56 +42,155 @@
             {template 'header_main'}
             <!--heder end here-->
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">首页</a><i class="fa fa-angle-right"></i>{$_W['union_name']}部门管理</li>
+                <li class="breadcrumb-item"><a href="index.html">首页</a><i class="fa fa-angle-right"></i>部门管理</li>
             </ol>
+
+
             <div class="panel1 panel-widget top-grids" style="padding:0">
-                    <div class="col-adjust-10">
+                <div class="ibox-title">
+                    <h5>部门管理</h5>
+                    <div class="nowrap pull-right" >
                         <ul class="bt-list">
                             <li style="margin-left: 0.2rem">
                                 <button data-modal="{php echo unionUrl('member/department/add')}" data-title="添加新部门" class='layui-btn layui-btn-small'><i
                                         class='fa fa-plus'></i> 添加新部门
                                 </button>
                             </li>
+
                         </ul>
                     </div>
+                </div>
+
             </div>
             <div class="agile-grids">
-                <div class="agile-tables">
-                    <div class="w3l-table-info">
-                        <h2>{$_W['union_name']}部门管理</h2>
-                        <table id="table">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>部门名称</th>
-                                <th>上级</th>
-                                <th>状态</th>
-                                <th>编辑</th>
-                            </tr>
-                            </thead>
-                            {if $department}
-                            <tbody>
-                            {loop $department $row}
-                            <tr>
-                                <td>{$row['id']}</td>
-                                <td>{$row['name']}</td>
-                                <td>{if !$row['parent_id']} 顶级{else}{$row['parent_id']}{/if}</td>
-                                <td>{if $row['enable']}已启用{else}不启用{/if}</td>
-                                <td> <a data-modal="{php echo unionUrl('member/department/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a></td>
-                            </tr>
-                            {/loop}
-                            </tbody>
-                            {/if}
-                        </table>
+
+                <div class="dd" id="div_nestable">
+                    <ol class="dd-list">
+                        {loop $category $row}
+                        {if empty($row['parent_id'])}
+                        <li class="dd-item full" data-id="{$row['id']}">
+                            <div class="dd-handle" >
+                                [ID: {$row['id']}] {$row['name']}
+                                <span class="pull-right">
+                            <div class='label {if $row['enable']==1}label-primary{else}label-default{/if}'>
+                                 {if $row['enable']==1}显示{else}隐藏{/if}</div>
+                            <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/add', array('parent_id' => $row['id']))}" title='' >
+                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                        <i class="icow icow-tianjia"></i>
+                                         </span>
+                            </a>
+                            <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/edit', array('id' => $row['id']))}"  >
+                               <span data-toggle="tooltip" data-placement="top"  data-original-title="{ifp 'goods.category.edit'}修改{else}查看{/if}">
+                                <i class="icow icow-bianji2"></i>
+                                 </span>
+                            </a>
+                            <a class='btn btn-default btn-sm btn-operation btn-op' data-load="{php echo unionUrl('member/department/delete', array('id' => $row['id']))}" data-confirm="确定删除分类？" href="javascript:void(0)">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                                    <i class="icow icow-shanchu1"></i>
+                                </span>
+                            </a>
+                            </span>
+                            </div>
+                {if count($row['children'])>0}
+                <ol class="dd-list">
+                    {loop $row['children'] $child}
+                    <li class="dd-item full" data-id="{$child['id']}">
+                        <div class="dd-handle" style="width:100%;">
+
+                            [ID: {$child['id']}] {$child['name']}
+                            <span class="pull-right">
+                                <div class='label {if $child['enable']==1}label-primary{else}label-default{/if}'>
+                                     {if $child['enable']==1}显示{else}隐藏{/if}</div>
+                        <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/add', array('parent_id' => $child['id']))}" title='添加子分类' >
+                                               <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                                <i class="icow icow-tianjia"></i>
+                                               </span>
+                        </a>
+
+                        <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/edit', array('id' => $child['id']))}" title="" >
+                                              <span data-toggle="tooltip" data-placement="top" title="" data-original-title="{ifp 'goods.category.edit'}修改{else}查看{/if}">
+                                                    <i class="icow icow-bianji2"></i>
+                                             </span>
+                        </a>
+                        <a class='btn btn-default btn-sm btn-operation btn-op'  data-load="{php echo unionUrl('member/department/delete', array('id' => $child['id']))}" data-confirm="确认删除此分类吗？" href="javascript:void(0)" >
+                                                  <span data-toggle="tooltip" data-placement="top"  data-original-title="删除">
+                                                        <i class="icow icow-shanchu1"></i>
+                                                  </span>
+                        </a>
+                        </span>
+            </div>
+            {if count($child['children'])>0}
+            <ol class="dd-list"  style='width:100%;'>
+                {loop $child['children'] $third}
+                <li class="dd-item" data-id="{$third['id']}">
+                    <div class="dd-handle">
+
+                        [ID: {$third['id']}] {$third['name']}
+                        <span class="pull-right">
+                                         <div class='label {if $third['enable']==1} label-primary {else} label-default {/if}'>
+                                                            {if $third['enable']==1}显示{else}隐藏{/if}
+                                         </div>
+                    <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/add', array('parent_id' => $third['id']))}" title='添加子分类' >
+                                               <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                                <i class="icow icow-tianjia"></i>
+                                               </span>
+                    </a>
+                        <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/edit', array('id' => $third['id']))}" title="" >
+                                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="修改">
+                                                    <i class="icow icow-bianji2"></i>
+                                                </span>
+                        </a>
+                        <a class='btn btn-default btn-sm btn-operation btn-op'  data-load="{php echo unionUrl('member/department/delete', array('id' => $third['id']))}" data-confirm="确认删除此分类吗？" href="javascript:void(0)">
+                                                <span data-toggle="tooltip" data-placement="top"  data-original-title="删除">
+                                                  <i class="icow icow-shanchu1"></i>
+                                                 </span>
+                        </a>
+                        </span>
                     </div>
-                    {if !$department}
-                    <div class="panel panel-default" style="background-color: #fff;">
-                        <div class="panel-body" style="text-align: center;padding:30px;">
-                            没有任何数据!
-                        </div>
-                    </div>
+                    {if count($third['children'])>0}
+                    <ol class="dd-list"  style='width:100%;'>
+                    {loop $third['children'] $four}
+                        <li class="dd-item" data-id="{$four['id']}">
+                            <div class="dd-handle">
+
+                                [ID: {$four['id']}] {$four['name']}
+                                <span class="pull-right">
+                                                         <div class='label {if $four['enable']==1} label-primary {else} label-default {/if}'>
+                                                                            {if $four['enable']==1}显示{else}隐藏{/if}
+                                                </div>
+                                    <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('member/department/edit', array('id' => $four['id']))}" title="" >
+                                                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="修改">
+                                                                    <i class="icow icow-bianji2"></i>
+                                                                </span>
+                            </a>
+                                    <a class='btn btn-default btn-sm btn-operation btn-op'  data-load="{php echo unionUrl('member/department/delete', array('id' => $four['id']))}" data-confirm="确认删除此分类吗？" href="javascript:void(0)">
+                                                                <span data-toggle="tooltip" data-placement="top"  data-original-title="删除">
+                                                                  <i class="icow icow-shanchu1"></i>
+                                                                 </span>
+                            </a>
+                                    </span>
+                            </div>
+                        </li>
+                        {/loop}
+                    </ol>
                     {/if}
-                </div>
+
+
+                </li>
+                {/loop}
+                </ol>
+        {/if}
+        </li>
+        {/loop}
+        </ol>
+        {/if}
+        </li>
+        {/if}
+        {/loop}
+        </ol>
+    </div>
+
+
 
 
                 <!--copy rights start here-->
@@ -82,9 +203,13 @@
         {template 'sidebar_menu'}
 </body>
 <script>
-    require(['index','jquery.basictable'],function(modal){
+    require(['index','jquery.nestable'],function(modal){
         modal.init();
-        $('#table').basictable();
+        $('#div_nestable').nestable({maxDepth: 4});
+        $(".dd-handle a,.dd-handle div").mousedown(function (e) {
+
+            e.stopPropagation();
+        });
     })
 </script>
 </html>

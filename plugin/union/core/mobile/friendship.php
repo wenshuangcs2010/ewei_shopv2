@@ -13,6 +13,11 @@ class Friendship_EweiShopV2Page extends UnionMobilePage
         global $_W;
         global $_GPC;
         $_W['union']['title']="单身联谊";
+        $indexid=intval($_GPC['indexid']);
+        if($indexid>0){
+            $uniontitle=pdo_fetchcolumn("select title from ".tablename("ewei_shop_union_menu")." where id=:indexid",array(":indexid"=>$indexid));
+            $_W['union']['title']=$uniontitle;
+        }
         include $this->template();
     }
     public function get_list(){
@@ -25,23 +30,27 @@ class Friendship_EweiShopV2Page extends UnionMobilePage
         $pagesize = !empty($_GPC['pagesize']) ? intval($_GPC['pagesize']) : 4;
         $order = !empty($args['order']) ? $args['order'] : ' f.add_time';
         $orderby = empty($args['order']) ? 'desc' : (!empty($args['by']) ? $args['by'] : '' );
-        $condition = ' AND f.uniacid = :uniacid  AND f.is_delete=0 and f.union_id=:union_id ';
+        $condition = ' AND f.uniacid = :uniacid  AND f.is_delete=0 and f.union_id=:union_id';
         $sqlparent=$params = array(':uniacid' => $uniacid,':union_id'=>$union_id);
 
         if(isset($_GPC['type']) && $_GPC['type']==1){
             $condition.=" AND f.openid=:openid ";
             $params[':openid']=$openid;
+        }else{
+            $condition.=" AND f.verification=1 ";
         }
         if(isset($_GPC['type']) && $_GPC['type']==2){
             $sql_join=" LEFT JOIN ".tablename("ewei_shop_union_friendship_follow")." as ff ON ff.friend_id = f.id ";
-            $condition.=" AND ff.openid=:openid and ff.follow=1 ";
+            $condition.="  AND ff.openid=:openid and ff.follow=1  ";
             $params[':openid']=$openid;
         }
         $sql="select f.* from ".tablename("ewei_shop_union_friendship")." as f ".$sql_join."where 1 "
             .$condition."ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
+
         $countsql="select count(*) from ".tablename('ewei_shop_union_friendship')." as f ".$sql_join." where 1 ".$condition;
         $total = pdo_fetchcolumn($countsql,$params);
         $list = pdo_fetchall($sql, $params);
+
         foreach ($list as &$row){
             $row['add_time']=date("Y-m-d",$row['add_time']);
            if($row['maritalstatus']==1){
@@ -51,6 +60,7 @@ class Friendship_EweiShopV2Page extends UnionMobilePage
             }else{
                 $row['maritalstatus']="未婚";
             }
+            $row['header_imageurl']=tomedia($row['header_imageurl']);
             $sqlparent[':friend_id']=$row['id'];
             $sqlparent[':openid']=$openid;
             $row['fabulous']=pdo_fetchcolumn("select fabulous from ".tablename("ewei_shop_union_friendship_fabulous")." where uniacid=:uniacid and union_id=:union_id and friend_id=:friend_id and openid=:openid",$sqlparent);
@@ -139,7 +149,7 @@ class Friendship_EweiShopV2Page extends UnionMobilePage
         global $_W;
         global $_GPC;
         $id=intval($_GPC['id']);
-        $_W['union']['title']="发布征婚";
+        $_W['union']['title']="发布";
         if($_W['ispost']){
             $header_imageurl=  isset($_GPC['images']) ?  tomedia($_GPC['images'][0]) : NULL;
             $life_images= isset($_GPC['life_images']) ?  array_map("tomedia",$_GPC['life_images']) : NULL;
@@ -162,7 +172,7 @@ class Friendship_EweiShopV2Page extends UnionMobilePage
                 'othercondition'=>trim($_GPC['othercondition']),
                 'otheradditional'=>trim($_GPC['otheradditional']),
                 'declaration'=>trim($_GPC['declaration']),
-                'life_images'=>implode("|",$life_images),
+                'life_images'=>!empty($life_images) ? implode("|",$life_images) :'',
                 'add_time'=>time(),
                 'openid'=>$_W['openid'],
                 'union_id'=>$_W['unionid'],
@@ -217,7 +227,7 @@ class Friendship_EweiShopV2Page extends UnionMobilePage
         global $_W;
         global $_GPC;
         $id=intval($_GPC['id']);
-        $_W['union']['title']="征婚详情";
+        $_W['union']['title']="交友详情";
         $member=pdo_fetch("select * from ".tablename("ewei_shop_union_friendship")." where id=:id  and uniacid=:uniacid",array(":id"=>$id,'uniacid'=>$_W['uniacid']));
         $life_images=!empty($member['life_images']) ? explode("|",$member['life_images']) :array();
         foreach ($life_images as $key=>$v){

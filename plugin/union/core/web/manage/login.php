@@ -33,40 +33,43 @@ class Login_EweiShopV2Page extends UnionWebPage
 	{
 		global $_W;
 		global $_GPC;
-		if ($is_operator == 0) 
+        $user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_union_user') . ' WHERE username=:username AND uniacid=:uniacid AND status=1 AND deleted=0 LIMIT 1', array(':username' => $username, ':uniacid' => $_W['uniacid']));
+		if (!$user)
 		{
-			$user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_union_user') . ' WHERE username=:username AND uniacid=:uniacid AND status=1 AND deleted=0 LIMIT 1', array(':username' => $username, ':uniacid' => $_W['uniacid']));
+		    //酒店线路管理员登录
+            $operator = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_union_ly_role_member') . ' WHERE username=:username AND status=1 AND deleted=0  LIMIT 1', array(':username' => $username));
+
+            if (empty($operator))
+            {
+                show_json(0, '用户名不存在!');
+            }
+            $password = md5($password . $operator['salt']);
+            if ($operator['password'] != $password)
+            {
+                show_json(0, '用户名密码错误!');
+            }
+            $perm = iunserializer($operator['role']);
+
+            if (empty($perm))
+            {
+                show_json(0, '用户没有有任何权限!');
+            }
+            $user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_union_ly_role_member') . ' WHERE id=:id  AND status=1 AND deleted=0 LIMIT 1', array(':id' => $operator['id']));
+
+            if (!(empty($user)))
+            {
+
+                session_start();
+                $_SESSION['__union_' . (int) $_GPC['i'] . '_session'] = $user;
+
+                show_json(1, array('url' => unionUrl(current($perm)[0])));
+            }
+            else
+            {
+                show_json(0, '用户名不存在!');
+            }
 		}
-		else 
-		{
-			$operator = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_union_operator') . ' WHERE username=:username AND uniacid=:uniacid LIMIT 1', array(':username' => $username, ':uniacid' => $_W['uniacid']));
-			if (empty($operator)) 
-			{
-				show_json(0, '用户名不存在!');
-			}
-			$password = md5($password . $operator['salt']);
-			if ($operator['password'] != $password) 
-			{
-				show_json(0, '用户名密码错误!');
-			}
-			$perm = json_decode($operator['perm'], true);
-			if (empty($perm)) 
-			{
-				show_json(0, '用户没有有任何权限!');
-			}
-			$user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_union_user') . ' WHERE id=:id AND uniacid=:uniacid AND status=1 AND deleted=0 LIMIT 1', array(':id' => $operator['cashierid'], ':uniacid' => $_W['uniacid']));
-			if (!(empty($user))) 
-			{
-				$user['operator'] = $operator;
-				session_start();
-				$_SESSION['__union_' . (int) $_GPC['i'] . '_session'] = $user;
-				show_json(1, array('url' => unionUrl($perm[0])));
-			}
-			else 
-			{
-				show_json(0, '用户名不存在!');
-			}
-		}
+
 		if ($salt !== NULL) 
 		{
 			if (!(empty($user))) 

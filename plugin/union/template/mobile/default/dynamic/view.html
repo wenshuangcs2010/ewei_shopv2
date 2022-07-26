@@ -12,7 +12,7 @@
         <div class="fui-header-right"></div>
     </div>
     {/if}
-    <div class='fui-content' style="background: #FFFFFF;">
+    <div class='fui-content' style="background: #FFFFFF;margin-bottom: 2.5rem">
         <div class="fui-article-page">
             <div class="fui-article-title">{$article['title']}</div>
             <div class="fui-article-subtitle">
@@ -26,7 +26,7 @@
                     <i class="icon icon_time"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic-history.png"/></i>
                     <span>{php echo date('Y-m-d',$article['createtime'])}</span></div>
             </div>
-            <div class="fui-article-content">
+            <div class="fui-article-content" style="word-wrap: break-word; word-break:break-all;overflow: hidden;">
                 {$article['description']}
             </div>
 

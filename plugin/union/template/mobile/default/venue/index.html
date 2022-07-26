@@ -3,6 +3,18 @@
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 
+<style>
+    {if $category['head_images']!=""}
+        .venue_page{
+            background-image:url("{php echo tomedia($category['head_images'])}");
+        }
+    {else}
+        .venue_page{
+            background-image: url("https://gh.lylife.com.cn/addons/ewei_shopv2/plugin/union/template/mobile/default/static/images/bg_vuenu.png");
+        }
+    {/if}
+
+</style>
 <div class="fui-page  fui-page-current page-goods-list" >
     <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
         <div class="headinfo venue_page">
@@ -10,13 +22,23 @@
                 <div class="fui-header-left">
                     <a class="back"></a>
                 </div>
-                <ul class="setbtn">
-                    <li><a class="togele" href="#"><img  style="width: 1.3rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_more.png"></a>
+                <ul class="setbtn" style="width: 4rem">
+                    <li><a style="display: block;right: 0;text-align: -webkit-right;"  class="togele" href="#"><img  style="width: 1.3rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_more.png"></a>
                         <ul class="menu_list" style="display: none">
-                            <li><a data-nocache="true" href="{php echo mobileUrl('union/venue/mylist')}" href=""><img style="width: 0.9rem"src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_mine.png">我的预订</a></li>
+                            <li><a data-nocache="true" href="{php echo mobileUrl('union/venue/mylist')}" href=""><img style="width: 0.9rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_mine.png">我的预订</a></li>
                         </ul>
                     </li>
                 </ul>
+            </div>
+        </div>
+        <div >
+            <div class="fui-icon-group noborder col-3 " style="background: #ffffff">
+                {loop $categorylist  $item}
+                <a class="fui-icon-col external" href="{php echo mobileUrl('union.venue',array('id'=>$item['id']))}" data-nocache="true">
+                    <div class="icon"><img src="{php echo tomedia($item['images'])}"></div>
+                    <div class="text" style="color: #666666;">{$item['catename']}</div>
+                </a>
+                {/loop}
             </div>
         </div>
         <div class="fui-content navbar" style="position: relative;top:0">
@@ -33,10 +55,10 @@
 </div>
 <script type='text/html' id='tpl_venue_list'>
     <%each list as row%>
-    <a class="fui-cell-group" href="{php echo mobileUrl('union/venue/add')}&id=<%row.id%>">
+    <a class="fui-cell-group" style="font-size: 0.65rem" data-nocache="true" href="{php echo mobileUrl('union/venue/list_venue')}&id=<%row.id%>">
         <div class="fui-cell">
             <div class="fui-cell-icon" style="width: 2.8rem" >
-                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/venue_bg.png">
+                <img style="width: 100%"  onerror="this.src='../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/venue_bg.png'"   src="<%row.images%>">
             </div>
             <div class="fui-cell-text">
                 <span class="texthead" style="height: 1rem"><%row.title%></span>
@@ -48,18 +70,18 @@
                     <span class="uses notuse">空闲</span>
                     <%/if%>
                 </div>
-                <div class="online_li">
+                <div class="online_li" style="font-size: .7rem;color: #8e7f7f;">
                     当前预订 <span><%row.count%></span> 人
                 </div>
             </div>
-            <div class="yuding">预订</div>
+            <div class="baosgin">预订</div>
         </div>
     </a>
     <%/each%>
 </script>
 <script language='javascript'>
     require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
-        modal.venue_init({});
+        modal.venue_init({cateid:{$cateid}});
     });
 </script>
 

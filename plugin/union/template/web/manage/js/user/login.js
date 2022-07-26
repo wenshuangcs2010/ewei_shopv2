@@ -4,10 +4,11 @@ define(['jquery', 'jquery.gcjs'], function (jQuery) {
     };
     modal.init=function(params){
         modal.params = $.extend(modal.params, params || {});
-        $('form').submit(function (e) {
+        $(".layui-btn").click(function (e) {
             e.preventDefault();
             modal.submit();
         })
+
     }
     modal.submit=function(){
         $('.layui-btn').attr('disabled',true).html('正在登录...');

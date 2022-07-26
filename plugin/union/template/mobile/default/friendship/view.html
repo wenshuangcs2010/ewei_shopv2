@@ -2,22 +2,27 @@
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 <script>document.title = "{$_W['union']['title']}"; </script>
+<style>
+    a.back:before{
+        left: 5px;
+        border-color: #FFFF;
+    }
+</style>
 <div class='fui-page  fui-page-current'>
-    {if !is_weixin()}
-    <div class="fui-header">
-        <div class="fui-header-left">
-            <a class="back"></a>
-        </div>
-        <div class="title">征婚详情</div>
-        <div class="fui-header-right"></div>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"></a>
+            </div>
+        </header>
     </div>
-    {/if}
     <div class='fui-content friendship' >
+
         {if $life_images && count($life_images)>1}
         <div class="fui-swipe" style="background-color: #FFFFFF;">
             <div class="fui-swipe-wrapper" style="transition-duration: 300ms; transform: translate3d(-375px, 0px, 0px);">
                 {loop $life_images $v}
-                <div class="fui-swipe-item" ><img src="{$v}" style="display: block; width:auto;margin: auto;height: 225px;"></div>
+                <div class="fui-swipe-item" ><img src="{php echo tomedia($v)}" style="display: block; width:auto;margin: auto;height: 225px;"></div>
                 {/loop}
 
             </div>
@@ -33,7 +38,7 @@
         </div>
         {else}
         <div>
-            <img src="{$life_images[0]}" style="display: block; height: 225px;">
+            <img src="{php echo tomedia($life_images[0])}" style="display: block; height: 225px;width: 100%">
         </div>
         {/if}
         <div class="tabs-container tab-goods" style="">
@@ -149,7 +154,7 @@
                                 <div class="fui-cell-icon">
                                     <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/frendship/ic_declarer.png">
                                 </div>
-                                <div class="fui-cell-label ">征婚宣言</div>
+                                <div class="fui-cell-label ">交友宣言</div>
                                 <div class="fui-cell-info">{if $member['declaration']}{$member['declaration']}{else}保密{/if}</div>
                             </div>
                             <div class="fui-cell" style="height: 2.8rem"></div>
@@ -225,7 +230,6 @@
                             <div class="master-info">
                                 <img class="avatar"  onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/sex.png'" src="{$msg['avatar']}">
                                 <span class="name">{if $msg['realname']}{$msg['realname']}{else}{$msg['nickname']}{/if}</span>
-
                             </div>
                             <div class="message-content">{$msg['message']}
                             </div>

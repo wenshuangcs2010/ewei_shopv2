@@ -1,23 +1,46 @@
+
+<style>
+	.fui-navbar .nav-item .label{
+		font-size: 0.6rem;
+	}
+
+	.external-item{
+		background-color: #f5f5f5;
+		margin-top: 0.2rem;
+	}
+
+	.fui-navbar .nav-item .label {
+		top: -0.3rem;
+	}
+</style>
 <div class="fui-navbar">
-
-	<a href="{php echo mobileUrl('union/index')}" class="external nav-item {if $_W['routes']=='' ||  $_W['routes']=='shop' ||  $_W['routes']=='commission.myshop'}active{/if}">
-		<span class="icon icon-home"></span>
-		<span class="label">首页</span>
+	<a href="{php echo mobileUrl('union/index')}" class="external-item nav-item {if $_W['routes']=='' ||  $_W['routes']=='union' ||  $_W['routes']=='union.index'}active{/if}">
+		<span class="iconfont iconhome"></span>
+		<span class="label">服务大厅</span>
 	</a>
 
-
-	<a href="{php echo mobileUrl('union/dynamic')}" class="external nav-item {if $_W['routes']=='goods'}active{/if}" >
-		<span class="icon icon-list"></span>
-		<span class="label">工会动态</span>
+	{if isset($_W['welfareconfig']) && isset($_W['welfareconfig']['welfarestatus']) && $_W['welfareconfig']['welfarestatus']==1}
+    <a href="{php echo mobileUrl('union/welfareindex')}" class="external-item nav-item {if $_W['routes']=='union.welfareindex'}active{/if}" >
+        <span class="iconfont iconyouhui"></span>
+        <span class="label">慰问申请</span>
+    </a>
+	{/if}
+	{if $_W['unionid']!=$_W['defaultunionid']}
+	<a href="{php echo mobileUrl('union/maillist',array('categoryid'=>-1))}" class="external-item nav-item {if $_W['routes']=='union.maillist'}active{/if}" id="menucart">
+		<span class="iconfont icontongxunlu"></span>
+		<span class="label">通讯录</span>
 	</a>
-
-	<a href="{php echo mobileUrl('index')}" class="external nav-item {if $_W['routes']=='member.cart'}active{/if}" id="menucart">
-		<span class="icon icon-cart"></span>
-		<span class="label">福利商城</span>
-		{if $cartcount>0}<span class="badge">{$cartcount}</span>{/if}
+	{/if}
+	{if $_W['union_info']['shopstatus']==1 && !empty($_W['union_info']['shopurl'])}
+	<a href="{$_W['union_info']['shopurl']}" class="external-item nav-item {if $_W['routes']=='index'}active{/if}">
+		<span class="iconfont iconshangcheng"></span>
+		<span class="label">{if empty($_W['union_info']['shopname'])}福利商城{else}{$_W['union_info']['shopname']}{/if}</span>
 	</a>
-	<a href="{php echo mobileUrl('union/member')}" class="external nav-item  {if $_W['routes']=='member'}active{/if}">
-		<span class="icon icon-person2"></span>
+	{/if}
+	<a href="{php echo mobileUrl('union/member')}" class="external-item nav-item  {if $_W['routes']=='union.member'}active{/if}">
+		<span class="iconfont iconhuiyuan"></span>
 		<span class="label">会员中心</span>
 	</a>
 </div>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/footercss.css" rel="stylesheet" type="text/css"/>
+{template '_share'}

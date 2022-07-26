@@ -12,7 +12,7 @@ class Personnelmien_EweiShopV2Page extends UnionMobilePage
     {
         global $_W;
         global $_GPC;
-        $_W['union']['title']="员工风采";
+        $_W['union']['title']="职工风采";
         include $this->template();
     }
 

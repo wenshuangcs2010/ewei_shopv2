@@ -20,4 +20,18 @@
     <script src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/app.js?ver={php echo time()}"></script>
     <!-- //lined-icons -->
 
+    <script>
+        window.sysinfo = {
+        <?php  if(!empty($_W['uniacid'])) { ?>'uniacid': '<?php  echo $_W['uniacid'];?>',<?php  } ?>
+        <?php  if(!empty($_W['acid'])) { ?>'acid': '<?php  echo $_W['acid'];?>',<?php  } ?><?php  if(!empty($_W['openid'])) { ?>'openid': '<?php  echo $_W['openid'];?>',<?php  } ?>
+        <?php  if(!empty($_W['uid'])) { ?>'uid': '<?php  echo $_W['uid'];?>',<?php  } ?>
+        'siteroot': '<?php  echo $_W['siteroot'];?>',
+            'siteurl': '<?php  echo $_W['siteurl'];?>',
+            'attachurl': '<?php  echo $_W['attachurl'];?>',
+            'attachurl_local': '<?php  echo $_W['attachurl_local'];?>',
+            'attachurl_remote': '<?php  echo $_W['attachurl_remote'];?>',
+        <?php  if(defined('MODULE_URL')) { ?>'MODULE_URL': '<?php echo MODULE_URL;?>',<?php  } ?>
+        'cookie' : {'pre': '<?php  echo $_W['config']['cookie']['pre'];?>'}
+        };
+    </script>
 

@@ -85,7 +85,7 @@
                            placeholder="请输入密码"/>
                 </li>
                 <li class="text-center">
-                    <button type="submit" class="layui-btn layui-disabled" data-form-loaded="立 即 登 入">正 在 载 入</button>
+                    <a  class="layui-btn layui-disabled" data-form-loaded="立 即 登 入">正 在 载 入</a>
                 </li>
             </ul>
         </form>
@@ -106,10 +106,12 @@
     require(['jquery','login'], function ($,modal) {
         $('[name="password"]').on('focus', function () {
             $('#left-hander').removeClass('initial_left_hand').addClass('left_hand');
-            $('#right-hander').removeClass('initial_right_hand').addClass('right_hand')
+            $('#right-hander').removeClass('initial_right_hand').addClass('right_hand');
+            return;
         }).on('blur', function () {
             $('#left-hander').addClass('initial_left_hand').removeClass('left_hand');
-            $('#right-hander').addClass('initial_right_hand').removeClass('right_hand')
+            $('#right-hander').addClass('initial_right_hand').removeClass('right_hand');
+            return;
         });
         modal.init({submitUrl:"{$submitUrl}"});
     });

@@ -12,6 +12,26 @@ body a{
 	-ms-transition:0.5s all;
 
 }
+.form-search {
+    padding: 10px 10px;
+}
+.ibox-title {
+    border-bottom: 1px solid #e7eaec;
+    color: inherit;
+    margin-bottom: 0;
+    padding: 0px 15px 0px 15px;
+    min-height: 48px;
+}
+.ibox-title h5 {
+    display: inline-block;
+    font-size: 26px;
+    margin: 16px 0px;
+    font-weight: 500;
+    text-indent: 8px;
+    text-overflow: ellipsis;
+    border-left: 2px solid #88B7E0;
+}
+
 a:focus, a:active, a:hover ,a.dropdown-toggle{
     outline: none;
     -webkit-transition: all 0.3s;
@@ -42,8 +62,9 @@ a:hover { transition: all 200ms ease-in-out; }
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 100%;
+  min-height: 890px;
   margin: 0px auto;
+    background-color: white;
 }
 .left-content {
     float: right;
@@ -86,6 +107,7 @@ li.breadcrumb-item i.fa.fa-angle-right {
  .left-content {
     width:87%;
 	padding: 0 2em;
+     background-color: white;
 }
 .tlinks{text-indent:-9999px;height:0;line-height:0;font-size:0;overflow:hidden;}
 .page-container.sidebar-collapsed .sidebar-menu {
@@ -96,6 +118,8 @@ li.breadcrumb-item i.fa.fa-angle-right {
 .page-container.sidebar-collapsed-back .sidebar-menu {
   width: 230px;
   transition: all 100ms ease-in-out;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 .page-container.sidebar-collapsed .sidebar-icon {
    transform: rotate(90deg);
@@ -153,6 +177,8 @@ li.breadcrumb-item i.fa.fa-angle-right {
 	-webkit-box-shadow: 0px 0px 10px 0px rgb(58, 41, 31);
 	-moz-box-shadow: 0px 0px 10px 0px rgb(58, 41, 31);
    z-index: 999;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 label.col-sm-2.control-label {
     font-size: 16px;
@@ -172,8 +198,9 @@ label.col-sm-2.control-label {
   padding: 0;
 }
 #menu li ul {
+    /**
   opacity: 0;
-  height: 0px;
+  height: 0px;**/
 }
 #menu li a {
 	font-style: normal;
@@ -202,20 +229,26 @@ label.col-sm-2.control-label {
 }
 #menu ul li {
     background-color: #333333;
+    text-indent:25px
 }
 #menu ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
+
 #menu li ul {
+  /**
   position: absolute;
   visibility: hidden;
+   opacity: 0;
+  **/
+    display: none;
   left: 100%;
   top: -1px;
   background-color: #2b303a;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  opacity: 0;
+
   transition: opacity 0.1s linear;
   border-top: 1px solid rgba(69, 74, 84, 0.7);
 }
@@ -330,7 +363,7 @@ li#menu-academico{
 }
 .profile_details {
     float: left;
-    width: 24.25%;
+
     background: #1b93e1;
     text-align: center;
     padding: 0.3em 1em;
@@ -878,6 +911,10 @@ ul.dropdown-menu.drp-mnu li {
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
     -moz-box-shadow: 0 1px 1px rgba(0,0,0,.05);
     background: #fff;
+
+    left: 110px;
+    width: 100%;
+    position: absolute;
 }
 .copyrights p {
     font-size: 1em;
@@ -1745,6 +1782,20 @@ code {
 .bs-component {
     position: relative;
 }
+.btn-white{
+    display: inline-block;
+    height: 38px;
+    line-height: 38px;
+    padding: 0 18px;
+    background-color: #009688;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 14px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
 .btn {
     display: inline-block;
     margin-bottom: 0;
@@ -1829,8 +1880,14 @@ code {
     line-height: 1.5;
     border-radius: 3px;
 }
+.animated{
+    background-color: white;
+}
+.animated .row .col-xs-2 input{
+    height: 39px;
+}
 .btn-sm, .btn-group-sm > .btn {
-    padding: 5px 14px;
+
     font-size: 11px;
     line-height: 1.5;
     border-radius: 3px;
@@ -1883,7 +1940,7 @@ ul.bt-list li {
     display: inline-block;
     list-style: none;
     width: 32%;
-    margin: 1% 0;
+    margin: 5px 0;
 }
 ul.bt-list li a {
     padding: 1em 2.5em;
@@ -4706,6 +4763,7 @@ p {
 /*---//errorpage-----*/
 ul.bt-list {
     padding: 0;
+    margin: 5px 0;
 }
 /*---signin-----*/
 .main-wthree{
@@ -4757,7 +4815,14 @@ span.prfil-img img {
 	margin-bottom: 35px;
 	float:left;
 }
-
+.label-required:after {
+    content: '*';
+    color: red;
+    position: absolute;
+    margin-left: 4px;
+    font-weight: bold;
+    line-height: 1.8em;
+}
 .main-wthree input.password {
 	width: 71%;
 	padding:10px 10px 10px 15px;
@@ -5316,6 +5381,8 @@ canvas#bar, canvas#line, canvas#pie {
 		position: fixed;
 		float: left;
 		width: 200px;
+        overflow-y: scroll;
+        overflow-x: hidden;
 	}
 	.page-container.sidebar-collapsed-back .sidebar-menu {
 		width: 200px;
@@ -5511,6 +5578,8 @@ table th, table td {
 		position: fixed;
 		float: left;
 		width: 200px;
+        overflow-y: scroll;
+        overflow-x: hidden;
 	}
 	.page-container.sidebar-collapsed-back .sidebar-menu {
 		width: 200px;
@@ -5588,6 +5657,8 @@ li.dropdown.head-dpdn a.dropdown-toggle {
 		position: fixed;
 		float: left;
 		width: 180px;
+        overflow-y: scroll;
+        overflow-x: hidden;
 	}
 	span.name-caret {
     margin: 10px 0px 0px 0px;
@@ -5669,6 +5740,8 @@ table th, table td {
 		position: fixed;
 		float: left;
 		width: 170px;
+        overflow-y: scroll;
+        overflow-x: hidden;
 	}
 	.sidebar-icon {
 		margin-top: -6px;
@@ -5843,6 +5916,8 @@ table th, table td {
 		}
 	 .sidebar-menu {
           position:absolute;
+         overflow-y: scroll;
+         overflow-x: hidden;
 	  }
 	 .page-container.sidebar-collapsed .left-content .srch button {
 		cursor: pointer;
@@ -6029,6 +6104,8 @@ table th, table td {
 	.page-container.sidebar-collapsed .sidebar-menu {
 		width: 180px;
 		z-index: 999999999;
+        overflow-y: scroll;
+        overflow-x: hidden;
 	}
 	.page-container.sidebar-collapsed .left-content {
 		float: right;
@@ -6128,6 +6205,8 @@ ul.bt-list li {
 	.page-container.sidebar-collapsed .sidebar-menu {
 		width: 180px;
 		z-index: 999999999;
+        overflow-y: scroll;
+        overflow-x: hidden;
 	}
 	.page-container.sidebar-collapsed .left-content {
 		float: right;
@@ -6419,4 +6498,7 @@ ul.dropdown-menu {
     padding: 7px 9px 8px 15px;
 }
 }
+
 /***responsive***/
+
+

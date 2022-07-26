@@ -3,16 +3,13 @@
 <script>document.title = "{$_W['union']['title']}"; </script>
 <div class='fui-page  fui-page-current'>
 
-    {if is_mobile() && !is_weixin() }
-    <div class="fui-header">
-
-        <div class="fui-header-left">
-            <a class="back"></a>
-        </div>
-        <div class="title">预订</div>
-        <div class="fui-header-right"></div>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"><span></span></a>
+            </div>
+        </header>
     </div>
-    {/if}
     <div class='fui-content member-page navbar'  {if is_weixin()} style="top:0" {/if}>
         <div class="fui-cell-group" {if is_weixin()} style="margin-top:0" {/if}>
             <div class="fui-cell">
@@ -48,8 +45,6 @@
                         <option value="11:00">11:00</option>
                         <option value="11:30">11:30</option>
                         <option value="12:00">12:00</option>
-                        <option value="12:30">12:30</option>
-                        <option value="13:00">13:00</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
                         <option value="13:30">13:30</option>
@@ -88,8 +83,6 @@
                         <option value="11:00">11:00</option>
                         <option value="11:30">11:30</option>
                         <option value="12:00">12:00</option>
-                        <option value="12:30">12:30</option>
-                        <option value="13:00">13:00</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
                         <option value="13:30">13:30</option>

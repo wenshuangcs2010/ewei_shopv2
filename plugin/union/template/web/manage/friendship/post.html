@@ -3,7 +3,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">姓名</label>
         <div class="layui-input-block">
-            <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入员工姓名" placeholder="请输入员工姓名" class="layui-input">
+            <input type="text" name="name" value="{$vo['name']}" required="required" title="请输入职工姓名" placeholder="请输入职工姓名" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -11,20 +11,20 @@
         <div class="layui-input-block">
             <select name="sex" class="form-control select2" tabindex="-1" title="">
                 <option value="0" {if isset($vo['sex']) && $vo['sex']==1 }selected{/if}>男</option>
-                <option value="1" {if isset($vo['sex']) && $key==$vo['sex']=2 }selected{/if}>女</option>
+                <option value="1" {if isset($vo['sex']) && $vo['sex']==2 }selected{/if}>女</option>
             </select>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">年龄</label>
         <div class="layui-input-block">
-            <input type="text" name="age" value="{$vo['age']}" required="required" title="请输入员工年龄" placeholder="请输入员工年龄" class="layui-input">
+            <input type="text" name="age" value="{$vo['age']}" required="required" title="请输入职工年龄" placeholder="请输入职工年龄" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">身高</label>
         <div class="layui-input-block">
-            <input type="text" name="height" value="{$vo['height']}"  title="请输入员工身高(cm)" placeholder="请输入员工身高(cm)" class="layui-input">
+            <input type="text" name="height" value="{$vo['height']}"  title="请输入职工身高(cm)" placeholder="请输入职工身高(cm)" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -63,7 +63,7 @@
         <div class="layui-input-block">
             <div style="position:relative;width:500px">
                 <div class="input-group">
-                    <input class="layui-input" readonly name="life_images" value="{$vo['life_images']}" placeholder="请选择全身照" type="text">
+                    <input class="layui-input" readonly name="life_images" data-srcs="{$vo['life_images']}" value="{$vo['life_images']}" placeholder="请选择全身照" type="text">
                     <a class="input-group-addon" data-file="mutl"  data-field="life_images" data-type="jpg,png,jpeg" data-uptype="local" >
                         <i class="fa fa-file"></i>
                     </a>
@@ -72,7 +72,7 @@
                     {if $vo['thumbs']}
                     {loop $vo['thumbs'] $key $thumb}
                     <div class="multi-item">
-                        <img src="{$thumb}"  class="img-responsive img-thumbnail">
+                        <img src="{php echo tomedia($thumb)}"  class="img-responsive img-thumbnail">
                         <em class="close"  data-index="{$key}" title="删除这张图片">×</em>
                     </div>
                     {/loop}
@@ -130,7 +130,7 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">征婚宣言</label>
+        <label class="layui-form-label">交友宣言</label>
         <div class="layui-input-block">
            <textarea name="declaration" class="layui-textarea">{$vo['declaration']}</textarea>
         </div>
@@ -152,6 +152,22 @@
         <div class="layui-input-block">
             <input type="text" name="otheradditional" value="{$vo['otheradditional']}"  title="对方的补充说明" placeholder="对方的补充说明" class="layui-input">
         </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否通过审核</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['verification']) && $vo['verification'] == 1}
+                <input type="radio" checked name="verification" value="1" title="是">
+                <input type="radio" name="verification" value="-1" title="否">
+                {else}
+                <input type="radio" name="verification" value="1" title="是">
+                <input type="radio" checked name="verification" value="-1" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
     </div>
 
 
@@ -182,16 +198,17 @@
                     $(this).parent().next().children(".multi-item").remove();
                 }
                 values.reverse();
-                for (var i in srcs) {
+                for (i = 0; i < srcs.length; i++){
                     values.push(srcs[i]);
                 }
                 this.value = values.join('|');
-                for (var i in values) {
+                for (i = 0; i < values.length; i++){
                     var $tpl=$(tpl);
-                    $tpl.children("img").attr('src',values[i]);
+                    var imgsrc=tomedia(values[i]);
+                    $tpl.children("img").attr('src',imgsrc);
                     $tpl.children("input").val(values[i]);
                     $(input).data('input', input).data('srcs', values).data('index', i);
-                    console.log($(input).data());
+
                     $tpl.on('click', 'em', function (e) {
                         e.stopPropagation();
                         var $cur = $(this).parent();
@@ -210,25 +227,34 @@
                 var input = this, values = [], srcs = this.value.split('|');
                 if($(input).parent().children("a").data("file")=="one"){
                     $(this).parent().next().children(".multi-item").remove();
+                }else{
+                    $(this).parent().next().children(".multi-item").remove();
                 }
                 values.reverse();
-                for (var i in srcs) {
+
+                for (i = 0; i < srcs.length; i++){
                     values.push(srcs[i]);
                 }
+
                 this.value = values.join('|');
+
                 $(input).data('input', input).data('srcs', values);
-                for (var i in values) {
+
+                for (i = 0; i < values.length; i++){
+
                     var $tpl=$(tpl);
-                    $tpl.children("img").attr('src',values[i]);
+                    var imgsrc=tomedia(values[i]);
+
+                    $tpl.children("img").attr('src',imgsrc);
                     $tpl.children("em").data('index', i);
                     $(this).parent().next(".multi-img-details").append($tpl);
                 }
             });
             var values =$("input[name='life_images']").val().split('|');
-            for (var i in values) {
+            for (i = 0; i < values.length; i++){
                 $("input[name='life_images']").data('srcs', values).data('index', i);
             }
-            $(document).on('click', 'em', function (e) {
+            $(document).unbind("click").on('click', 'em', function (e) {
                 e.stopPropagation();
                 var $cur = $(this).parent();
                 var input=$(this).parent().parent().prev().children("input");

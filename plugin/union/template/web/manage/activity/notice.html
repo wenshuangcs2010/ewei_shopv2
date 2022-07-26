@@ -52,7 +52,7 @@
 					<td>{$row['a_title']}</td>
 					<td>{$row['browsecount']}</td>
 					<td>
-						<a target="_blank" data-load="{php echo unionUrl('association/noticedelete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
+						<a data-load="{php echo unionUrl('association/noticedelete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
 					</td>
 				</tr>
                 {/loop}

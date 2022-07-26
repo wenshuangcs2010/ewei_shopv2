@@ -3,8 +3,24 @@
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 
+<style>
+    {if $category['head_images']!=""}
+    .document{
+        background-image:url("{php echo tomedia($category['head_images'])}");!important;
+    }
+    {else}
+
+    .document{
+
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/document.png");
+    }
+    {/if}
+
+</style>
+
 <div class="fui-page  fui-page-current page-goods-list" >
     <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+
         <div class="headinfo document">
             <div class="commission_head">
                 <div class="fui-header-left">
@@ -14,12 +30,22 @@
                             <div class="searchbar">
                                 <div class="search-input">
                                     <i class="icon icon-search"></i>
-                                    <input type="search" class="serchinput" id="keywords" name="keywords" placeholder="输入关键字...">
+                                    <input type="search" class="serchinput" value="{$_GPC['keywords']}" id="keywords" name="keywords" placeholder="输入关键字...">
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div >
+            <div class="fui-icon-group noborder col-3 " style="background: #ffffff">
+                {loop $categorylist  $item}
+                <a class="fui-icon-col external" href="{php echo mobileUrl('union.document',array('id'=>$item['id']))}" data-nocache="true">
+                    <div class="icon"><img src="{php echo tomedia($item['images'])}"></div>
+                    <div class="text" style="color: #000;font-size: 0.7rem">{$item['catename']}</div>
+                </a>
+                {/loop}
             </div>
         </div>
         <div class="fui-content navbar" style="position: relative;top:0">
@@ -38,13 +64,13 @@
 
 <script type='text/html' id='tpl_goods_list'>
     <%each list as row%>
-    <a class="fui-cell-group" href="{php echo mobileUrl('union/document/view')}&id=<%row.id%>">
+    <a class="fui-cell-group"  href="<%row.link%>">
         <div class="fui-cell">
             <div class="fui-cell-icon" style="width: 2.8rem" >
-                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/documentlist.png">
+                <img style="width: 100%" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/20191205091012.jpg'" src="<%row.header_image%>">
             </div>
             <div class="fui-cell-text">
-                <span class="texthead"><%row.title%></span>
+                <span class="texthead"><%if row.union_title !=''%>[<%row.union_title%>]  <%/if%><%row.title%></span>
                 <div class="online_li">
 
                     <span class="span_text2"><img width="100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_read.png"/><%row.read_count%></span>
@@ -58,7 +84,7 @@
 </script>
 <script language='javascript'>
     require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
-        modal.document_init({});
+        modal.document_init({'category_id':{$category_id}});
     });
 </script>
 <style>
@@ -67,14 +93,6 @@
         width: 80%;
         top: 0.4rem;
         left: 2rem;
-    }
-    .serchinput{
-        width: 100%;
-        background-color: rgba(0,0,0,0.5)!important;
-        border:2px solid rgba(255,255,255,1);
-        opacity:0.6;
-        border-radius:6px;
-        color: #FFFFFF!important;
     }
 </style>
 {template 'union/_footer'}

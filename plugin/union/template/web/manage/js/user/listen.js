@@ -95,6 +95,21 @@ define(['jquery', 'admin.plugs'], function () {
         window.location.href = '#' + $.menu.parseUri(this.href, this);
     });
 
+
+
+    /*! 注册 data-page-href 事件行为 */
+    this.$body.on('click', '[data-toggle]', function () {
+        var toggle = $(this).attr('data-toggle') || '';
+        var controls = $(this).attr('aria-controls') || '';
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        console.log(index);
+        layer.iframeAuto(index);
+    });
+    this.$body.on('click','[data-selectmember]',function(){
+
+
+        return $.form.getMembers($(this).attr('data-selectmember'), 'open_type=modal', $(this).attr('data-title') || '编辑',$(this));
+    })
     /*! 注册 data-file 事件行为 */
     this.$body.on('click', '[data-file]', function () {
         var type = $(this).attr('data-type') || 'jpg,png';
@@ -102,6 +117,7 @@ define(['jquery', 'admin.plugs'], function () {
         var method = $(this).attr('data-file') === 'one' ? 'one' : 'mtl';
         var title = $(this).attr('data-title') || '文件上传';
         var uptype = $(this).attr('data-uptype') || '';
+
 
         var url = window.ROOT_URL + '/union.php?i='+window.uniacid+'&r=upfile.plugs.upfile&mode=' + method + '&uptype=' + uptype + '&type=' + type + '&field=' + field;
 
@@ -112,6 +128,13 @@ define(['jquery', 'admin.plugs'], function () {
     this.$body.on('click', '[data-iframe]', function () {
         $.form.iframe($(this).attr('data-iframe'), $(this).attr('data-title') || '窗口');
     });
+
+    /*! 注册 data-iframe 事件行为 */
+    this.$body.on('click', '[data-map]', function () {
+        $.form.mapiframe($(this).attr('data-map'), $(this).attr('data-title') || '窗口');
+    });
+
+
 
     /*! 注册 data-icon 事件行为 */
     this.$body.on('click', '[data-icon]', function () {
@@ -284,6 +307,33 @@ define(['jquery', 'admin.plugs'], function () {
         }), {boxShadow: 'none'});
     });
 
+    tomedia = function(src, forcelocal){
+        if(!src) {
+            return '';
+        }
+        if(typeof(src)!="string"){
+            return false;
+        }
+        if(src.indexOf('./addons') == 0) {
+            return window.sysinfo.siteroot + src.replace('./', '');
+        }
+        if(src.indexOf(window.sysinfo.siteroot) != -1 && src.indexOf('/addons/') == -1) {
+            src = src.substr(src.indexOf('images/'));
+        }
+        if(src.indexOf('./resource') == 0) {
+            src = 'app/' + src.substr(2);
+        }
+        var t = src.toLowerCase();
+        if(t.indexOf('http://') != -1 || t.indexOf('https://') != -1 ) {
+            return src;
+        }
+        if(forcelocal || !window.sysinfo.attachurl_remote) {
+            src = window.sysinfo.attachurl_local + src;
+        } else {
+            src = window.sysinfo.attachurl_remote + src;
+        }
+        return src;
+    };
     /*! 后台菜单控制初始化 */
     $.menu.listen();
 

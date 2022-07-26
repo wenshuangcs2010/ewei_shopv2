@@ -2,6 +2,14 @@
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 <script>document.title = "{$_W['union']['title']}"; </script>
+<style>
+    .menu_list li a{
+        text-align: left;
+    }
+    .commission_head .setbtn{
+        width: 5rem;
+    }
+</style>
 <div class='fui-page  fui-page-current'>
     <div class="headinfo d_simp">
         <div class="commission_head">
@@ -11,9 +19,9 @@
             <ul class="setbtn">
                 <li><a class="togele" href="#"><img  style="width: 1.3rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_more.png"></a>
                     <ul class="menu_list" style="display: none">
-                        <li><a data-nocache="true" href="{php echo mobileUrl('union/friendship/addfriendship')}"><img style="width: 0.9rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_issue.png">发布征婚</a></li>
-                        <li><a data-nocache="true" href="{php echo mobileUrl('union/friendship/friendship_edit',array('type'=>'1'))}" href=""><img style="width: 0.9rem"src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_mine.png">我的征婚</a></li>
-                        <li><a  data-nocache="true" href="{php echo mobileUrl('union/friendship/friendship_list',array('type'=>'2'))}" href=""><img style="width: 0.9rem"src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_attetion.png">我的关注</a></li>
+                        <li><a style="text-align: left;" data-nocache="true" href="{php echo mobileUrl('union/friendship/addfriendship')}"><img style="width: 0.9rem" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_issue.png">我要发布</a></li>
+                        <li><a style="text-align: left;" data-nocache="true" href="{php echo mobileUrl('union/friendship/friendship_edit',array('type'=>'1'))}" href=""><img style="width: 0.9rem"src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_mine.png">我的发布</a></li>
+                        <li><a style="text-align: left;"  data-nocache="true" href="{php echo mobileUrl('union/friendship/friendship_list',array('type'=>'2'))}" href=""><img style="width: 0.9rem"src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/ic_attetion.png">我的关注</a></li>
                     </ul>
                 </li>
             </ul>
@@ -21,7 +29,6 @@
         </div>
     </div>
     <div class='fui-content friendship' style="top:8.5rem;bottom: 2.4rem;">
-
         <div class='fui-content-inner'>
             <div class='content-empty' style='display:none;'>
                 <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
@@ -90,7 +97,6 @@
                 <div class="row">
                     <div class="row-text" style="font-size: .6rem;color: #666666">关注<span class="allfollow"><%row.allfollow%></span></div>
                 </div>
-
             </div>
         </div>
     </a>

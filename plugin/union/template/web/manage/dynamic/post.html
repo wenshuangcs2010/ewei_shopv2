@@ -8,6 +8,27 @@
     </div>
 
     <div class="layui-form-item">
+        <label class="layui-form-label">标题图片</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" readonly name="header_image" value="{$vo['header_image']}" placeholder="活动图片" type="text">
+                    <a class="input-group-addon" data-file="one"  data-field="header_image" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+                <div class="input-group multi-img-details ui-sortable">
+                    {if $vo['header_image']}
+                    <div class="multi-item">
+                        <img src="{$vo['header_image']}"  class="img-responsive img-thumbnail">
+                        <em class="close" title="删除这张图片">×</em>
+                    </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
     <label class="layui-form-label">内容</label>
         <div class="layui-input-block">
             <textarea id="editor" name='description'>{$vo['description']}</textarea>

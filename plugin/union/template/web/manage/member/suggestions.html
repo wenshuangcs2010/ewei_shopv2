@@ -11,14 +11,36 @@
         <div class="mother-grid-inner">
             <!--header start here-->
             {template 'header_main'}
+
+
             <!--heder end here-->
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>列表</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>建言献策</li>
+
             </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>建言献策</h5>
+
+                    </div>
+                </div>
+            </div>
+            <form class="animated form-search" action="{php echo unionUrl('member.suggestions')}" onsubmit="return false" method="get">
+                <div class="row">
+
+                    <div class="col-xs-2">
+                        <input type="text" name="keywordes" value="{$keywordes}" placeholder="标题" class="form-control">
+                    </div>
+                    <div class="col-xs-1">
+                        <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+                    </div>
+                </div>
+            </form>
             <div class="agile-grids">
                 <div class="agile-tables">
                     <div class="w3l-table-info">
-                        <h2>建言献策</h2>
+
                         <table id="table">
                             <thead>
                             <tr>

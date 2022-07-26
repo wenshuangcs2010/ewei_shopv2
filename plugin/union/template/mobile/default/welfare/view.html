@@ -1,6 +1,6 @@
 {template '_header'}
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
-
+<link href="../addons/ewei_shopv2/plugin/union/static/css/timeline.css" rel="stylesheet" type="text/css"/>
 <script>document.title = "{$_W['union']['title']}"; </script>
 <div class='fui-page' style="background-color: #fff">
 
@@ -8,12 +8,12 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">福利审核</div>
+        <div class="title">慰问详情</div>
         <div class="fui-header-right"></div>
     </div>
 
     <div class='fui-content  welfare_view'>
-        <h3 style="text-align: center">职工{$typename}慰问申请表</h3>
+        <h3 style="text-align: center">职工{$typename}申请表</h3>
         <div class="fui-cell-group">
             <div class="fui-cell">
                 <div class="fui-cell-icon" style="width: 4rem" >公司</div>
@@ -25,16 +25,16 @@
                 <div class="fui-cell-text">{$department['name']}</div>
                 <div>{php echo date("Y-m-d",$item['add_time'])}</div>
             </div>
-               <div class="class_status {if $item['status']==3||$item['status']==4} status_lost{elseif $item['status']==2}status_success {/if}">{$item['statusmessage']}</div>
+               <div class="class_status {if $item['status']==3||$item['status']==4} status_lost{elseif $item['status']==2 ||$item['status']==5}status_success {/if}">{$item['statusmessage']}</div>
         </div>
         <div class="fui-cell-group">
             <table class="table table-bordered">
                 <tbody>
                 <tr>
                     <td>姓名</td>
-                    <td>{$item['name']} </td>
+                    <td>{php echo $this->member['name']} </td>
                     <td>性别</td>
-                    <td>{if $this->member['sex']==0}男{else}女{/if}</td>
+                    <td>{if $this->member['sex']==1}男{else}女{/if}</td>
                 </tr>
                 <tr>
                     <td>事由</td>
@@ -44,16 +44,31 @@
                 </tr>
                 <tr>
                     <td>类型</td>
-                    <td>{if $item['amounttype']==1}现金{else}福利券{/if}</td>
+                    <td>{if $item['amounttype']==1}现金{else}实物{/if}</td>
                     <td>{$typename}日期</td>
                     <td>{php echo date("Y-m-d",$item['time'])}</td>
                 </tr>
+                <tr>
+                    <td>工会小组</td>
+                    <td>{$groups_info['groupname']}</td>
+                    <td>联系电话</td>
+                    <td>{php echo $this->member['mobile_phone']}</td>
+                </tr>
+                {if $item['bankcard']}
+                <tr>
+                    <td>开户银行</td>
+                    <td>{$item['bankname']}</td>
+                    <td>银行卡号</td>
+                    <td>{$item['bankcard']}</td>
+                </tr>
+                {/if}
                 <tr>
                     <td style="height: 5rem;">备注</td>
                     <td colspan="3">{$item['remarks']}</td>
                 </tr>
                 <tr >
-                    <td colspan="4">
+                    <td colspan="1">材料</td>
+                    <td colspan="3">
                         {loop $images $i}
                         <img src="{$i}">
                         {/loop}
@@ -71,6 +86,48 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="fui-cell-group">
+            <section id="cd-timeline" class="cd-container">
+                <div class="cd-timeline-block">
+                    <div class="cd-timeline-img cd-picture">
+                        我
+                    </div>
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576735216446" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="742" width="100%" height="100%"><path d="M489.6 141.6a369.12 369.12 0 1 0 369.28 369.28A369.12 369.12 0 0 0 489.6 141.6z m211.84 273.44L462.56 653.76a33.44 33.44 0 0 1-48 0l-137.44-137.44a33.44 33.44 0 1 1 48-48l113.92 113.92L654.08 368a33.44 33.44 0 1 1 48 48z m0 0" p-id="743" fill="#11af08"></path></svg>
+                    </div>
+                    <div class="cd-timeline-content">
+                        <div>发起人:<span style="float: right;margin-right: 1rem;" class="cd-date">{php echo date('Y-m-d',$item['add_time'])}</span></div>
+                        <p>我</p>
+                    </div>
+                </div>
+                {loop $examine_loglist $row}
+
+                <div class="cd-timeline-block">
+                    <div class="cd-timeline-img cd-picture">
+                        {$row['title_name']}
+                    </div>
+                    {if $row['status']==2}
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576735216446" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="742" width="100%" height="100%"><path d="M489.6 141.6a369.12 369.12 0 1 0 369.28 369.28A369.12 369.12 0 0 0 489.6 141.6z m211.84 273.44L462.56 653.76a33.44 33.44 0 0 1-48 0l-137.44-137.44a33.44 33.44 0 1 1 48-48l113.92 113.92L654.08 368a33.44 33.44 0 1 1 48 48z m0 0" p-id="743" fill="#11af08"></path></svg>
+                    </div>
+                    {/if}
+                    {if $row['status']==-1}
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576740910107" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1449" width="100%" height="100%"><path d="M509.12 141.6a369.12 369.12 0 1 0 369.12 369.28A369.12 369.12 0 0 0 509.12 141.6z m189.28 512a33.76 33.76 0 0 1-24 57.44 33.44 33.44 0 0 1-23.84-9.92l-141.76-142.4-144 141.92a33.44 33.44 0 0 1-23.68 9.76 33.76 33.76 0 0 1-23.52-57.6l144-141.92-142.24-144a33.76 33.76 0 0 1 48-48l142.24 144 144-141.92a33.76 33.76 0 1 1 48 48L556.8 512z" p-id="1450" fill="#d81e06"></path></svg>
+                    </div>
+                    {/if}
+                    <div class="cd-timeline-content">
+                        <div>审核人:{$row['namelist']}<span>{if $row['status']==1}(待审核){elseif $row['status']==-1}(已拒绝){elseif $row['status']==2}(已同意){/if}</span><span style="float: right;margin-right: 1rem;" class="cd-date">{if isset($row['examinetime'])}{php echo date('Y-m-d',$row['examinetime'])}{/if}</span></div>
+                        <p></p>
+                    </div>
+                </div>
+
+                {/loop}
+            </section>
+
+        </div>
+
     </div>
 
 </div>

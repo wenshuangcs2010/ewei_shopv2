@@ -13,30 +13,48 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>场馆管理</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>场馆预订<i class="fa fa-angle-right"></i>场馆管理</li>
             </ol>
 		   <div class="panel1 panel-widget top-grids" style="padding:0">
 			   <div class="col-adjust-10">
-				   <ul class="bt-list">
-
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('venue/index/add')}" data-title="添加新的场馆" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 添加新的场馆
-						   </button>
-					   </li>
-				   </ul>
-
+				   <div class="ibox-title">
+					   <h5>场馆管理</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-modal="{php echo unionUrl('venue/index/add')}" data-title="添加新的场馆" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 添加新的场馆
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
 			   </div>
 		   </div>
+		   <form class="animated form-search" action="{php echo unionUrl('venue/index')}" onsubmit="return false" method="get">
+			   <div class="row">
+				   <div class="col-xs-2">
+					   <select name="categoryid" id="categoryid" class="form-control1">
+						   <option value="">请选择分类</option>
+						   {loop $categorylist $key $p}
+						   <option value="{$p['id']}">{$p['catename']}</option>
+						   {/loop}
+					   </select>
+				   </div>
+
+				   <div class="col-xs-1">
+					   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+				   </div>
+			   </div>
+		   </form>
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-			<h2>场馆管理</h2>
+
 			<table id="table">
 				<thead>
 				<tr>
 					<th>ID</th>
 					<th>场馆名称</th>
+					<th>分类</th>
 					<th>状态</th>
 					<th>操作</th>
 				</tr>
@@ -46,10 +64,11 @@
 				<tr>
 					<td>{$row['id']}</td>
 					<td>{$row['title']}</td>
+					<td>{$row['catename']}</td>
 					<td>{if $row['enable']}启用{else}未启用{/if}</td>
 					<td>
-						<a target="_blank" data-modal="{php echo unionUrl('venue/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
-						<a target="_blank" data-load="{php echo unionUrl('venue/delete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
+						<a  data-modal="{php echo unionUrl('venue/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
+						<a  data-load="{php echo unionUrl('venue/delete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
 					</td>
 				</tr>
                 {/loop}

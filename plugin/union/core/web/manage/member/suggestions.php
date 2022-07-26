@@ -12,6 +12,10 @@ class Suggestions_EweiShopV2Page extends UnionWebPage
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
         $condition="  where p.uniacid=:uniacid and p.union_id=:union_id  and p.is_delete=0 and p.status>0";
+        if($_GPC['keywordes']!=''){
+
+            $condition.=" and title like '%".$_GPC['keywordes']."%'";
+        }
         $paras=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid']);
         $sql="select p.title,p.status,p.id,m.name,p.create_time from ".tablename("ewei_shop_union_suggestions")." as p LEFT JOIN ".
             tablename("ewei_shop_union_members")." as m ON m.openid=p.openid and p.union_id=m.union_id ".
@@ -63,6 +67,8 @@ class Suggestions_EweiShopV2Page extends UnionWebPage
             }
             $data=array(
                 'status'=>intval($_GPC['status']),
+                'memberlist'=>$_GPC['memberlist'],
+                'memberlistname'=>$_GPC['memberlistname'],
             );
             if($id){
                 unset($data['create_time']);

@@ -15,16 +15,40 @@
     </div>
 	
     <div class="hr-line-dashed"></div>
-	
+    <div class="layui-form-item" style="padding: 30px;">
+        <p>功能介绍：可使用Excel文件快速上传工会会员信息，一次性完成多名工会会员信息的导入，节约您的时间。</p>
+
+        <p>使用方法：</p>
+        <p>1、点击下载批量会员导入模板；</p>
+        <p>2、打开导入模板，可通过使用复制粘贴或者手工录入的方式将工会会员的部分基本信息填写至模板表中，完成保存；</p>
+        <p style="color: red">3、【填写注意事项：①模板中标红栏为必填项；②在填写身份证号是必须确保单元格为文本框格式，确保身份证号显示正常；③性别栏与职工类型栏，请按批注内容选择填写。】</p>
+        <p>4、在批量导入工会会员中选择已完成填写的Excel表格，点击保存数据即可完成上传；</p>
+
+
+
+
+    </div>
     <div class="layui-form-item text-center">
-        <button class="layui-btn" type='button'>保存数据</button>
+
+            <a id="data-down" href="{EWEI_SHOPV2_STATIC}model/单位工会会员---导入模板.xls"  class="layui-btn layui-btn-small">
+                <i class="fa fa-cloud-download"></i>  下载批量会员导入模板
+            </a>
+
+        <button class="layui-btn" id="import" type='button'>保存数据</button>
         <button class="layui-btn layui-btn-danger" type='button' data-close>关闭重试</button>
     </div>
 
     <script>
-		window.form.render();
+
+
 		$(function(){
-			$('button[type="button"]').click(function(){
+
+            // $("#data-down").click(function () {
+		     //    console.log("ss");
+		     //    window.location="{EWEI_SHOPV2_STATIC}model/单位工会会员---导入模板.xls";
+            //     return false;
+            // })
+			$('#import').click(function(){
 				var inputxcel = $('input[name="inputxcel"]').val();
 				
 				if(inputxcel == ''){
@@ -54,11 +78,10 @@
 							  location.reload();
 							});
 						}
-
-
 					}
 				});
 			})
 		})
+        window.form.render();
 	</script>
 </form>

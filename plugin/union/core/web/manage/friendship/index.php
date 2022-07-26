@@ -13,6 +13,13 @@ class Index_EweiShopV2Page extends UnionWebPage
         $psize = 20;
         $condition="  where uniacid=:uniacid and union_id=:union_id  and is_delete=0 ";
         $paras=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid']);
+
+        if($_GPC['keywordes']!=''){
+            $condition.=" and name like '%".$_GPC['keywordes']."%' ";
+
+        }
+
+
         $sql="select * from ".tablename("ewei_shop_union_friendship").
             $condition;
         $sql.=" order by add_time desc LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
@@ -63,7 +70,6 @@ class Index_EweiShopV2Page extends UnionWebPage
                 'address'=>trim($_GPC['address']),
                 'work'=>trim($_GPC['work']),
                 'character'=>trim($_GPC['character']),
-                'character'=>trim($_GPC['character']),
                 'other'=>trim($_GPC['other']),
                 'additional'=>trim($_GPC['additional']),
                 'contact'=>trim($_GPC['contact']),
@@ -71,8 +77,8 @@ class Index_EweiShopV2Page extends UnionWebPage
                 'othercondition'=>trim($_GPC['othercondition']),
                 'otheradditional'=>trim($_GPC['otheradditional']),
                 'declaration'=>trim($_GPC['declaration']),
+                'verification'=>intval($_GPC['verification']),
                 'life_images'=>implode("|",$life_image),
-
             );
 
             if($id){

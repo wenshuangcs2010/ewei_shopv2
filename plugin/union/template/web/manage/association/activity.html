@@ -14,17 +14,38 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>协会活动</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}<i class="fa fa-angle-right"></i>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}活动通知</li>
             </ol>
 		   <div class="panel1 panel-widget top-grids" style="padding:0">
 			   <div class="col-adjust-10">
-				   <ul class="bt-list">
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('association/activityadd')}" data-title="添加新的活动" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 添加新的活动
-						   </button>
-					   </li>
-				   </ul>
+				   <div class="ibox-title">
+					   <h5>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}活动通知</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-modal="{php echo unionUrl('association/activityadd')}" data-title="添加新的活动" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 添加新的活动
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
+				   <form class="animated form-search" action="{php echo unionUrl('association/activity')}" onsubmit="return false" method="get">
+					   <div class="row">
+						   <div class="col-xs-2">
+							   <select name="asso_id" id="asso_id" style="background-color: white" class="form-control1">
+								   <option value="">请选择{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}</option>
+								   {loop $activelist $key $p}
+								   <option {if $_GPC['asso_id']==$p['id']} selected {/if} value="{$p['id']}">{$p['title']}</option>
+								   {/loop}
+							   </select>
+						   </div>
+						   <div class="col-xs-2">
+							   <input type="text" name="keywordes" style="height: 39px;" value="{$_GPC['keywordes']}" placeholder="标题" class="form-control">
+						   </div>
+						   <div class="col-xs-2">
+							   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+						   </div>
+					   </div>
+				   </form>
 			   </div>
 		   </div>
 <div class="agile-grids">
@@ -36,7 +57,7 @@
 				<tr>
 					<th>ID</th>
 					<th>活动标题</th>
-					<th>描述</th>
+					<th style="width: 680px">描述</th>
 
 					<th>操作</th>
 				</tr>
@@ -48,8 +69,8 @@
 					<td>{$row['title']}</td>
 					<td>{$row['description']}</td>
 					<td>
-						<a target="_blank" data-modal="{php echo unionUrl('association/activityadd')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
-						<a target="_blank" data-load="{php echo unionUrl('association/activitydelete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
+						<a  data-modal="{php echo unionUrl('association/activityadd')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
+						<a  data-load="{php echo unionUrl('association/activitydelete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
 					</td>
 				</tr>
                 {/loop}

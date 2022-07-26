@@ -14,23 +14,31 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{$title}福利申请</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>福利管理<i class="fa fa-angle-right"></i>{$title}福利申请</li>
             </ol>
 		   <div class="panel1 panel-widget top-grids" style="padding:0">
 			   <div class="col-adjust-10">
-				   <ul class="bt-list">
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('welfare/add',array('type'=>$type))}" data-title="添加新的{$title}福利申请" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 添加新的{$title}福利申请
-						   </button>
-					   </li>
-				   </ul>
+				   <div class="ibox-title">
+					   <h5>{$title}</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-open="{php echo unionUrl('welfare/index',array('export'=>1,'type'=>$type))}" data-title="添加新的{$title}福利申请" class='layui-btn layui-btn-small'><i
+									   class='fa fa-cloud-download'></i>导出已审核未打款数据
+							   </button>
+							   <!--
+							   <button data-modal="{php echo unionUrl('welfare/add',array('type'=>$type))}" data-title="添加新的{$title}福利申请" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 添加新的{$title}{if $_GPC['type']==5}帮扶{else}福利{/if}申请
+							   </button>-->
+						   </ul>
+					   </div>
+				   </div>
 			   </div>
 		   </div>
+
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-			<h2>{$title}福利管理</h2>
+
 			<table id="table">
 				<thead>
 				<tr>
@@ -50,11 +58,12 @@
 					<td>{$row['name']}</td>
 					<td>{php echo date('Y-m-d H:i',$row['time'])}</td>
 					<td>{$row['money']}</td>
-					<td>{if $row['amounttype']==0}现金{else}福利券{/if}</td>
-					<td>{if $row['status']==1}申请中{elseif $row['status']==2}通过{elseif $row['status']==3}驳回{elseif $row['status']==4}拒绝{/if}</td>
+					<td>{if $row['amounttype']==1}现金{else}实物{/if}</td>
+					<td>{if $row['status']==-1}已撤销{elseif $row['status']==1}申请中{elseif $row['status']==2}通过{elseif $row['status']==3}驳回{elseif $row['status']==4}拒绝{elseif $row['status']==5}已完成{/if}</td>
 					<td>
-						<a target="_blank" data-modal="{php echo unionUrl('welfare/edit',array('type'=>$type))}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
-						<a target="_blank" data-load="{php echo unionUrl('welfare/delete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
+						<a  target="_blank"  href="{php echo unionUrl('welfare/show',array('type'=>$type))}&id={$row['id']}">查看</a> |
+						<a  data-modal="{php echo unionUrl('welfare/edit',array('type'=>$type))}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
+						<a  data-load="{php echo unionUrl('welfare/delete')}&id={$row['id']}" data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
 					</td>
 				</tr>
                 {/loop}

@@ -1,39 +1,418 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
     <head>
-        <title>{:sysconf('app_name')} {:sysconf('app_version')}</title>
+        <title></title>
         <meta charset="utf-8">
         <link rel="icon" href="../image/favicon.ico">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=0">
         <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/uploader/webuploader.css" rel="stylesheet" type="text/css"/>
+
         <link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/uploader/theme/uploader.css" rel="stylesheet" type="text/css"/>
         <script src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/jquery/jquery-2.1.4.min.js" type="text/javascript"></script>
         <script src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/uploader/webuploader.min.js" type="text/javascript"></script>
         <script src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/plugs/uploader/theme/upload.js" type="text/javascript"></script>
     </head>
+    <style>
+        .modal-header {
+            padding: 15px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .nav {
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+
+        }
+        nav{
+            display: block;
+        }
+        ul, li {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .modal-header:before,.nav:before,.clearfix:before,.modal-footer:before{
+            content: " ";
+            display: table;
+
+        }
+        .modal-header:after,.nav:after,.clearfix:after,.modal-footer:after{
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .nav > li.active >a,  .nav > li.active >a:active, .uploader .placeholder .webuploader-pick {
+            background: #19aa8d;
+            border: none;
+        }
+        .nav > li.active > a {
+            color: #ffffff;
+        }
+
+        .nav > li.active {
+            border: none;
+            background: none;
+        }
+        .nav-pills>li {
+            float: left;
+        }
+        .nav>li {
+            position: relative;
+            display: block;
+        }
+        .modal-body {
+            padding: 20px 30px 30px 30px;
+            position: relative;
+        }
+
+        a {
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .nav > li > a {
+            color: #a7b1c2;
+            font-weight: 600;
+            padding: 14px 20px 14px 25px;
+            display: block;
+        }
+        .nav-pills>li>a {
+            border-radius: 4px;
+        }
+        .tab-content>.tab-pane {
+            display: none;
+        }
+        .tab-content>.active {
+            display: block;
+        }
+        .btn-group, .btn-group-vertical {
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .btn-group>.btn:first-child:not(:last-child):not(.dropdown-toggle) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .btn-group>.btn:first-child {
+            margin-left: 0;
+        }
+        .btn-group-vertical>.btn, .btn-group>.btn {
+            position: relative;
+            float: left;
+        }
+        .btn-default {
+            color: inherit;
+            background: white;
+            border: 1px solid #e7eaec;
+        }
+        .btn {
+            border-radius: 3px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+
+            border-radius: 4px;
+        }
+        .history .img-list {
+            margin: 4px;
+            display: block;
+            clear: both;
+            list-style: outside none none;
+            padding: 0px;
+        }
+        .history .img-list .img-item {
+            float: left;
+            padding: 1px;
+            cursor: pointer;
+            position: relative;
+        }
+        .history .img-list .img-item .img-container {
+            position: relative;
+            width: 75px;
+            height: 75px;
+            text-align: center;
+            background-color: #eee;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+        }
+        .img-container, .img-preview {
+            overflow: hidden;
+            text-align: center;
+            width: 100%;
+        }
+        .history .img-list .img-item .img-container .select-status {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 2;
+        }
+        .btn-info {
+            background: aquamarine;
+        }
+        .pagination {
+            margin: 0;
+        }
+        .pagination {
+            display: inline-block;
+            padding-left: 0;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .pagination>li {
+            display: inline;
+        }
+        .pagination>li:first-child>a, .pagination>li:first-child>span {
+            margin-left: 0;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+        .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+            background-color: #1ab394;
+            border-color: #1ab394;
+            color: #fff;
+            cursor: default;
+            z-index: 2;
+        }
+        .pagination > li > a, .pagination > li > span {
+            background-color: #FFFFFF;
+            border: 1px solid #DDDDDD;
+            color: inherit;
+            float: left;
+            line-height: 1.42857;
+            margin-left: -1px;
+            padding: 4px 10px;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .modal-footer {
+            margin-top: 0;
+        }
+        .modal-footer {
+            padding: 15px;
+            text-align: right;
+            border-top: 1px solid #e5e5e5;
+        }
+    </style>
     <body>
         <div id="uploader">
-            <div class="queueList">
-                <div id="dndArea" class="placeholder">
-                    <div id="filePicker"></div>
+            {if $nvs}
+            <div class="modal-header">
+                <ul class="nav nav-pills" role="tablist">
+                    <li id="li_upload" class="active" role="presentation"><a href="#upload" aria-controls="network" role="tab" data-toggle="tab" onclick="$('#select').hide();">上传图片</a></li>
+                    <li id="li_history_image" class="" role="presentation"><a href="#history_image" aria-controls="history_image" role="tab" data-toggle="tab" onclick="$('#select').show();">浏览图片</a></li>
+                </ul>
+            </div>
+            <div id="select" style="display: none;margin:10px 0 -10px 15px;padding-left:7px;">
+                <div id="select-year" style="margin-bottom:10px;"><div class="btn-group">
+                    <a href="javascript:;" data-id="0" data-type="year" class="btn btn-default btn-info btn-select">不限</a>
+
+                    <a href="javascript:;" data-id="{php echo $year}" data-type="year" class="btn btn-default btn-select">{$year}年</a>
+                    <a href="javascript:;" data-id="{php echo $year-1}" data-type="year" class="btn btn-default btn-select">{php echo $year-1}年</a>
+                    <a href="javascript:;" data-id="{php echo $year-2}" data-type="year" class="btn btn-default btn-select">{php echo $year-2}年</a>
+                    <a href="javascript:;" data-id="{php echo $year-3}" data-type="year" class="btn btn-default btn-select">{php echo $year-3}年</a>
+
+                </div>
+                </div>
+                <div id="select-month">
+                    <div class="btn-group">
+                        <a href="javascript:;" data-id="0" data-type="month" class="btn btn-default btn-info btn-select">不限</a>
+                        <a href="javascript:;" data-id="1" data-type="month" class="btn btn-default btn-select">1</a>
+                        <a href="javascript:;" data-id="2" data-type="month" class="btn btn-default btn-select">2</a>
+                        <a href="javascript:;" data-id="3" data-type="month" class="btn btn-default btn-select">3</a>
+                        <a href="javascript:;" data-id="4" data-type="month" class="btn btn-default btn-select">4</a>
+                        <a href="javascript:;" data-id="5" data-type="month" class="btn btn-default btn-select">5</a>
+                        <a href="javascript:;" data-id="6" data-type="month" class="btn btn-default btn-select">6</a>
+                        <a href="javascript:;" data-id="7" data-type="month" class="btn btn-default btn-select">7</a>
+                        <a href="javascript:;" data-id="8" data-type="month" class="btn btn-default btn-select">8</a>
+                        <a href="javascript:;" data-id="9" data-type="month" class="btn btn-default btn-select">9</a>
+                        <a href="javascript:;" data-id="10" data-type="month" class="btn btn-default btn-select">10</a>
+                        <a href="javascript:;" data-id="11" data-type="month" class="btn btn-default btn-select">11</a>
+                        <a href="javascript:;" data-id="12" data-type="month" class="btn btn-default btn-select">12</a>
+                    </div>
                 </div>
             </div>
-            <div class="statusBar" style="display:none;">
-                <div class="progress">
-                    <span class="text">0%</span>
-                    <span class="percentage"></span>
+            {/if}
+            <div class="modal-body tab-content">
+                <div role="tabpanel" class="tab-pane network active" id="network">
+                    <div class="queueList">
+                        <div id="dndArea" class="placeholder">
+                            <div id="filePicker"></div>
+                        </div>
+                    </div>
+                    <div class="statusBar" style="display:none;">
+                        <div class="progress">
+                            <span class="text">0%</span>
+                            <span class="percentage"></span>
+                        </div>
+                        <div class="info"></div>
+                        <div class="btns">
+                            {if $mode!=='one'}
+                            <div id="filePicker2"></div>
+                            {/if}
+                            <div class="uploadBtn">开始上传</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="info"></div>
-                <div class="btns">
-                    {if $mode!=='one'}
-                    <div id="filePicker2"></div>
-                    {/if}
-                    <div class="uploadBtn">开始上传</div>
+                <div role="tabpanel" class="tab-pane history " id="history_image">
+                    <div class="history-content" style="height: 310px; text-align: center;">
+                        <ul class="img-list clearfix">
+                            <li class="img-item" attachid="121803" title="20161205171039 - 副本.jpg">
+                                <div class="img-container" style="background-image: url('https://wx.lylife.com.cn/attachment/images/5/2019/11/rqueNmcn0Dxg9PmS0dUSPmjz2nj9Qd.jpg');">
+
+                                </div>
+                                <div class="btnClose" data-id="121803"><a href=""><i class="fa fa-times"></i></a></div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <div style="float: left;">
+                            <nav id="image-list-pager"><div>
+                            </div>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <script>
+            var upload={
+                init:function () {
+                    upload.postgetimage();
+                    upload.tabclick();
+
+                    $("#select").find("#select-year").find(".btn-group").children("a").unbind("click").on("click",function () {
+                        var year=$(this).data("id");
+                        $("#select #select-year").find(".btn-group").children("a").removeClass("btn-info");
+                        $(this).addClass("btn-info");
+                        upload.postgetimage({year:year});
+                    });
+
+                    $("#select").find("#select-month").find(".btn-group").children("a").unbind("click").on("click",function () {
+                        var month=$(this).data("id");
+                        var year=$("#select").find("#select-year").find(".btn-group").find(".btn-info").data("id");
+
+                        $("#select #select-month").find(".btn-group").children("a").removeClass("btn-info");
+                        $(this).addClass("btn-info");
+                        upload.postgetimage({year:year,month:month});
+                    });
+
+
+                },
+                bindfootclick:function(){
+                    $(".pagination").children("li").unbind("click").on("click",function () {
+                        var page=$(this).children("a").attr("page");
+                        $(".pagination").children("li").removeClass("active");
+                        $(this).addClass("active");
+                        var year=$("#select").find("#select-year").find(".btn-group").find(".btn-info").data("id");
+                        var month=$("#select").find("#select-month").find(".btn-group").find(".btn-info").data("id");
+                        upload.postgetimage({year:year,month:month,page:page});
+                    })
+                },
+                postgetimage:function(params){
+                    $.post("{php echo unionUrl('upfile.plugs.getimagelist')}",params,function (ret){
+                        $("#image-list-pager").html("");
+                        $("#image-list-pager").append(ret.message.page);
+                        if(ret.message.page!=''){
+                            upload.bindfootclick();
+                        }
+                        if(ret.message.items){
+                            $('.img-list').html("");
+                            $.each(ret.message.items,function (index,item) {
+                                var html='<li class="img-item" attach-url="'+item.imgurl+'" attachid="'+item.id+'" title="'+item.filename+'">';
+                                html+='<div class="img-container" style="background-image: url('+item.url+');"></div>';
+                                html+=" </li>";
+                                $('.img-list').append(html);
+                            })
+                            upload.bindimglistclick();
+                        }
+                    },'json');
+                },
+                bindimglistclick:function () {
+                    //事件绑定
+                    $('.img-list').children('li').unbind("click").on("click",function () {
+                        var attachid=$(this).attr("attachid");
+                        var url = $(this).attr("attach-url");
+                        var md5 = $(this).attr("title");
+                        /*{if $mode === 'one'}*/
+                            upload.onmodebind(url,md5);
+                        /* {else}*/
+                            upload.mitind(url,md5);
+                        /*{/if} {$mode}*/
+                    })
+                },
+                onmodebind:function(url,md5){
+                    top.$('[name="{$field}"]').map(function () {
+                        top.$(this).attr('data-srcs', url).attr('data-md5',md5).val(url).trigger('change');
+                    });
+                    var index = top.layer.getFrameIndex(window.name);
+                    top.layer.close(index);
+                },
+                mitind:function(url,md5){
+                    var datamd5= top.$('[name="{$field}"]').attr('data-md5');
+                    var dataurl= top.$('[name="{$field}"]').attr('data-srcs');
+                    if((typeof(dataurl)=="undefined" || dataurl=="")){
+                        top.$('[name="{$field}"]').attr('data-srcs', url).attr('data-md5',md5).val(url).trigger('change');
+                        var index = top.layer.getFrameIndex(window.name);
+                        top.layer.close(index);
+                    }else{
+                        var srcs = new Array(), md5s = new Array(),urllist= top.$('[name="{$field}"]').val();
+                        if(typeof(urllist)!='undefined'){
+                            urllist= urllist.split("|");
+                            urllist.push(url);
+                        }else{
+                            urllist=new Array();
+                            urllist.push(url);
+                        }
+                        md5s.push(md5);
+                        srcs.push(url);
+                        top.$('[name="{$field}"]').map(function () {
+                            top.$(this).attr('data-srcs', srcs.join('|')).attr('data-md5', md5s.join('|'));
+                        });
+                        top.$('[name="{$field}"]').val(urllist.join("|")).triggerHandler('change');
+                        var index = top.layer.getFrameIndex(window.name);
+                        top.layer.close(index);
+                    }
+                },
+                tabclick:function(){
+                    $('.modal-header').children('ul').each(function () {
+                        $(this).find("li").unbind("click").click(function () {
+                            $(".nav li").removeClass("active");
+                            $(this).addClass("active");
+                            var divid=$(this).find("a").attr("aria-controls");
+                            $(".tab-pane").hide();
+                            $("#"+divid).show();
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            top.layer.iframeAuto(index);
+                        })
+                    })
+                }
+
+            };
+            upload.init();
+
+
             /* global WebUploader */
 
             /**
@@ -43,6 +422,7 @@
             function uploaded(ret, file) {
                 var url = ret.url || ret.site_url;
                 $('#' + file.id).attr('data-md5', file.md5).attr('data-src', url);
+                console.log(file.id);
                 /*{if $mode === 'one'}*/
                 top.$('[name="{$field}"]').map(function () {
                     top.$(this).attr('data-srcs', ret.url).attr('data-md5', file.md5).val(url).trigger('change');

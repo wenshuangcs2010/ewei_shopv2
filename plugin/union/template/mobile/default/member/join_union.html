@@ -1,4 +1,5 @@
 {template '_header'}
+<script>document.title = "{$_W['union_info']['title']}"; </script>
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
 <div class='fui-page  fui-page-current'>
     <div class="fui-header">
@@ -33,7 +34,7 @@
         <div class="fui-cell must">
             <div class="fui-cell-label">手机号</div>
             <div class="fui-cell-info">{if empty($member['mobile'])}未绑定手机号{else}{$member['mobile']}{/if}{if !empty($member['mobileverify'])}(已绑定){/if}</div>
-            <a class="fui-cell-remark external" href="{php echo mobileUrl('member/bind')}">{if empty($member['mobile'])}绑定{else}更换绑定{/if}</a>
+            <a class="fui-cell-remark external" href="{php echo mobileUrl('member/bind',array('backurl'=>$backurl))}">{if empty($member['mobile'])}绑定{else}更换绑定{/if}</a>
         </div>
         <input type="hidden" id="union_id" value="{$unionid}"/>
     </div>

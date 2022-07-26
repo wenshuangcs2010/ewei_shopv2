@@ -17,12 +17,14 @@
         <li  {if $_GPC['tab']=='pay'}class="active"{/if}><a href="#tab_pay">会费支付设置</a></li>
         <li  {if $_GPC['tab']=='withdraw'}class="active"{/if}><a href="#tab_withdraw">会费结算设置</a></li>
         <li  {if $_GPC['tab']=='account'}class="active"{/if}><a href="#tab_account">账户设置</a></li>
+        <li  {if $_GPC['tab']=='permrole'}class="active"{/if}><a href="#tab_permrole">权限设置</a></li>
     </ul>
     <div class="tab-content ">
         <div class="tab-pane {if empty($_GPC['tab']) || $_GPC['tab']=='basic'}active{/if}" id="tab_basic">{template 'union/user/post/basic'}</div>
         <div class="tab-pane {if $_GPC['tab']=='pay'}active{/if}" id="tab_pay">{template 'union/user/post/pay'}</div>
         <div class="tab-pane {if $_GPC['tab']=='withdraw'}active{/if}" id="tab_withdraw">{template 'union/user/post/withdraw'}</div>
         <div class="tab-pane {if $_GPC['tab']=='account'}active{/if}" id="tab_account">{template 'union/user/post/account'}</div>
+        <div class="tab-pane {if $_GPC['tab']=='permrole'}active{/if}" id="tab_permrole">{template 'union/user/post/permrole'}</div>
     </div>
 </div>
 {ifp 'union.set.edit'}

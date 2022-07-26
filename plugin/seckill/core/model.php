@@ -526,6 +526,9 @@ class SeckillModel extends PluginModel
         $taskid = 0;
         $goods_starttime = 0;
         $goods_endtime = 0;
+        if(empty($times)){
+            return false;
+        }
         foreach ($times as $key => $time) {
 
             $starttime = strtotime(date("Y-m-d {$time['time']}:00:00"));
@@ -881,7 +884,9 @@ class SeckillModel extends PluginModel
         }
         $redis = redis();
         $times = $this->getTaskTimes($taskid);
-
+        if(empty($times)){
+            return false;
+        }
         $options = array();
         $currenttime = time();
         $timegoods = array();

@@ -25,7 +25,6 @@ require.config({
         // 自定义插件（源码自创建或已修改源码）
         'layui': ['../plugs/layui/layui'],
         'ueditor': ['../plugs/ueditor/ueditor'],
-        'ueditor': ['../plugs/ueditor/ueditor'],
         'jquery': ['../plugs/jquery/jquery-2.1.4.min'],
         'jquery.gcjs': ['../plugs/jquery/jquery.gcjs'],
         'bootstrap': ['../plugs/bootstrap/bootstrap.min'],
@@ -40,6 +39,7 @@ require.config({
         'jquery.cookies': ['../plugs/jquery/jquery.cookie'],
         'pace': ['../plugs/jquery/pace.min'],
         'select2' : window.ROOT_URL+'/resource/components/select2/zh-CN',
+        'jquery.nestable' : '../plugs/nestable/jquery.nestable',
 
     },
     shim: {
@@ -51,6 +51,7 @@ require.config({
         'jquery-ui': {deps: ['jquery']},
         'bootstrap':{deps: ['jquery']},
         'jquery.cookies': {deps: ['jquery']},
+        'jquery.nestable': {deps: ['jquery']},
         'admin.plugs': {deps: ['jquery', 'layui']},
         'admin.listen': {deps: ['jquery', 'jquery.cookies', 'admin.plugs']},
         'select2': {
@@ -66,11 +67,17 @@ console.log(window.ROOT_URL);
 // UI框架初始化
 require(['pace', 'jquery', 'layui', 'bootstrap', 'jquery.cookies'], function () {
     layui.config({dir: baseUrl + '../plugs/layui/'});
-    layui.use(['layer','form','laydate'], function () {
+
+    layui.use(['layer','form','laydate','tree','element'], function () {
 
         window.layer = layui.layer;
+        window.tree = layui.tree;
         window.form = layui.form;
         window.laydate = layui.laydate;
+        window.element = layui.element;
+
         require(['admin.listen']);
     });
+
+
 });

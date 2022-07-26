@@ -13,49 +13,77 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>签到人员</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>活动模块<i class="fa fa-angle-right"></i>报名人员</li>
             </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>报名人员</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-modal="{php echo unionUrl('memberactivity/memberlistedit',array('activityid'=>$id))}" data-title="添加一个新的分类" class="layui-btn layui-btn-small">
+								   <i class="fa fa-plus"></i>  添加一个新用户
+							   </button>
+							   <button data-open="{php echo unionUrl('memberactivity/showpeople',array('export'=>1,'id'=>$id))}" data-title="添加一个新的分类" class="layui-btn layui-btn-small">
+								   <i class="fa fa-cloud-download"></i>  导出全部用户
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
+			   </div>
 
+		   </div>
 <div class="agile-grids">
+
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-
 			<table id="table">
 				<thead>
 				<tr>
 					<th>ID</th>
+					<th>状态</th>
+					<th>单位</th>
 					<th>名称</th>
-
-					<th>签到时间</th>
-
-
+					<th>电话</th>
+					<th>材料（附件）</th>
+					<th>备注</th>
+					<th>报名时间</th>
+					<th>操作</th>
 				</tr>
 				</thead>
 				<tbody>
-                {loop $list $row}
+				{loop $list $row}
 				<tr>
 					<td>{$row['id']}</td>
+					<th>{if $row['status']==-1}拒绝申请{elseif $row['status']==1}待审核{elseif $row['status']==2}审核通过{/if}</th>
+					<td>{$row['unionname']}</td>
 					<td>{$row['m_name']}</td>
-
+					<td>{$row['phonenumber']}</td>
+					<td>{if empty($row['dataurl'])}<span style="color: red">材料未上传请注意</span>{else} <a href="{php echo tomedia($row['dataurl'])}">下载</a>{/if}</td>
+					<td>{$row['description']}</td>
 					<td>{php echo date('Y-m-d H:i',$row['create_time'])}</td>
-
-
-
+					<td>
+						{if $row['union_id']==$_W['unionid'] }
+						<a data-modal="{php echo unionUrl('memberactivity/memberlistedit')}&id={$row['id']}&activityid={$row['activity_id']}" href="javascript:void(0)">编辑</a> |
+						<a data-load="{php echo unionUrl('memberactivity/memberlistdeltet')}&id={$row['id']}" data-confirm="确定删除数据？"  href="javascript:void(0)">删除</a>
+						{/if}
+					</td>
 				</tr>
-                {/loop}
+				{/loop}
 				</tbody>
 			</table>
-            {$pager}
-        </div>
-        {if !$list}
-        <div class="panel panel-default" style="background-color: #fff;">
-            <div class="panel-body" style="text-align: center;padding:30px;">
-                没有任何数据!
-            </div>
-        </div>
-        {/if}
+			{$pager}
+		</div>
+		{if !$list}
+		<div class="panel panel-default" style="background-color: #fff;">
+			<div class="panel-body" style="text-align: center;padding:30px;">
+				没有任何数据!
+			</div>
+		</div>
+		{/if}
+	</div>
 
-   </div>
+
 
 
 <!--copy rights start here-->

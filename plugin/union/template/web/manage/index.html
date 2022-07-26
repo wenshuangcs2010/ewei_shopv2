@@ -14,21 +14,20 @@
             </ol>
 <!--four-grids here-->
 		<div class="four-grids">
-					<div class="col-md-3 four-grid">
-						<div class="four-agileits">
+					<div class="col-md-4 four-grid">
+						<a href="{php echo unionUrl('member')}"><div class="four-agileits">
 							<div class="icon">
 								<i class="glyphicon glyphicon-user" aria-hidden="true"></i>
 							</div>
 							<div class="four-text">
-								<h3>工会人员</h3>
+								<h3>工会会员数</h3>
 								<h4> {$union_members['count']}</h4>
-								
 							</div>
 							
-						</div>
+						</div></a>
 					</div>
-					<div class="col-md-3 four-grid">
-						<div class="four-agileinfo">
+					<div class="col-md-4 four-grid">
+						<a href="{php echo unionUrl('member.suggestions')}"><div class="four-agileinfo">
 							<div class="icon">
 								<i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>
 							</div>
@@ -38,93 +37,37 @@
 
 							</div>
 							
-						</div>
+						</div></a>
 					</div>
-					<div class="col-md-3 four-grid">
-						<div class="four-w3ls">
+					<div class="col-md-4 four-grid">
+                        <a href="{php echo unionUrl('welfare.index',array('type'=>1))}"><div class="four-w3ls">
 							<div class="icon">
 								<i class="glyphicon glyphicon-folder-open" aria-hidden="true"></i>
 							</div>
 							<div class="four-text">
-								<h3>福利申请</h3>
+								<h3>福利申请(待处理)</h3>
 								<h4>{$total2}</h4>
 								
 							</div>
 							
-						</div>
+						</div></a>
 					</div>
-					<div class="col-md-3 four-grid">
-						<div class="four-wthree">
-							<div class="icon">
-								<i class="glyphicon glyphicon-briefcase" aria-hidden="true"></i>
-							</div>
-							<div class="four-text">
-								<h3>工会动态</h3>
-								<h4>{$total3}</h4>
-								
-							</div>
-							
-						</div>
-					</div>
+
 					<div class="clearfix"></div>
 				</div>
-<!--//four-grids here-->
 
-<!--photoday-section-->	
-			
-                        
-                    	<div class="col-sm-4 wthree-crd">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget widget-report-table">
-                                        <header class="widget-header m-b-15">
-                                        </header>
-                                        
-                                        <div class="row m-0 md-bg-grey-100 p-l-20 p-r-20">
-                                            <div class="col-md-6 col-sm-6 col-xs-6 w3layouts-aug">
-                                                <h3>福利申请</h3>
 
-                                            </div>
-
-                                        </div>
-                                        
-                                        <div class="widget-body p-15">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>申请人</th>
-                                                        <th>金额</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-												{loop $welfares $row}
-                                                    <tr>
-                                                        <td>{$row['id']}</td>
-                                                        <td>{$row['name']}</td>
-                                                        <td>{$row['money']}</td>
-                                                    </tr>
-												{/loop}
-
-                                                </tbody>
-                                            </table>    
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-sm-4 w3-agileits-crd">
+                        <div class="col-sm-6 w3-agileits-crd">
 						
                             <div class="card card-contact-list">
 							<div class="agileinfo-cdr">
                                 <div class="card-header">
-                                    <h3>建言献策</h3>
+                                    <h3>建言献策(待处理)</h3>
                                 </div>
                                 <div class="card-body p-b-20">
                                     <div class="list-group">
                                         {loop $suggestions $s}
-                                        <a class="list-group-item media" href="">
+                                        <a class="list-group-item media" href="{php echo unionUrl('member.suggestions.edit',array('id'=>$s['id']))}">
                                             <div class="media-body">
                                                 <div class="pull-left">
                                                 	<div class="lg-item-heading">{$s['title']}</div>
@@ -141,48 +84,45 @@
                             </div>
 							</div>
                       	</div>
-                    	<div class="col-sm-4 w3-agile-crd">
-                            <div class="card">
-                                <div class="card-body card-padding">
-                                    <div class="widget">
-                                        <header class="widget-header">
-                                            <h4 class="widget-title">工会动态</h4>
-                                        </header>
-                                        <hr class="widget-separator">
-                                        <div class="widget-body">
-                                            <div class="streamline">
-												{loop $dynamics $key $d}
+           <div class="col-sm-6 wthree-crd">
 
-												{if $key==0}
-												<div class="sl-item sl-primary">
-												{elseif $key==1}
-													<div class="sl-item sl-danger">
-														{elseif $key==2}
-														<div class="sl-item sl-success">
-															{elseif $key==3}
-															<div class="sl-item">
-																{elseif $key==4}
-																<div class="sl-item sl-warning">
-																	{else}
-																	<div class="sl-item">
-												{/if}
+               <div class="card card-contact-list">
+                       <div class="agileinfo-cdr">
+                           <div class="card-header">
+                               <h3>福利申请(待处理)</h3>
+                           </div>
+                           <div class="card-body p-b-20">
+                               <table class="table table-bordered">
+                                   <thead>
+                                   <tr>
+                                       <th>ID</th>
+                                       <th>申请人</th>
+                                       <th>金额</th>
+                                   </tr>
+                                   </thead>
+                                   <tbody>
+                                   {loop $welfares $row}
+                                   <tr>
 
-													<div class="sl-content">
-														<small class="text-muted">{php echo date('Y-m-d',$d['createtime'])}</small>
-														<p>{$d['title']}</p>
-													</div>
-												</div>
-												{/loop}
-                                            </div>
-                                        </div>
+                                       <td>{$row['id']}</td>
+                                       <td>  <a href="{php echo unionUrl('welfare.index',array('type'=>$row['type']))}">{$row['name']} </a></td>
+                                       <td>{$row['money']}</td>
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-						<div class="clearfix"></div>
+                                   </tr>
+                                   {/loop}
 
-	<!--//photoday-section-->	
+                                   </tbody>
+                               </table>
+                           </div>
+                       </div>
+                   </div>
+
+           </div>
+
+
+           <div class="clearfix"></div>
+
+	<!--//photoday-section-->
 
 
 <div class="inner-block">

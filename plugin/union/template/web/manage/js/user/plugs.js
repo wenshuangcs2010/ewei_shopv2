@@ -292,7 +292,56 @@ define(['jquery'], function () {
 
         window.location.href =  $.menu.parseUri(url, obj);
     };
+    _form.prototype.getMembers=function(url, data, title, object, loading, tips){
+        var datavalues=$(object).attr("data-values");
+        data+="&selectvalue="+datavalues;
 
+        this.load(url, data, 'GET', function (res) {
+            if (typeof (res) === 'object') {
+                return $.msg.auto(res);
+            }
+
+            top.layer.open({
+                type: 1,
+                btn: false,
+                area: "800px",
+                content: res,
+                title: title || '',
+                success: function (dom, index) {
+                    // 此窗口完成时需要自动关闭
+                    $.msg.addAutoSuccessCloseIndex(index);
+                    var $container = $(dom);
+                    /* 处理样式及返回按钮事件 */
+                    $container.find('[data-close]').off('click').on('click', function () {
+                        if ($(this).attr('data-confirm')) {
+                            $.msg.confirm($(this).attr('data-confirm'), function () {
+                                layer.close(index);
+                            });
+                        } else {
+                            layer.close(index);
+                        }
+                    });
+                    /*处理提交事件*/
+                    $container.find('[data-submit]').off('click').on('click', function () {
+                       var length= $(object).attr("data-selectleng");
+
+                        if(chooseList.length>length && length!=0 && length!='undefined'){
+                            $.msg.tips("选择人数不能超过"+length);
+                            return;
+                        }
+                        $(object).prev().val(chooselist_name.join(","))
+                        $(object).prev().prev().val(chooseList.join(","))
+                        $(object).attr("data-values",chooseList.join(","));
+                        layer.close(index);
+                    })
+
+                    /* 事件重载 */
+                    $.form.reInit($container);
+                }
+            });
+
+        }, loading, tips);
+    };
     /**
      * 加载HTML到弹出层
      * @param url
@@ -307,7 +356,8 @@ define(['jquery'], function () {
             if (typeof (res) === 'object') {
                 return $.msg.auto(res);
             }
-            layer.open({
+
+            top.layer.open({
                 type: 1,
                 btn: false,
                 area: "800px",
@@ -316,6 +366,7 @@ define(['jquery'], function () {
                 success: function (dom, index) {
                     // 此窗口完成时需要自动关闭
                     $.msg.addAutoSuccessCloseIndex(index);
+
                     var $container = $(dom);
                     /* 处理样式及返回按钮事件 */
                     $container.find('[data-close]').off('click').on('click', function () {
@@ -353,7 +404,15 @@ define(['jquery'], function () {
      * @param title 窗口标题
      */
     _form.prototype.iframe = function (url, title) {
-        return layer.open({title: title || '窗口', type: 2, area: ['800px', '530px'], fix: true, maxmin: false, content: url});
+        return layer.open({title: title || '窗口', type: 2, area: ['800px', '590px'], fix: true, maxmin: false, content: url});
+    };
+    /**
+     * 打开一个iframe窗口
+     * @param url iframe打开的URL地址
+     * @param title 窗口标题
+     */
+    _form.prototype.mapiframe = function (url, title) {
+        return layer.open({title: title || '窗口', type: 2, area: ['1000px', '790px'], fix: true, maxmin: false, content: url});
     };
 
     /**
@@ -389,6 +448,7 @@ define(['jquery'], function () {
      *获取表单元素的类型
      */
     validate.prototype.getElementType = function (ele) {
+
         return (ele.getAttribute("type") + "").replace(/\W+$/, "").toLowerCase();
     };
 
@@ -493,10 +553,12 @@ define(['jquery'], function () {
             elements = $(elements).find(self.inputTag);
         }
         elements.each(function () {
+
             if (self.checkInput(this, params) === false) {
                 return $(this).focus(), (allpass = false);
             }
         });
+
         return allpass;
     };
 
@@ -535,6 +597,7 @@ define(['jquery'], function () {
         var tag = input.tagName.toLowerCase();
         var isRequired = this.hasProp(input, "required");
         var isNone = this.hasProp(input, 'data-auto-none');
+
         //无需要验证
         if (isNone || input.disabled || type === 'submit' || type === 'reset' || type === 'file' || type === 'image' || !this.isVisible(input)) {
             return;
@@ -615,9 +678,11 @@ define(['jquery'], function () {
         var params = $.extend({}, options || {}), self = this;
         // 去除HTML默认验证
         $(form).attr("novalidate", "novalidate");
+
         // 表单元素动态监听
         $(form).find(self.inputTag).map(function () {
             var func = function () {
+
                 self.checkInput(this);
             };
             for (var i in self.checkEvent) {
@@ -628,9 +693,12 @@ define(['jquery'], function () {
         });
         // 表单提交事情监听
         $(form).bind("submit", function (event) {
+
             if (self.isAllpass($(this).find(self.inputTag), params) && typeof callback === 'function') {
+
                 callback.call(this, $(form).serialize());
             }
+
             return event.preventDefault(), false;
         });
         // 表单对象绑定
@@ -661,6 +729,7 @@ define(['jquery'], function () {
     /*! 自动监听规则内表单 */
     $.validate.listen = function () {
         $('form[data-auto]').map(function () {
+
             if ($(this).attr('data-listen') !== 'true') {
                 // 表单监听初始化
                 var callback = $(this).attr('data-callback');
@@ -711,8 +780,10 @@ define(['jquery'], function () {
         var params = {};
         if (uri.indexOf('?') !== -1) {
             var queryParams = uri.split('?')[1].split('&');
+
             for (var i in queryParams) {
-                if (queryParams[i].indexOf('=') !== -1) {
+
+                if (typeof (queryParams[i])=="string" && queryParams[i].indexOf('=') !== -1) {
                     var hash = queryParams[i].split('=');
                     try {
                         params[hash[0]] = window.decodeURIComponent(window.decodeURIComponent(hash[1].replace(/%2B/ig, ' ')));

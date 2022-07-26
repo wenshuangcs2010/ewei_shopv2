@@ -10,9 +10,22 @@
 	width: auto!important;
 
 }
+.layui-tree-entry{
+	height: 50px;
+}
+
+	.layui-container {
+		width: 100%;
+	}
+
+
 .layui-btn{
 	font-size: 12px!important;
 }
+	.layui-tree-entry{
+		line-height: 50px;
+	}
+
 </style>
    <div class="page-container">
    <!--/content-inner-->
@@ -22,110 +35,253 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{$_W['union_name']}会员</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>会员列表</li>
             </ol>
 		   <div class="panel1 panel-widget top-grids" style="padding:0">
 			   <div class="col-adjust-10">
-				   <ul class="bt-list">
-					   <li style="margin-left: 0.2rem">
-						   <button data-href="{php echo unionUrl('member/index/export')}" data-title=" 下载{$_W['union_name']}会员模板" class="layui-btn layui-btn-small">
-							   <i class="fa fa-cloud-download"></i>  下载会员导出模板
-						   </button>
-					   </li>
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('member/index/import')}" data-title="导入{$_W['union_name']}会员" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 导入{$_W['union_name']}会员
-						   </button>
-					   </li>
-					   <li style="margin-left: 0.2rem">
-						   <button data-modal="{php echo unionUrl('member/index/add')}" data-title="添加新的{$_W['union_name']}会员" class='layui-btn layui-btn-small'><i
-								   class='fa fa-plus'></i> 添加新的{$_W['union_name']}会员
-						   </button>
-					   </li>
-				   </ul>
+				   <div class="ibox-title">
+					   <h5>{$_W['union_name']}会员</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+
+							   <li style="margin-left: 0.2rem">
+								   <button data-modal="{php echo unionUrl('member/index/import')}" title="批量导入工会会员" data-title="批量导入{$_W['union_name']}会员" class='layui-btn layui-btn-small'><i
+										   class='fa fa-plus'></i> 批量导入{$_W['union_name']}会员
+								   </button>
+							   </li>
+							   <!--
+							   <li style="margin-left: 0.2rem">
+								   <button data-modal="{php echo unionUrl('member/index/add')}" data-title="添加新的{$_W['union_name']}会员" class='layui-btn layui-btn-small'><i
+										   class='fa fa-plus'></i> 添加新的{$_W['union_name']}会员
+								   </button>
+							   </li>-->
+							   <button id="data-down" data-open="{php echo unionUrl('member/index/export')}"   class="layui-btn layui-btn-small">
+								   <i class="fa fa-cloud-download"></i>  全部会员数据导出
+							   </button>
+
+
+						   </ul>
+					   </div>
+				   </div>
 			   </div>
 			   <div class="col-adjust-10">
-			   <form class="animated form-search" action="{php echo unionUrl('member/index')}" onsubmit="return false" method="get">
-				   <div class="row">
+			   <form class="animated form-search"  class="layui-form" action="{php echo unionUrl('member')}" onsubmit="return false" method="get">
+				   <div class="layui-form-item">
 					   <div class="col-xs-2">
-						   <select name="selector1" id="selector1" class="form-control1">
-							   <option value="">请选择部门</option>
-							   {loop $department $p}
-							   <option value="{$p['id']}">{$p['name']}</option>
+						   <select name="uniongroupid" id="uniongroupid" class="form-control1">
+							   <option value="">请选择工会小组</option>
+							   {loop $grouplist $key $p}
+							   <option  {if $_GPC['uniongroupid']==$p['id']} selected {/if} value="{$p['id']}">{$p['groupname']}</option>
+							   {/loop}
+						   </select>
+					   </div>
+
+					   <div class="col-xs-2">
+						   <select name="member_type" id="member_type" class="form-control1">
+							   <option value="">会员类型</option>
+							   {loop $this->membertype $key $p}
+							   <option  {if $_GPC['member_type']==$key} selected {/if} value="{$key}">{$p}</option>
 							   {/loop}
 						   </select>
 					   </div>
 					   <div class="col-xs-2">
-						   <input type="text" name="mobile" value="{$mobile}" placeholder="手机号" class="form-control">
+						   <select name="activate" id="activate" class="form-control1">
+							   <option value="">是否在职</option>
+							   <option value="1"   {if $_GPC['activate']==1} selected {/if} >是</option>
+							   <option value="0" {if $_GPC['activate']==0 && is_numeric($_GPC['activate']) } selected {/if}>否</option>
+						   </select>
 					   </div>
 					   <div class="col-xs-2">
-						   <input type="text" name="name" value="{$name}" placeholder="姓名" class="form-control">
+						   <select name="sex" id="sex" class="form-control1">
+							   <option value="">性别</option>
+							   <option value="1"  {if $_GPC['sex']==1} selected {/if}>男</option>
+							   <option value="2"  {if $_GPC['sex']==2} selected {/if}>女</option>
+						   </select>
 					   </div>
-					   <div class="col-xs-1">
-						   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+					   <div class="col-xs-2">
+						   <input type="text" name="mobile" value="{$_GPC['mobile']}" placeholder="手机号" class="form-control1">
+					   </div>
+					   <div class="col-xs-2">
+						   <select name="status" id="status" class="form-control1">
+							   <option value="">绑定状态</option>
+
+							   <option  {if $_GPC['status']==0 && is_numeric($_GPC['status'])} selected {/if} value="0">未绑定</option>
+							   <option  {if $_GPC['status']==1} selected {/if} value="1">已绑定</option>
+
+						   </select>
 					   </div>
 				   </div>
+				   <div class="layui-form-item">
+					   <div class="layui-inline">
+						   <div class="layui-input-inline">
+							   <input type="text" class="layui-input" name="jobjointime" value="{$_GPC['jobjointime']}" id="test6" placeholder="入职时间">
+						   </div>
+					   </div>
+					   <div class="layui-inline">
+						   <div class="layui-input-inline">
+							   <input type="text" class="layui-input" name="applyuniontime"  value="{$_GPC['applyuniontime']}"  id="test7" placeholder="申请入会时间">
+						   </div>
+					   </div>
+						   <div class="layui-inline">
+							   <div class="layui-input-inline">
+								   <input type="text" class="layui-input" name="approvaluniontime"  value="{$_GPC['approvaluniontime']}"  id="test8" placeholder="批准入会时间">
+							   </div>
+						   </div>
+					   <div class="layui-inline">
+						   <label class="layui-form-label" style="width: 100px;">子女年龄段</label>
+						   <div class="layui-input-inline" style="width: 100px;">
+							   <input type="text" name="age_min" placeholder="" autocomplete="off" value="{$_GPC['age_min']}"  class="layui-input">
+						   </div>
+						   <div class="layui-form-mid">-</div>
+						   <div class="layui-input-inline" style="width: 100px;">
+							   <input type="text" name="age_max" placeholder="" autocomplete="off" value="{$_GPC['age_max']}"  class="layui-input">
+						   </div>
+					   </div>
+					   <div class="layui-inline">
+						   <div class="layui-input-inline">
+							   <input type="text" name="name" value="{$_GPC['name']}" placeholder="姓名/职务" class="form-control1">
+						   </div>
+					   </div>
+					   <input type="hidden" id="export" name="export" value="0" class="form-control1">
+				   </div>
+					   <div class="layui-form-item">
+						   <div class="layui-inline">
+						   		<button type="submit" class="btn layui-btn btn-white"><i class="fa fa-search"></i> 搜索</button>
+						   </div>
+						   <div class="layui-inline">
+						   		<button type="submit" onclick="exporttable()" class="btn layui-btn btn-white"><i class="fa fa-cloud-download"></i> 导出搜索</button>
+					   		</div>
+					   </div>
+
+
 			   </form>
 			   </div>
 		   </div>
 <div class="agile-grids" style="min-height: 800px">
-	<div class="agile-tables">
-		<div class="w3l-table-info">
+	<div class="layui-container">
+	<div class="layui-row">
+		<div class="layui-col-xs3 layui-col-md3" style="background-color: #FFFF;
+    height: 100%;
+    margin-top: 20px;">
+			<div class="grid-demo grid-demo-bg1"><div id="test1" class="demo-tree demo-tree-box"></div></div>
 
-			<table id="table">
-				<thead>
-				<tr>
-					<th>排序</th>
-					<th>处事/部门</th>
-					<th>姓名</th>
-					<th>手机号</th>
-					<th>性别</th>
-					<th>状态</th>
-					<th>员工类型</th>
-					<th>操作</th>
-				</tr>
-				</thead>
-				<tbody>
-                {loop $list $row}
-				<tr>
-					<td> <a data->{$row['sort']}</a></td>
-					<td>{$row['dname']}</td>
-					<td>{$row['name']}</td>
-					<td>{$row['mobile_phone']}</td>
-					<td>{$row['sex']}</td>
-					<td>{if $row['activate']==0}未激活{else}激活{/if}</td>
-					<td>{$row['type']}</td>
-					<td><a data-modal="{php echo unionUrl('member/index/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a></td>
-				</tr>
-                {/loop}
-				</tbody>
-			</table>
-            {$pager}
-        </div>
-        {if !$list}
-        <div class="panel panel-default" style="background-color: #fff;">
-            <div class="panel-body" style="text-align: center;padding:30px;">
-                没有任何数据!
-            </div>
-        </div>
-        {/if}
+		</div>
+		<div class="layui-col-xs9 layui-col-md9">
+			<div class="agile-tables">
+				<div class="w3l-table-info">
+					<table id="table">
+						<thead>
+						<tr>
 
-   </div>
+							<th>处室/部门</th>
+							<th>职务</th>
+							<th>工会小组</th>
+							<th>姓名</th>
+							<th>手机号</th>
+							<th>性别</th>
+							<th>状态</th>
 
+							<!-- <th>入职时间</th>
+                             <th>申请入会时间</th>
+                             <th>批准入会时间</th>-->
+							<!--<th>是否在职</th>-->
+							<th>会员类型</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						{loop $list $row}
+						<tr>
+
+							<td>{$row['dname']}</td>
+							<td>{$row['duties']}</td>
+							<td>{$row['groupname']}</td>
+							<td>{$row['name']}</td>
+							<td>{$row['mobile_phone']}</td>
+							<td>{$row['sex']}</td>
+							<td>{if $row['status']==0}<span style="color: red">未绑定</span>{else}已绑定{/if}</td>
+							<!--
+							<td>{php echo date("Y-m-d",$row['jobjointime'])}</td>
+							<td>{php echo date("Y-m-d",$row['applyuniontime'])}</td>
+							<td>{php echo date("Y-m-d",$row['approvaluniontime'])}</td>-->
+							<td>{if $row['activate']==1}在职{else}离职{/if}</td>
+							<!--<td>{$row['type']}</td>-->
+							<td>
+								<a data-modal="{php echo unionUrl('member/index/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
+								<a data-modal="{php echo unionUrl('member/index/password')}&id={$row['id']}" href="javascript:void(0)">密码</a> |
+								<a data-load="{php echo unionUrl('member/index/delete')}&id={$row['id']}" data-confirm="确定删除会员？" href="javascript:void(0)">删除</a>
+							</td>
+						</tr>
+						{/loop}
+						</tbody>
+					</table>
+					{$pager}
+				</div>
+				{if !$list}
+				<div class="panel panel-default" style="background-color: #fff;">
+					<div class="panel-body" style="text-align: center;padding:30px;">
+						没有任何数据!
+					</div>
+				</div>
+				{/if}
+			</div>
+		</div>
+	</div>
+	</div>
 
 <!--copy rights start here-->
 	{template 'footer'}
 <!--COPY rights end here-->
 </div>
+	   </div>
 </div>
+   </div>
   <!--//content-inner-->
 		<!--/sidebar-menu-->
 	   {template 'sidebar_menu'}
 </body>
 <script>
-    require(['index','jquery.basictable'],function(modal){
+    var data1 = {$categorydata};
+	function exporttable(){
+		$("#export").val(1);
+	}
+    require(['index','jquery.basictable','layui'],function(modal){
         modal.init();
+        //常规用法
         $('#table').basictable();
+		//日期范围
+
+
+        layui.use(['tree','laydate'], function(tree,laydate){
+            tree.render({
+                elem: '#test1' //默认是点击节点可进行收缩
+                ,data: data1,
+				 spread:true,
+                click: function(obj){
+                    var data = obj.data;  //获取当前点击的节点数据
+					if(obj.state=="open"){
+                        window.location.href="{php echo unionUrl('member/index')}&selector1="+data.id;
+					}
+                   // layer.msg('状态：'+ obj.state + '<br>节点数据：' + JSON.stringify(data));
+                }
+            });
+            laydate.render({
+                elem: '#test6'
+                ,range: true
+            });
+            laydate.render({
+                elem: '#test7'
+                ,range: true
+            });
+            laydate.render({
+                elem: '#test8'
+                ,range: true
+            });
+
+
+        });
     })
+
+
 </script>
 </html>

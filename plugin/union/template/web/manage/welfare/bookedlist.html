@@ -13,9 +13,16 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>预订管理</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>福利管理<i class="fa fa-angle-right"></i>申请管理</li>
             </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>申请管理</h5>
 
+				   </div>
+			   </div>
+		   </div>
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
@@ -49,7 +56,7 @@
 						{/if}
 					</td>
 					<td>
-						<a target="_blank" data-load="{php echo unionUrl('venue/bookedstatus')}&id={$row['id']}" data-confirm="确定取消预约？" href="javascript:void(0)">取消预约</a>
+						<a data-load="{php echo unionUrl('venue/bookedstatus')}&id={$row['id']}" data-confirm="确定取消预约？" href="javascript:void(0)">取消预约</a>
 					</td>
 				</tr>
                 {/loop}

@@ -13,18 +13,50 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{$_W['union_name']}会员</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>文章管理<i class="fa fa-angle-right"></i>文章列表</li>
             </ol>
-
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>文章列表</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-open="{php echo unionUrl('document/add')}" data-title="添加新的征婚人员" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 添加新的文章
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
+			   </div>
+		   </div>
+		   <form class="animated form-search" action="{php echo unionUrl('document/index')}" onsubmit="return false" method="get">
+			   <div class="row">
+				   <div class="col-xs-2">
+					   <select name="categoryid" id="categoryid" style="background-color: white" class="form-control1">
+						   <option value="">请选择分类</option>
+						   {loop $categorylist $key $p}
+						   <option {if $_GPC['categoryid']==$p['id']} selected{/if} value="{$p['id']}">{$p['catename']}</option>
+						   {/loop}
+					   </select>
+				   </div>
+				   <div class="col-xs-2">
+					   <input type="text" name="keywordes" style="height: 39px;" value="{$_GPC['keywordes']}" placeholder="标题" class="form-control">
+				   </div>
+				   <div class="col-xs-2">
+					   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+				   </div>
+			   </div>
+		   </form>
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-			<h2>公文列表</h2>
 			<table id="table">
 				<thead>
 				<tr>
 					<th>ID</th>
-					<th>公文标题</th>
+					<th>排序</th>
+					<th>文章标题</th>
+					<th>文章分类</th>
 					<th>添加时间</th>
 					<th>操作</th>
 				</tr>
@@ -33,10 +65,12 @@
                 {loop $list $row}
 				<tr>
 					<td>{$row['id']}</td>
+					<td>{$row['displayorder']}</td>
 					<td>{$row['title']}</td>
+					<td>{$row['categoryname']}</td>
 					<td>{php echo date('Y-m-d H:i',$row['add_time'])}</td>
-
-					<td><a target="_blank" data-open="{php echo unionUrl('document/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a></td>
+					<td><a  data-open="{php echo unionUrl('document/edit',array('id'=>$row['id'],'backurl'=>$row['backurl']))}" href="javascript:void(0)">编辑</a>|
+					</td>
 				</tr>
                 {/loop}
 				</tbody>

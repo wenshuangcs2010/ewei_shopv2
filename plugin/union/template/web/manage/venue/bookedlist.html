@@ -13,13 +13,19 @@
 		   {template 'header_main'}
 			<!--heder end here-->
 			<ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>预订管理</li>
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>场馆预订<i class="fa fa-angle-right"></i>预约管理</li>
             </ol>
-
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>预约管理</h5>
+				   </div>
+			   </div>
+		   </div>
 <div class="agile-grids">
 	<div class="agile-tables">
 		<div class="w3l-table-info">
-			<h2>预订管理</h2>
+
 			<table id="table">
 				<thead>
 				<tr>
@@ -36,8 +42,8 @@
                 {loop $list $row}
 				<tr>
 					<td>{$row['id']}</td>
-					<td>{$row['nickname']}</td>
 					<td>{$row['title']}</td>
+					<td>{$row['realname']}</td>
 					<td>{php echo date('Y-m-d H:i',$row['start_time'])}</td>
 					<td>{php echo date('Y-m-d H:i',$row['end_time'])}</td>
 					<td>{if $row['status']==1}
@@ -49,7 +55,7 @@
 						{/if}
 					</td>
 					<td>
-						<a target="_blank" data-load="{php echo unionUrl('venue/bookedstatus')}&id={$row['id']}" data-confirm="确定取消预约？" href="javascript:void(0)">取消预约</a>
+						<a data-load="{php echo unionUrl('venue/bookedstatus')}&id={$row['id']}" data-confirm="确定取消预约？" href="javascript:void(0)">取消预约</a>
 					</td>
 				</tr>
                 {/loop}

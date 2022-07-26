@@ -42,6 +42,7 @@ class Index_EweiShopV2Page extends UnionWebPage
                 'uniacid'=>$_W['uniacid'],
                 'union_id'=>$_W['unionid'],
                 'createtime'=>time(),
+                'header_image'=>$_GPC['header_image'],
                 'description'=>htmlspecialchars_decode($_GPC['description']),
             );
 
@@ -55,6 +56,8 @@ class Index_EweiShopV2Page extends UnionWebPage
         }
         include $this->template("dynamic/post");
     }
+
+
 
     function delete(){
         global $_W;

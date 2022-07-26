@@ -14,6 +14,43 @@ class UnionModel extends PluginModel
 	const PAY_CASHIER_USER = 'pay_cashier_user';
 
 	static public $paytype = array(0 => '微信', 1 => '支付宝', 2 => '商城余额', 3 => '现金收款', 101 => '系统微信', 102 => '系统支付宝');
+
+
+	public $theme=array(
+		'1'=>"摄影",
+		'2'=>"田园采摘",
+		'3'=>"古镇村落",
+		'4'=>'节事活动',
+		'5'=>"温泉滑雪",
+		'6'=>"峡谷漂流",
+	);
+    public $grade=array(
+        '1'=>"省级",
+        '2'=>"市级",
+        '3'=>"县级",
+
+    );
+	//线路主题
+    public $themeonline=array(
+        '1'=>"主题乐园",
+        '2'=>"古镇遗址",
+        '3'=>"名山胜水",
+        '4'=>'温泉滑雪',
+        '5'=>"峡谷漂流",
+    );
+    //线路交通
+	public $traffic=array(
+		'1'=>'豪华大巴车',
+		'2'=>'空调旅游车',
+		'3'=>'动车/高铁',
+		'4'=>'自驾',
+		'5'=>'飞机',
+		'6'=>'飞机+大巴',
+		'7'=>'动车/高铁+大巴',
+	);
+
+
+
 	public $setmeal = array('标准套餐', '豪华套餐');
 	static public $UserSet = array();
 
@@ -152,12 +189,11 @@ class UnionModel extends PluginModel
     {
         global $_W;
         //$src = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/' . $src;
-        return $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/union/'.$_W['uniacid'] .'/';
+        return '/union/'.$_W['uniacid'] .'/';
     }
 	public function getUserSet($name = '', $unionid)
 	{
 		global $_W;
-
 		if (!isset(static::$UserSet[$unionid])) {
 			$user = $this->userInfo($unionid);
 
@@ -193,9 +229,7 @@ class UnionModel extends PluginModel
 			show_json(0, '请填写工会名称!');
 		}
 
-		if (empty($params['manageopenid'])) {
-			show_json(0, '请填写管理微信号!');
-		}
+
 
 		if (empty($params['name'])) {
 			show_json(0, '请填写联系人!');
@@ -231,6 +265,7 @@ class UnionModel extends PluginModel
 		$params['wechat_status'] = intval($params['wechat_status']);
 		$params['alipay_status'] = intval($params['alipay_status']);
 		$params['parent_id'] = intval($params['parent_id']);
+		$params['level'] = intval($params['level']);
 
 		if (isset($params['deleted'])) {
 			$params['deleted'] = intval($params['deleted']);
@@ -392,26 +427,26 @@ class UnionModel extends PluginModel
         global $_W;
 
 		if($start_itme<time()){
-            return error(-1,"开始时间必须比现在时间大");
+            return error(-1,"开始时间必须晚于当前时间");
 		}
         if($start_itme>$end_time){
-            return error(-1,"开始时间必须比结束时间小");
+            return error(-1,"开始时间必须小于结束时间");
         }
         if($start_itme==$end_time){
             return error(-1,"预订时间不得低于半小时");
         }
 		//如果开始时间是在已经预订的时间内的
-		$sql="select id from ".tablename("ewei_shop_union_venue_bookedlist")." where start_time<=:start_time and end_time>:start_time and status =1 and is_delete=0";
+		$sql="select id from ".tablename("ewei_shop_union_venue_bookedlist")." where start_time<=:start_time and end_time>:start_time and status =1 and is_delete=0 and venue_id=:venue_id";
 
 
-		$id=pdo_fetch($sql,array(':start_time'=>$start_itme));
+		$id=pdo_fetch($sql,array(':start_time'=>$start_itme,":venue_id"=>$venue_id));
 		if($id){
 			return error(-1,"当前时间已经被其他用户预订");
 		}
 
 		// 如果结束时间在已经预订的时间内
-        $sql="select id from ".tablename("ewei_shop_union_venue_bookedlist")." where start_time<=:end_time and end_time>=:end_time and status =1 and is_delete=0";
-        $id=pdo_fetch($sql,array(":end_time"=>$end_time));
+        $sql="select id from ".tablename("ewei_shop_union_venue_bookedlist")." where start_time<=:end_time and end_time>=:end_time and status =1 and is_delete=0 and venue_id=:venue_id";
+        $id=pdo_fetch($sql,array(":end_time"=>$end_time,":venue_id"=>$venue_id));
         if($id){
             return error(-1,"当前时间已经被其他用户预订");
         }
@@ -447,6 +482,26 @@ class UnionModel extends PluginModel
         return pdo_fetch($sql,$params);
 	}
 
+	function checkMember($openid){
+        global $_W;
+        $coution=" where  uniacid=:uniacid and openid=:openid and activate=1 and status=1 and isdelete=0 and is_default=1";
+        $sql="select * from ".tablename("ewei_shop_union_members").$coution." order by id desc";
+        $params=array(
+            ':uniacid'=>$_W['uniacid'],
+            ':openid'=>$openid,
+        );
+        //默认选择多个用户
+        $member_list=pdo_fetchall($sql,$params);
+        if(count($member_list)>1){
+            array_shift($member_list);
+			$unsetIds=array_column($member_list,'id');
+			foreach ($unsetIds as $id){
+                pdo_update("ewei_shop_union_members",array("is_default"=>0),array("id"=>$id));
+			}
+		}
+	}
+
+
 	//用户默认绑定的用户
 	function get_member($openid,$union_id=0){
         global $_W;
@@ -455,7 +510,6 @@ class UnionModel extends PluginModel
             ':openid'=>$openid,
         );
         $coution=" where  uniacid=:uniacid and openid=:openid and activate=1 and status=1 and isdelete=0";
-
         if($union_id){
             $coution.=" and union_id=:union_id ";
             $params[':union_id']=$union_id;
@@ -464,6 +518,7 @@ class UnionModel extends PluginModel
             $coution.=" and is_default=1 ";
         }
         $sql="select * from ".tablename("ewei_shop_union_members").$coution;
+
         return pdo_fetch($sql,$params);
     }
 
@@ -474,7 +529,7 @@ class UnionModel extends PluginModel
         $pagesize = !empty($args['pagesize']) ? intval($args['pagesize']) : 10;
         $order = !empty($args['order']) ? $args['order'] : ' create_time';
         $orderby = empty($args['order']) ? 'desc' : (!empty($args['by']) ? $args['by'] : '' );
-        $condition = ' and `uniacid` = :uniacid AND `is_delete` = 0 and union_id=:union_id';
+        $condition = ' and `uniacid` = :uniacid AND `is_delete` = 0 and union_id=:union_id and is_publish=1';
         $params = array(':uniacid' => $_W['uniacid'],':union_id'=>$_W['unionid']);
         $sql="select id,title,teamname,department_id,create_time,header_imageurl from ".tablename("ewei_shop_union_personnelmien")." where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
         $countsql="select count(*) from ".tablename('ewei_shop_union_personnelmien')." where 1 ".$condition;
@@ -585,16 +640,35 @@ class UnionModel extends PluginModel
 
 	}
 
+	function get_union_member_info($openid){
+        global $_W;
+		$uid=intval($openid);
+        $member_info=array();
+
+		if($uid){
+			$member_info=pdo_fetch("select * from ".tablename("ewei_shop_union_members")." where id=:id",array(":id"=>$uid));
+
+		}else{
+            $member_info=pdo_fetch("select * from ".tablename("ewei_shop_union_members")." where openid=:openid and is_default=1 and uniacid=:uniacid ",array(":openid"=>$openid,":uniacid"=>$_W['uniacid']));
+
+		}
+
+		return $member_info;
+	}
 
 	//查询预订的人数和数量
-	function get_venue_bookedlist($arg=array()){
+	function get_venue_bookedlist($args=array()){
         global $_W;
         $openid=$_W['openid'];
         $page = !empty($args['page']) ? intval($args['page']) : 1;
         $pagesize = !empty($args['pagesize']) ? intval($args['pagesize']) : 6;
         $condition = ' and b.uniacid = :uniacid AND b.is_delete = 0 and b.status=1 and b.union_id=:union_id';
         $params = array(':uniacid' => $_W['uniacid'],':union_id'=>$_W['unionid']);
-		$vunue_id=!empty($args['vunue_id']) ? intval($args['vunue_id']) : 0;
+		$vunue_id=!empty($args['venue_id']) ? intval($args['venue_id']) : 0;
+		$vunue_time=!empty($args['vunue_time']) ? intval($args['vunue_time']) :0;
+
+
+
         $order = !empty($args['order']) ? $args['order'] : ' b.create_time';
         $orderby = empty($args['order']) ? 'desc' : (!empty($args['by']) ? $args['by'] : '' );
 		if(!empty($vunue_id)){
@@ -603,14 +677,21 @@ class UnionModel extends PluginModel
 		}
         $user_openid=!empty($args['openid']) ? trim($args['openid']) : "";
         if(!empty($user_openid)){//查自己的预订
-            $condition.=" AND b.openid =:openid";
+            $condition.=" AND b.openid =:openid and b.end_time>:end_time";
             $params[':openid']=$user_openid;
+
+            $params[':end_time']=time();
         }
+        if(!empty($vunue_time)){
+            $condition.=" AND b.start_time >:start_time";
+            $params[':start_time']=time();
+		}
 
         $sql="select b.*,v.title from ".tablename("ewei_shop_union_venue_bookedlist")." as b ".
 			"LEFT JOIN ".tablename("ewei_shop_union_venue")." as v  ON  v.id=b.venue_id "
 			." where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;
         $countsql="select count(*) from ".tablename('ewei_shop_union_venue_bookedlist')." as b where 1 ".$condition;
+
         $total = pdo_fetchcolumn($countsql,$params);
         $list = pdo_fetchall($sql, $params);
         foreach ($list as &$row){
@@ -693,43 +774,286 @@ class UnionModel extends PluginModel
         $list = pdo_fetchall($sql, $params);
         return array("list"=>$list,"total"=>$total,'pagesize'=>$pagesize);
     }
+    public function _get_union_member($openid){
+        global $_W;
+		$id=intval($openid);
+        $params = array(':uniacid' => $_W['uniacid'],':union_id'=>$_W['unionid']);
+		if(empty($id)){
+            $params[':openid']=$openid;
+
+			return pdo_fetch("select * from ".tablename("ewei_shop_union_members")." where union_id=:union_id and uniacid=:uniacid and openid=:openid",$params);
+		}else{
+            $params[':id']=$id;
+            return pdo_fetch("select * from ".tablename("ewei_shop_union_members")." where union_id=:union_id and uniacid=:uniacid and id=:id",$params);
+		}
+	}
+	public function _superion_union_info_list($union_id){
+        static $union_list=array();
+        $parent_id=pdo_fetchcolumn("select parent_id from ".tablename("ewei_shop_union_user")." where id=:id and deleted=0 and status=1",array(":id"=>$union_id));
+        $union_list[]=$parent_id;
+        return $union_list;
+	}
+
+    public function categoryOne($id)
+    {
+        global $_W;
+        $item = pdo_fetch('select * from ' . tablename('ewei_shop_union_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        return $item;
+    }
+//获取全部的上级ID
+	public function _superior_unionlist($union_id){
+        global $_W;
+        static $union_list=array();
+        $parent_id=pdo_fetchcolumn("select parent_id from ".tablename("ewei_shop_union_user")." where id=:id and deleted=0 and status=1",array(":id"=>$union_id));
+
+        if(empty($parent_id)){
+           return $union_list;
+		}else{
+            $union_list[]=$parent_id;
+            $this->_superior_unionlist($parent_id);
+		}
+		return $union_list;
+    }
+
+    function get_categorylist($tablename,$category_id,$parent_id){
+        global $_W;
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$category_id);
+        $categorylist = pdo_fetchall('SELECT * FROM ' . tablename($tablename) . ' WHERE 1 and parent_id=:id  and union_id=:union_id and uniacid=:uniacid  ORDER BY displayorder desc, id DESC  ', $params,"id");
+        if(empty($categorylist)){
+            $params[':id']=$parent_id;
+            $categorylist = pdo_fetchall('SELECT * FROM ' . tablename($tablename) . ' WHERE 1 and parent_id=:id  and union_id=:union_id and uniacid=:uniacid  ORDER BY displayorder desc, id DESC  ', $params,"id");
+        }
+
+        return $categorylist;
+	}
+
+
+    //公文单个查询
+    function get_document_info($id){
+        global $_W;
+        $info=array();
+
+        $parentlist=$this->_superion_union_info_list($_W['unionid']);
+		$params=array(":id"=>$id);
+        //获取全部上级的名称
+        if(!empty($parentlist)){
+            $parent_title=pdo_fetchcolumn("select title from ".tablename("ewei_shop_union_user")." where id=:id and deleted=0 and status=1",array(":id"=>$parentlist[0]));
+        }
+        $condition="";
+        if(!empty($parentlist) && count($parentlist)>1){
+            $condition.=' and  ((union_id in ('.implode(",",$parentlist).' ) and show_type=1) or union_id=:union_id) ';
+        }else if(!empty($parentlist) && count($parentlist)==1){
+            $condition.=' and  ( ( (find_in_set('.$_W['unionid'].',show_typevalue) or show_typevalue is null )  and union_id ='.$parentlist[0].' and show_type=1) or union_id=:union_id) ';
+        }else{
+            $condition.="and union_id=:union_id";
+
+        }
+        $params[':union_id']=$_W['unionid'];
+        $sql="select * from ".tablename("ewei_shop_union_document")." where id=:id ".$condition;
+
+
+
+
+        $info=pdo_fetch($sql,$params);
+        return array("info"=>$info);
+    }
+
+
     //公文管理
-	function get_document_list($arg=array()){
+	function get_document_list($args=array()){
         global $_W;
         $openid=$_W['openid'];
+        $parentlist=$this->_superion_union_info_list($_W['unionid']);
+
+        //获取全部上级的名称
+		if(!empty($parentlist)){
+            $parent_title=pdo_fetchcolumn("select title from ".tablename("ewei_shop_union_user")." where id=:id and deleted=0 and status=1",array(":id"=>$parentlist[0]));
+        }
+
         $page = !empty($args['page']) ? intval($args['page']) : 1;
+
         $pagesize = !empty($args['pagesize']) ? intval($args['pagesize']) : 10;
-
-        $condition = ' and uniacid = :uniacid AND   union_id=:union_id AND isdelete = 0 ';
-        $params = array(':uniacid' => $_W['uniacid'],':union_id'=>$_W['unionid']);
-
-		if($arg['keywords']){
-			$condition.=" and title like :keywords ";
-            $params[':keywords']="%".$arg['keywords']."%";
+		$member=$this->_get_union_member($openid);
+		$member_id=$member['id'];
+		if($member){
+            $condition = " and uniacid = :uniacid AND  isdelete = 0 AND (peopletype=0 or (peopletype=1 and find_in_set({$member_id},peoplevale)))";
+		}else{
+            $condition = " and uniacid = :uniacid  AND isdelete = 0 ";
 		}
 
-        $order = !empty($args['order']) ? $args['order'] : ' add_time';
-        $orderby = empty($args['order']) ? 'desc' : (!empty($args['by']) ? $args['by'] : '' );
-        $sql="select * from ".tablename("ewei_shop_union_document")." where 1 {$condition} ORDER BY {$order} {$orderby} LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;;
+        if(!empty($parentlist) && count($parentlist)>1){
+            $condition.=' and  ((union_id in ('.implode(",",$parentlist).' ) and show_type=1) or union_id=:union_id) ';
+        }else if(!empty($parentlist) && count($parentlist)==1){
+            $condition.=' and  ( ( (find_in_set('.$_W['unionid'].',show_typevalue) or show_typevalue is null )  and union_id ='.$parentlist[0].' and show_type=1) or union_id=:union_id) ';
+        }else{
+            $condition.="and union_id=:union_id";
+        }
+        $params = array(':uniacid' => $_W['uniacid'],':union_id'=>$_W['unionid']);
 
-        $countsql="select count(*) from ".tablename('ewei_shop_union_document')."where 1 ".$condition;
+		if($args['keywords']){
+			$condition.=" and title like :keywords ";
+            $params[':keywords']="%".$args['keywords']."%";
+		}
+        if($args['category_id']!=''){
+			$categorylist=$this->get_allcategory($args['category_id']);
+
+            $condition .= " and category_id in (".implode(",",$categorylist).")";
+
+        }
+        $order = !empty($args['order']) ? $args['order'] : ' displayorder ';
+        $orderby = empty($args['order']) ? 'desc' : (!empty($args['by']) ? $args['by'] : '' );
+        $sql="select * from ".tablename("ewei_shop_union_document")." where 1 {$condition} ORDER BY displayorder desc,add_time desc LIMIT " . ($page - 1) * $pagesize . ',' . $pagesize;;
+
+        $countsql="select count(*) from ".tablename('ewei_shop_union_document')." where 1 ".$condition;
         $total = pdo_fetchcolumn($countsql,$params);
         $list = pdo_fetchall($sql, $params);
-
+        $company=$this->get_union_info($_W['unionid']);
         foreach ($list as &$value){
 			$value['datetime']=date("Y-m-d",$value['add_time']);
+			$value['header_image']=tomedia($value['header_image']);
+			$value['union_title']=$value['union_id']==$_W['unionid'] ? "" :$parent_title;
 		}
 		unset($value);
         return array("list"=>$list,"total"=>$total,'pagesize'=>$pagesize);
 	}
-	//公文单个查询
-	function get_document_info($id){
+
+
+    //在数组中查找指定的id
+    function  findPid ( $pid = 1 , & $arr = array() ,$boo = false ,$a =array()  )
+    {
+
+        if( is_array( $arr ) )
+        {
+
+
+            foreach ( $arr as $k=>  $v )
+            {
+
+                if (  $v['id'] == $pid )
+                {
+
+                    if( ! $boo )
+                    {
+                        //$boo是false表示只找
+                        return $arr[$k];
+                    }
+                    else
+                    {
+
+                        if( isset( $arr[$k]['children'] )  )
+                        {
+
+                        	$ids=array_column($arr[$k]['children'],'id');
+                        	if(!in_array($a['id'],$ids)){
+                                //有子类型
+                                $arr[$k]['children'][] = $a   ;
+							}
+
+                        }
+                        else
+                        {
+                            //没有子类型
+                            $arr[$k]['children'] = array()   ;
+                            $arr[$k]['children'][] = $a   ;
+                        }
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    if( isset( $v['children'] ) )
+                    {
+
+                        $this->findPid( $pid , $arr[$k]['children'] ,$boo ,$a);//递归
+                    }
+
+                }
+            }
+        }
+        else
+        {
+
+            return false;
+        }
+    }
+
+    function   getLeaderArray( $array = array() )
+    {
+        $leaderArray = array ();
+        $notarray=array();
+
+        if( is_array( $array )  )
+        {
+
+            //必须是数组
+            foreach ( $array as $k=> $v  )
+            {
+                if( $v['parent_id'] == 0 )
+                {
+
+                    //顶层数组保留
+                    $leaderArray[] = $v ;
+                }
+                else
+                {
+
+                    //否则要放到其父类型的'sub'属性里面
+                    if( $this->findPid( $v['parent_id'] , $leaderArray  , true , $array[$k]  ))//找到父类型添加进父类型或者没找到
+                    {
+                        //子类型添加完成
+                    }
+                    else
+                    {
+                        $notarray[]=$array[$k];//没有找到上级的
+                    }
+                }
+            }
+            if(!empty($notarray)){
+					foreach ( $notarray as $k=> $v  )
+					{
+                        if( $this->findPid( $v['parent_id'] , $leaderArray  , true , $notarray[$k]  ));//找到父类型添加进父类型或者没找到
+
+					}
+			}
+
+
+            return $leaderArray;
+        }
+        else
+        {
+            return $array;
+        }
+    }
+	public function get_allcategory($cate_id){
         global $_W;
-        $info=array();
-		$sql="select * from ".tablename("ewei_shop_union_document")." where id=:id";
-        $info=pdo_fetch($sql,array(":id"=>$id));
-        return array("info"=>$info);
+        static $categorylist=array();
+        $categorylist[]=$cate_id;
+
+    	$params=array(":union_id"=>$_W['unionid'],":uniacid"=>$_W['uniacid'],":parent_id"=>$cate_id);
+        $category_id=pdo_fetchall("select id from ".tablename("ewei_shop_union_document_category")." where parent_id=:parent_id and uniacid =:uniacid and union_id=:union_id",$params);
+
+        if(!empty($category_id)){
+			foreach ($category_id as $c){
+				$this->get_allcategory($c['id']);
+			}
+		}
+		return $categorylist;
+    }
+
+    /**
+	 * @author 检查本级单位有没有上级或者下级单位
+     * @param $union_id 单位ID
+     */
+	function checkparent_children($union_id){
+        global $_W;
+    	//有没有下级
+		$count=pdo_fetchcolumn("select count(*) from ".tablename("ewei_shop_union_user").' where uniacid=:uniacid and parent_id=:id',array(':uniacid'=>$_W['uniacid'],':id'=>$union_id));
+        $union_info=$this->get_union_info($union_id);
+		return array("childcount"=>$count,'parent_id'=>$union_info['parent_id']);
 	}
+
+
 
 	//活动管理
 	function get_activitylist($arg=array()){
@@ -890,7 +1214,11 @@ class UnionModel extends PluginModel
         return $str;
     }
 
-    function readmember_insert($openid,$type){
+    /**
+     * @param $openid
+     * @param $type 1 文章类型 2 建言查看情況 3 活动查询情况 4,签到模块查看情况
+     */
+    function readmember_insert($openid,$type,$groupid=0){
         global $_W;
 		$tablename="ewei_shop_union_readmembers";
 		$uniacid=$_W['uniacid'];
@@ -900,8 +1228,9 @@ class UnionModel extends PluginModel
 			':union_id'=>$unionid,
 			':openid'=>$openid,
 			':type'=>$type,
+			':groupid'=>$groupid,
 		);
-		$sql="select count(*) from ".tablename($tablename)." where uniacid =:uniacid and union_id=:union_id and openid =:openid and type=:type";
+		$sql="select count(*) from ".tablename($tablename)." where uniacid =:uniacid and union_id=:union_id and openid =:openid and type=:type and groupid=:groupid";
 		$count=pdo_fetchcolumn($sql,$params);
 
 		if(!$count){
@@ -910,12 +1239,13 @@ class UnionModel extends PluginModel
 				'union_id'=>$unionid,
 				'openid'=>$openid,
 				'type'=>$type,
+				'groupid'=>$groupid,
 				'createtime'=>time(),
 			);
 			pdo_insert($tablename,$data);
 		}
 	}
-	function readcount($type){
+	function readcount($type,$array='',$groupid){
 		global $_W;
 		$returndata=array();
         $tablename="ewei_shop_union_readmembers";
@@ -925,20 +1255,44 @@ class UnionModel extends PluginModel
             ':uniacid'=>$uniacid,
             ':union_id'=>$unionid,
             ':type'=>$type,
+			':groupid'=>$groupid,
         );
-        $sql="select count(*) from ".tablename($tablename)." where uniacid =:uniacid and union_id=:union_id  and type=:type";
+
+        if(isset($array) && !empty($array)){
+        	//获取这些人的openid
+            $openids2=array();
+			$openidlist=pdo_fetchall("select openid from ".tablename("ewei_shop_union_members")." where union_id=:union_id and id in(".$array.") ",array(":union_id"=>$_W['unionid']));
+          	if(!empty($openidlist)){
+                foreach ($openidlist as $openid2) {
+                    if(!empty($openid2['openid'])){
+                        $openids2[] = '\'' . $openid2['openid'] . '\'';
+                    }
+                }
+                $openids2=implode(",",$openids2);
+                $sql="select count(*) from ".tablename($tablename)." where uniacid =:uniacid and openid in(".$openids2.") and union_id=:union_id  and type=:type and groupid=:groupid";
+            }else{
+                $sql="select count(*) from ".tablename($tablename)." where uniacid =:uniacid and union_id=:union_id  and type=:type and groupid=:groupid ";
+			}
+        }else{
+            $sql="select count(*) from ".tablename($tablename)." where uniacid =:uniacid and union_id=:union_id  and type=:type and groupid=:groupid ";
+		}
+
         $count=pdo_fetchcolumn($sql,$params);
+
         $returndata['count']=$count;
-        $sql="select m.realname from ".tablename($tablename)." as rdm ".
-            "LEFT JOIN ".tablename("ewei_shop_member")." as m ON rdm.openid = m.openid and m.uniacid=rdm.uniacid"
-            ." where rdm.uniacid =:uniacid and rdm.union_id=:union_id  and rdm.type=:type";
+        $sql="select m.name as realname from ".tablename($tablename)." as rdm ".
+            "LEFT JOIN ".tablename("ewei_shop_union_members")." as m ON rdm.openid = m.openid and m.uniacid=rdm.uniacid and m.union_id=:union_id"
+            ." where rdm.uniacid =:uniacid and rdm.union_id=:union_id  and rdm.type=:type and rdm.groupid=:groupid";
+
         if($count && $count>5){
         	//获取随机几个代表
 			$sql.=" ORDER BY RAND() LIMIT 5";
 		}else{
             $sql.=" LIMIT 5";
 		}
+
         $list=pdo_fetchall($sql,$params);
+
         $returndata['memberlist']=$list;
 
 		return $returndata;
@@ -953,9 +1307,376 @@ class UnionModel extends PluginModel
         if(empty($union_id)){
             $unionid=$_W['unionid'];
 		}
-		$sql="select count(*) from ".tablename("ewei_shop_union_user")." where ";
+		$sql="select count(*) from ".tablename("ewei_shop_union_user")." where status=1 and  parent_id=:parent_id and uniacid=:uniacid";
+        return pdo_fetchcolumn($sql,array(":parent_id"=>$unionid,":uniacid"=>$_W['uniacid']));
+	}
+
+	function getFullUnion($union_id=0,$refresh = false){
+        global $_W;
+        if(empty($union_id)){
+            $unionid=$_W['unionid'];
+        }
+        $key_rdis="allunions_".$union_id;
+       // $allunions = m('cache')->getArray($key_rdis);
+        if(empty($allunions) || $refresh){
+           static $allunionlist = array();
+            $sql="select * from ".tablename("ewei_shop_union_user")."  where status=1 and uniacid=:uniacid";
+            $union_list=pdo_fetchall($sql,array(":uniacid"=>$_W['uniacid']));
+			if(empty($union_list)){
+				return array();
+			}
+            foreach ($union_list as $union_info){
+				if (empty($union_info['parentid'])) {
+					array_push($allunionlist,$union_info);//顶级公司
+				}
+			}
+		}
+        if(empty($union_id)){
+            $unionid=$_W['unionid'];
+        }
+
 
 	}
+
+	//获取特殊的活动报名列表
+
+    /**
+     * @param $category_id
+     */
+	public function getCategroyMemberActivity($activity_id,$category_id=0){
+        global $_W;
+		$nowtime=TIMESTAMP;
+        $params[':union_id']=$_W['unionid'];
+        $params[':uniacid']=$_W['uniacid'];
+        $params[':newtimes']=$nowtime;
+		$condition=" where a_start_time<:newtimes and a_end_time>=:newtimes and status=1 and uniacid=:uniacid and union_id=:union_id";
+
+		if($category_id>0){
+			$condition.=" and category_id=:category_id";
+			$params[':category_id']=$category_id;
+		}
+		if($activity_id){
+            $sql=" select title,id from ".tablename("ewei_shop_union_memberactivity")." where id=:id ";
+			$item=pdo_fetchall($sql,array(":id"=>$activity_id));
+		}
+
+
+		$sql=" select title,id from ".tablename("ewei_shop_union_memberactivity").$condition;
+        $list= pdo_fetchall($sql,$params);
+		if($item){
+            $interlist=array_intersect($item,$list);
+
+            if(empty($interlist)){
+                array_push($list,$item[0]);
+            }
+		}
+
+		return $list;
+	}
+
+
+	//获取元素上级和当前级别内容
+	function get_category_parentlist($tablename,$category_id){
+
+        global $_W;
+
+        $category_list=array("parent"=>array(),'children'=>array());
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$category_id);
+        $sql="select * from ".tablename($tablename)." where id=:id and uniacid =:uniacid and union_id=:union_id and enable=1";
+
+        $category=pdo_fetch($sql,$params);
+		if($category){
+            $params[':id']=$category['parent_id'];
+            $sql="select * from ".tablename($tablename)." where id=:id and uniacid =:uniacid and union_id=:union_id and enable=1";
+            $parent_category=pdo_fetch($sql,$params);//上级ID
+			if(empty($parent_category)){//这个就是最顶级了
+                $params[':id']=$category['parent_id'];
+                $sql="select * from ".tablename($tablename)." where parent_id=:id and uniacid =:uniacid and union_id=:union_id and enable=1 order by displayorder desc";
+                $categorylist=pdo_fetchall($sql,$params);//上级ID
+                $category_list['parent']=$category;
+                $category_list['children']=$categorylist;
+			}else{
+                $params[':id']=$parent_category['parent_id'];
+                $sql="select * from ".tablename($tablename)." where parent_id=:id and uniacid =:uniacid and union_id=:union_id and enable=1 order by displayorder desc";
+                $categorylist=pdo_fetchall($sql,$params);//上级ID
+                $category_list['parent']=$parent_category;
+                $category_list['children']=$categorylist;
+			}
+
+		}
+
+		return $category_list;
+
+    }
+
+
+    /**
+     * 获取当前会员上级全部ID内容
+     */
+	public function getdocumentCategory($tablename,$categoryid){
+		global $_W;
+
+		 static $categoryarray=array();
+
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$categoryid);
+        $sql="select * from ".tablename($tablename)." where id=:id and uniacid =:uniacid and union_id=:union_id and enable=1";
+
+        $category=pdo_fetch($sql,$params);
+
+        if($category){
+            $categoryarray[$category['id']]=$category;
+		}
+
+		if($category['parent_id']>0){
+            $this->getdocumentCategory($tablename,$category['parent_id']);
+		}
+		return $categoryarray;
+	}
+	//获取全部下级分类
+	public function getChildList($tablename,$categoryid){
+        global $_W;
+        static $categoryarray=array();
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$categoryid);
+        $sql="select * from ".tablename($tablename)." where id=:id and uniacid =:uniacid and union_id=:union_id and enable=1";
+        $category=pdo_fetch($sql,$params);
+	 	if($category){
+            $categoryarray[]=$category;
+            $list=pdo_fetchall("select * from ".tablename($tablename)." where parent_id=:id and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+            foreach ($list as $value){
+                $this->getChildList($tablename,$value['id']);
+            }
+		}
+        return $categoryarray;
+	}
+	//获取全部下级分类
+	public function get_table_children_list($tablename,$categoryid){
+        global $_W;
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$categoryid);
+		$list=pdo_fetchall("select * from ".tablename($tablename)." where parent_id=:id and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+		return $list;
+	}
+
+	//获取当前分类的面包屑
+
+	public function get_index_list($tablename,$categoryid){
+        global $_W;
+        static $categorylist=array();
+		if($categoryid>0){
+            $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$categoryid);
+            $category=pdo_fetch("select * from ".tablename($tablename)." where id=:id and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+            $categorylist[]=$category;
+            if($category['parent_id']!=0){
+				$this->get_index_list($tablename,$category['parent_id']);
+			}
+
+		}
+		return $categorylist;
+	}
+
+    //获取全部同级分类
+	public function get_table_parent_list($tablename,$categoryid){
+        global $_W;
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$categoryid);
+        $category=pdo_fetch("select * from ".tablename($tablename)." where id=:id and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+
+        if(empty($category)){
+        	unset($params[':id']);
+            $list=pdo_fetchall("select * from ".tablename($tablename)." where parent_id=0 and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+            return $list;
+		}else{
+        	$params[':id']=$category['parent_id'];
+
+            $list=pdo_fetchall("select * from ".tablename($tablename)." where parent_id=:id and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+            return $list;
+		}
+	}
+
+
+	public function getmemberChildList($categoryid){
+        global $_W;
+        static $categoryarray=array();
+        $params=array(":union_id"=>$_W['unionid'],':uniacid'=>$_W['uniacid'],':id'=>$categoryid);
+        $sql="select * from ".tablename("ewei_shop_union_department")." where id=:id and uniacid =:uniacid and union_id=:union_id and enable=1";
+        $category=pdo_fetch($sql,$params);
+       	if($category){
+
+            $categoryarray[]=$category;
+            $list=pdo_fetchall("select * from ".tablename("ewei_shop_union_department")." where parent_id=:id and uniacid=:uniacid and union_id=:union_id and enable=1",$params);
+            foreach ($list as $value){
+            	$this->getmemberChildList($value['id']);
+			}
+		}
+		return $categoryarray;
+
+	}
+
+	public function defaultperms(){
+		return [
+			'index',
+			'member',
+			'all',
+			'suggestions',
+			'venue',
+			'friendship',
+			'report',
+			'association',
+			'quiz',
+			'vote',
+			'welfare',
+			'document',
+            'memberactivity',
+			'union_menu',
+		];
+	}
+    /**
+	 * 获取全部菜单
+     * @param bool $full
+     */
+	public function getMenu($full=false){
+		global $_W;
+
+		$association_title=empty($_W['asoconfig']['title']) ? '兴趣小组' :$_W['asoconfig']['title'];
+        $shopmenu=array(
+        	'index'=>array(
+        		'title'=>"首页",
+				'route'=>"index",
+			),
+        	'member'=>array(
+        		'title'=>'工会会员',
+				'items'=>array(
+                    array('title' => '会员列表', 'route' => 'member.index'),
+                    array('title' => '处室、部门', 'route' => 'member.department')
+                )
+            ),
+			'all'=>array(
+				'title'=>'文章二级菜单',
+				'route'=>'system',
+			),
+			'suggestions'=>array(
+				'title'=>"建言献策",
+				'route'=>"member.suggestions",
+			),
+
+			'venue'=>array(
+				'title'=>"场馆预订",
+                'items'=>array(
+                    array('title' => '场馆管理', 'route' => 'venue.index'),
+                    array('title' => '预订管理', 'route' => 'venue.bookedlist'),
+                    array('title' => '分类管理', 'route' => 'venue.category')
+                )
+			),
+            'friendship'=>array(
+                'title'=>"单身联谊",
+                'items'=>array(
+                    array('title' => '征婚管理', 'route' => 'friendship'),
+                )
+            ),
+            'report'=>array(
+                'title'=>"签到模块",
+                'items'=>array(
+                    array('title' => '签到管理', 'route' => 'report.index'),
+                    array('title' => '签到积分', 'route' => 'report.credit'),
+                )
+            ),
+			'association'=>array(
+                'title'=>$association_title,
+                'items'=>array(
+                    array('title' => $association_title.'管理' , 'route' => 'association.index'),
+                    array('title' => $association_title.'活动' , 'route' => 'association.activity'),
+                    array('title' => $association_title.'人员' , 'route' => 'association.memberlist'),
+                    array('title' =>"通用配置" , 'route' => 'association.asconfig'),
+                )
+            ),
+            'quiz'=>array(
+                'title'=>"竞赛调研",
+                'items'=>array(
+                    array('title' =>'题库管理' , 'route' => 'quiz.index'),
+                    array('title' =>'活动管理' , 'route' => 'quiz.activity'),
+                    array('title' =>'分类管理' , 'route' => 'quiz.category'),
+                )
+            ),
+			'activityresearch'=>array(
+				'title'=>"统计调研",
+				  'items'=>array(
+				  	array('title'=>"活动管理",'route'=>'activityresearch.index')
+				  ),
+			),
+
+			'vote'=>array(
+				'title'=>"投票活动",
+				'route'=>'vote/index',
+			),
+			'welfare'=>array(
+				'title'=>"福利管理",
+				'items'=>array(
+					array('title' =>'结婚' , 'route' =>'welfare.index','query'=>array('type'=>1)),
+					array('title' =>'生育' , 'route' =>'welfare.index','query'=>array('type'=>2)),
+					array('title' =>'住院' , 'route' => 'welfare.index','query'=>array('type'=>3)),
+					array('title' =>'退休' , 'route' =>'welfare.index','query'=>array('type'=>4)),
+					array('title' =>'丧葬' , 'route' => 'welfare.index','query'=>array('type'=>5)),
+					array('title' =>'基础设置' , 'route' => 'welfare.config'),
+            	),
+			),
+			'document'=>array(
+				'title'=>"文章列表",
+				'items'=>array(
+					array('title' =>'文章列表' , 'route' =>'document','query'=>array('isindex'=>1)),
+					array('title' =>'分类管理' , 'route' => 'document.category'),
+					array('title' =>'添加文章' , 'route' => 'document.add'),
+				),
+			),
+            'memberactivity'=>array(
+				'title'=>"活动模块",
+				'items'=>array(
+					array('title' =>'活动管理' , 'route' =>'memberactivity'),
+					array('title' =>'分类管理' , 'route' => 'memberactivity.category'),
+				),
+			),
+			'union_menu'=>array(
+				'title'=>"系统设置",
+				'items'=>array(
+					array('title' =>'单位管理' , 'route' => 'union_config'),
+					array('title' =>'短信群发' , 'route' => 'sms_all'),
+					array('title' =>'首页幻灯片' , 'route' => 'adv'),
+					array('title' =>'首页菜单管理' , 'route' => 'union_menu.index'),
+					array('title' =>'首页二级模块管理' , 'route' => 'union_menu.secondlevel'),
+					array('title' =>'审核流程' , 'route' => 'union_menu.examine'),
+				),
+			),
+            'ly'=>array(
+                'title'=>"疗养页面",
+                'items'=>array(
+                    array('title' =>'幻灯片管理' , 'route' => 'ly.advs'),
+                    array('title' =>'疗养地点' , 'route' => 'ly.lyaddress'),
+                    array('title' =>'疗养酒店' , 'route' => 'ly.lyhotel'),
+                    array('title' =>'精品线路' , 'route' => 'ly.lyaddressline'),
+                    array('title' =>'动态资讯' , 'route' => 'ly.lynews'),
+                    array('title' =>'订单管理' , 'route' => 'ly.hotelorder'),
+                    array('title' =>'管理员管理' , 'route' => 'ly.member'),
+                ),
+            )
+		);
+        return $shopmenu;
+	}
+
+	function setCredit($openid,$vo){
+		$postdata=array(
+			'uniacid'=>$vo['uniacid'],
+			'union_id'=>$vo['union_id'],
+			'report_id'=>$vo['id'],
+			'openid'=>$openid,
+			'createtime'=>time(),
+			'credit'=>$vo['credit'],
+		);
+		pdo_insert('ewei_shop_union_report_credit',$postdata);
+		$member=$this->get_member($openid,$vo['union_id']);
+		if(!empty($member)){
+			pdo_update("ewei_shop_union_members",array("credit"=>$member['credit']+$vo['credit']),array("id"=>$member['id']));
+		}
+		return pdo_insertid();
+
+	}
+
 
 }
 
