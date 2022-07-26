@@ -1,0 +1,94 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="headinfo member_ac">
+            <div class="commission_head ">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+                <div class="header_bottom">{$view['title']}</div>
+            </div>
+        </div>
+        <div class='fui-content' style="background: #FFFFFF;top:8.5rem">
+
+            <div class="fui-cell-group">
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_persos.png">
+                    </div>
+
+                    <div class="fui-cell-info"><p style="float: left">培训计划总人数:</p><span style="color: red;"> {$view['count']}</span></div>
+
+                </div>
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_persos.png">
+                    </div>
+
+                    <div class="fui-cell-info"><p style="float: left">已报名人数:</p><span style="color: red"> {$count}</span></div>
+                    <div class="fui-cell-remark" style="font-size: 0.5rem;font-size: 0.7rem;"><a href="{php echo mobileUrl('union/train/showpeoper',array('id'=>$view['id']))}">查看详情</a></div>
+                </div>
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_daojishi.png">
+                    </div>
+
+                    <div class="fui-cell-info"><p>报名倒计时</p></div>
+                    <div class="right"><span class="day">00</span><span class="clear">天</span><span class="hour">00</span>:<span class="minute">00</span>:<span class="second">00</span></div>
+                </div>
+            </div>
+            <div class="fui-list" style="height: 2.0rem;background:#F8F8F8;font-size: 0.6rem">
+                发起人信息
+            </div>
+            <div class="fui-cell-group">
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_man.png">
+                    </div>
+
+                    <div class="fui-cell-info">{$view['originator']}</div>
+                </div>
+                <a class="fui-cell" href="tel:{$view['phone']}">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_telephon.png">
+                    </div>
+
+                    <div class="fui-cell-info"><p>联系方式</p></div>
+                    <div class="right">{$view['phone']}</div>
+                </a>
+            </div>
+            <div class="fui-list" style="height: 2.0rem;background:#F8F8F8;font-size: 0.6rem">
+                活动详情
+            </div>
+            <div class="fui-article-page">
+                <div class="fui-article-content" style="    padding-left: 0.5rem;
+    padding-right: 0.5rem;">
+                    {$view['declaration']}
+                </div>
+            </div>
+            {if $view['t_end_time']>time() && $mycount==0}
+            <a href="{php echo mobileUrl('union/train/post',array('id'=>$view['id']))}" data-nocache="true" id="btn-submit" class="btn btn-success block">立即报名</a>
+            {/if}
+            {if $mycount>=1}
+            <a href="#" data-nocache="true"  class="btn btn-close block">已报名</a>
+            {/if}
+        </div>
+    </div>
+
+</div>
+<style>
+    .clear{
+        background-color:white!important;
+        color: #0a0a0a!important;
+    }
+</style>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/util.js'], function (modal) {
+        modal.init_data({lasttime:"{php echo $view['t_end_time']-time()}"});
+
+    });
+</script>
+

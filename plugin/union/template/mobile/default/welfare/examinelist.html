@@ -1,0 +1,75 @@
+{template '_header'}
+
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+<div class='fui-page  fui-page-current page-goods-list'>
+
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">审批列表</div>
+        <div class="fui-header-right"></div>
+    </div>
+
+        <div class='fui-content member-page' style="background-color: #ffffff;top:2.2rem;bottom: 2.5rem;">
+            <div class="fui-tab fui-tab-warning" id="tabexmine">
+                <a class="active" href="javascript:void(0)" data-tab="level1">待审批</a>
+                <a href="javascript:void(0)" data-tab="level2">已审批</a>
+
+            </div>
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="container" style="background-color: #ffffff"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+</div>
+
+<script type='text/html' id='tpl_list'>
+    <%each list as row%>
+    <a class="fui-cell-group" style="border: 2px solid #fafafa;border-radius: 10px;" href="{php echo mobileUrl('union/welfare/examine')}&id=<%row.id%>">
+        <div class="fui-cell">
+            <div class="fui-cell-icon" style="width: 4rem" >
+                <%if row.type==1%>
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/j_bg.png">
+                <%/if%>
+                <%if row.type==2%>
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/s_bg.png">
+                <%/if%>
+                <%if row.type==3%>
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/h_bg.png">
+                <%/if%>
+                <%if row.type==4%>
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/tx_bg.png">
+                <%/if%>
+                <%if row.type==5%>
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/die_bg.png">
+                <%/if%>
+
+            </div>
+            <div class="fui-cell-text">
+                <div class="watext watfont"><%row.username%>申请的<%row.typename%></div>
+                <div class="watext welborder welborder_red"><%row.msgstatus%></div>
+                <div class="watext">所属部门:<%row.department%></div>
+                <div class="watext">申请日期:<%row.add_time%></div>
+            </div>
+            <div>
+                <p class="watext">金额:<span class="lastwaltext"><%row.money%></span></p>
+                <p class="watext">福利形式:<span  class="lastwaltext"> <%if row.amounttype==1%>现金<%else%>券<%/if%></span></p>
+            </div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/exmine.js'], function (modal) {
+        modal.init({});
+    });
+</script>
+{template 'union/_footer'}

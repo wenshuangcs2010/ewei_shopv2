@@ -1,0 +1,132 @@
+
+{template '_header'}
+<script>document.title = "法律维权"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css">
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css">
+<style>
+    .reply {
+        padding-left: 1rem;
+        background: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/huifu.png") left center no-repeat;
+        -webkit-background-size: 13px 13px;
+        background-size: 13px 13px;
+        float: right;
+        font-size: 0.65rem;
+        color: #9f9e9e;
+        padding-right: 0.6rem;
+    }
+     .fui-cell-remark {
+        color: #888;
+        text-align: right;
+        font-size: 0.75rem;
+        margin-right: .2rem;
+    }
+    .fui-cell-remark:after {
+        content: " ";
+        display: inline-block;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+        height: 0.3rem;
+        width: 0.3rem;
+        border-width: 2px 2px 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        position: relative;
+        top: -1px;
+        margin-left: .3em;
+    }
+    .fui-list-inner .subtitle {
+        position: relative;
+        font-size: 0.75rem;
+        color: #444;
+        display:-webkit-box;
+        overflow:hidden;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:3;
+        white-space: unset;
+    }
+    .timeslie{
+        color: #666;
+        font-size: 0.35rem;
+    }
+    .fui-list-inner .row {
+        font-weight: 600;
+    }
+    .fui-navbar-add, .fui-footer {
+        border-top: solid 1px #ddd;
+        position: fixed;
+        width: 100%;
+        border-top: solid 1px #ddd;
+        background: #fff;
+        -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+     .class_status {
+        border-width: 0.1rem;
+        border-radius: 0.5rem;
+        border-style: dashed;
+        width: 4rem;
+        border-color: #ff2f34;
+        color: #ff2f34;
+        text-align: center;
+        position: absolute;
+
+        z-index: 999;
+        right: 6rem;
+        transform: rotate(30deg);
+        font-size: 0.8rem;
+    }
+</style>
+
+    <div class="fui-page  fui-page-current" id="fui-page-1575337681866">
+        <div id="m_common_header" class="m_item_header">
+            <header class="jd-header jd-header-immerse jd-header-op0">
+                <div class="jd-header-new-bar" id="jd_header_new_bar">
+                    <a class="jd-header-icon-back J_ping back"></a>
+                </div>
+            </header>
+        </div>
+        <div class="fui-content friendship">
+           <!-- <div class="fui-tab fui-tab-warning" id="tab">
+                <a class="active" href="javascript:void(0)" data-tab='status'>所有</a>
+                <a href="javascript:void(0)" data-tab='status1'>0回复</a>
+            </div>-->
+            <div class='content-empty' style='display:none;'>
+                <i class='icon icon-manageorder'></i><br/>暂时没有任何数据
+            </div>
+            <div class="fui-list-group" id="container"></div>
+            <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+        </div>
+    </div>
+    <div class="fui-navbar-add" style="height: 2.8rem;    bottom: 2.8rem;">
+        <a href="{php echo mobileUrl('union/leavmessage/addmessage')}" class="button_add"> <img style="width: 100%" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/frendship/addf.png"></a>
+    </div>
+
+{template 'union/_footer'}
+<script type='text/html' id='tpl_list'>
+    <%each list as row%>
+    <a class="fui-list" data-nocache="true" href="{php echo mobileUrl('union/leavmessage/view')}&id=<%row.id%>">
+        <div class="fui-list-inner">
+            <div class="row">
+                <div class="row-text"><%row.title%></div>
+            </div>
+            <div class="subtitle"><%row.message%>
+            </div>
+            <div class="timeslie">
+                发布时间:
+                <%row.sterttime%></div>
+        </div>
+        <div class="fui-cell-remark">
+        </div>
+        <%if row.count<=0%>
+        <div class="class_status status_success ">未回复</div>
+        <%/if%>
+    </a>
+    <%/each%>
+</script>
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.leavmessage_init({'page':1});
+    });
+</script>
+

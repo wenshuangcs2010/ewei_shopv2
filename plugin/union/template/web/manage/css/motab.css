@@ -1,0 +1,375 @@
+
+a {
+    color: #172c45;
+    text-decoration: none
+}
+
+a:hover {
+    color: #cd0200;
+    text-decoration: underline
+}
+
+em {
+    font-style: normal
+}
+
+li {
+    list-style: none
+}
+
+img {
+    border: 0;
+    vertical-align: middle
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+p {
+    word-wrap: break-word
+}
+
+:focus {
+    outline: 0
+}
+
+
+
+.to__prefix {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    display: inline-block
+}
+
+.to__prefix>img {
+    width: 100%;
+    height: 100%
+}
+
+.to__header .to__addUser {
+    margin: 0 auto;
+    width: 90%;
+    font-size: 20px
+}
+
+.to__header .to__flow {
+    margin: 0 auto;
+    padding: 15px 0;
+    width: 90%;
+    display: block
+}
+
+.to__header .to__flow .to__flow__item {
+    position: relative;
+    width: 30%;
+    color: #999;
+    display: inline-block
+}
+
+.to__header .to__flow .to__flow__item .to__round {
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border: 1px solid #999;
+    border-radius: 50%;
+    display: inline-block
+}
+
+.to__header .to__flow .to__flow__item .to__active {
+    color: #fff;
+    background-color: #175ad8;
+    border: 1px solid #175ad8
+}
+
+.to__header .to__flow .to__flow__item .to__flow__name {
+    display: inline-block;
+    cursor: pointer
+}
+
+.to__header .to__flow .to__flow__item::after {
+    margin: auto 0;
+    content: ">";
+    position: absolute;
+    right: 33%;
+    top: 0;
+    bottom: 0;
+    height: 20px;
+    line-height: 20px;
+    font-size: 26px
+}
+
+.to__header .to__flow .to__flow__item:last-child::after {
+    content: ""
+}
+
+.to__block {
+    padding-left: 0px;
+    text-align: center
+}
+
+.to__block .to__parentName {
+    margin-left: 6px;
+    color: #999;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: middle
+}
+
+.to__block .to__left,.to__block .to__right {
+    width: 45%;
+    display: inline-block;
+    vertical-align: text-top
+}
+
+.to__block .to__left .to__item,.to__block .to__right .to__item {
+    margin-left: -100px;
+    padding-left: 140px;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #eee
+}
+
+.to__block .to__left .to__title,.to__block .to__right .to__title {
+    line-height: 30px;
+    text-align: left
+}
+
+.to__block .to__left .to__title .to__remark,.to__block .to__right .to__title .to__remark {
+    color: #999;
+    display: inline-block
+}
+
+.to__block .to__left .to__content,.to__block .to__right .to__content {
+    width: 100%;
+    height: 300px;
+    text-align: left;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    overflow-y: auto
+}
+
+.to__block .to__left .to__content .to__search,.to__block .to__right .to__content .to__search {
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px solid #ccc
+}
+
+.to__block .to__left .to__content .to__search input,.to__block .to__right .to__content .to__search input {
+    padding-left: 20px;
+    padding-right: 100px;
+    width: 100%;
+    border: 0;
+    box-sizing: border-box
+}
+
+.to__block .to__left .to__content .to__search .to__icon__search,.to__block .to__right .to__content .to__search .to__icon__search {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 30px;
+    border-left: 1px solid #ccc
+}
+
+.to__block .to__left .to__content .to__search .to__icon__search svg,.to__block .to__right .to__content .to__search .to__icon__search svg {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0
+}
+
+.to__block .to__left {
+    position: relative;
+    margin-right: 30px
+}
+
+.to__block .to__left>div .to__subItem {
+    padding-left: 20px;
+    display: none
+}
+
+.to__block .to__left>div .to__show {
+    display: block;
+    overflow: hidden;
+}
+.layui-layer-content{
+    height: auto!important;
+}
+.to__block .to__left .to__arrow {
+    margin: auto 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    color: #999;
+    height: 30px;
+    line-height: 30px;
+    font-size: 20px;
+    transform: translateX(120%)
+}
+
+.to__block .to__left .to__arrow span:last-child {
+    margin-left: -16px
+}
+
+.to__block .to__left .to__item {
+    position: relative
+}
+
+.to__block .to__left .to__item .to__dropdownList {
+    position: relative
+}
+
+.to__block .to__left .to__item .to__dropdownList i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 6px;
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    margin: auto 0;
+    cursor: pointer;
+    transform: rotate(-90deg)
+}
+
+.to__block .to__left .to__item .to__dropdownList i svg {
+    position: absolute;
+    z-index: 2
+}
+
+.to__block .to__left .to__item .to__dropdownList .to__roate {
+    transform: rotate(0)
+}
+
+.to__block .to__left .to__item input[type=checkbox] {
+    margin: auto 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    margin-right: 6px;
+    -webkit-appearance: none;
+    vertical-align: middle;
+    background: #fff;
+    border: #ccc solid 1px;
+    width: 12px;
+    height: 12px;
+    opacity: 0
+}
+
+.to__block .to__left .to__item input[type=checkbox]:checked {
+    background: #3190e8
+}
+
+.to__block .to__left .to__item input[type=checkbox]:checked::after {
+    content: '';
+    top: 2px;
+    left: 1px;
+    position: absolute;
+    background: 0 0;
+    border: #fff solid 2px;
+    border-top: 0;
+    border-right: 0;
+    height: 2px;
+    width: 6px;
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg)
+}
+
+.to__block .to__left .to__item .to__name {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer
+}
+
+.to__block .to__left .to__item .to__number {
+    margin-left: 6px;
+    color: #999;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: middle
+}
+
+.to__block .to__left .to__item .icon__round {
+    margin: auto 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    margin-right: 6px;
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer
+}
+
+.to__block .to__left .to__item .icon__round--false {
+    background-image: url(../../manage/images/icon-round-no.svg)
+}
+
+.to__block .to__left .to__item .icon__round--true {
+    background-image: url(../../manage/images/icon-round-yes.svg)
+}
+
+.to__block .to__left .to__item .icon__round--disabled {
+    background-image: url(../../manage/images/icon-round-disabled.svg)
+}
+
+.to__block .to__right {
+    position: relative
+}
+
+.to__block .to__right .to__item {
+    position: relative
+}
+
+.to__block .to__right .to__item .to__close {
+    margin: auto 0;
+    position: absolute;
+    right: 12px;
+    top: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    background: url(../../manage/images/icon-close.svg) no-repeat;
+    background-size: 100%;
+    display: inline-block;
+    cursor: pointer
+}
+
+.to__footer {
+    margin-top: 15px;
+    text-align: center
+}
+
+.to__footer .to__btn__group {
+    display: inline-block
+}
+
+.to__footer .to__btn__group .to__btn {
+    margin: 0 25px;
+    padding: 8px 0;
+    width: 80px;
+    border: 1px solid #999;
+    display: inline-block
+}
+
+.to__footer .to__btn__group .to__btn__primary {
+    color: #fff;
+    background-color: #175ad8
+}

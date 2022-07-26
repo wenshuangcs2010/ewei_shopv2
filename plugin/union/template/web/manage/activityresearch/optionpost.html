@@ -1,0 +1,42 @@
+
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('activityresearch/optionpost')}" data-auto="true" method="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label">选项名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$data['option_name']}" required="required" title="请输入选项名称" placeholder="请输入选项名称" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($data['status']) && $data['status'] == 1}
+                <input type="radio" checked name="status" value="1" title="是">
+                <input type="radio" name="status" value="0" title="否">
+                {else}
+                <input type="radio" name="status" value="1" title="是">
+                <input type="radio" checked name="status" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        {if isset($data['id'])}<input type='hidden' value="{$data['id']}" name='id'/>{/if}
+        <input type='hidden' value="{$research_id}" name='research_id'/>
+        <button class="layui-btn" lay-submit lay-filter="demo1" >保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+</form>
+<script>
+
+    form.render();
+
+    //监听提交
+    form.on('submit(demo1)', function(data){
+        return true;
+    });
+</script>

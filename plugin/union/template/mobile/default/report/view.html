@@ -1,0 +1,112 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+<style>
+    {if $view['images']!=""}
+    .member_ac{
+        background-image:url("{php echo tomedia($view['images'])}");!important;
+    }
+    {else}
+    .member_ac{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/report.jpg");
+    }
+    {/if}
+
+</style>
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="headinfo member_ac">
+            <div class="commission_head ">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+                <div class="header_bottom">{$view['title']}</div>
+            </div>
+        </div>
+        <div class='fui-content' style="background: #FFFFFF;top:8.5rem">
+
+
+            <div class="fui-list" style="height: 2.0rem;background:#F8F8F8;font-size: 0.6rem">
+                联系人信息
+            </div>
+            <div class="fui-cell-group">
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_man.png">
+                    </div>
+                    <div class="fui-cell-info">联系人</div>
+                    <div class="right"  >{$view['originator']}</div>
+                </div>
+                <a class="fui-cell" href="tel:{$view['phone']}">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_telephon.png">
+                    </div>
+
+                    <div class="fui-cell-info"><p>联系方式</p></div>
+                    <div class="right"  >{$view['phone']}</div>
+                </a>
+                <a class="fui-cell" href="{php echo mobileUrl('union/report/sign_list',array('id'=>$view['id']))}">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_telephon.png">
+                    </div>
+
+                    <div class="fui-cell-info"><p>签到记录</p></div>
+                    <div class="fui-cell-remark" style="font-size: 0.65rem;"></div>
+                </a>
+                {if $credit>0}
+                <a class="fui-cell" href="{php echo mobileUrl('union/report/sign_list',array('id'=>$view['id']))}">
+                    <div class="fui-cell-icon">
+                        <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_telephon.png">
+                    </div>
+                    <div class="fui-cell-info"><p>获得积分</p></div>
+                    <div class="right" >{$credit}</div>
+                </a>
+                {/if}
+            </div>
+            <div class="fui-list" style="height: 2.0rem;background:#F8F8F8;font-size: 0.6rem">
+                详情
+            </div>
+            <div class="fui-article-page">
+                <div class="fui-article-content" style="    padding-left: 0.5rem;
+    padding-right: 0.5rem;">
+                    {$view['declaration']}
+                </div>
+            </div>
+
+            <a class="fui-cell-group" data-nocache="true" href="{php echo mobileUrl('union/readmember/members',array('readtype'=>4,'articleid'=>$view['id']))}">
+                <div class="fui-cell">
+                    <div class="fui-cell-icon">
+                        <span class="icon icon-person2"></span>
+                    </div>
+                    <div class="fui-cell-text" style="font-size: 0.6rem">
+                        接收人:{loop $readmember['memberlist'] $m}
+                        {$m['realname']},
+                        {/loop}等{$allcount}人
+                    </div>
+                    <div class="fui-cell-remark" style="font-size: 0.5rem;">{$notreadcount}人未读</div>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+
+</div>
+{template '_share'}
+<style>
+    .clear{
+        background-color:white!important;
+        color: #0a0a0a!important;
+    }
+</style>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/util.js'], function (modal) {
+        modal.init_data({lasttime:"{php echo $view['a_end_time']-time()}"});
+
+    });
+</script>
+

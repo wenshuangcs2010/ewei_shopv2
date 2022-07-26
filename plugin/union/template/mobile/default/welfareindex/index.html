@@ -1,0 +1,76 @@
+{template '_header'}
+<script>document.title = "福利申请"; </script>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobile.css" rel="stylesheet" type="text/css"/>
+<div class="fui-page fui-page-current">
+
+    <style>
+        .fui-block-group .fui-block-child .title{
+            line-height: 1.9rem;
+            font-size:1.1rem;
+            height: 1.9rem;
+
+        }
+    </style>
+    <div class="fui-content" style="margin-bottom: 2.5rem" >
+        <div class="fui-block-group col-2" style='margin-top:0; overflow: hidden ;'>
+            {if isset($list['marry'])}
+            <a class="fui-block-child external jiehun" href="{$list['marry']['url']}">
+                <div class="images" style="">
+                    <img src="{$list['marry']['imgurl']}">
+                </div>
+                <div class="title" >结婚慰问</div>
+                <div class="text "  style="line-height: 0.9rem;font-size:.7rem;padding-top:.2rem;">立即申请</div>
+            </a>
+            {/if}
+            {if isset($list['birth'])}
+            <a class="fui-block-child external birth"  href="{$list['birth']['url']}">
+                <div class="images" style="">
+                    <img src="{$list['birth']['imgurl']}">
+                </div>
+                <div class="title" >生育慰问</div>
+                <div class="text "  style="line-height: 0.9rem;font-size:.7rem;padding-top:.2rem;">立即申请</div>
+            </a>
+            {/if}
+            {if isset($list['hospitalization'])}
+            <a class="fui-block-child external hospitalization" href="{$list['hospitalization']['url']}">
+                <div class="images" style="">
+                    <img src="{$list['hospitalization']['imgurl']}">
+                </div>
+                <div class="title" >住院慰问</div>
+                <div class="text "  style="line-height: 0.9rem;font-size:.7rem;padding-top:.2rem;">立即申请</div>
+            </a>
+            {/if}
+            {if isset($list['retire'])}
+            <a class="fui-block-child external retire" href="{$list['retire']['url']}">
+                <div class="images" style="">
+                    <img src="{$list['retire']['imgurl']}">
+                </div>
+                <div class="title" >{$list['retire']['text']}慰问</div>
+                <div class="text "  style="line-height: 0.9rem;font-size:.7rem;padding-top:.2rem;">立即申请</div>
+            </a>
+            {/if}
+            {if isset($list['funeral'])}
+            <a class="fui-block-child external funeral" href="{$list['funeral']['url']}">
+                <div class="images" style="">
+                    <img src="{$list['funeral']['imgurl']}">
+                </div>
+                <div class="title" >{$list['funeral']['text']}慰问</div>
+                <div class="text "  style="line-height: 0.9rem;font-size:.7rem;padding-top:.2rem;">立即申请</div>
+            </a>
+            {/if}
+            {if $examine}
+            <a class="fui-block-child external examine" data-nocache="true" href="{php echo mobileUrl('union/welfare/examinelist')}">
+                <div class="images" style="">
+                    <img src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/fuli/sh.png">
+                </div>
+                <div class="title" >我审批的</div>
+                <div class="text "  style="line-height: 0.9rem;font-size:.7rem;padding-top:.2rem;">立即查看</div>
+            </a>
+            {/if}
+
+        </div>
+    </div>
+</div>
+
+
+{template 'union/_footer'}

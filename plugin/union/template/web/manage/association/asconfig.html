@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+
+<style>
+    .layui-form-label{
+        width: 100px;
+    }
+    .layui-input, .layui-textarea{
+        width: 80%;
+    }
+
+</style>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}配置</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}基础信息设置</h5>
+
+                    </div>
+                </div>
+            </div>
+            <div class="grid-form1">
+
+                <div class="tab-content">
+                    <form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('association/asconfig')}" data-auto="true" method="post">
+
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">频道名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" value="{$union_info['title']}" title="" placeholder="手机端显示频道名称" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">手机端显示频道名称</div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}参与限制</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="usecount" value="{$union_info['usecount']}" title="" placeholder="单位用户最多可以加入几个小组" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">单位用户最多可以加入几个小组(0不限人数)</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}总人数控制</label>
+                            <div class="layui-input-block">
+                                <div class='col-sm-10'>
+                                    {if isset($union_info['asocount']) && $union_info['asocount'] == 1}
+                                    <input type="radio" checked name="asocount" value="1" title="是">
+                                    <input type="radio" name="asocount" value="0" title="否">
+                                    {else}
+                                    <input type="radio" name="asocount" value="1" title="是">
+                                    <input type="radio" checked name="asocount" value="0" title="否">
+                                    {/if}
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">是否开启每个小组最大申请人数</div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}报名时间</label>
+                            <div class="layui-input-block">
+                                <div class='col-sm-10'>
+                                    {if isset($union_info['usetime']) && $union_info['usetime'] == 1}
+                                    <input type="radio" checked name="usetime" value="1" title="是">
+                                    <input type="radio" name="usetime" value="0" title="否">
+                                    {else}
+                                    <input type="radio" name="usetime" value="1" title="是">
+                                    <input type="radio" checked name="usetime" value="0" title="否">
+                                    {/if}
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">是否开启每个{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}报名时间要求</div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}申请要求</label>
+                            <div class="layui-input-block">
+                                <div class='col-sm-10'>
+                                    {if isset($union_info['userdescradio']) && $union_info['userdescradio'] == 1}
+                                    <input type="radio" checked name="userdescradio" value="1" title="是">
+                                    <input type="radio" name="userdescradio" value="0" title="否">
+                                    {else}
+                                    <input type="radio" name="userdescradio" value="1" title="是">
+                                    <input type="radio" checked name="userdescradio" value="0" title="否">
+                                    {/if}
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">是否开启用户申请需要的填写简历或者描述</div>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="layui-form-item text-center">
+                            {if isset($union_info['id'])}<input type='hidden' value="{$union_info['id']}" name='id'/>{/if}
+                            <button class="layui-btn" type='submit'>保存数据</button>
+                            <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+</body>
+<script>
+    require(['jquery'],function(){
+        $(".btn-primary").click(function(){
+            $("#horizontal-form").submit();
+        })
+    })
+
+</script>
+</html>

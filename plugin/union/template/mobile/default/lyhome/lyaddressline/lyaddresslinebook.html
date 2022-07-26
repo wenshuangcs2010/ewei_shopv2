@@ -1,0 +1,93 @@
+{template '_header'}
+<script>document.title = "预约"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<style>
+    a.back:before{
+        left: 5px;
+        border-color: #FFFF;
+    }
+    .jieshao.fui-cell-info{
+        white-space:revert!important;
+        text-overflow:unset!important;
+        overflow:auto!important;
+    }
+    .jieshao.fui-cell-info span{
+        width: 100%;
+        text-align: left;
+        float: none;
+        background-color: white;
+    }
+</style>
+<div class='fui-page  fui-page-current'>
+
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"></a>
+            </div>
+        </header>
+    </div>
+    <div class='fui-content member-page navbar' style="top:0">
+        <div class="fui-cell-group">
+            
+            <div class="fui-cell">
+                <div class="fui-cell-label ">预约提示</div>
+                <div class="jieshao fui-cell-info" style="color: red">7月-8月,节假日需要提前7天预约，其他时间需要提前3天</div>
+            </div>
+            <div class="fui-cell must ">
+
+                <div class="fui-cell-label ">姓名</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='name' name='name' placeholder="请输入您的姓名"  /></div>
+            </div>
+            <div class="fui-cell must ">
+                <div class="fui-cell-label ">身份证号</div>
+                <div class="fui-cell-info"><input type="text" class='fui-input' id='imid' name='imid' placeholder="请输入您的身份证号"  /></div>
+            </div>
+            <div class="fui-cell must">
+
+                <div class="fui-cell-label ">手机号</div>
+                <div class="fui-cell-info"><input type="number" class='fui-input' id='mobile' name='mobile' placeholder="手机号"   /></div>
+            </div>
+            <div class="fui-cell must">
+
+                <div class="fui-cell-label ">时间</div>
+                <div class="fui-cell-info">
+                    <input type="text" id="date" name="date" value="{$_GPC['date']}" placeholder="请选择日期" class="fui-input dt" readonly>
+                </div>
+            </div>
+            <div class="fui-cell must">
+
+                <div class="fui-cell-label ">人数</div>
+                <div class="fui-cell-info"><input type="number" class='fui-input' id='number' name='number' placeholder="请输入入住人数"  /></div>
+            </div>
+            <div class="fui-cell must">
+                <div class="fui-cell-label ">介绍信</div>
+                <div class="fui-cell-info">
+                    <ul class="fui-images fui-images-sm" id="images">
+                    </ul>
+                    <div class="fui-uploader fui-uploader-sm refund-container-uploader" data-name="images[]" data-max="1" >
+                    <input type="file" name='imgFile0' id='imgFile0' multiple="" accept="image/*" >
+                    </div>
+                </div>
+            </div>
+
+</div>
+    <input type="hidden" id="id" value="{$lyaddresslineid}">
+    <a href='#' id='btn-submit' data-stop="0" class='btn btn-success block'>预约</a>
+    </div>
+
+
+</div>
+
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        $('.dt').datePicker();
+        modal.lyaddress_install();
+        $('.refund-container-uploader').uploader({
+            uploadUrl: core.getUrl('util/uploader'),
+            removeUrl: core.getUrl('util/uploader/remove')
+        });
+    });
+</script>

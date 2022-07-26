@@ -1,0 +1,60 @@
+{template '_header'}
+<script>document.title = "{$_W['union_info']['title']}"; </script>
+<link rel="stylesheet" href="../addons/ewei_shopv2/template/mobile/default/static/css/rank.css">
+<div class="fui-page fui-page-current page-rank orange" >
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">签到人员</div>
+        <div class="fui-header-right">&nbsp;</div>
+    </div>
+    <div class="fui-content navbar">
+        <div class="rankline">
+            <div class="left"></div>
+            <div class="right"></div>
+            <div class="center"></div>
+        </div>
+        <div class="ranklist">
+            <div class="main">
+                <div class="line title">
+                    <div class="col">排名</div>
+                    <div class="col">处室/部门</div>
+                    <div class="col" >姓名</div>
+                   <!-- <div class="col"style="width: 47%">电话</div>-->
+                </div>
+                <div class='fui-content-inner'>
+                    <div class='content-empty' style='display:none;'>
+                        <i class='icon icon-searchlist'></i><br/>你还没有参加任何{$_W['asoconfig']['title']}
+                    </div>
+                    <div class="fui-goods-group container block" id="container"></div>
+                    <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                    <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+                </div>
+
+            </div>
+
+        </div>
+        <script id="tpl_list" type="text/html">
+            <%each list as row %>
+            <div class="line">
+                <div class="col"><%row.index%></div>
+                <div class="col">
+                    <div class="name" style="overflow: auto;white-space: normal;height: auto;line-height: initial;text-align: center"  ><%row.dename%></div>
+                </div>
+                <div class="col"  style="width: 23%">
+                    <div class="name" ><%row.name%></div>
+                </div>
+                <!--<div class="col " style="width: 47%"><%row.mobile%></div>-->
+            </div>
+            <%/each%>
+        </script>
+        <script language='javascript'>
+            require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+                modal.sign_init({id:"{$id}","union_id":"{$union_id}"});
+            });
+        </script>
+    </div>
+</div>
+
+{template '_footer'}

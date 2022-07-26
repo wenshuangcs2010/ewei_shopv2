@@ -1,0 +1,67 @@
+{template '_header'}
+
+
+
+<script>document.title = "{$data['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<style>
+    .header_top{
+        min-height: 44px;
+        line-height: 44px;
+        display: block;
+        margin-left: 1.6rem;
+        text-align: center;
+    }
+</style>
+<div class='fui-page order-success-page'>
+
+    <div class="fui-content navbar">
+        <div id="m_common_header" class="m_item_header">
+            <header class="jd-header jd-header-immerse jd-header-op0" >
+                <div class="jd-header-new-bar" id="jd_header_new_bar">
+                    <a class="jd-header-icon-back J_ping back"></a>
+                    <p class="header_top">{$data['title']}</p>
+                </div>
+
+
+            </header>
+        </div>
+        <div class="list-number" data-index="1" id="list_index_0">
+
+            <div class="fui-card" style="padding-top: 0rem;border-radius: 0.7rem;">
+
+                <div class="fui-card-title">
+                    {$data['declaration']}
+                </div>
+                <div class="fui-card-content">
+                    <div class="fui-cell-group">
+                        {loop $list $key $item}
+                        <div class="fui-cell {if !$selectdata}answer{/if}" data-id="{$item['id']}" style=" white-space: initial; margin-bottom: 0.2rem;">
+                            <div class="fui-cell-info" style="white-space: initial;font-size: .7rem"><span>{php echo $key+1}</span> {$item['option_name']}</div>
+                            <div class="external" style="{if $selectdata['option_id']==$item['id']}display: block{else}display: none;{/if}">
+                                <img style="width: 1.3rem" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/quiz/selected.png">
+                            </div>
+                        </div>
+                        {/loop}
+                    </div>
+                </div>
+                {if !$selectdata}
+                <a href="#" data-nocache="true" data-type="1" data-submit="0" id="btn-submit" class="btn btn-success block">提交</a>
+                {/if}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+{template '_share'}
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.research_init({id:"{$data['id']}"});
+
+    });
+</script>
+</body>
+</html>

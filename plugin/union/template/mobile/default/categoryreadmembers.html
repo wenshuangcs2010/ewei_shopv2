@@ -1,0 +1,46 @@
+{template '_header'}
+<div class="fui-page fui-page-current page-commission-down">
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">{$category_info['name']}</div>
+    </div>
+    <div class="fui-content navbar">
+
+
+        <div class="fui-list-group container" id="container">
+            <div class="fui-cell-group fui-cell-click" style="margin-top: 0;margin-left: 0.5rem;margin-right: 0.5rem;background-color: #F8f8f8;">
+            {loop $list['category'] $item}
+                <a class="fui-cell external" href="{php echo mobileUrl('union/readmember/category',array('cid'=>$item['id'],'level'=>$level,'readtype'=>$readtype))}">
+                    <div class="fui-cell-icon"><span class="span_icon"><img width="100%" src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/member_info/ic_tel.png"></span></div>
+                    <div class="fui-cell-text fui-cell-text-member">{$item['name']}</div>
+                    <div class="fui-cell-remark" style="font-size: 0.65rem;"><span class="badge {if $level==1} badge-danger{/if}">{$item['count']}</span></div>
+                </a>
+            {/loop}
+                {loop $list['memberlist'] $item}
+                <div class="fui-cell external">
+                    <div class="fui-cell-icon"><span class="icon icon-person2"></span></div>
+                    <div class="fui-cell-text fui-cell-text-member">{$item['name']}</div>
+
+                </div>
+
+                {/loop}
+            </div>
+        </div>
+
+
+        <div class='content-empty' style='display:none;'>
+            <i class='icon icon-group'></i><br/>暂时没有任何数据
+        </div>
+
+    </div>
+</div>
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+       // modal.readmember_init({"readtype":"{$readtype}"});
+    });
+</script>
+
+{template '_footer'}

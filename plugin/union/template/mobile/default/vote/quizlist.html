@@ -1,0 +1,120 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+
+<style>
+    {if $category['head_images']!=""}
+    .document{
+        background-image:url("{php echo tomedia($category['head_images'])}");!important;
+    }
+    {else}
+    .document{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/vote.jpg");
+    }
+    {/if}
+</style>
+<div class="fui-page  fui-page-current page-goods-list" >
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0; {if $category['head_images']!=""} background-image:url("{php echo tomedia($category['head_images'])}");!important;{/if}">
+        <div class="headinfo document">
+            <div class="commission_head">
+                <div class="fui-header-left">
+                    <a class="back" onclick="location.back()"></a>
+                </div>
+            </div>
+        </div>
+        <div >
+            <div class="fui-icon-group noborder col-3 " style="background: #ffffff">
+                {loop $categorylist  $item}
+                <a class="fui-icon-col external" href="{php echo mobileUrl('union.memberactivity',array('id'=>$item['id']))}" data-nocache="true">
+                    <div class="icon"><img src="{php echo tomedia($item['images'])}"></div>
+                    <div class="text" style="color: #666666;">{$item['catename']}</div>
+                </a>
+                {/loop}
+            </div>
+        </div>
+
+        <div class="fui-content navbar" style="position: relative;top:0">
+            <div class='fui-content-inner'>
+                {loop $list $row}
+                <a class="fui-cell-group" href="{php echo mobileUrl('union/vote/quiz',array('id'=>$row['id']))}">
+                    <div class="fui-cell">
+                        <div class="fui-cell-icon" style="width: 3rem" >
+                            <img style="width: 100%" onerror="this.src='{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/timg.gif'"  src="{php echo tomedia($row['images'])}">
+                        </div>
+                        <div class="fui-cell-text">
+                            <span class="texthead" style="height: 1rem">{$row['title']}</span>
+                            <div class="online_li">
+                                {if $activity_info['end_time']>time()}
+                                <span class="status">投票中</span>
+                                {else}
+                                <span class="status show">已截止</span>
+
+                                {/if}
+                            </div>
+                            <div class="online_li" style="font-size: .7rem;color: #8e7f7f;">
+                                投票截止日期:{php echo date("Y-m-d",$activity_info['end_time'])}
+                            </div>
+                        </div>
+                        <div>
+                            {if $activity_info['end_time']>time()}
+
+
+                               {if $row['play']}
+
+                            <span class="jiezhisign"> 已参与 </span>
+                                {else}
+                            <span class="{if $activity_info['end_time']>time()}baosgin{else}jiezhisign{/if}"> 参与 </span>
+                                {/if}
+
+
+                            {else}
+                                <span  class="jiezhisign">结束</span>
+                            {/if}
+                        </div>
+                    </div>
+                </a>
+                {/loop}
+            </div>
+            {if empty($list)}
+            <div class='content-empty' >
+                <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+            </div>
+            {/if}
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .status{
+        display: block;
+        width: 2rem;
+        text-align: center;
+        border: 1px solid #D71F06;
+        border-radius: 3px;
+        font-size: 0.6rem;
+        color: #D71F06;
+        height: 1rem;
+        line-height: 1rem;
+
+        margin-top: 0.2rem;
+    }
+    .show{
+        border-color:   #219BFF;
+        color:   #219BFF;
+    }
+    .online_li{
+        height: 1.3rem;
+        line-height: 1.3rem;
+    }
+</style>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+            //modal.memberinit();
+    });
+</script>
+
+{template 'union/_footer'}

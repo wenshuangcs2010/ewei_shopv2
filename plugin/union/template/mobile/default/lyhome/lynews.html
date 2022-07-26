@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en" style="font-size: 625%;"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <title>政策</title>
+    <script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.css">
+    <script src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/dist/dropload.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+</head>
+
+<body>
+
+<div class="fui-header">
+    <div class="fui-header-left">
+        <a class="back" onclick="history.back();"></a>
+    </div>
+    <div class="title">最新政策</div>
+    <div class="fui-header-right"></div>
+</div>
+<!-- 搜索 -->
+<div class="search_bg"></div>
+<div style='top: 0.92rem;' class="search"></div>
+<form method="get" action="" onsubmit="return false">
+    <input class="search_input" style='top: 1rem;' type="text" name="searchContent" id="searchContent" value="" placeholder=" 请输入标题">
+    <button type="submit" id="searchBtn" class="search_bottom">搜索</button>
+</form>
+<div class="nj_box">
+    <div class="news_hd h_siz_34">政策列表</div>
+</div>
+<div id="listdata">
+
+</div>
+
+<!-- 栏目 -->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+
+<script>
+
+    $("#searchBtn").click(function () {
+        $('#listdata').html("");
+        var keyword=$("#searchContent").val();
+        var data={page:1,keywords:keyword}
+        selectConvalesceList(data);
+    })
+
+    var currentPage=1;
+    /*
+    $('#listdata').dropload({
+        scrollArea : window,
+        loadDownFn : function(me){
+            currentPage++;
+            selectConvalesceList({page:currentPage});
+            me.resetload();
+        }
+    });
+    */
+    selectConvalesceList(1);
+    function selectConvalesceList(data) {
+        $.ajax({
+            type: 'get',
+            url: "{php echo mobileUrl('union/lyhome/lynews/getlist')}",
+            data:data,
+            dataType: 'json',
+            success: function(ret){
+                var data=ret.result.list;
+                var result = '';
+                for(var i = 0; i < data.length; i++){
+                    result+="<div class=\"news_list\">";
+                    result+="<a href=\"{php echo mobileUrl('union/lyhome/lynews/view')}&id="+data[i].id+"\">";
+                    result+="<p class=\"news_title\">"+data[i].title+"</p>";
+                    result+="<P class=\"news_di\"><span class=\"h_siz_26 gray_title mp_20\">文章来源："+data[i].newstitle+"</span><span class=\"h_siz_26 gray_title\">时间："+data[i].createtime+"</span></P>";
+                    result+="</a>";
+                    result+="</div>";
+                }
+                setTimeout(function(){
+                    $('#listdata').append(result);
+                },100);
+            },
+            error: function(xhr, type){
+                alert('网络延迟，确认重新加载!');
+                location.reload();
+            }
+        });
+
+    }
+</script></body></html>

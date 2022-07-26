@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en" style="font-size: 625%;"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <title>详情</title>
+    <script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+    <style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style></head>
+
+<body>
+<div class="fui-header">
+    <div class="fui-header-left">
+        <a class="back" onclick="history.back();"></a>
+    </div>
+    <div class="title">政策详情</div>
+    <div class="fui-header-right"></div>
+</div>
+
+<div class="news_show" style='margin-top: 1rem;'>
+    <p class="h_siz_52 news_show_hd">{$item['title']}</p>
+    <p class="news_di"><span class=" h_siz_26 gray_title mp_20">文章来源：{$item['newstitle']}</span><span class=" h_siz_26 gray_title">时间：{php echo date("Y-m-d",$item['createtime'])}</span>
+    </p>
+    <div class="h_siz_34 news_show_txt">
+    {$item['description']}
+    </div>
+
+</div>
+<!-- 栏目 -->
+<div class="bu"></div>
+{template 'union/lyhome/footer'}
+<script>
+    $('img').each(function(){
+        $(this).css("width", '100%');
+    });
+</script>
+</body></html>

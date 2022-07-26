@@ -1,0 +1,53 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<div class="fui-page  fui-page-current page-goods-list" >
+
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="headinfo suggestions">
+            <div class="commission_head">
+                <div class="fui-header-left">
+                    <a class="back" ></a>
+                </div>
+            </div>
+        </div>
+        <div class="fui-content navbar" style="position: relative;top:0">
+            <div class='fui-content-inner'>
+                <div class='content-empty' style='display:none;'>
+                    <i class='icon icon-searchlist'></i><br/>暂时没有任何数据
+                </div>
+                <div class="fui-goods-group container block" id="goods-list-my-container"></div>
+                <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                <div class='no-more-goods' style="text-align: center;margin-top:20px;display: none"><span class='text'>没有更多</span></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type='text/html' id='tpl_goods_list_mylist'>
+    <%each list as row%>
+    <a class="fui-cell-group" data-id="<%row.id%>" >
+        <div class="fui-cell">
+            <div class="fui-cell-icon" style="width: 3rem" >
+                <img style="width: 100%" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/sugli.png">
+            </div>
+            <div class="fui-cell-text">
+                <div class="online_li" style="height: 2rem;overflow: hidden;"> <%row.title%></div>
+                <div class="online_li"> <span class="span_text4 <%if row.status==0%>span_active1<%else if row.status==2%>span_active1<%/if%>"><%if row.status==0%>待提交<%else if row.status==1%>待采纳<%else if row.status==2%>已采纳<%else if row.status==3%>未采纳<%/if%></span></div>
+            </div>
+            <div class="fui-cell-remark" style="font-size: 0.5rem;"></div>
+        </div>
+    </a>
+    <%/each%>
+</script>
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/mobile.js'], function (modal) {
+        modal.suggestions_init({'page':1,'type':'my'});
+    });
+</script>
+
+{template 'union/_footer'}
+

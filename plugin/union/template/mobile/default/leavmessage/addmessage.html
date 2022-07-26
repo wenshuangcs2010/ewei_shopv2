@@ -1,0 +1,44 @@
+{template '_header'}
+<script>document.title = "发布维权信息"; </script>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<style>
+    a.back:before{
+        left: 5px;
+        border-color: #FFFF;
+    }
+</style>
+<div class='fui-page  fui-page-current'>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"></a>
+            </div>
+        </header>
+    </div>
+    <div class='fui-content member-page navbar' style="top:0">
+        <div class="fui-cell-group">
+            <div class="fui-cell">
+                <div class="fui-cell-label">标题</div>
+                <div class="fui-cell-info"><input type="text" class="fui-input" id="title" value="" placeholder="填写标题"></div>
+            </div>
+            <div class="fui-cell-group">
+                <div class="fui-cell ">
+                    <textarea class="col-5 friendaddmessage" id="desc" placeholder="填写详细描述，方便顾问回复"></textarea>
+                </div>
+            </div>
+            <input type="hidden" id="id" value="{$id}">
+            <a href='#' id='btn-submit' class='btn btn-success block'>发布</a>
+        </div>
+    </div>
+
+    {template 'union/_footer'}
+</div>
+
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.add_leavmessage_init();
+
+    });
+</script>

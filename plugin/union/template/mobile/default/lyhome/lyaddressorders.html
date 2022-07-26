@@ -1,0 +1,84 @@
+{template '_header'}
+<style>
+    .fui-list-media img{height:2.5rem;}
+</style>
+<div class='fui-page order-list-page'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">我的订单</div>
+    </div>
+    <div id="tab" class="fui-tab fui-tab-danger">
+        <a data-tab="tab"  class="external {if $_GPC['status']==''}active{/if}" data-status=''>全部</a>
+        <a data-tab="tab0" class="external {if $_GPC['status']=='0'}active{/if}"  data-status='0'>待确认</a>
+        <a data-tab="tab1" class="external {if $_GPC['status']=='1'}active{/if}"  data-status='1'>已确认</a>
+        <a data-tab="tab2" class="external {if $_GPC['status']=='2'}active{/if}"  data-status='2'>已取消</a>
+        <a data-tab="tab3" class="external {if $_GPC['status']=='3'}active{/if}"  data-status='3'>待评价</a>
+    </div>
+    <div class='fui-content navbar order-list' >
+        <div class='fui-content-inner'>
+            <div class='content-empty' style='display:none;'>
+                <i class='icon icon-lights'></i><br/>暂时没有任何订单<br/><a href="{php echo mobileUrl('union/lyhome')}" class='btn btn-default-o external'>到处逛逛</a>
+            </div>
+            <div class='container'></div>
+            <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+        </div>
+        {template '_copyright'}
+    </div>
+    <script id='tpl_order_index_list' type='text/html'>
+        <%each list as order%>
+        <div class='fui-list-group order-item' data-orderid="<%order.id%>" >
+            <a href="{php echo mobileUrl('union/lyhome/order/detail')}&id=<%order.id%>" data-nocache='true'>
+                <div class='fui-list-group-title'>
+                    订单号: <%order.ordersn%>
+                    <span class='status <%order.statuscss%>'><%order.statusstr%></span>
+                </div>
+
+                <div class="fui-list goods-list">
+                    <div class="fui-list-media" >
+                        <img data-lazy="<%order.addresheader_image%>" class="round">
+                    </div>
+                    <div class="fui-list-inner">
+                        <div class="text goodstitle"><%order.adltitle%></div>
+                    </div>
+                    <div class='fui-list-angle'>
+                        &yen; <span class='marketprice'><%order.oldprice%><br/>   x1
+                    </div>
+                </div>
+
+                <div class='fui-list-group-title lineblock'>
+                    <span class='status'> 价格: <span class='text-danger'>&yen; <%order.price%></span></span>
+                </div>
+            </a>
+            <div class='fui-list-group-title lineblock opblock' style="height: auto;">
+                <span class='status'>
+                    <%if order.status==3 && order.iscomment==0 %>
+                    <a class="btn btn-default btn-default-o" data-nocache="true" href="{php echo mobileUrl('union/lyhome/order/comment')}&id=<%order.id%>">评价</a>
+                    <%else if order.iscomment>=1%>
+                       <div class="btn btn-default btn-default-o">已评价</div>
+                    <%/if%>
+                </span>
+            </div>
+        </div>
+        <%/each%>
+    </script>
+
+    <script language='javascript'>require(['../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/order.js'], function (modal) {
+        modal.init({fromDetail:false,status:"{$_GPC['status']}",merchid:{php echo intval($_GPC['merchid'])}});
+    });</script>
+
+
+
+
+</div>
+<div class="fui-navbar">
+    <a href="{php echo mobileUrl('union/lyhome')}" class="external nav-item ">
+        <span class="icon icon-home"></span>
+        <span class="label">首页</span>
+    </a>
+    <a href="{php echo mobileUrl('union/lyhome/member')}" class="external nav-item ">
+        <span class="icon icon-person2"></span>
+        <span class="label">会员中心</span>
+    </a>
+</div>

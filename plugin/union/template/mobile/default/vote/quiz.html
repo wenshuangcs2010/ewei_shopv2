@@ -1,0 +1,125 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+
+<style>
+    {if $view['image']!=""}
+    .quiz{
+        background-image:url("{php echo tomedia($view['image'])}");!important;
+    }
+    {else}
+    .quiz{
+        background-image: url("{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/mobile/default/static/images/vote.jpg");
+    }
+    {/if}
+    .icon-green .image {
+        height: 4rem;
+        width: 4rem;
+        float: left;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+    .icon-green a{
+        display: block;
+    }
+    .timessytle{
+        text-align: center;
+        background-color: #e9e9e9fa;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+        border-radius: 0.25rem;
+    }
+    .timessytle p{
+        color: red;
+        font-size: 0.85rem;
+        font-family: cursive;
+        padding-top: 0.3rem;
+    }
+    .timessytle span{
+        color: red;
+    }
+    .timessytle .times{
+        padding-bottom: 0.3rem;
+    }
+    .timessytle .times span{
+        padding-left: 0.32rem;
+        padding-right: 0.3rem;
+    }
+    .radius{
+        color: red;
+    }
+</style>
+<div class='fui-page  fui-page-current member-view-page'>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+        <div class="quiz">
+            <div class="commission_head ">
+                <div class="fui-header-left">
+                    <a class="back"></a>
+                </div>
+                <div class="header_bottom">{$view['title']}</div>
+            </div>
+        </div>
+        <div class='fui-content' style="background: #FFFFFF;top:8.5rem">
+            <div class="fui-icon-group timessytle">
+                <p>距离投票结束</p>
+                <div class="times"><span class="day">0</span>天<span class="hour">0</span>时<span class="minute">0</span>分<span class="second">0</span>秒</div>
+            </div>
+            <div class="fui-icon-group selecter">
+                <div class="fui-icon-col external" style="width: 33%">
+                    <div class="icon icon-green radius">{$optioncount}</div>
+                    <div class="text">选项</div>
+                </div>
+                <div class="fui-icon-col external" style="width: 33%">
+                    <div class="icon icon-orange radius">{$alloptiontackcount}</div>
+                    <div class="text">累计投票</div>
+                </div>
+                <div class="fui-icon-col external" style="width: 33%">
+                    <div class="icon icon-blue radius">{$view['clickcount']}</div>
+                    <div class="text">访问量</div>
+                </div>
+            </div>
+            <div class="fui-article-list template-1" id="container">
+                <div class="list-number">
+                    <div class="">
+                        <p style="color: red;text-align: center">活动介绍</p>
+                        <div class="fui-card">
+                            <div class="fui-card-content">{$view['declaration']}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fui-goods-group container block">
+                {loop $list $item}
+                <div class="fui-goods-item">
+                    <a data-nocache="true" href="{php echo mobileUrl('union.vote.option',array('id'=>$item['id'],'quiz_id'=>$view['id']))}">
+                        <div class="image"  data-lazyloaded="true" style="background-image: url({php echo tomedia($item['image'])});">
+                        </div>
+                    </a>
+                    <div class="detail" style="text-align: center;">
+                        <a href="{php echo mobileUrl('union.vote.option',array('id'=>$item['id'],'quiz_id'=>$view['id']))}">
+                            <div class="name">{$item['title']}</div>
+                        </a>
+                    </div>
+                </div>
+                {/loop}
+            </div>
+        </div>
+    </div>
+
+</div>
+{template '_share'}
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/util.js'], function (modal) {
+
+        if(typeof (window.timesindex)=="undefined"){
+            var lasttime="{php echo $last_time-time()}";
+            modal.init_data({lasttime:lasttime});
+        }
+    });
+</script>
+

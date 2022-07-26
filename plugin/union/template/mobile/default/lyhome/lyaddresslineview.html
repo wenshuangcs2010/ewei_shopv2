@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en" style="font-size: 625%;"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <title>精品线路详情</title>
+    <script type="text/javascript" src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/js/js.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/css/coalsun.css">
+</head>
+
+<body>
+<div class="fui-header">
+    <div class="fui-header-left">
+        <a class="back" onclick="history.back();"></a>
+    </div>
+    <div class="title">精品线路</div>
+    <div class="fui-header-right"></div>
+</div>
+<div class="lx_box" style="margin-top: 0.85rem"><img src="{php echo tomedia($item['header_image'])}" width="750" height="542"></div>
+<div class="lx_title">
+    <div class="lx_title_lt">{$item['title']}</div>
+    <div class="lx_title_rt collect">
+        <img src="../addons/ewei_shopv2/plugin/union/template/mobile/default/lyhome/img/sc_s1.png" date-value="0">收藏  </div>
+</div>
+<!--
+<div class="lx_all_bg mt_up_1">
+
+   <div class="lx_h">
+       <p class=" h_siz_26 gray_title">原价<span class="tm-price">￥{$item['oldprice']}</span></p>
+       <div class="lx_h_3 mt_up_15" style="padding-left: 0"><span class="red_title h_siz_30">￥<span class="h_siz_42">{$item['price']}</span> 元</span></div>
+      <div class="title">历史消费：0</div>
+   </div>
+</div>
+-->
+<div class="lx_hd mt_up_15"> 基本信息 </div>
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【行程天数】</div>
+    <div class="lx_jg_rt">{$item['dayvale']}</div>
+</div>
+{if $item['price']}
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【费用标准】</div>
+    <div class="lx_jg_rt">{$item['price']}/人</div>
+</div>
+{/if}
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【线路交通】</div>
+    <div class="lx_jg_rt">{php echo $traffic[$item['traffic_id']]}</div>
+</div>
+<!--
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【出发城市】</div>
+    <div class="lx_jg_rt">{$item['city']}</div>
+</div>-->
+{if $item['guidancename']}
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【指导单位】</div>
+    <div class="lx_jg_rt">{$item['guidancename']}</div>
+</div>
+{/if}
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【承接单位】</div>
+    <div class="lx_jg_rt">{$item['unitname']}</div>
+</div>
+<div class="lx_jg1">
+    <div class="lx_jg_lt">【联系电话】</div>
+    <div class="lx_jg_rt">{$item['mobilephone']}</div>
+</div>
+
+<div class="lx_hd mt_up_15"> 行程亮点 </div>
+<div class="lx_all_bg mt_up_1">
+    <div class="title_txt">
+        {$item['lineintroduce']}  </div>
+</div>
+
+<div class="lx_hd mt_up_15"> 线路行程 </div>
+<div class="lx_all_bg mt_up_1">
+  {$item['description']}
+</div>
+
+
+
+<div class="lx_hd mt_up_15"> 服务内容 </div>
+<div class="lx_all_bg mt_up_1">
+   {$item['costdescription']}
+</div>
+
+<div class="lx_hd mt_up_15"> 评价 ({$count})
+    <p class="hd_r"><span class="org_title h_siz_42">{$lodnd}%</span> 满意度</p>
+
+</div>
+<div class="lx_all_bg mt_up_1">
+{loop $commentlist $i_item}
+    <div class="fui-list goods-list" data-goodsid="{$g['goodsid']}">
+        <div class="fui-list-media" >
+            <img src="{php echo tomedia($i_item['headimgurl'])}" class="round">
+        </div>
+        <div class="fui-list-inner" >
+            <div class="text goodstitle">{$i_item['content']}</div>
+        </div>
+
+    </div>
+
+    {/loop}
+</div>
+<div class="subscribe">
+    <a href="{php echo mobileUrl('union/lyhome/lyaddressline/lyaddresslinebook',array('id'=>$item['id']))}">预订</a>
+</div>
+
+<!-- 栏目 -->
+<div class="bu"></div>
+<script>
+    $('.lx_all_bg img').each(function(){
+        $(this).css("width", '100%');
+    });
+</script>
+{template 'union/lyhome/footer'}
+</body></html>

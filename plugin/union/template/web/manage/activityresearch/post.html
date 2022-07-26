@@ -1,0 +1,90 @@
+
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('activityresearch/post')}" data-auto="true" method="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$data['title']}" required="required" title="请输入活动标题" placeholder="请输入活动标题" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动开始时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="start" id="start"  value="{$data['start_time']}" lay-verify="start" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动结束时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="end" id="end"  value="{$data['end_time']}" lay-verify="end" placeholder="yyyy-MM-dd H:i:s" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动说明</label>
+        <div class="layui-input-block">
+            <textarea name="declaration" id="editor" lay-verify="editor" class="layui-textarea">{$data['declaration']}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($data['status']) && $data['status'] == 1}
+                <input type="radio" checked name="status" value="1" title="是">
+                <input type="radio" name="status" value="0" title="否">
+                {else}
+                <input type="radio" name="status" value="1" title="是">
+                <input type="radio" checked name="status" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        {if isset($data['id'])}<input type='hidden' value="{$data['id']}" name='id'/>{/if}
+        <button class="layui-btn" lay-submit lay-filter="demo1" >保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+</form>
+<script>
+    var layeditindex=0;
+    var layedit='';
+    layui.use('layedit', function(){
+        layedit = layui.layedit;
+
+        layedit.set({
+            uploadImage: {
+                url: "{php echo unionUrl('upfile/layuiupload')}" //接口url
+                ,type: 'post' //默认post
+            }
+        });
+        layeditindex=layedit.build('editor'); //建立编辑器
+
+    });
+
+    laydate.render({
+        elem: '#start',
+        type: 'datetime',
+        trigger:'click',
+    });
+    laydate.render({
+        elem: '#end',
+        type: 'datetime',
+        trigger:'click',
+    });
+
+    form.render();
+
+    form.verify({
+        editor: function(value){
+            layedit.sync(layeditindex);
+        }
+    });
+    //监听提交
+    form.on('submit(demo1)', function(data){
+        return true;
+    });
+</script>

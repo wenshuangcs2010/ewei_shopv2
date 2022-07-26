@@ -1,0 +1,170 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/timeline.css" rel="stylesheet" type="text/css"/>
+
+<script>document.title = "{$_W['union']['title']}"; </script>
+<div class='fui-page' style="background-color: #fff">
+
+
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"><span></span></a>
+            </div>
+        </header>
+    </div>
+    <div class='fui-content  welfare_view' style="bottom: 4.5rem;top:0.5rem">
+        <h3 style="text-align: center">职工{$typename}申请表</h3>
+        <div class="fui-cell-group">
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 4rem" >公司</div>
+                <div class="fui-cell-text">{$union_info['title']}</div>
+                <div></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 4rem" >部门</div>
+                <div class="fui-cell-text">{$item['department']}</div>
+                <div>{php echo date("Y-m-d",$item['add_time'])}</div>
+            </div>
+               <div class="class_status">{if $item['status']==2}审批通过{elseif $item['status']==4}审批拒绝{elseif $item['status']==1}审批中{elseif $item['status']==-1}已撤销{/if}</div>
+        </div>
+        <div class="fui-cell-group">
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <td>姓名</td>
+                    <td>{$item['username']} </td>
+                    <td>性别</td>
+                    <td>{if $item['sex']==1}男{else}女{/if}</td>
+                </tr>
+                <tr>
+                    <td>事由</td>
+                    <td>{$typename}</td>
+                    <td>申请金额</td>
+                    <td><span style="color: #ff2f34">{$item['money']}</span></td>
+                </tr>
+                <tr>
+                    <td>类型</td>
+                    <td>{if $item['amounttype']==1}现金{else}实物{/if}</td>
+                    <td>{$typename}日期</td>
+                    <td>{php echo date("Y-m-d",$item['time'])}</td>
+                </tr>
+                <tr>
+                    <td style="height: 5rem;">备注</td>
+                    <td colspan="3">{$item['remarks']}</td>
+                </tr>
+                <tr >
+                    <td colspan="4">
+                        {loop $images $i}
+                        <img src="{$i}">
+                        {/loop}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="fui-cell-group">
+            <section id="cd-timeline" class="cd-container">
+                <div class="cd-timeline-block">
+                    <div class="cd-timeline-img cd-picture">
+                       会员
+                    </div>
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576735216446" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="742" width="100%" height="100%"><path d="M489.6 141.6a369.12 369.12 0 1 0 369.28 369.28A369.12 369.12 0 0 0 489.6 141.6z m211.84 273.44L462.56 653.76a33.44 33.44 0 0 1-48 0l-137.44-137.44a33.44 33.44 0 1 1 48-48l113.92 113.92L654.08 368a33.44 33.44 0 1 1 48 48z m0 0" p-id="743" fill="#11af08"></path></svg>
+                    </div>
+                    <div class="cd-timeline-content">
+                        <div>发起申请:{$item['username']}<span style="float: right;margin-right: 1rem;" class="cd-date">{php echo date('Y-m-d H:i:s',$item['add_time'])}</span></div>
+                        <p></p>
+                    </div>
+                </div>
+                {loop $examine_loglist $row}
+
+                <div class="cd-timeline-block">
+                    <div class="cd-timeline-img cd-picture">
+                        {$row['title_name']}
+                    </div>
+                    {if $row['status']==2}
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576735216446" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="742" width="100%" height="100%"><path d="M489.6 141.6a369.12 369.12 0 1 0 369.28 369.28A369.12 369.12 0 0 0 489.6 141.6z m211.84 273.44L462.56 653.76a33.44 33.44 0 0 1-48 0l-137.44-137.44a33.44 33.44 0 1 1 48-48l113.92 113.92L654.08 368a33.44 33.44 0 1 1 48 48z m0 0" p-id="743" fill="#11af08"></path></svg>
+                    </div>
+                    {/if}
+                    {if $row['status']==-1}
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576740910107" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1449" width="100%" height="100%"><path d="M509.12 141.6a369.12 369.12 0 1 0 369.12 369.28A369.12 369.12 0 0 0 509.12 141.6z m189.28 512a33.76 33.76 0 0 1-24 57.44 33.44 33.44 0 0 1-23.84-9.92l-141.76-142.4-144 141.92a33.44 33.44 0 0 1-23.68 9.76 33.76 33.76 0 0 1-23.52-57.6l144-141.92-142.24-144a33.76 33.76 0 0 1 48-48l142.24 144 144-141.92a33.76 33.76 0 1 1 48 48L556.8 512z" p-id="1450" fill="#d81e06"></path></svg>
+                    </div>
+                    {/if}
+                    <div class="cd-timeline-content">
+                        <div>审批人:{$row['namelist']}<span>{if $row['status']==1}(待审批){elseif $row['status']==-1}(审批不通过){elseif $row['status']==2}(审批通过){/if}</span><span style="float: right;margin-right: 1rem;" class="cd-date">{if isset($row['examinetime'])}{php echo date('Y-m-d H:i:s',$row['examinetime'])}{/if}</span></div>
+                        <p></p>
+                    </div>
+                </div>
+
+                {/loop}
+            </section>
+        </div>
+    </div>
+
+</div>
+{if $this->member['id']==$item['examinmemberid']}
+<div class="fui-navbar examinebnt" style="bottom: 2.5rem">
+    <div class="fui-block-group col-2" style="margin-top:0; overflow: hidden ;">
+        <a href="#"   class="btn btn-error exportlist block">拒绝</a>
+        <a href="#"   class="btn btn-success exportlist block">同意</a>
+    </div>
+</div>
+{/if}
+<style>
+    .exportlist{
+        width: 45%;float: left;display: table
+    }
+</style>
+<script language='javascript'>
+    require(['core'], function (modal) {
+        core.showImages('.table tr td img');
+        {if $this->member['id']==$item['examinmemberid']}
+        var id={$item['id']};
+
+            $(".btn-success").click(function () {
+
+
+
+                FoxUI.confirm("确定同意当前申请么？","提示", function () {
+                    core.json("union/welfare/examinestatus",{id:id,status:2},function(ret){
+                        if(ret.status==1){
+                            FoxUI.toast.show('审核通过!');
+                            window.location.reload();
+                            return;
+
+                        }
+                        FoxUI.toast.show(ret.result.message);
+
+                        return;
+
+                    },false,true)
+
+                });
+            });
+        $(".btn-error").click(function () {
+            FoxUI.confirm("确定拒绝当前申请么？","提示", function () {
+                core.json("union/welfare/examinestatus",{id:id,status:-1},function(ret){
+                    if(ret.status==1){
+                        FoxUI.toast.show('审核通过!');
+                        window.location.reload();
+                        return;
+
+                    }
+                    FoxUI.toast.show(ret.result.message);
+
+                    return;
+
+                },false,true)
+
+            });
+        });
+        {/if}
+
+    });
+</script>
+
+
+{template 'union/_footer'}
