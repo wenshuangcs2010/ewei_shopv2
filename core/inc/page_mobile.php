@@ -41,6 +41,7 @@ class MobilePage extends Page {
             {
                 $_W['openid'] = "o6tC-wmZovDTswVba3Kg1oAVss1";
             }
+
         }
         //var_dump($_W['openid']);
         //获取当前用户
@@ -48,6 +49,7 @@ class MobilePage extends Page {
         $_W['mid'] = !empty($member) ? $member['id'] : '';
         $_W['mopenid'] = !empty($member) ? $member['openid'] : '';
         $merch_plugin = p('merch');
+
         $merch_data = m('common')->getPluginset('merch');
         if (!empty($_GPC['merchid']) && ($merch_plugin && $merch_data['is_openmerch']))
         {

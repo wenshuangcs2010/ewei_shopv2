@@ -25,6 +25,7 @@ class PluginWebPage extends WebPage {
 		{
 			$this->message("你没有相应的权限查看");
 		}
+
 		$this->pluginname = $_W['plugin'];
 		$this->modulename = 'ewei_shopv2';
 		$this->plugintitle = m('plugin')->getName($this->pluginname);
@@ -33,6 +34,7 @@ class PluginWebPage extends WebPage {
 		if($_W['ispost']){
 			rc($this->pluginname); 
 		}
+
 	}
 
 	public function getSet(){

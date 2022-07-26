@@ -22,6 +22,7 @@ class Perm_EweiShopV2ComModel extends ComModel
                 'shop' => $this->perm_shop(),
 
                 'goods' => $this->perm_goods(),
+                'disgoods' => $this->perm_disgoods(),
 
                 'member' => $this->perm_member(),
 
@@ -241,7 +242,11 @@ class Perm_EweiShopV2ComModel extends ComModel
                     ) : array(),
         );
     }
-
+    protected function perm_disgoods(){
+        return array(
+            'text'=>'代理商品',
+        );
+    }
     protected function perm_goods()
     {
         return array(
@@ -268,6 +273,22 @@ class Perm_EweiShopV2ComModel extends ComModel
                 'xxx' => array(
                     'enabled' => 'edit'
                 )
+            ),
+            'stock'=>array(
+                'text'=>'库存批量导入',
+                'view' => '浏览',
+            ),
+            'isdiscount'=>array(
+                'text'=>'促销批量导入',
+                'view' => '浏览',
+            ),
+            'importgoods'=>array(
+                'text'=>'商品导入',
+                'view' => '浏览',
+            ),
+            'label'=>array(
+                'text'=>'标签管理',
+                'view' => '浏览',
             ),
             'group' => array(
                 'text' => '商品组',

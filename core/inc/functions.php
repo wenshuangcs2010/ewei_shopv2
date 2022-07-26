@@ -8,7 +8,17 @@
 if (!defined('IN_IA')) {
     exit('Access Denied');
 }
+if(!function_exists("array_str")){
+    function array_str($v){
+        return is_numeric($v) ? $v : "'".addslashes($v)."'";
+    }
+}
 
+if(!function_exists("array_updatesqlstr")){
+    function array_updatesqlstr($v){
+        return $v."=values(".$v.")";
+    }
+}
 //加载模型
 if (!function_exists('m')) {
     function m($name = '')
@@ -29,6 +39,65 @@ if (!function_exists('m')) {
         return $_modules[$name];
     }
 }
+if (!function_exists("tpl_form_field_multi_image2")) {
+    function tpl_form_field_multi_image2($name, $value = array(), $options = array())
+    {
+        global $_W;
+        $options['multiple'] = true;
+        $options['direct'] = false;
+        $options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024;
+        if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
+            if (!preg_match('/^\w+([\/]\w+)?$/i', $options['dest_dir'])) {
+                exit('图片上传目录错误,只能指定最多两级目录,如: "we7_store","we7_store/d1"');
+            }
+        }
+        $s = '';
+        if (!defined('TPL_INIT_MULTI_IMAGE')) {
+            $s = '
+<script type="text/javascript">
+	function uploadMultiImage(elm) {
+		var name = $(elm).next().val();
+		util.image( "", function(urls){
+			$.each(urls, function(idx, url){
+				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'../addons/ewei_shopv2/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.attachment+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em></div>\');
+			});
+		}, ' . json_encode($options) . ');
+	}
+	function deleteMultiImage(elm){
+		require(["jquery"], function($){
+			$(elm).parent().remove();
+		});
+	}
+</script>';
+            define('TPL_INIT_MULTI_IMAGE', true);
+        }
+
+        $s .= <<<EOF
+<div class="input-group">
+	<input type="text" class="form-control" readonly="readonly" value="" placeholder="批量上传图片" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="uploadMultiImage(this);">选择图片</button>
+		<input type="hidden" value="{$name}" />
+	</span>
+</div>
+<div class="input-group multi-img-details">
+EOF;
+        if (is_array($value) && count($value) > 0) {
+            foreach ($value as $row) {
+                $s .= '
+<div class="multi-item">
+	<img src="' . tomedia($row) . '" onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
+	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
+	<em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em>
+</div>';
+            }
+        }
+        $s .= '</div>';
+
+        return $s;
+    }
+}
+
 if (!(function_exists('pagination2'))) 
 {
     function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 5, 'after' => 4, 'ajaxcallback' => '', 'callbackfuncname' => '')) 
@@ -1015,9 +1084,11 @@ if (!function_exists('mobileUrl')) {
         }
 
         $r = implode(".", $routes);
+
         if (!empty($r)) {
             $query = array_merge(array('r' => $r), $query);
         }
+
         $query = array_merge(array('do' => 'mobile'), $query);
         $query = array_merge(array('m' => "ewei_shopv2"), $query);
 
@@ -1048,6 +1119,7 @@ if (!function_exists('mobileUrl')) {
                 unset($query['merchid']);
             }
         }
+
         if ($full) {
             return $_W['siteroot'] . 'app/' . substr(murl('entry', $query, true), 2);
         }

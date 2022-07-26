@@ -24,6 +24,7 @@ class Page extends WeModuleSite {
 
 		//如果上次收货时间小
 		$current = time();
+
 		if ($lasttime + $interval <= $current) {
 			m('cache')->set('receive', date('Y-m-d H:i:s', $current), 'global');
 			ihttp_request( EWEI_SHOPV2_TASK_URL . "order/receive.php", null, null, 1);
@@ -219,6 +220,7 @@ class Page extends WeModuleSite {
                 $compile = IA_ROOT . "/data/tpl/app/{$name}/plugin/{$pluginname}/{$ptemplate}/mobile/{$filename}.tpl.php";
 
 				$source = $moduleroot . "/plugin/" . $pluginname . "/template/mobile/" . $ptemplate . "/{$pfilename}.html";
+
 				if (!is_file($source)) {
 					$source = $moduleroot . "/plugin/" . $pluginname . "/template/mobile/" . $ptemplate . "/".$pfilename."/index.html";
 				}

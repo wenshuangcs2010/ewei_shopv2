@@ -25,6 +25,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
 
         $smsset = $this->sms_set();
         $template = $this->sms_verify($tplid, $smsset);
+
         if(empty($template['status'])){
             return $template;
         }
@@ -87,6 +88,17 @@ class Sms_EweiShopV2ComModel extends ComModel {
             }
             return array('status'=>1);
         }
+        elseif($template['type']=='chuang'){
+            include_once EWEI_SHOPV2_VENDOR.'chuang/api.php';
+            $smssign="【".$template['smssign']."】";
+            $api=new Api($smsset);
+            $ret= $api->send($mobile,$smssign,$params);
+
+            if($ret['code']!=0){
+                return array('status'=>0,'message'=>$ret['errorMsg']);
+            }
+            return array('status'=>1);
+        }
         return array('status'=>1);
     }
 
@@ -113,6 +125,8 @@ class Sms_EweiShopV2ComModel extends ComModel {
             }
             elseif($item['type']=='cnbuyer'){
                 $item['name'] = '[梦网]'.$item['name'];
+            }elseif($item['type']=='chuang'){
+                $item['name'] = '[创蓝]'.$item['name'];
             }
         }
         unset($item);
@@ -148,6 +162,7 @@ class Sms_EweiShopV2ComModel extends ComModel {
     protected function sms_verify($tplid, $smsset) {
         global $_W;
         $template = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_sms') . " WHERE id=:id and uniacid=:uniacid ", array(':id'=>$tplid, ':uniacid'=>$_W['uniacid']));
+
         $template['data'] = iunserializer($template['data']);
         if(empty($template)){
             return array('status'=>0, 'message'=>'模板不存在!');
@@ -216,6 +231,17 @@ class Sms_EweiShopV2ComModel extends ComModel {
                 return array('status'=>0, 'message'=>'未填写亿梦网密码!');
             }
         }
+        elseif($template['type']=='chuang'){
+            if(empty($smsset['chuang'])){
+                return array('status'=>0, 'message'=>'未开启创蓝平台!');
+            }
+            if(empty($smsset['clyzaccount'])){
+                return array('status'=>0, 'message'=>'短信账号!');
+            }
+            if(empty($smsset['clyzpassword'])){
+                return array('status'=>0, 'message'=>'短信密码!');
+            }
+        }
         return $template;
     }
 
@@ -223,11 +249,12 @@ class Sms_EweiShopV2ComModel extends ComModel {
     protected function sms_data($type, $data, $replace, $template) {
         // 如果 $replace=true $data 替换模板数据 否则 直接使用$data
         if($replace){
-            if($type=='emay'||$type=='cnbuyer'){
+            if($type=='emay'||$type=='cnbuyer' || $type=="chuang"){
                 $tempdata = $template['content'];
                 foreach ($data as $key=>$value) {
                     $tempdata = str_replace("[".$key."]", $value, $tempdata);
                 }
+
                 $data = $tempdata;
             }else{
                 $tempdata = iunserializer($template['data']);
@@ -265,6 +292,8 @@ class Sms_EweiShopV2ComModel extends ComModel {
             $result = $data;
         }
         elseif($type=='cnbuyer'){
+            $result = $data;
+        }elseif($type=='chuang'){
             $result = $data;
         }
         return $result;
