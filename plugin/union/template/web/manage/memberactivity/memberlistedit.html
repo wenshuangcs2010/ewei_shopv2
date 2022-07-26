@@ -1,0 +1,88 @@
+
+<style>
+    .select2{
+        margin:0;
+        width:100%;
+        height:34px;
+        border-radius: 3px;
+        border-color: rgb(229, 230, 231);
+    }
+    .select2 .select2-choice{
+        height: 34px;
+        line-height: 32px;
+        border-radius: 3px;
+        border-color: rgb(229, 230, 231);
+    }
+    .select2 .select2-choice .select2-arrow{
+        background: #fff;
+    }
+    .form-group .radio-inline{
+        padding-top: 0px;;
+    }
+    .select2-container{
+    z-index: 88888888;
+    }
+
+</style>
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('memberactivity/memberlistedit')}" data-auto="true" method="post">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" {if isset($vo['id'])} readonly {/if}value="{$vo['phonenumber']}" required="required" title="请输入联系电话" placeholder="请输入联系电话人" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea type="text" name="description"   title="备注事项" placeholder="备注事项" class="layui-input">{$vo['description']}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户材料</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" value="{$vo['dataurl']}"  name="docurl" placeholder="请选择‘doc,docx,pdf’后缀的文件..." type="text">
+                    <a class="input-group-addon" data-file="mtl" data-type="doc,docx,pdf" data-uptype="local" data-field="docurl">
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">审核</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['status']) && $vo['status'] == 2}
+                <input type="radio" checked name="status" value="2" title="通过">
+                <input type="radio" name="status" value="-1" title="不通过">
+                {else}
+                <input type="radio" name="status" value="2" title="通过">
+                <input type="radio" checked name="status" value="-1" title="不通过">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux">审核通过后将不能修改用户数据</div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}
+        <input type='hidden' value="{$vo['id']}" name='id'/>
+        {/if}
+        <input type='hidden' value="{$activityid}" name='activityid'/>
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+    </script>
+</form>

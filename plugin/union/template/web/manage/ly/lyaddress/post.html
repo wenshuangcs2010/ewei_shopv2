@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{template 'header'}
+</head>
+
+
+<style>
+	.layui-form-selected dl {
+		z-index: 9999999;
+	}
+</style>
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+              <!--header start here-->
+		   {template 'header_main'}
+<!--heder end here-->
+	<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>疗养模块 <i class="fa fa-angle-right"></i> 疗养地点</li>
+            </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>添加新的疗养地点</h5>
+
+				   </div>
+			   </div>
+		   </div>
+  		<div class="grid-form1">
+
+  	         <div class="tab-content">
+						<div class="tab-pane active" id="horizontal-form">
+							<form action="" method="post" class=" layui-form form-horizontal">
+
+								<input type="hidden" name="i"  value="{$_W['uniacid']}" />
+
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">标题</label>
+									<div class="col-sm-8">
+										<input type="text" name="title" value="{$vo['title']}" class="form-control1" required=""  placeholder="请输入标题">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是疗养地点标题!</p>
+									</div>
+								</div>
+                                <div class="form-group">
+                                    <label for="focusedinput" class="col-sm-2 control-label">联系电话</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="mobilephone" value="{$vo['mobilephone']}" class="form-control1" required=""  placeholder="请输入联系电话">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <p class="help-block">这里是联系电话!</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="focusedinput" class="col-sm-2 control-label">接待能力</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="reception" value="{$vo['reception']}" class="form-control1"   placeholder="请输入接待能力">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <p class="help-block">这里是接待能力!</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="focusedinput" class="col-sm-2 control-label">特色菜肴</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="dishes" value="{$vo['dishes']}" class="form-control1"   placeholder="请输入特色菜肴">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <p class="help-block">这里是特色菜肴!</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="focusedinput" class="col-sm-2 control-label">周边景点</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="spot" value="{$vo['spot']}" class="form-control1"  placeholder="请输入周边景点">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <p class="help-block">这里是周边景点</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="focusedinput" class="col-sm-2 control-label">疗养地点</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="lat" id="lat" value="{$vo['lat']}" placeholder="lat" autocomplete="off" class="layui-input">
+                                        <input type="hidden" name="lng" id="lng" placeholder="lng" value="{$vo['lng']}" autocomplete="off" class="layui-input">
+                                        <input type="text" id="address" name="address" value="{$vo['address']}" style="width: 60%" class="form-control1" required=""  placeholder="请输入酒店地址">
+                                        <a type="button" data-map="{php echo unionUrl('map')}" class="layui-btn layui-btn-primary">选择</a>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <p class="help-block">这里是疗养地点!</p>
+                                    </div>
+                                </div>
+
+
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">目的地</label>
+									<div class="col-sm-8">
+										<input type="text" name="position" value="{$vo['position']}" class="form-control1"   placeholder="请输入目的地">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是疗养地点目的地!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">销量</label>
+									<div class="col-sm-8">
+										<input type="text" name="volume" value="{$vo['volume']}" class="form-control1"   placeholder="请输入销量">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是销量!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">排序</label>
+									<div class="col-sm-8">
+										<input type="text" name="displayorder" value="{$vo['displayorder']}" class="form-control1"   placeholder="排序">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">数值越大排在越前!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">是否有折扣</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="is_dscount"  value="0" {if empty($vo) ||  $vo['is_dscount'] ==0} checked {/if} type="radio"> 否</label></div>
+										<div class="radio-inline"><label><input  name="is_dscount" value="1"  {if isset($vo) && $vo['is_dscount'] ==1 } checked="" {/if} type="radio">是</label></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">是否热销</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="is_hot"  value="0" {if empty($vo) ||  $vo['is_hot'] ==0} checked {/if} type="radio"> 否</label></div>
+										<div class="radio-inline"><label><input  name="is_hot" value="1"  {if isset($vo) && $vo['is_hot'] ==1 } checked="" {/if} type="radio">是</label></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">是否有住宿</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="is_hasget"  value="0" {if empty($vo) ||  $vo['is_hasget'] ==0} checked {/if} type="radio"> 否</label></div>
+										<div class="radio-inline"><label><input  name="is_hasget" value="1"  {if isset($vo) && $vo['is_hasget'] ==1 } checked="" {/if} type="radio">是</label></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">餐饮折扣</label>
+									<div class="col-sm-8">
+										<input type="text" name="restaurant_dscount" value="{$vo['restaurant_dscount']}" class="form-control1"   placeholder="请输入餐饮折扣">
+									</div>
+
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">住宿折扣</label>
+									<div class="col-sm-8">
+										<input type="text" name="hasget_dscount" value="{$vo['hasget_dscount']}" class="form-control1"  placeholder="请输入住宿折扣">
+									</div>
+
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">主题</label>
+									<div class="col-sm-8">
+										<div class="layui-input-inline">
+											<select name="theme_id" class="form-control" style="    z-index: 999999;"  >
+												<option value="">请选择</option>
+												{loop $theme $key $opl}
+												<option {if $vo['theme_id']==$key} selected {/if} value="{$key}">{$opl}</option>
+												{/loop}
+											</select>
+										</div>
+
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">评级</label>
+									<div class="col-sm-8">
+										<div class="layui-input-inline">
+											<select name="grade_id" class="form-control" style="z-index: 999999;"  >
+												<option value="">请选择</option>
+												{loop $grade $key $opl}
+												<option {if $vo['grade_id']==$key} selected {/if} value="{$key}">{$opl}</option>
+												{/loop}
+
+											</select>
+										</div>
+
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">上级地区</label>
+									<div class="col-sm-8">
+										<div class="layui-input-inline">
+											<select name="parentid" class="form-control" style="z-index: 999999;"  >
+												<option value="">请选择</option>
+												{loop $arddresslsit $key $opl}
+												<option {if $vo['parentid']==$opl['id']} selected {/if} value="{$opl['id']}">{$opl['title']}</option>
+												{/loop}
+											</select>
+										</div>
+
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">标题图片</label>
+									<div class="col-sm-8">
+										<div style="position:relative;width:500px">
+											<div class="input-group">
+												<input class="layui-input"  name="header_image" value="{$vo['header_image']}" placeholder="标题图片" type="text">
+												<a class="input-group-addon" data-file="one"  data-field="header_image" data-type="jpg,png,jpeg" data-uptype="local" >
+													<i class="fa fa-file"></i>
+												</a>
+											</div>
+											<div class="input-group multi-img-details ui-sortable" style="width: 80px;">
+												{if $vo['header_image']}
+												<div class="multi-item">
+													<img src="{php echo tomedia($vo['header_image'])}"  class="img-responsive img-thumbnail">
+												</div>
+												{/if}
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<p class="help-block">图片尺寸650*400px!</p>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="form-group">
+									<label for="disabledinput" class="col-sm-2 control-label">内容</label>
+									<div class="col-md-8">
+										<textarea id="editor" name='description'>{$vo['description']}</textarea>
+									</div>
+								</div>
+
+
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">是否展示</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="enabled"  value="0" {if empty($vo) ||  $vo['enabled'] ==0} checked {/if} type="radio"> 是</label></div>
+										<div class="radio-inline"><label><input  name="enabled" value="1"  {if isset($vo) && $vo['enabled'] ==1 } checked="" {/if} type="radio">否</label></div>
+									</div>
+								</div>
+
+								<div class="panel-footer">
+									<div class="row">
+										<div class="col-sm-8 col-sm-offset-2">
+											{if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+											<button id="btnsubmit" class="btn-primary btn">提交</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+ 	</div>
+ 	<!--//grid-->
+
+<!--inner block start here-->
+<div class="inner-block">
+
+</div>
+<!--inner block end here-->
+<!--copy rights start here-->
+		   {template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+   </div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+
+</body>
+
+<style>
+	.ww_groupSelBtn_item_text{
+		margin-left: 6px;
+		border: 1px solid;
+		background-color: #F0f0f0;
+	}
+	.ww_groupSelBtn_item{
+
+	}
+</style>
+
+<script type="text/javascript" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"></script>
+<script type="text/javascript">
+
+
+
+    require(['jquery','ueditor'], function () {
+
+
+        var ue = UE.getEditor('editor');
+
+
+
+    });
+    function getvalue(obj,obj1){
+
+        if(obj1!=''){
+            var lnglat= obj1.split(",");
+
+            $("#lat").val(lnglat[0]);
+            $("#lng").val(lnglat[1]);
+        }
+        $('#address').val(obj);
+
+    }
+</script>
+</html>

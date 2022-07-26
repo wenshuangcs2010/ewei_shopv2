@@ -1,0 +1,130 @@
+
+<script type="text/javascript" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"></script>
+<style>
+    .layui-input-block p{
+        display: block;
+        line-height: 35px;
+    }
+    input[readonly] {
+        background-color: #ccc;
+    }
+</style>
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('union_menu/examine/post')}" data-auto="true" method="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="displayorder" value="{$vo['displayorder']}" required="required" title="排序" placeholder="排序" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">流程名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="catename" value="{$vo['catename']}" required="required" title="请输入流程名称" placeholder="请输入流程名称" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="width: 180px">一级审核是否是分管领导</label>
+        <div class="layui-input-block">
+            <input type="checkbox" {if $vo['open']=="on"} checked="" {/if} name="open" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
+        </div>
+    </div>
+    <div class="myexamin">
+        {loop $vo['optionlist'] $row}
+        <div class="layui-form-item">
+            <label class="layui-form-label">{php echo $row['level']+1;}级审核用户</label>
+            <div class="layui-input-block">
+                <div class="input-group">
+                    <input class="layui-input" value="{$row['memberlist']}" readonly="" name="addoption[{$row['level']}]" type="hidden">
+                    <input class="layui-input"  name="addname[{$row['level']}]" value="{$row['namelist']}" readonly="" placeholder="请选择用户..." type="text">
+                    <a class="input-group-addon" data-values="{$row['memberlist']}" data-selectleng="1" data-selectmember="{php echo unionUrl('member.selectmember')}">
+                        <i class="fa fa-list"></i>
+                    </a>
+                    <div class="input-group-btn"><button class="btn btn-danger" onclick="removeRechargeItem(this)"><i class="fa fa-remove"></i></button></div>
+                </div>
+            </div>
+        </div>
+        {/loop}
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['enable']) && $vo['enable'] == 1}
+                <input type="radio" checked name="enable" value="1" title="是">
+                <input type="radio" name="enable" value="0" title="否">
+                {else}
+                <input type="radio" name="enable" value="1" title="是">
+                <input type="radio" checked name="enable" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn addoption" type='button' >添加审核人</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+    <script>
+        window.form.render();
+
+
+        //监听指定开关
+        form.on('switch(switchTest)', function(data){
+            if(this.checked==false){
+                $(".myexamin").html("");
+                $(".myexamin").append( addoption());
+                form.render();
+            }else{
+                $(".myexamin").html("");
+            }
+            form.render();
+        });
+        /*! 注册 data-page-href 事件行为*/
+        $(".addoption").unbind("click").on('click', function () {
+            $('.myexamin').append( addoption());
+            form.render();
+        });
+        function removeRechargeItem(obj){
+         $(obj).parent("div").parent("div").parent("div").parent("div").remove();
+        }
+        function addoption(inputname){
+            var rdionval=$('input[name="open"]:checked ').val();
+
+            var length=$('.myexamin').find('.layui-form-item').length;
+
+            if(rdionval=="on"){
+                length=length+1;
+            }
+            if(inputname=='' || typeof(inputname)=='undefined' ){
+                inputname="addoption["+length+"]";
+            }
+
+            var html='<div  class="layui-form-item">';
+            html+='<label class="layui-form-label">'+(length+1)+'级审核用户</label>';
+            html+='<div class="layui-input-block">';
+            html+='<div class="input-group">';
+            html+='<input class="layui-input" value="" readonly name="'+inputname+'"  type="hidden">';
+            html+=' <input class="layui-input" value=""  name="addname['+length+']" readonly  placeholder="请选择用户..." type="text">';
+            html+=' <a class="input-group-addon" data-values=""  data-selectmember="{php echo unionUrl("member.selectmember")}">';
+            html+='<i class="fa fa-list"></i>';
+            html+='</a>';
+            if(length==0 && typeof (rdionval)=="undefined"){
+
+            }else{
+                html+=' <div class="input-group-btn"><button class="btn btn-danger" onclick="removeRechargeItem(this)"><i class="fa fa-remove"></i></button></div>';
+            }
+
+
+
+
+            html+='</div></div></div>';
+            return html;
+        }
+    </script>
+</form>

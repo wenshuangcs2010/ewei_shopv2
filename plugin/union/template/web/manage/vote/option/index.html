@@ -1,0 +1,106 @@
+
+	{template 'header'}
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+             <!--header start here-->
+		   {template 'header_main'}
+			<!--heder end here-->
+			<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>投票模块<i class="fa fa-angle-right"></i>选项管理</li>
+            </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>选项管理-{$quiz_info['title']}</h5>
+					   <div class="nowrap pull-right" >
+						   <ul class="bt-list">
+							   <button data-modal="{php echo unionUrl('vote/option/add',array('quiz_id'=>$quiz_info['id']))}" data-title="添加一个选项" class='layui-btn layui-btn-small'><i
+									   class='fa fa-plus'></i> 添加一个选项
+							   </button>
+
+							   <button data-open="{php echo unionUrl('vote/option',array('id'=>$_GPC['id'],'export'=>1))}" class='layui-btn layui-btn-small'><i
+									   class='fa fa-cloud-download'></i> 导出投票排名
+							   </button>
+						   </ul>
+					   </div>
+				   </div>
+			   </div>
+		   </div>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <form class="animated form-search" action="{php echo unionUrl('vote/option')}" onsubmit="return false" method="get">
+				   <div class="row">
+						<input type="hidden" name="id" value="{$id}">
+					   <div class="col-xs-2">
+						   <input type="text" name="keywordes" value="{$keywordes}" placeholder="选项" class="form-control">
+					   </div>
+					   <div class="col-xs-1">
+						   <button type="submit" class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+					   </div>
+				   </div>
+			   </form>
+		   </div>
+
+<div class="agile-grids">
+	<div class="agile-tables">
+		<div class="w3l-table-info">
+
+			<table id="table">
+				<thead>
+				<tr>
+					<th>ID</th>
+					<th>选项名称</th>
+					<th>点击数量</th>
+					<th>投票数量</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody>
+                {loop $list $row}
+				<tr>
+					<td>{$row['id']}</td>
+					<td>{$row['title']}</td>
+					<td>{$row['clikcount']}</td>
+					<td>{$row['ticketcount']}</td>
+					<td>
+						<a data-modal="{php echo unionUrl('vote/option/edit')}&id={$row['id']}&quiz_id={$quiz_info['id']}" href="javascript:void(0)">编辑</a> |
+						<a data-load="{php echo unionUrl('vote/option/delete')}&id={$row['id']}"  data-confirm="确定删除数据？" href="javascript:void(0)">删除</a>
+					</td>
+				</tr>
+                {/loop}
+				</tbody>
+			</table>
+            {$pager}
+        </div>
+        {if !$list}
+        <div class="panel panel-default" style="background-color: #fff;">
+            <div class="panel-body" style="text-align: center;padding:30px;">
+                没有任何数据!
+            </div>
+        </div>
+        {/if}
+
+   </div>
+
+
+<!--copy rights start here-->
+	{template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','jquery.basictable'],function(modal){
+        modal.init();
+        $('#table').basictable();
+    })
+</script>
+</html>

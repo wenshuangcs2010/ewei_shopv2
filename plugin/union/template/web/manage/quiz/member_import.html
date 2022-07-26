@@ -1,0 +1,75 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{$action}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">请选择表格</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+				<div class="input-group">
+					<input class="layui-input" name="inputxcel" placeholder="请选择‘.xlsx,csv’后缀的表格文件..." type="text">
+					<a class="input-group-addon" data-file="one" data-type="xlsx,xls,csv" data-uptype="local" data-field="inputxcel">
+						<i class="fa fa-file"></i>
+					</a>
+				</div>
+			</div>
+        </div>
+    </div>
+	
+    <div class="hr-line-dashed"></div>
+	
+    <div class="layui-form-item text-center">
+        <button id="data-down"  class="layui-btn layui-btn-small">
+            <i class="fa fa-cloud-download"></i>  下载批量导入试题模板
+        </button>
+        <button id="savedata" class="layui-btn" type='button'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>关闭重试</button>
+    </div>
+
+    <script>
+		window.form.render();
+
+
+
+		$(function(){
+
+            $("#data-down").click(function () {
+                window.location="{EWEI_SHOPV2_STATIC}model/tables.xls";
+                return false;
+            })
+			$('#savedata').click(function(){
+				var inputxcel = $('input[name="inputxcel"]').val();
+				
+				if(inputxcel == ''){
+					layer.alert('请选择数据文件', {icon: 0});
+					return false;
+				}
+				
+				$(this).button('loading');
+				$.ajax({
+					url  : "{php echo unionUrl('quiz/import')}",
+					type : 'POST',
+					dataType:"json",
+					data : {"inputxcel":inputxcel},
+					success : function(res){
+						if(res.status == 0){
+							var res_msg = res.result.message;
+							if(res_msg == ''){
+								res_msg = res.result.message;
+							}
+							layer.alert(res_msg, {icon: 0});
+							return false;
+						}else{
+							layer.msg('成功', {
+							  icon: 1,
+							  time: 2000
+							}, function(){
+							  location.reload();
+							});
+						}
+
+
+					}
+				});
+			})
+		})
+	</script>
+</form>

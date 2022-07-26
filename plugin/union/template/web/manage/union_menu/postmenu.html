@@ -1,0 +1,459 @@
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('union_menu/addmenupost')}" data-auto="true" method="post">
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="displayorder" value="{$vo['displayorder']}"  title="排序" placeholder="排序" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">菜单名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="menuname" value="{$vo['title']}" required="required" title="请输入菜单名称" placeholder="请输入菜单名称" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">菜单缩略图</label>
+            <div class="layui-input-block">
+                <div class='col-sm-8'>
+                    <div style="position:relative;">
+                        <div class="input-group">
+                            <input class="layui-input" readonly name="images" value="{$vo['icon_url']}" placeholder="请选择分类缩略图" type="text">
+                            <a class="input-group-addon" data-file="one"  data-field="images" data-type="jpg,png,jpeg" data-uptype="local" >
+                                <i class="fa fa-file"></i>
+                            </a>
+                        </div>
+                        <div class="input-group multi-img-details ui-sortable">
+                            {if $vo['icon_url']}
+                            <div style="width: 6rem"   class="multi-item">
+                                <img src="{php echo tomedia($vo['icon_url'])}" style="width: 4rem"  class="img-responsive img-thumbnail">
+                                <em class="close" title="删除这张图片">×</em>
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-mid layui-word-aux">建议尺寸123px*123px</div>
+            </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择链接模块</label>
+        <div class="layui-input-block">
+            <select id="modeltype" name="modeltype" lay-filter="modeltype" class="form-control" >
+                <option value="0"  {if $vo['menutype']==0}selected{/if} >文章模块</option>
+                <option value="1"  {if $vo['menutype']==1}selected{/if}>建言献策</option>
+                <option value="2"  {if $vo['menutype']==2}selected{/if}>场馆模块</option>
+                <option value="3"  {if $vo['menutype']==3}selected{/if}>单身联谊</option>
+                <option value="4"  {if $vo['menutype']==4}selected{/if}>活动模块</option>
+                <option value="5"  {if $vo['menutype']==5}selected{/if}>福利模块</option>
+                <option value="6"  {if $vo['menutype']==6}selected{/if}>竞赛模块</option>
+                <option value="7"  {if $vo['menutype']==7}selected{/if}>兴趣小组</option>
+                <option value="8"  {if $vo['menutype']==8}selected{/if}>签到模块</option>
+                <option value="9"  {if $vo['menutype']==9}selected{/if}>投票活动</option>
+                <option value="10"  {if $vo['menutype']==10}selected{/if}>URL模式</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item articlecategory showtest" {if isset($vo) &&  $vo['menutype']==0 || !isset($vo)}{else} style="display: none" {/if} >
+        <label class="layui-form-label">文章模块</label>
+        <div class="layui-input-inline">
+            <select name="cateidarticle[]" lay-filter="articlecategory">
+                <option value="">请选择分类</option>
+                {loop $categorylist  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+
+        {if isset($vo) && isset($level2)}
+        <div class="layui-input-inline ajaxselect articlecategory_2">
+            <select name="cateidarticle[]" lay-filter="articlecategory_2">
+                <option value="">请选择分类</option>
+                {loop $level2  $item}
+                <option value="{$item['id']}" {if !empty($vo) && !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+        {/if}
+        {if isset($vo) && isset($level3)}
+        <div class="layui-input-inline ajaxselect articlecategory_3">
+            <select name="cateidarticle[]" lay-filter="articlecategory_3">
+                <option value="">请选择分类</option>
+                {loop $level3  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+        {/if}
+
+    </div>
+
+    <div class="layui-form-item memberactivitycategory showtest" {if isset($vo) &&  $vo['menutype']==4}{else} style="display: none" {/if}>
+        <label class="layui-form-label">活动模块</label>
+        <div class="layui-input-inline">
+            <select name="activitycateid[]" lay-filter="memberactivitycategory">
+                <option value="">请选择分类</option>
+                {loop $memberactivitycategorylist  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+
+        {if isset($vo) && isset($memberactivitylevel2)}
+        <div class="layui-input-inline ajaxselect memberactivitycategory_2">
+            <select name="activitycateid[]" lay-filter="memberactivitycategory_2">
+                <option value="">请选择分类</option>
+                {loop $memberactivitylevel2  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+        {/if}
+        {if isset($vo) && isset($memberactivitylevel3)}
+        <div class="layui-input-inline ajaxselec tmemberactivitycategory_3">
+            <select name="activitycateid[]" lay-filter="memberactivitycategory_3">
+                <option value="">请选择分类</option>
+                {loop $memberactivitylevel3  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+        {/if}
+
+    </div>
+
+    <div class="layui-form-item venuecategory showtest" {if isset($vo) &&  $vo['menutype']==2}{else} style="display: none" {/if}>
+        <label class="layui-form-label">场馆模块</label>
+        <div class="layui-input-inline">
+            <select name="venuecateid[]"  lay-filter="venuecategory">
+                <option value="">请选择分类</option>
+                {loop $venuecategorylist  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+
+        {if isset($vo) && isset($venuecategorylevel2)}
+        <div class="layui-input-inline ajaxselect venuecategory_2">
+            <select name="venuecateid[]" lay-filter="venuecategory_2">
+                <option value="">请选择分类</option>
+                {loop $venuecategorylevel2  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+        {/if}
+        {if isset($vo) && isset($venuecategorylevel3)}
+        <div class="layui-input-inline ajaxselect venuecategory_3">
+            <select name="venuecateid[]" lay-filter="venuecategory_3">
+                <option value="">请选择分类</option>
+                {loop $venuecategorylevel3  $item}
+                <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+                {/loop}
+            </select>
+        </div>
+        {/if}
+    </div>
+
+    <div class="layui-form-item quizcategory showtest" {if isset($vo) &&  $vo['menutype']==6}{else} style="display: none" {/if}>
+    <label class="layui-form-label">竞赛模块</label>
+    <div class="layui-input-inline">
+        <select name="quizcateid[]" lay-filter="quizcategory">
+            <option value="">请选择分类</option>
+            {loop $quizcategorylist  $item}
+            <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+            {/loop}
+        </select>
+    </div>
+
+    {if isset($vo) && isset($quizcategorylevel2)}
+    <div class="layui-input-inline ajaxselect quizcategory_2">
+        <select name="quizcateid[]" lay-filter="quizcategory_2">
+            <option value="">请选择分类</option>
+            {loop $quizcategorylevel2  $item}
+            <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+            {/loop}
+        </select>
+    </div>
+    {/if}
+    {if isset($vo) && isset($quizcategorylevel3)}
+    <div class="layui-input-inline ajaxselect quizcategory_3">
+        <select name="quizcateid[]" lay-filter="quizcategory_3">
+            <option value="">请选择分类</option>
+            {loop $quizcategorylevel3  $item}
+            <option value="{$item['id']}" {if !empty($vo) && in_array($item['id'],$vo['cateid'])} selected{/if}  >{$item['catename']}</option>
+            {/loop}
+        </select>
+    </div>
+    {/if}
+    </div>
+    <div class="layui-form-item urllink" {if (isset($vo) && $vo['menutype']!=10) || empty($vo)} style="display: none" {/if} >
+        <label class="layui-form-label">URL地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="link_url" value="{$vo['link_url']}"  title="请输入URL地址" placeholder="请输入URL地址" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">wap显示</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['status']) && $vo['status'] == 1}
+                <input type="radio" checked name="status" value="1" title="是">
+                <input type="radio" name="status" value="0" title="否">
+                {else}
+                <input type="radio" name="status" value="1" title="是">
+                <input type="radio" checked name="status" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">web显示</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['webstatus']) && $vo['webstatus'] == 1}
+                <input type="radio" checked name="webstatus" value="1" title="是">
+                <input type="radio" name="webstatus" value="0" title="否">
+                {else}
+                <input type="radio" name="webstatus" value="1" title="是">
+                <input type="radio" checked name="webstatus" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+</form>
+    <script>
+
+        var categorylist={$jsonstr};
+        var membercategorylist={$memberactivityjsonstr};
+        var venuecategorylist={$venuecategorylistjsonstr};
+        var quizcategorylist={$quizcategorylistjsonstr};
+        window.form.render();
+        require(['jquery'], function () {
+            var tpl = '<div style="width: 6rem"  class="multi-item">\n' +
+                '                        <img src=""  style="width: 4rem"  class="img-responsive img-thumbnail">\n' +
+                '                        <em class="close" title="删除这张图片">×</em>\n' +
+                '                    </div>';
+            $('[name="images"]').on('change', function () {
+                var input = this, values =new Array(), srcs = this.value.split('|');
+                if($(input).parent().children("a").data("file")=="one"){
+                    $(this).parent().next().children(".multi-item").remove();
+                }
+
+                values.reverse();
+
+                for (var i = 0; i < srcs.length; i++) {
+
+
+                    values.push(srcs[i]);
+                }
+
+                this.value = values.join('|');
+                for (var i= 0; i < values.length; i++) {
+                    var $tpl=$(tpl);
+
+                    var imgsrc=tomedia(values[i]);
+                    $tpl.children("img").attr('src',imgsrc);
+                    $tpl.children("input").val(values[i]);
+                    $(input).data('input', input).data('srcs', values).data('index', i);
+
+                    $tpl.on('click', 'em', function (e) {
+                        e.stopPropagation();
+                        var $cur = $(this).parent();
+                        $.msg.confirm('确定要移除这张图片吗？', function () {
+                            var data = $(input).data("srcs");
+                            delete data[$(input).data('index')];
+                            $(input).data('input').value=data.join('|');
+                            $cur.remove();
+                        });
+                    });
+                    $(this).parent().next(".multi-img-details").append($tpl);
+                }
+            });
+            form.on('select(modeltype)', function(data){
+                var val=data.value;
+                $(".showtest").hide();
+                if(val==0){
+                    $(".articlecategory").show();
+                }
+                if(val==2){
+                    $(".venuecategory").show();
+                }
+                if(val==4){
+                    $(".memberactivitycategory").show();
+                }
+                if(val==6){
+                    $(".quizcategory").show();
+                }
+                if(val==10){
+                    $(".urllink").show();
+                }
+            });
+
+
+            form.on('select(articlecategory)', function(data){
+
+
+
+                var cateid=data.value;
+                $(".ajaxselect").remove();
+                window.form.render("select");
+                addselect(categorylist,cateid);
+            });
+            {if isset($level2)}
+            var level2children={$level2children};
+                form.on('select(articlecategory_2)', function(cdata){
+                    $(".articlecategory_3").remove();
+                    window.form.render("select");
+                    addselect(level2children,cdata.value);
+                })
+            {/if}
+
+
+                form.on('select(memberactivitycategory)', function(data){
+                var cateid=data.value;
+                $(".ajaxselect").remove();
+                window.form.render("select");
+                    addmemberselect(membercategorylist,cateid);
+                 });
+            {if isset($memberactivitylevel2)}
+
+                var activitycategorylevel2children={$activitycategorylevel2children};
+                form.on('select(memberactivitycategory_2)', function(cdata){
+                    $(".memberactivitycategory_3").remove();
+                    window.form.render("select");
+                    addmemberselect(activitycategorylevel2children,cdata.value);
+                })
+            {/if}
+
+                form.on('select(venuecategory)', function(data){
+                    var cateid=data.value;
+                    $(".ajaxselect").remove();
+                    window.form.render("select");
+                    addvenueselect(venuecategorylist,cateid);
+                });
+                {if isset($venuecategorylevel2)}
+                    var level2venuechildren={$vuenucategorylevel2children};
+                    form.on('select(venuecategory_2)', function(cdata){
+                        $(".venuecategory_3").remove();
+                        window.form.render("select");
+                        addvenueselect(level2venuechildren,cdata.value);
+                    })
+                {/if}
+                    form.on('select(quizcategory)', function(data){
+                        var cateid=data.value;
+                        $(".ajaxselect").remove();
+                        window.form.render("select");
+                        addquizselect(quizcategorylist,cateid);
+                    });
+                    {if isset($quizcategorylevel2)}
+                    var level2quizchildren={$quizcategorylevel2children};
+                    form.on('select(venuecategory_2)', function(cdata){
+                        $(".venuecategory_3").remove();
+                        window.form.render("select");
+                        addquizselect(level2quizchildren,cdata.value);
+                    })
+                    {/if}
+
+        });
+        function addquizselect(categorylist,cateid){
+            $.each(categorylist,function(idx,obj){
+                if(obj.id==cateid && typeof(obj.children)!="undefined"){
+                    var html='<div class="layui-input-inline ajaxselect quizcategory_'+(parseInt(obj.level)+1)+'"><select name="cateid[]" lay-filter="quizcategory_'+( parseInt(obj.level)+1)+'">';
+                    html+='<option value="">请选择分类</option>';
+                    $.each(obj.children,function(index,object){
+                        html+='<option value="'+object.id+'">'+object.catename+'</option>';
+                    })
+                    html+='</select>';
+                    html+='</div>';
+                    console.log();
+                    $(".quizcategory").append(html);
+
+
+                    form.on('select(quizcategory_'+(parseInt(obj.level)+1)+')', function(cdata){
+                        addselect(obj.children,cdata.value);
+                    })
+                }
+            })
+            window.form.render("select");
+        }
+        function addvenueselect(categorylist,cateid){
+            $.each(categorylist,function(idx,obj){
+                if(obj.id==cateid && typeof(obj.children)!="undefined"){
+                    var html='<div class="layui-input-inline ajaxselect venuecategory_'+(parseInt(obj.level)+1)+'"><select name="cateid[]" lay-filter="venuecategory_'+( parseInt(obj.level)+1)+'">';
+                    html+='<option value="">请选择分类</option>';
+                    $.each(obj.children,function(index,object){
+                        html+='<option value="'+object.id+'">'+object.catename+'</option>';
+                    })
+                    html+='</select>';
+                    html+='</div>';
+                    console.log();
+                    $(".venuecategory").append(html);
+
+
+                    form.on('select(venuecategory_'+(parseInt(obj.level)+1)+')', function(cdata){
+                        addselect(obj.children,cdata.value);
+                    })
+                }
+            })
+            window.form.render("select");
+        }
+        function addmemberselect(categorylist,cateid){
+            $.each(categorylist,function(idx,obj){
+                if(obj.id==cateid && typeof(obj.children)!="undefined"){
+                    var html='<div class="layui-input-inline ajaxselect memberactivitycategory_'+(parseInt(obj.level)+1)+'"><select name="cateid[]" lay-filter="memberactivitycategory_'+( parseInt(obj.level)+1)+'">';
+                    html+='<option value="">请选择分类</option>';
+                    $.each(obj.children,function(index,object){
+                        html+='<option value="'+object.id+'">'+object.catename+'</option>';
+                    })
+                    html+='</select>';
+                    html+='</div>';
+                    console.log();
+                    $(".memberactivitycategory").append(html);
+
+
+                    form.on('select(memberactivitycategory_'+(parseInt(obj.level)+1)+')', function(cdata){
+                        addselect(obj.children,cdata.value);
+                    })
+                }
+            })
+            window.form.render("select");
+        }
+
+
+        function addselect(categorylist,cateid){
+            $.each(categorylist,function(idx,obj){
+                if(obj.id==cateid && typeof(obj.children)!="undefined"){
+                    var html='<div class="layui-input-inline ajaxselect articlecategory_'+(parseInt(obj.level)+1)+'"><select name="cateid[]" lay-filter="articlecategory_'+( parseInt(obj.level)+1)+'">';
+                    html+='<option value="">请选择分类</option>';
+                    $.each(obj.children,function(index,object){
+                        html+='<option value="'+object.id+'">'+object.catename+'</option>';
+                    })
+                    html+='</select>';
+                    html+='</div>';
+                    console.log();
+                    $(".articlecategory").append(html);
+
+
+                    form.on('select(articlecategory_'+(parseInt(obj.level)+1)+')', function(cdata){
+                        addselect(obj.children,cdata.value);
+                    })
+                }
+            })
+            window.form.render("select");
+        }
+
+
+    </script>
+

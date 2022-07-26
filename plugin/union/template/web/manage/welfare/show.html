@@ -1,0 +1,114 @@
+
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+
+<script>document.title = "{$_W['union']['title']}"; </script>
+<div class='fui-page' style="background-color: #fff">
+
+
+
+    <div class='fui-content  welfare_view'>
+        <h3 style="text-align: center">职工{$typename}慰问审批表</h3>
+        <div class="fui-cell-group">
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 6rem;float: left;" >公司</div>
+                <div class="fui-cell-text">{$union_info['title']}</div>
+                <div></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 6rem;float: left;" >部门</div>
+                <div class="fui-cell-text">{$department['name']}</div>
+                <div></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 6rem;float: left;" >申请日期</div>
+                <div class="fui-cell-text" >  {php echo date("Y-m-d",$item['add_time'])}</div>
+                <div></div>
+            </div>
+        </div>
+        <div class="fui-cell-group">
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <td>姓名</td>
+                    <td>{$item['name']} </td>
+                    <td>性别</td>
+                    <td>{if $member['sex']==1}男{else}女{/if}</td>
+                </tr>
+                <tr>
+                    <td>福利支出事项
+                    </td>
+                    <td>{$typename}</td>
+                    <td>申请金额</td>
+                    <td><span style="color: #ff2f34">{$item['money']}</span></td>
+                </tr>
+                <tr>
+                    <td>类型</td>
+                    <td>{if $item['amounttype']==1}现金{else}实物{/if}</td>
+                    <td>{$typename}日期</td>
+                    <td>{php echo date("Y-m-d",$item['time'])}</td>
+                </tr>
+                <tr>
+                    <td>工会小组</td>
+                    <td>{$groups_info['groupname']}</td>
+                    <td>联系电话</td>
+                    <td>{$member['mobile_phone']}</td>
+                </tr>
+                <tr>
+                    <td>开户银行</td>
+                    <td>{$item['bankname']}</td>
+                    <td>银行卡号</td>
+                    <td>{$item['bankcard']}</td>
+                </tr>
+                <tr>
+                    <td style="height: 5rem;">备注</td>
+                    <td colspan="3">{$item['remarks']}</td>
+                </tr>
+                <tr>
+                    <td style="height: 5rem;">材料</td>
+                    <td colspan="3">
+                        {loop $images $i}
+                        <img src="{$i}">
+                        {/loop}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">提交申请人</td>
+                    <td colspan="2">
+                        <div>申请人签字：<strong style="font-size: 1rem;font-family: cursive;">{$item['name']}</strong></div>
+                        <div>{php echo date("Y-m-d H:i:s",$item['add_time'])}</div>
+                    </td>
+                </tr>
+
+                {if $examinelist}
+                {loop $examinelist $row}
+
+                <tr>
+                    <td colspan="1" style="border-right-style: hidden;font-weight: 100">
+
+                        审核意见:
+                    </td>
+                    <td colspan="1" style=" {if $row['status']==1}color: green{else}color: red{/if}">
+                        {if $row['status']==1}审批通过{else}审批不通过{/if}
+                    </td>
+                    <td colspan="2">
+                        <div>审批人签字：<strong style="font-size: 1rem;font-family: cursive;">{$row['examinename']}</strong></div>
+                        <div>{php echo date("Y-m-d H:i:s",$row['add_time'])}</div>
+                    </td>
+                </tr>
+
+                {/loop}
+                {/if}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<script language='javascript'>
+    require(['core'], function (modal) {
+        core.showImages('.table tr td img');
+    });
+</script>
+

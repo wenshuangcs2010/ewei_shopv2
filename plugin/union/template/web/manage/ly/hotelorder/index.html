@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>疗养订单管理</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>订单管理</h5>
+
+                        <form class="animated form-search" id="form-search" action="{php echo unionUrl('ly/hotelorder')}" onsubmit="return false" method="get">
+                            <div class="row">
+
+                                <div class="col-xs-2">
+                                    <input type="text" name="keywordes" style="height: 39px;" value="{$_GPC['keywordes']}" placeholder="姓名/手机号" class="form-control">
+                                </div>
+                                <div class="col-xs-2">
+                                    <select name="status" id="status" class="form-control1">
+                                        <option value="">订单状态</option>
+                                        <option {if is_numeric($_GPC['status']) && $_GPC['status']==0} selected {/if} value="0">待确认</option>
+                                        <option {if is_numeric($_GPC['status']) && $_GPC['status']==1} selected {/if} value="1">已确认</option>
+                                        <option {if is_numeric($_GPC['status']) && $_GPC['status']==2} selected {/if} value="2">已取消</option>
+                                        <option {if is_numeric($_GPC['status']) && $_GPC['status']==3} selected {/if} value="3">待评价</option>
+                                        <option {if is_numeric($_GPC['status']) && $_GPC['status']==4} selected {/if} value="4">已完成</option>
+
+                                    </select>
+                                </div>
+                                <div class="col-xs-2">
+                                    <select name="addressonlineid" id="addressonlineid" class="form-control1">
+                                        <option value="">选择路线</option>
+                                        {loop $addresslist $i_tem}
+                                        <option {if is_numeric($_GPC['addressonlineid']) && $_GPC['addressonlineid']==$i_tem['id']} selected {/if} value="{$i_tem['id']}">{$i_tem['title']}</option>
+                                        {/loop}
+
+                                    </select>
+                                </div>
+                                <div class="col-xs-2">
+                                    <input type="text" class="layui-input" name="datetime"  value="{$_GPC['datetime']}"  id="test8" placeholder="预约时间">
+                                </div>
+                                <input type="hidden" name="export" id="exportid" value="0"/>
+                                <div class="col-xs-3">
+
+                                    <button type="submit" name="submit"  class="btn btn-sm btn-white"><i class="fa fa-search"></i> 搜索</button>
+
+                                    <button type="button" id="export" value="1" class="btn btn-sm btn-white"><i class="fa fa-cloud-download"></i> 导出</button>
+
+                                </div>
+                                
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div class="layui-col-xs10 layui-col-md10" style="width: 100%">
+                    <div class="agile-tables">
+                        <div class="w3l-table-info">
+                            <table id="table">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>订单号</th>
+                                    <th>姓名</th>
+                                    <th>身份证</th>
+                                    <th>电话</th>
+                                    <th>预约时间</th>
+                                    <th>入住人数</th>
+                                    <th>路线名称</th>
+                                    <th>景点</th>
+
+                                    <th>介绍信</th>
+                                    <th>取消详情</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {loop $list $row}
+                                <tr>
+                                    <td> <a data->{$row['id']}</a></td>
+                                    <td>{$row['ordersn']}</td>
+                                    <td>{$row['name']}</td>
+                                    <td>{$row['imid']}</td>
+                                    <td>{$row['mobile']}</td>
+                                    <td>{php echo date("Y-m-d",$row['times'])}</td>
+                                    <td>{$row['number']}</td>
+
+                                    <td>{$row['adltitle']}</td>
+                                    <td>{$row['addresstitle']}</td>
+
+                                    <td><a  target="_blank" href="{php echo tomedia($row['jieshao'])}">查看</a></td>
+                                    <td>{$row['canceldesc']}</td>
+                                    <td>
+                                        {if $row['status']==0}
+                                        待确认
+                                        {elseif $row['status']==1}
+                                        已确认
+                                        {elseif $row['status']==2}
+                                        <span style="color: red">已取消</span>
+                                        {elseif $row['status']==3}
+                                        待评价
+                                        {elseif $row['status']==4}
+                                        已完成
+                                       {/if}</td>
+                                    <td>
+                                        <a data-modal="{php echo unionUrl('ly/hotelorder/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a> |
+                                        {if $row['status']==0}
+                                        <a data-load="{php echo unionUrl('ly/hotelorder/confirm')}&id={$row['id']}" data-confirm="是否确认订单？" href="javascript:void(0)">确认订单</a> |
+                                        {/if}
+                                        {if $row['status']<2}
+                                        <a  data-modal="{php echo unionUrl('ly/hotelorder/cancel')}&id={$row['id']}"  href="javascript:void(0)">取消订单</a> |
+                                        {/if}
+                                        {if $row['status']==0 || $row['status']==2 }
+                                        <!--
+                                        <a  data-load="{php echo unionUrl('ly/hotelorder/delete')}&id={$row['id']}" data-confirm="确定删除订单？" href="javascript:void(0)">删除</a>
+                                        -->
+                                        {/if}
+                                        {if $row['status']==1 || $row['status']==3 }
+                                        <a  data-load="{php echo unionUrl('ly/hotelorder/confirmorder')}&id={$row['id']}" data-confirm="确定完成订单？" href="javascript:void(0)">完成订单</a>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                {/loop}
+                                </tbody>
+                            </table>
+                            {$pager}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+</body>
+<script>
+    require(['jquery','layui'],function(){
+        $(".btn-primary").click(function(){
+            $("#horizontal-form").submit();
+        });
+        $("#export").click(function () {
+            $("#exportid").val(1);
+            $("#form-search").submit();
+        })
+        
+        $("#addinput").click(function () {
+            var html="";
+            html+='<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label">菜单名称</label><div class="layui-input-inline">';
+            html+='<div class="layui-inline">';
+
+            $(".menu_list").append(html);
+        });
+
+        layui.use(['laydate'], function(laydate){
+            laydate.render({
+                elem: '#test8'
+                ,range: true
+            });
+        })
+    })
+
+</script>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+</head>
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>知识竞赛 <i class="fa fa-angle-right"></i> 题库添加</li>
+            </ol>
+
+            <div class="grid-form1">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="horizontal-form">
+                        <form class="layui-form" method="post" action="{php echo unionUrl('quiz/post')}">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">题目类型</label>
+                                <div class="layui-input-inline">
+                                    <select  lay-filter="business" name="quiztype" >
+                                        <option value="0" {if empty($vo) || $vo['quiztype']==0} selected=""{/if}>选择题</option>
+                                        <option value="1" {if !empty($vo) && $vo['quiztype']==1} selected=""{/if} >是非题</option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">问题内容</label>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入内容" name="quiztare"   lay-verify="required" class="layui-textarea">{$vo['title']}</textarea>
+                                </div>
+                            </div>
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>答案设置</legend>
+                            </fieldset>
+                            <div class="page_0"  {if isset($vo) && $vo['quiztype']==1} style="display: none" {/if}>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label" style="width: 120px">选项随机排列</label>
+                                        <div class="layui-input-inline">
+                                            <select name="quiz1">
+                                                <option value="0"  {if empty($vo) || $vo['quiz1']==0} selected=""{/if}  >否</option>
+                                                <option value="1" {if !empty($vo) && $vo['quiz1']==1} selected=""{/if}  >是</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选项一</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="c1" name="option[0]" value="{$vo['c1']}"  autocomplete="off" class="layui-input">
+
+                                        </div>
+                                        <input type="checkbox" name="answers[]" value="1" {if isset($winning) && in_array(1,$winning)} checked {/if}  lay-filter="answers" lay-skin="primary" title="设为答案" >
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选项二</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="c2" name="option[1]" value="{$vo['c2']}"  autocomplete="off" class="layui-input">
+                                        </div>
+                                        <input type="checkbox" name="answers[]" value="2" {if isset($winning) &&  in_array(2,$winning)} checked {/if} lay-filter="answers"  lay-skin="primary" title="设为答案">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选项三</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="c3" name="option[2]" value="{$vo['c3']}"   autocomplete="off" class="layui-input">
+                                        </div>
+                                        <input type="checkbox" name="answers[]" value="3" {if isset($winning) &&  in_array(3,$winning)} checked {/if} lay-filter="answers"  lay-skin="primary" title="设为答案">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选项四</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="c4" name="option[3]" value="{$vo['c4']}"   autocomplete="off" class="layui-input">
+                                        </div>
+                                        <input type="checkbox" name="answers[]" value="4" {if  isset($winning) && in_array(4,$winning)} checked {/if} lay-filter="answers"  lay-skin="primary" title="设为答案">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选项五</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="c5" name="option[4]"  value="{$vo['c5']}"  autocomplete="off" class="layui-input">
+                                        </div>
+                                        <input type="checkbox" name="answers[]" value="5" {if isset($winning) && in_array(5,$winning)} checked {/if} lay-filter="answers"  lay-skin="primary" title="设为答案">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选项六</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="c6" name="option[5]" value="{$vo['c6']}"  autocomplete="off" class="layui-input">
+                                        </div>
+                                        <input type="checkbox" name="answers[]" lay-filter="answers" {if isset($winning) &&  in_array(6,$winning)} checked {/if}  value="6" lay-skin="primary" title="设为答案">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page_1" {if empty($vo) || $vo['quiztype']==0} style="display: none" {/if}>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">是非答案</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="yes" value="0" title="是" {if $vo['yes']==0} checked{/if} ><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon"></i><div>是</div></div>
+                                        <input type="radio" name="yes" value="1" title="否" {if $vo['yes']==1} checked{/if} ><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>否</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="id" value="{$vo['id']}">
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--//grid-->
+
+            <!--inner block start here-->
+            <div class="inner-block">
+
+            </div>
+            <!--inner block end here-->
+            <!--copy rights start here-->
+            {template 'footer'}
+            <!--COPY rights end here-->
+        </div>
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+
+</body>
+<script type="text/javascript">
+    require(['jquery','layui'],function(){
+        layui.use(['form'], function (form) {
+            form.on('select(business)', function(data){
+                if(data.value==1){
+                    $(".page_0").hide();
+                    $(".page_1").show();
+                }
+                if(data.value==0){
+                    $(".page_0").show();
+                    $(".page_1").hide();
+                }
+
+            });
+
+            form.on('checkbox(answers)', function(data){
+                if(data.elem.checked){
+                    var value= $(data.elem).parent().children(".layui-input-inline").find("input").val();
+                    if(value==""){
+
+                        layer.alert('答案选择不能为空', {
+                            title: '最终的提交信息'
+                        })
+                        $(data.elem).attr("checked",false);
+                        form.render(); //更新全部
+                    }
+                }
+
+
+            });
+
+            //监听提交
+            form.on('submit(demo1)', function(data){
+                if(data.field.quiztype==0){
+
+                   var c1=$("#c1").val();
+                   var c2=$("#c2").val();
+                   var c3=$("#c3").val();
+                   var c4=$("#c4").val();
+                   var c5=$("#c5").val();
+                   var c6=$("#c6").val();
+                   if(c1=="" && c2=="" && c3=="" && c4=="" && c5=='' && c6==''){
+                       layer.alert('答案不能为空', {
+                           title: '最终的提交信息'
+                       });
+                       return false;
+                   }
+                   var chk_value=Array();
+                    $('input:checkbox:checked').each(function (index, item) {//遍历每一个名字为interest的复选框，其中选中的执行函数
+
+                        chk_value.push($(this).val());//将选中的值添加到数组chk_value中
+                    });
+                    if(chk_value.length<=0){
+                        layer.alert('请选择一个正确答案', {
+                            title: '提示'
+                        });
+                        return false;
+                    }
+                }
+
+
+                return true;
+            });
+            form.render();
+        })
+
+    })
+
+
+
+</script>
+<style>
+    .layui-form-label{
+        width: 100px;
+    }
+    .layui-input-block{
+        margin-left: 100px;
+    }
+    legend{
+        width: auto;
+        border-bottom:0px;
+    }
+</style>
+</html>

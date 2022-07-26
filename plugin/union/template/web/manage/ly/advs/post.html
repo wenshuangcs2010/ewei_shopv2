@@ -1,0 +1,75 @@
+
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('ly/advs/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">幻灯片标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="advname" value="{$vo['advname']}" required="required" title="幻灯片标题" placeholder="幻灯片标题" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">幻灯片图片</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" readonly name="thumb" value="{$vo['thumb']}" placeholder="幻灯片图片" type="text">
+                    <a class="input-group-addon" data-file="one"  data-field="thumb" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+                <div class="input-group multi-img-details ui-sortable">
+                    {if $vo['thumb']}
+                    <div class="multi-item">
+                        <img src="{php echo tomedia($vo['thumb'])}"  class="img-responsive img-thumbnail">
+                        <em class="close" title="删除这张图片">×</em>
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            <div class="layui-form-mid layui-word-aux">建议尺寸750px*500px</div>
+        </div>
+
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">幻灯片链接</label>
+        <div class="layui-input-block">
+            <input type="text" name="link" value="{$vo['link']}" title="请输入链接" placeholder="请输入链接" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="displayorder" value="{$vo['displayorder']}"  class="layui-input">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否显示</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($vo['enabled']) && $vo['enabled'] == 1}
+                <input type="radio" checked name="enabled" value="1" title="是">
+                <input type="radio" name="enabled" value="0" title="否">
+                {else}
+                <input type="radio" name="enabled" value="1" title="是">
+                <input type="radio" checked name="enabled" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+    </script>
+</form>

@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/formSelects-v4.css" />
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+
+    <div class="left-content">
+
+        <div class="mother-grid-inner" style="background-color: white;padding-left: 10px" >
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>签到模块<i class="fa fa-angle-right"></i>签到管理</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>签到记录</h5>
+                        <div class="nowrap pull-right" >
+                            <ul class="bt-list">
+                                <button data-open="{php echo unionUrl('report/showpeople',array('id'=>$id,'export'=>1))}" data-title="导出记录" class='layui-btn layui-btn-small'><i
+                                        class='fa fa-plus'></i> 导出
+                                </button>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">已签到</li>
+                <li>未签到</li>
+
+
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>处室/部门</th>
+                            <th>姓名</th>
+                            <th>电话</th>
+                            <th>签到时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {loop $list $row}
+                        <tr>
+                            <td>{$row['id']}</td>
+                            <td>{$row['depname']}</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['mobile_phone']}</td>
+                            <td>{php echo date('Y-m-d H:i',$row['createtime'])}</td>
+
+
+                        </tr>
+                        {/loop}
+                        </tbody>
+                    </table>
+                    {$pager}
+
+                </div>
+                <div class="layui-tab-item">
+                    <table id="table2">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>姓名</th>
+                            <th>电话</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {loop $notinlist $row}
+                        <tr>
+                            <td>{$row['id']}</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['mobile_phone']}</td>
+
+
+
+                        </tr>
+                        {/loop}
+                        </tbody>
+                    </table>
+                    {$pager}
+
+
+                </div>
+
+            </div>
+            </div>
+                <!--copy rights start here-->
+                {template 'footer'}
+                <!--COPY rights end here-->
+        </div>
+    </div>
+</div>
+
+        <!--//content-inner-->
+        <!--/sidebar-menu-->
+        {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','layui','jquery.basictable'],function(modal){
+        modal.init();
+        $('#table').basictable();
+        $('#table2').basictable();
+
+
+    })
+</script>
+</html>

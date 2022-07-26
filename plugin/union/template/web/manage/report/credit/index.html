@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/formSelects-v4.css" />
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+
+    <div class="left-content">
+
+        <div class="mother-grid-inner" style="background-color: white;padding-left: 10px" >
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>签到模块<i class="fa fa-angle-right"></i>签到积分</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>签到积分</h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="layui-tab">
+                <form class="animated form-search"  class="layui-form" action="{php echo unionUrl('report.credit')}" onsubmit="return false" method="get">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" autocomplete="off" name="starttime" value="{$_GPC['starttime']}" id="test6" placeholder="签到开始时间">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" autocomplete="off" name="endtime" value="{$_GPC['endtime']}" id="test7" placeholder="签到结束时间">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="export" name="export" value="0">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <button type="submit" class="btn layui-btn btn-white"><i class="fa fa-search"></i> 搜索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" onclick="exporttable()" class="btn layui-btn btn-white"><i class="fa fa-cloud-download"></i> 导出搜索</button>
+                        </div>
+                    </div>
+
+                </form>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+
+                        <table id="table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>对应活动</th>
+                                <th>处室/部门</th>
+                                <th>姓名</th>
+                                <th>电话</th>
+                                <th>获得积分</th>
+                                <th>签到时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {loop $list $row}
+                            <tr>
+                                <td>{$row['id']}</td>
+                                <td>{$row['activity_name']}</td>
+                                <td>{$row['depname']}</td>
+                                <td>{$row['username']}</td>
+                                <td>{$row['mobile_phone']}</td>
+                                <td>{$row['credit']}</td>
+                                <td>{php echo date('Y-m-d H:i',$row['createtime'])}</td>
+
+
+                            </tr>
+                            {/loop}
+                            </tbody>
+                        </table>
+                        {$pager}
+
+                    </div>
+
+
+                </div>
+            </div>
+            <!--copy rights start here-->
+            {template 'footer'}
+            <!--COPY rights end here-->
+        </div>
+    </div>
+</div>
+
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+</body>
+<script>
+    function exporttable(){
+        $("#export").val(1);
+    }
+    require(['jquery.basictable','layui'],function(modal){
+
+        layui.use(['tree','laydate'], function(tree,laydate){
+            laydate.render({
+                elem: '#test6'
+                ,max:"{php echo date('Y-m-d')}"
+                ,range: false
+            });
+            laydate.render({
+                elem: '#test7'
+                ,max:"{php echo date('Y-m-d')}"
+                ,range: false
+            });
+        })
+    })
+</script>
+</html>

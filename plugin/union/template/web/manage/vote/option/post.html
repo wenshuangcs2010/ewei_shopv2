@@ -1,0 +1,142 @@
+
+<style>
+    .select2{
+        margin:0;
+        width:100%;
+        height:34px;
+        border-radius: 3px;
+        border-color: rgb(229, 230, 231);
+    }
+    .select2 .select2-choice{
+        height: 34px;
+        line-height: 32px;
+        border-radius: 3px;
+        border-color: rgb(229, 230, 231);
+    }
+    .select2 .select2-choice .select2-arrow{
+        background: #fff;
+    }
+    .form-group .radio-inline{
+        padding-top: 0px;;
+    }
+    .select2-container{
+    z-index: 88888888;
+    }
+
+</style>
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('vote/option/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="displayorder" value="{$vo['displayorder']}" title="排序" placeholder="排序" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选项名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{$vo['title']}" required="required" title="请输入选项名称" placeholder="请输入选项名称" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">选项图片</label>
+        <div class="layui-input-block">
+            <div style="position:relative;width:500px">
+                <div class="input-group">
+                    <input class="layui-input" readonly name="images" value="{$vo['image']}" placeholder="活动图片" type="text">
+                    <a class="input-group-addon" data-file="one"  data-field="images" data-type="jpg,png,jpeg" data-uptype="local" >
+                        <i class="fa fa-file"></i>
+                    </a>
+                </div>
+                <div class="input-group multi-img-details ui-sortable">
+                    {if $vo['image']}
+                    <div class="multi-item">
+                        <img src="{php echo tomedia($vo['image'])}"  class="img-responsive img-thumbnail">
+                        <em class="close" title="删除这张图片">×</em>
+                    </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">选项介绍</label>
+        <div class="layui-input-block">
+            <textarea id="declaration" name="declaration" class="layui-textarea">{$vo['declaration']}</textarea>
+        </div>
+    </div>
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <input type='hidden' value="{$quiz_info['id']}" name='quiz_id'/>
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+    <script>
+
+
+
+        require(['jquery'], function () {
+
+
+            window.form.render();
+
+            //监听指定开关
+            form.on('radio(type)', function(data){
+                if(data.value==1){
+                    $("#votecount").show();
+                }else {
+                    $("#votecount").hide();
+                }
+
+            });
+            var tpl = '<div style="width: 6rem"  class="multi-item">\n' +
+                '                        <img src=""  style="width: 4rem"  class="img-responsive img-thumbnail">\n' +
+                '                        <em class="close" title="删除这张图片">×</em>\n' +
+                '                    </div>';
+
+            $('[name="images"]').on('change', function () {
+                var input = this, values = [], srcs =[];
+
+                if($(input).parent().children("a").data("file")=="one"){
+                    $(this).parent().next().children(".multi-item").remove();
+                }
+                srcs= Array.prototype.slice.call(this.value.split('|'));
+                values.reverse();
+                for (var i in srcs) {
+
+                    if(typeof(srcs[i])=="string"){
+                        values.push(srcs[i]);
+                    }
+                }
+
+                this.value = values.join('|');
+                for (var i in values) {
+                    if(typeof (values[i])=="string"){
+                        var $tpl=$(tpl);
+                        var imgsrc=tomedia(values[i]);
+                        $tpl.children("img").attr('src',imgsrc);
+                        $tpl.children("input").val(values[i]);
+                        $(input).data('input', input).data('srcs', values).data('index', i);
+
+                        $tpl.on('click', 'em', function (e) {
+                            e.stopPropagation();
+                            var $cur = $(this).parent();
+                            $.msg.confirm('确定要移除这张图片吗？', function () {
+                                var data = $(input).data("srcs");
+                                delete data[$(input).data('index')];
+                                $(input).data('input').value=data.join('|');
+                                $cur.remove();
+                            });
+                        });
+                        $(this).parent().next(".multi-img-details").append($tpl);
+                    }
+
+                }
+            });
+        });
+    </script>
+</form>

@@ -1,0 +1,67 @@
+
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('ly/member/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="username" value="{$account['username']}" required="required" title="登录账号" placeholder="登录账号" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" value="" title="登录密码" placeholder="登录密码" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="realname" value="{$account['realname']}" title="用户姓名" placeholder="用户姓名"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-block">
+            <input type="text" name="mobile" value="{$account['mobile']}" title="用户手机号" placeholder="用户手机号"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">管理地址</label>
+        <div class="layui-input-block">
+            {loop $addresslist $item}
+            <input type="checkbox" name="address[]" {if in_array($item['id'],$addressids)} checked='' {/if} lay-skin="primary" value="{$item['id']}" title="{$item['title']}" >
+            {/loop}
+
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            <div class='col-sm-8'>
+                {if isset($account['status']) && $account['status'] == 1}
+                <input type="radio" checked name="status" value="1" title="是">
+                <input type="radio" name="status" value="0" title="否">
+                {else}
+                <input type="radio" name="status" value="1" title="是">
+                <input type="radio" checked name="status" value="0" title="否">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($account['id'])}<input type='hidden' value="{$account['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+    </script>
+</form>

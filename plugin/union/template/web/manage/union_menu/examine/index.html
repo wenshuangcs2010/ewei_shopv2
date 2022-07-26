@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>全部审核流程</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>全部审核流程</h5>
+                        <div class="nowrap pull-right" >
+                            <ul class="bt-list">
+                                <button data-modal="{php echo unionUrl('union_menu/examine/add')}" data-title="添加" class="layui-btn layui-btn-small">
+                                    <i class="fa fa-cloud-add"></i>  添加一个审核流程
+                                </button>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="tab-content">
+                    <div class="layui-col-xs9 layui-col-md9">
+                    <div class="agile-tables">
+                        <div class="w3l-table-info">
+                            <table id="table">
+                                <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {loop $list $row}
+                                <tr>
+                                    <td>{$row['catename']}</td>
+                                    <td>{if $row['enable']==1}启用{else}弃用{/if}</td>
+                                    <td>
+                                        <a data-modal="{php echo unionUrl('union_menu/examine/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a>
+                                    </td>
+                                </tr>
+                                {/loop}
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </div>
+
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+</body>
+<script>
+    require(['jquery'],function(){
+        $(".btn-primary").click(function(){
+            $("#horizontal-form").submit();
+        })
+
+        $("#addinput").click(function () {
+            var html="";
+            html+='<div class="layui-form-item"><div class="layui-inline"><label class="layui-form-label">菜单名称</label><div class="layui-input-inline">';
+            html+='<div class="layui-inline">';
+
+            $(".menu_list").append(html);
+        })
+    })
+
+</script>
+</html>

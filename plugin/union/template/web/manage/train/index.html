@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{template 'header'}
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+	<link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+             <!--header start here-->
+		   {template 'header_main'}
+			<!--heder end here-->
+			<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>{$_W['union_name']}会员</li>
+            </ol>
+	   </div>
+	<div class="panel1 panel-widget top-grids" style="padding:0">
+		<div class="col-adjust-10">
+			<ul class="bt-list">
+				<li style="margin-left: 0.2rem">
+					<button data-modal="{php echo unionUrl('train/add')}" data-title="添加新的活动" class="layui-btn layui-btn-small"><i class="fa fa-plus"></i> 添加新的活动
+					</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+<div class="agile-grids">
+	<div class="agile-tables">
+		<div class="w3l-table-info">
+
+			<table id="table">
+				<thead>
+				<tr>
+					<th>ID</th>
+					<th>标题</th>
+					<th>报名时间</th>
+					<th>培训时间</th>
+					<th>最高参与人员</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody>
+                {loop $list $row}
+				<tr>
+					<td>{$row['id']}</td>
+					<td>{$row['title']}</td>
+					<td>{php echo date('Y-m-d',$row['t_start_time'])}/{php echo date('Y-m-d',$row['t_end_time'])}</td>
+					<td>{php echo date('Y-m-d',$row['start_time'])}/{php echo date('Y-m-d',$row['end_time'])}</td>
+					<td>{$row['count']}</td>
+
+					<td>
+						<a data-title="编辑" data-modal="{php echo unionUrl('train/edit')}&id={$row['id']}" href="javascript:void(0)">编辑</a>|
+						<a target="_blank" data-open="{php echo unionUrl('train/showmember')}&id={$row['id']}" href="javascript:void(0)">报名人数</a>
+					</td>
+				</tr>
+                {/loop}
+				</tbody>
+			</table>
+            {$pager}
+        </div>
+        {if !$list}
+        <div class="panel panel-default" style="background-color: #fff;">
+            <div class="panel-body" style="text-align: center;padding:30px;">
+                没有任何数据!
+            </div>
+        </div>
+        {/if}
+   </div>
+
+
+<!--copy rights start here-->
+	{template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','jquery.basictable'],function(modal){
+        modal.init();
+        $('#table').basictable();
+    })
+</script>
+</html>

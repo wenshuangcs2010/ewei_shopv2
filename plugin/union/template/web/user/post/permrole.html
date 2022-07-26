@@ -1,0 +1,19 @@
+<div class="form-group">
+
+    <label class="col-sm-1 control-label">权限</label>
+
+    <div class="col-sm-11 col-xs-12">
+        <div id="accordion" class="panel-group">
+            <div class='panel panel-default' >
+                {loop $perms $key $value}
+                    <div class='panel-heading' style='background:#f8f8f8' >
+                        <label class='checkbox-inline'>
+                            <input type='checkbox' id="{$key}" name='perms[]' value='{$key}' class='perm-all' data-group='{$key}'
+                                   {if in_array($key,$user_perms) || in_array($key,$user_perms) } checked{/if} /> {$value['title']}
+                        </label>
+                    </div>
+                {/loop}
+            </div>
+        </div>
+    </div>
+</div>

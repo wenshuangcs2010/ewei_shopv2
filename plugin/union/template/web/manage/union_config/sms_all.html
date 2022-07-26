@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/imgupload.css" />
+<body>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>短信群发</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>短信群发</h5>
+
+                    </div>
+                </div>
+            </div>
+            <div class="grid-form1">
+
+                <div class="tab-content">
+                    <form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('index/sms_all')}" data-auto="true" method="post">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">工会小组</label>
+                            <div class="col-xs-2">
+                                <select name="uniongroupid" id="uniongroupid" class="form-control1">
+                                    <option value="-1">全部</option>
+                                    {loop $grouplist $key $p}
+                                    <option  {if $_GPC['uniongroupid']==$p['id']} selected {/if} value="{$p['id']}">{$p['groupname']}</option>
+                                    {/loop}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">会员类型</label>
+                        <div class="col-xs-2">
+                            <select name="member_type" id="member_type" class="form-control1">
+                                <option value="-1">全部</option>
+                                {loop $this->membertype $key $p}
+                                <option  {if $_GPC['member_type']==$key} selected {/if} value="{$key}">{$p}</option>
+                                {/loop}
+                            </select>
+                        </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">会员状态</label>
+                            <div class="col-xs-2">
+                                <select name="status" id="status" class="form-control1">
+                                    <option value="-1">全部</option>
+                                    <option value="0">未绑定</option>
+                                    <option value="1">已绑定</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">短信内容</label>
+                            <div class="layui-input-block">
+                                <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="layui-form-item text-center">
+
+                            <button class="layui-btn" type='submit'>立即发送</button>
+                            <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--//content-inner-->
+<!--/sidebar-menu-->
+{template 'sidebar_menu'}
+</body>
+<script>
+    require(['jquery'],function(){
+        $(".btn-primary").click(function(){
+            $("#horizontal-form").submit();
+        })
+    })
+
+</script>
+</html>

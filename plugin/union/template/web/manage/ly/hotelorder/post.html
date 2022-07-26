@@ -1,0 +1,70 @@
+
+<form class="layui-form layui-box" style='padding:25px 30px 20px 0' action="{php echo unionUrl('ly/hotelorder/post')}" data-auto="true" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">订单号</label>
+        <div class="layui-input-block">
+            <p>{$vo['ordersn']}</p>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">预订人</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" value="{$vo['name']}"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-block">
+            <input type="text" name="mobile" value="{$vo['mobile']}"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">身份证号</label>
+        <div class="layui-input-block">
+            <input type="text" name="imid" value="{$vo['imid']}"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">入住人数</label>
+        <div class="layui-input-block">
+            <input type="text" name="number" value="{$vo['number']}"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">订单状态</label>
+        <div class="layui-input-block">
+            <select name="status" class="form-control" style="    z-index: 999999;"  >
+                <option value="">请选择</option>
+                <option {if $vo['status']==0} selected {/if} value="0">待确认</option>
+
+
+                <option {if $vo['status']==3} selected {/if} value="3">待评价</option>
+                <option {if $vo['status']==4} selected {/if} value="4">已完成</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">预订时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="times" value="{if isset($vo)}{php echo date('Y-m-d',$vo['times'])}{/if}" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" lay-key="1">
+
+        </div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        {if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+    </div>
+
+    <script>
+        window.form.render();
+        laydate.render({
+            elem: '#date',
+            trigger:'click',
+        });
+    </script>
+</form>

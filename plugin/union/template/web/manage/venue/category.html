@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {template 'header'}
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/table-style.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/basictable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/static/js/nestable/nestable.css" />
+    <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}/static/fonts/v3/iconfont.css" />
+<body>
+<style>
+    .dd {
+        position: relative;
+        display: block;
+        margin: 0;
+        padding: 0;
+        max-width:100%;
+        list-style: none;
+        font-size: 13px;
+        line-height: 20px;
+    }
+    .dd-handle {
+        height: 40px;
+        line-height: 30px;
+    }
+    .agile-grids{
+        padding: 20px 30px;
+        background-color: white;
+    }
+</style>
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            {template 'header_main'}
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>场馆预订<i class="fa fa-angle-right"></i>分类管理</li>
+            </ol>
+            <div class="panel1 panel-widget top-grids" style="padding:0">
+                <div class="col-adjust-10">
+                    <div class="ibox-title">
+                        <h5>分类管理</h5>
+                        <div class="nowrap pull-right" >
+                            <ul class="bt-list">
+                                <button data-modal="{php echo unionUrl('venue/category/addcategory')}" data-title="添加一个新的分类" class="layui-btn layui-btn-small">
+                                    <i class="fa fa-cloud-download"></i>  添加新分类
+                                </button>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agile-grids">
+                <div class="dd" id="div_nestable">
+                    <ol class="dd-list">
+                        {loop $category $row}
+                        {if empty($row['parent_id'])}
+                        <li class="dd-item full" data-id="{$row['id']}">
+                            <div class="dd-handle" >
+                                [ID: {$row['id']}] {$row['catename']}
+                                <span class="pull-right">
+                            <div class='label {if $row['enable']==1}label-primary{else}label-default{/if}'>
+                                 {if $row['enable']==1}显示{else}隐藏{/if}</div>
+                            <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('venue/category/addcategory', array('parent_id' => $row['id']))}" title='' >
+                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                        <i class="icow icow-tianjia"></i>
+                                         </span>
+                            </a>
+                            <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('venue/category/addcategory', array('id' => $row['id']))}"  >
+                               <span data-toggle="tooltip" data-placement="top"  data-original-title="{ifp 'goods.category.edit'}修改{else}查看{/if}">
+                                <i class="icow icow-bianji2"></i>
+                                 </span>
+                            </a>
+                            <a class='btn btn-default btn-sm btn-operation btn-op' data-load="{php echo unionUrl('venue/category/deletecategory', array('id' => $row['id']))}" data-confirm="确定删除分类？" href="javascript:void(0)">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                                    <i class="icow icow-shanchu1"></i>
+                                </span>
+                            </a>
+                            </span>
+                </div>
+                {if count($row['children'])>0}
+                <ol class="dd-list">
+                    {loop $row['children'] $child}
+                    <li class="dd-item full" data-id="{$child['id']}">
+                        <div class="dd-handle" style="width:100%;">
+                            <img src="{php echo tomedia($child['images']);}" width='30' height="30" style='padding:1px;border: 1px solid #ccc;float:left;' /> &nbsp;
+                            [ID: {$child['id']}] {$child['catename']}
+                            <span class="pull-right">
+                                <div class='label {if $child['enable']==1}label-primary{else}label-default{/if}'>
+                                     {if $child['enable']==1}显示{else}隐藏{/if}</div>
+                        <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('venue/category/addcategory', array('parent_id' => $child['id']))}" title='添加子分类' >
+                                               <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                                <i class="icow icow-tianjia"></i>
+                                               </span>
+                        </a>
+
+                        <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('venue/category/addcategory', array('id' => $child['id']))}" title="" >
+                                              <span data-toggle="tooltip" data-placement="top" title="" data-original-title="{ifp 'goods.category.edit'}修改{else}查看{/if}">
+                                                    <i class="icow icow-bianji2"></i>
+                                             </span>
+                        </a>
+                        <a class='btn btn-default btn-sm btn-operation btn-op'  data-load="{php echo unionUrl('venue/category/deletecategory', array('id' => $child['id']))}" data-confirm="确认删除此分类吗？" href="javascript:void(0)" >
+                                                  <span data-toggle="tooltip" data-placement="top"  data-original-title="删除">
+                                                        <i class="icow icow-shanchu1"></i>
+                                                  </span>
+                        </a>
+                        </span>
+            </div>
+            {if count($child['children'])>0}
+            <ol class="dd-list"  style='width:100%;'>
+                {loop $child['children'] $third}
+                <li class="dd-item" data-id="{$third['id']}">
+                    <div class="dd-handle">
+                        <img src="{php echo tomedia($third['images']);}" width='30' height="30"  style='padding:1px;border: 1px solid #ccc;float:left;' /> &nbsp;
+                        [ID: {$third['id']}] {$third['catename']}
+                        <span class="pull-right">
+                                         <div class='label {if $third['enable']==1} label-primary {else} label-default {/if}'>
+                                                            {if $third['enable']==1}显示{else}隐藏{/if}
+                    </div>
+                    <a class='btn btn-default btn-sm btn-operation btn-op' data-modal="{php echo unionUrl('venue/category/addcategory', array('id' => $third['id']))}" title="" >
+                                            <span data-toggle="tooltip" data-placement="top" title="" data-original-title="修改">
+                                                <i class="icow icow-bianji2"></i>
+                                            </span>
+                    </a>
+                    <a class='btn btn-default btn-sm btn-operation btn-op'  data-load="{php echo unionUrl('venue/category/deletecategory', array('id' => $third['id']))}" data-confirm="确认删除此分类吗？" href="javascript:void(0)">
+                                            <span data-toggle="tooltip" data-placement="top"  data-original-title="删除">
+                                              <i class="icow icow-shanchu1"></i>
+                                             </span>
+                    </a>
+                    </span>
+        </div>
+        </li>
+        {/loop}
+        </ol>
+        {/if}
+        </li>
+        {/loop}
+        </ol>
+        {/if}
+        </li>
+        {/if}
+        {/loop}
+        </ol>
+        {if !$category}
+        <div class="panel panel-default" style="background-color: #fff;">
+            <div class="panel-body" style="text-align: center;padding:30px;">
+                没有任何数据!
+            </div>
+        </div>
+        {/if}
+    </div>
+
+                <!--copy rights start here-->
+                {template 'footer'}
+                <!--COPY rights end here-->
+            </div>
+        </div>
+        <!--//content-inner-->
+        <!--/sidebar-menu-->
+        {template 'sidebar_menu'}
+</body>
+<script>
+    require(['index','jquery.basictable','jquery.nestable'],function(modal){
+        modal.init();
+        $('#div_nestable').nestable({maxDepth: 3});
+        $(".dd-handle a,.dd-handle div").mousedown(function (e) {
+
+            e.stopPropagation();
+        });
+    })
+</script>
+</html>

@@ -1,0 +1,70 @@
+
+
+<link href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/css/motab.css" rel='stylesheet' type='text/css' />
+<script href="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"  type='application/javascript' />
+
+
+<div class="layui-form-item">
+
+    <div class="layui-input-block">
+        <div class="to__block">
+            <div class="to__left">
+                <div class="to__arrow"><span>←</span><span>→</span></div>
+                <div class="to__title">选择组织架构</div>
+                <div class="to__content">
+                    <div class="to__search">
+                        <input id="searchInput" type="text" placeholder="请输入需要搜索的名称">
+                    </div>
+                    <div id="leftCont">
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="to__right">
+                <div class="to__title">已选择（<span id="selectNum">2</span>）人</div>
+                <div class="to__content" id="rightCont">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hr-line-dashed"></div>
+
+<div class="layui-form-item text-center">
+
+
+
+    <button type="button" class="layui-btn" id="sumitdata" >确定</button>
+    <button class="layui-btn layui-btn-danger" type='button' data-close>关闭重试</button>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function(e) {
+        var baseData={php echo json_encode($basedata,320)};
+        var result = new group(baseData);
+        result.go();
+
+        $("#sumitdata").click(function () {
+            console.log(chooseList);
+            console.log(chooselist_name);
+            if(chooseList!=''){
+                $(".ww_groupSelBtn_item").html("");
+                var html="";
+                for (i = 0; i < chooselist_name.length; i++) {
+                    html+='<span class="ww_groupSelBtn_item_text">'+chooselist_name[i]+'</span>、';
+                }
+                $("#peoplevale").val(chooseList.join(","));
+                $(".ww_groupSelBtn_item").append(html);
+            }
+            layer.close(layer.index);
+        })
+    })
+
+</script>
+<style>
+    .layui-input-block{
+        margin-left: 10px;!important;
+    }
+</style>

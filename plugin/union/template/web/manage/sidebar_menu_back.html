@@ -1,0 +1,283 @@
+
+
+<div class="sidebar-menu">
+    <header class="logo1">
+        <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a>
+    </header>
+    <div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
+    <div class="menu">
+        <ul id="menu" >
+            {if ($_W['isoperator']==1 && in_array("index",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li><a href="{php echo unionUrl('index')}"><i class="fa fa-tachometer"></i> <span>首页</span><div class="clearfix"></div></a></li>
+            {/if}
+            {if ($_W['isoperator']==1 && in_array("member",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li id="menu-academico" >
+                <a href="#"><i class="fa fa-list-ul" aria-hidden="true"></i><span> {$_W['union_name']}会员</span> <span class="fa {if $_W['action']=='manage.member' || $_W['action']=='manage.member.department' } fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                    <div class="clearfix"></div></a>
+                <ul {if $_W['action']=='manage.member' || $_W['action']=='manage.member.department'} style="display:block" {/if} >
+                    <li  ><a href="{php echo unionUrl('member')}">会员列表</a></li>
+                    <li  ><a href="{php echo unionUrl('member/department')}">部门管理</a></li>
+
+                </ul>
+            </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("memberactivity",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+                {loop $_W['dcoument_category'] $row}
+                    <li>
+                        <a href="{if !empty($row['children'])}#{else} {php echo unionUrl('document',array('categoryid'=>$row['id']))} {/if}">
+                            <i class="fa fa-envelope nav_icon">
+                            </i><span>{$row['catename']}</span>
+                            <span class="fa {if $_W['action']=='manage.document' && in_array($_GPC['categoryid'],$row['childrenids'])  } fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                            <div class="clearfix"></div>
+                        </a>
+                        {if !empty($row['children'])}
+                        <ul {if $_W['action']=='manage.document' && in_array($_GPC['categoryid'],$row['childrenids']) } style="display:block" {/if} >
+                            {loop $row['children'] $child}
+                                <li ><a href="{php echo unionUrl('document',array('categoryid'=>$child['id']))}">{$child['catename']}</a></li>
+                            {/loop}
+                        </ul>
+                        {/if}
+                    </li>
+                {/loop}
+
+                    {loop $_W['actity_category'] $row}
+                    <li>
+                        <a href="{if !empty($row['children'])}#{else} {php echo unionUrl('memberactivity',array('categoryid'=>$row['id']))} {/if}">
+                            <i class="fa fa-envelope nav_icon">
+                            </i><span>{$row['catename']}</span>
+                            <span class="fa {if $_W['action']=='manage.memberactivity' && in_array($_GPC['categoryid'],$row['childrenids'])  } fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                            <div class="clearfix"></div>
+                        </a>
+                        {if !empty($row['children'])}
+                        <ul {if $_W['action']=='manage.memberactivity' && in_array($_GPC['categoryid'],$row['childrenids']) } style="display:block" {/if} >
+                        {loop $row['children'] $child}
+                        <li ><a href="{php echo unionUrl('memberactivity',array('categoryid'=>$child['id']))}">{$child['catename']}</a></li>
+                        {/loop}
+                         </ul>
+                    {/if}
+                    </li>
+                    {/loop}
+        {/if}
+            <!--
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>职工风采</span><span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                <ul>
+                    <li><a href="{php echo unionUrl('member/personnelmien')}">列表</a></li>
+                    <li><a href="{php echo unionUrl('member/personnelmien/add')}">添加</a></li>
+                </ul>
+            </li>
+            -->
+        {if ($_W['isoperator']==1 && in_array("suggestions",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li><a href="{php echo unionUrl('member/suggestions')}"><i class="fa fa-picture-o" aria-hidden="true"></i><span>建言献策</span><div class="clearfix"></div></a></li>
+        {/if}
+            <!--<li><a href="{php echo unionUrl('questionnaire')}"><i class="fa fa-bar-chart"></i><span>问卷调查</span><div class="clearfix"></div></a></li>
+            -->
+        {if ($_W['isoperator']==1 && in_array("venue",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>场馆预订</span><span class="fa {if $_W['action']=='manage.venue' || $_W['action']=='manage.venue.category'} fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                    <div class="clearfix"></div>
+                </a>
+                <ul {if $_W['action']=='manage.venue' || $_W['action']=='manage.venue.category' } style="display:block" {/if}>
+                    <li><a href="{php echo unionUrl('venue')}">场馆管理</a></li>
+                    <li><a href="{php echo unionUrl('venue/bookedlist')}">预订管理</a></li>
+                    <li><a href="{php echo unionUrl('venue/category')}">分类管理</a></li>
+                </ul>
+            </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("friendship",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>单身联谊</span><span class="fa {if $_W['action']=='manage.friendship'} fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span><div class="clearfix"></div></a>
+                <ul {if $_W['action']=='manage.friendship'} style="display:block" {/if}>
+                    <li><a href="{php echo unionUrl('friendship')}">征婚管理</a></li>
+                </ul>
+            </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("report",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+           <li>
+               <a href="#">
+                   <i class="fa fa-envelope nav_icon"></i><span>签到模块</span>
+                   <span class="fa {if $_W['action']=='manage.report.index'} fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                   <div class="clearfix"></div></a>
+               <ul {if $_W['action']=='manage.report.index'} style="display:block"{/if}>
+                   <li><a href="{php echo unionUrl('report/index')}">签到管理</a></li>
+
+               </ul>
+           </li>
+        {/if}
+            <!--
+                       <li>
+                           <a href="#">
+                               <i class="fa fa-envelope nav_icon"></i><span>活动签到</span><span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                           <ul>
+                               <li><a href="{php echo unionUrl('activity/index')}">活动列表</a></li>
+                               <li><a href="{php echo unionUrl('activity/add')}">活动添加</a></li>
+                           </ul>
+                       </li>
+                       -->
+        {if ($_W['isoperator']==1 && in_array("association",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}</span><span class="fa {if $_W['action']=="manage.association.index" || $_W['action']=="manage.association" || $_W['action']=="manage.association.memberlist" || $_W['action']=="manage.association.category"  } fa-angle-down{else}fa-angle-right {/if}" style="float: right"></span><div class="clearfix"></div></a>
+                <ul {if $_W['action']=="manage.association.index" || $_W['action']=="manage.association" || $_W['action']=="manage.association.memberlist" || $_W['action']=="manage.association.category"  } style="display:block" {/if} >
+                    <li><a href="{php echo unionUrl('association/index')}">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}管理</a></li>
+                    <li><a href="{php echo unionUrl('association/activity')}">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}活动</a></li>
+                    <li><a href="{php echo unionUrl('association/memberlist')}">{if isset($_W['asoconfig']) && !empty($_W['asoconfig']['title'])}{$_W['asoconfig']['title']}{else}兴趣小组{/if}人员</a></li>
+                    <li><a href="{php echo unionUrl('association/asconfig')}">通用配置</a></li>
+                </ul>
+            </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("quiz",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>竞赛调研</span>
+                    <span class="fa {if $_W['action']=="manage.quiz.index" || $_W['action']=="manage.quiz" || $_W['action']=="manage.quiz.activity" || $_W['action']=="manage.quiz.category"  } fa-angle-down{else}fa-angle-right {/if}" style="float: right">
+
+                    </span><div class="clearfix"></div></a>
+                <ul  {if $_W['action']=="manage.quiz.index" || $_W['action']=="manage.quiz" || $_W['action']=="manage.quiz.activity" || $_W['action']=="manage.quiz.category"  } style="display:block" {/if} >
+                    <li><a href="{php echo unionUrl('quiz/index')}">题库管理</a></li>
+                    <li><a href="{php echo unionUrl('quiz/activity')}">活动管理</a></li>
+                    <li><a href="{php echo unionUrl('quiz/category')}">分类管理</a></li>
+                </ul>
+            </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("vote",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li><a href="{php echo unionUrl('vote/index')}"><i class="fa fa-picture-o" aria-hidden="true"></i><span>投票活动</span><div class="clearfix"></div></a></li>
+        {/if}
+
+        {if ($_W['isoperator']==1 && in_array("welfare",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>福利管理</span>
+                    <span class="fa {if $_W['action']=="manage.welfare.index" || $_W['action']=="manage.welfare"}fa-angle-down{else}fa-angle-right{/if}" style="float: right"></span>
+                    <div class="clearfix"></div></a>
+                <ul {if $_W['action']=="manage.welfare.index" || $_W['action']=="manage.welfare"} style="display:block" {/if}>
+                    <li><a href="{php echo unionUrl('welfare/index',array('type'=>1))}">结婚</a></li>
+                    <li><a href="{php echo unionUrl('welfare/index',array('type'=>2))}">生育</a></li>
+                    <li><a href="{php echo unionUrl('welfare/index',array('type'=>3))}">住院</a></li>
+                    <li><a href="{php echo unionUrl('welfare/index',array('type'=>4))}">退休</a></li>
+                    <li><a href="{php echo unionUrl('welfare/index',array('type'=>5))}">丧葬</a></li>
+                    <li><a href="{php echo unionUrl('welfare/config')}">基础设置</a></li>
+                </ul>
+            </li>
+        {/if}
+            <!--
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>扶贫菜单</span><span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                <ul>
+                    <li><a href="{php echo unionUrl('poor')}">文章列表</a></li>
+                    <li><a href="{php echo unionUrl('poor/add')}">添加文章</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>医疗修养</span><span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                <ul>
+                    <li><a href="{php echo unionUrl('recuperation')}">疗养列表</a></li>
+                    <li><a href="{php echo unionUrl('recuperation/add')}">添加疗养内容</a></li>
+                </ul>
+            </li> -->
+        {if ($_W['isoperator']==1 && in_array("document",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i><span>文章管理</span><span class="fa {if $_W['action']=='manage.document'} fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span><div class="clearfix"></div></a>
+                <ul {if ($_W['action']=='manage.document' || $_W['action']=='manage.document.index')} style="display:block" {/if} >
+            <li ><a href="{php echo unionUrl('document',array('isindex'=>1))}">文章列表</a></li>
+            <li ><a href="{php echo unionUrl('document/category')}">分类管理</a></li>
+            <li ><a href="{php echo unionUrl('document/add')}">添加文章</a></li>
+            </ul>
+            </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("memberactivity",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+        <li>
+            <a href="#">
+                <i class="fa fa-envelope nav_icon"></i><span>活动模块</span>
+                <span class="fa  {if $_W['action']=='manage.memberactivity'} fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                <div class="clearfix"></div></a>
+            <ul {if $_W['action']=='manage.memberactivity'} style="display:block" {/if}>
+                <li><a href="{php echo unionUrl('memberactivity')}">活动管理</a></li>
+                <li><a href="{php echo unionUrl('memberactivity/category')}">分类管理</a></li>
+            </ul>
+        </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("ly",$_W['operator_key_rou'])) || (empty($_W['isoperator']) && ($_W['unionid']==6 || $_W['unionid']==9 || $_W['unionid']==3))}
+        <li>
+            <a href="#">
+                <i class="fa fa-envelope nav_icon"></i><span>疗养页面</span>
+                <span class="fa  {if strpos($_W['action'],'manage.ly')!==false} fa-angle-down  {else} fa-angle-right{/if}" style="float: right"></span>
+                <div class="clearfix"></div></a>
+            <ul {if strpos($_W['action'],'manage.ly')!==false} style="display:block"{/if}>
+            {if ($_W['isoperator']==1 && in_array("ly.advs",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                <li><a href="{php echo unionUrl('ly.advs')}">幻灯片管理</a></li>
+            {/if}
+
+                {if ($_W['isoperator']==1 && in_array("ly.lyaddress",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                    <li><a href="{php echo unionUrl('ly.lyaddress')}">疗养地点</a></li>
+                {/if}
+        {if ($_W['isoperator']==1 && in_array("ly.lyhotel",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                <li><a href="{php echo unionUrl('ly.lyhotel')}">疗养酒店</a></li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("ly.lyaddressline",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                <li><a href="{php echo unionUrl('ly.lyaddressline')}">精品线路</a></li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("ly.lynews",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                <li><a href="{php echo unionUrl('ly.lynews')}">动态资讯</a></li>
+        {/if}
+                {if ($_W['isoperator']==1 && in_array("ly.hotelorder",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                <li><a href="{php echo unionUrl('ly.hotelorder')}">订单管理</a></li>
+                {/if}
+        {if ($_W['isoperator']==1 && in_array("ly.member",$_W['operator_routes'])) || empty($_W['isoperator'])}
+                <li><a href="{php echo unionUrl('ly.member')}">管理员管理</a></li>
+        {/if}
+            </ul>
+        </li>
+        {/if}
+        {if ($_W['isoperator']==1 && in_array("union_menu",$_W['operator_key_rou'])) || empty($_W['isoperator'])}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope nav_icon"></i>
+                    <span>系统设置</span>
+                    <span class="fa {if $_W['action']=="manage.union_menu" ||  $_W['action']=="manage.union_config" ||  $_W['action']=="manage.adv" ||  $_W['action']=="manage.union_menu.secondlevel" }fa-angle-down{else}fa-angle-right{/if}" style="float: right"></span>
+                    <div class="clearfix"></div>
+                </a>
+                <ul {if $_W['action']=="manage.union_menu" ||  $_W['action']=="manage.sms_all" ||  $_W['action']=="manage.union_config" ||  $_W['action']=="manage.adv" ||  $_W['action']=="manage.union_menu.secondlevel" } style="display:block" {/if} >
+                    <li><a href="{php echo unionUrl('union_config')}">单位管理</a></li>
+                    <li><a href="{php echo unionUrl('sms_all')}">短信群发</a></li>
+                    <li><a href="{php echo unionUrl('adv')}">首页幻灯片</a></li>
+                    <li><a href="{php echo unionUrl('union_menu')}">首页菜单管理</a></li>
+                    <li><a href="{php echo unionUrl('union_menu/secondlevel')}">首页二级模块管理</a></li>
+                    <li><a href="{php echo unionUrl('union_menu/examine')}">审核流程</a></li>
+
+                </ul>
+            </li>
+        {/if}
+
+        </ul>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="copyrights">
+    <p>Copyright &copy; 2019 <a href="" title="购全球">购全球</a> - <a href="" title="购全球" >购全球</a></p>
+</div>
+<script>
+    require(['jquery'],function(){
+        $("#menu li a").click(function (e) {
+            e.stopPropagation();    //  阻止事件冒泡
+            if($(this).next("ul").is(":hidden")){
+                $(this).children(".fa-angle-right").addClass("fa-angle-down");
+                $(this).children(".fa-angle-right").removeClass("fa-angle-right");
+            }else{
+                $(this).children(".fa-angle-down").addClass("fa-angle-right");
+                $(this).children(".fa-angle-down").removeClass("fa-angle-down");
+            }
+
+            $(this).next("ul").toggle(500);
+        })
+    })
+
+</script>
+</div>

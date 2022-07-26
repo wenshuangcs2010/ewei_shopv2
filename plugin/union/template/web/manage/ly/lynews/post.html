@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{template 'header'}
+</head>
+
+
+<style>
+	.layui-form-selected dl {
+		z-index: 9999999;
+	}
+</style>
+<body>
+   <div class="page-container">
+   <!--/content-inner-->
+<div class="left-content">
+	   <div class="mother-grid-inner">
+              <!--header start here-->
+		   {template 'header_main'}
+<!--heder end here-->
+	<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{php echo unionUrl('index')}">首页</a><i class="fa fa-angle-right"></i>疗养模块 <i class="fa fa-angle-right"></i> 动态资讯</li>
+            </ol>
+		   <div class="panel1 panel-widget top-grids" style="padding:0">
+			   <div class="col-adjust-10">
+				   <div class="ibox-title">
+					   <h5>添加新动态资讯</h5>
+
+				   </div>
+			   </div>
+		   </div>
+  		<div class="grid-form1">
+
+  	         <div class="tab-content">
+						<div class="tab-pane active" id="horizontal-form">
+							<form action="" method="post" class=" layui-form form-horizontal">
+
+								<input type="hidden" name="i"  value="{$_W['uniacid']}" />
+
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">标题</label>
+									<div class="col-sm-8">
+										<input type="text" name="title" value="{$vo['title']}" class="form-control1" required=""  placeholder="请输入标题">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是文章标题!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="focusedinput" class="col-sm-2 control-label">文章来源</label>
+									<div class="col-sm-8">
+										<input type="text" name="newstitle" value="{$vo['newstitle']}" class="form-control1" required=""  placeholder="请输入文章来源">
+									</div>
+									<div class="col-sm-2">
+										<p class="help-block">这里是文章来源!</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="radio" class="col-sm-2 control-label">是否展示</label>
+									<div class="col-sm-8">
+										<div class="radio-inline"><label><input name="status"  value="0" {if empty($vo) ||  $vo['status'] ==0} checked {/if} type="radio"> 否</label></div>
+										<div class="radio-inline"><label><input  name="status" value="1"  {if isset($vo) && $vo['status'] ==1 } checked="" {/if} type="radio">是</label></div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="disabledinput" class="col-sm-2 control-label">内容</label>
+									<div class="col-md-8">
+										<textarea id="editor" name='description'>{$vo['description']}</textarea>
+									</div>
+								</div>
+
+
+
+
+								<div class="panel-footer">
+									<div class="row">
+										<div class="col-sm-8 col-sm-offset-2">
+											{if isset($vo['id'])}<input type='hidden' value="{$vo['id']}" name='id'/>{/if}
+											<button id="btnsubmit" class="btn-primary btn">提交</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+ 	</div>
+ 	<!--//grid-->
+
+<!--inner block start here-->
+<div class="inner-block">
+
+</div>
+<!--inner block end here-->
+<!--copy rights start here-->
+		   {template 'footer'}
+<!--COPY rights end here-->
+</div>
+</div>
+   </div>
+  <!--//content-inner-->
+		<!--/sidebar-menu-->
+	   {template 'sidebar_menu'}
+
+</body>
+
+<style>
+	.ww_groupSelBtn_item_text{
+		margin-left: 6px;
+		border: 1px solid;
+		background-color: #F0f0f0;
+	}
+	.ww_groupSelBtn_item{
+
+	}
+</style>
+
+<script type="text/javascript" src="{php echo EWEI_SHOPV2_LOCAL}/plugin/union/template/web/manage/js/user/motab.js"></script>
+<script type="text/javascript">
+
+
+
+    require(['jquery','ueditor'], function () {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#endtime',
+                type: 'datetime'
+            });
+		})
+		$("#btnsubmit").click(function () {
+		    	if($("input[name='ishot'][checked]").val()==1 && ($("#endtime").val()=="" ||  $("#endtime").val()==0)){
+                    layer.alert('请选择热点推荐结束时间');
+                    return false;
+				}
+        })
+
+        var ue = UE.getEditor('editor');
+        $('input:radio[name="peopletype"]').click(function(){
+            var checkValue = $('input:radio[name="peopletype"]:checked').val();
+            if(checkValue==1){
+				$("#peopleid").show();
+			}else{
+                $("#peopleid").hide();
+			}
+
+        });
+        $('input:radio[name="show_type"]').click(function(){
+            var checkValue = $('input:radio[name="show_type"]:checked').val();
+            if(checkValue==1){
+                $("#show_type").show();
+            }else{
+                $("#show_type").hide();
+            }
+
+        });
+        if( $('input:radio[name="peopletype"]:checked').val()==1){
+            $("#peopleid").show();
+
+		}
+        if( $('input:radio[name="show_type"]:checked').val()==1){
+            $("#show_type").show();
+            $('#show_typevalue').select2({
+                search: true,
+                placeholder: "请选择接工会不选择将会发送到全部直属下级",
+                allowClear: true
+            });
+        }
+
+
+    });
+
+</script>
+</html>
