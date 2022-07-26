@@ -141,7 +141,8 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 $wechat = m('common')->wechat_build($params, $options, 0);
 //                if($_W['openid']=="oIeNnwzHrT6vXpiIUss3l5lt_W2w"){
 //                    var_dump($options);
-//                die();
+//                    var_dump($wechat);
+//                    die();
 //                }
                 if (!is_error($wechat)) {
                     $wechat['success'] = true;
@@ -188,6 +189,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 }
 
                 $wechat = m('common')->wechat_native_build($params, $options, 0);
+
                 if (!is_error($wechat)) {
                     $wechat['success'] = true;
                     if (!empty($params['openid'])){

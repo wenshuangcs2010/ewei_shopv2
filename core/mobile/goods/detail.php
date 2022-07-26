@@ -71,26 +71,23 @@ class Detail_EweiShopV2Page extends MobilePage {
             $creditsuccess=true;
         }
         if($_W['uniacid']==DIS_ACCOUNT && !empty($goods['goodssn'])){
+            if($depot_info['id']==118){
+                $goods['total']=m("k3cloud")->get_stock($goods['goodssn'],$goods['id'],$goods['total']);
+            }
 
-           // $ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
-           if(!empty($ret)){
-                if($ret['if_show']==0){
-                    $goods['total']=0;
-                }else{
-                  $goods['total']=$ret['stock'];
-                }
-           }
         }
         if($goods['disgoods_id']>0 && !empty($goods['goodssn'])){
-            
-            //$ret=m("cnbuyerdb")->get_stock($goods['goodssn']);
-//            if(!empty($ret)){
-//                if($ret['if_show']==0){
-//                    $goods['total']=0;
-//                }else{
-//                    $goods['total']=$ret['stock'];
-//                }
-//            }
+            //检查主商品状态
+            $parentgoods=pdo_fetch("select status,total from ".tablename('ewei_shop_goods')." where id=:disid",array(':disid'=>$goods['disgoods_id']));
+            if($parentgoods['status']!=1 && $parentgoods['status']!=$goods['status']){
+                $goods['total']=0;//主商品状态异常标记为异常
+                pdo_update('ewei_shop_goods',array('status'=>$parentgoods['status']),array("id"=>$goods['id']));
+            }
+            if($parentgoods['total']<=0 && $parentgoods['total']!=$goods['total']){
+                $goods['total']=0;//主商品状态异常标记为异常
+                pdo_update('ewei_shop_goods',array('total'=>$parentgoods['total']),array("id"=>$goods['id']));
+            }
+
         }
 
         $merchid = $goods['merchid'];
@@ -323,7 +320,7 @@ class Detail_EweiShopV2Page extends MobilePage {
 
         //是否可以加入购物车
         $canAddCart = true;
-        if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund']) || !empty($is_task_goods) || !empty($gifts)) {
+        if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || $goods['cannotcart']==1 || !empty($goods['cannotrefund']) || !empty($is_task_goods) || !empty($gifts)) {
             $canAddCart = false;
             //var_dump($goods['cannotrefund']);
         }

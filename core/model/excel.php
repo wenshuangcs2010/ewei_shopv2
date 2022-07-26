@@ -28,6 +28,51 @@ class Excel_EweiShopV2Model {
         return $this->column_str($key) . $columnnum;
     }
 
+
+    //导出带文件标题的exec
+
+    function export_title($list,$title, $params = array()){
+
+        require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel.php';
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->getProperties()->setCreator("单位工会会员")->setLastModifiedBy("单位工会会员")->setTitle("Office 2007 XLSX Test Document")->setSubject("Office 2007 XLSX Test Document")->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")->setKeywords("office 2007 openxml php")->setCategory("report file");
+        $sheet = $objPHPExcel->setActiveSheetIndex(0);
+
+        $sheet->mergeCells('A1:L1');
+        $sheet->setCellValue('A1', $title);
+        $sheet->getStyle('A1')->getFont()->setBold(true);
+        $sheet->getStyle('A1')->getFont()->setSize(20);
+        $sheet->getStyle('A1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $rownum = 2;
+        foreach ($params['columns'] as $key => $column) {
+            $sheet->setCellValue($this->column($key, $rownum), $column['title']);
+            if (!empty($column['width'])) {
+                $sheet->getColumnDimension($this->column_str($key))->setWidth($column['width']);
+            }
+        }
+        $rownum++;
+        $len = count($params['columns']);;
+        foreach ($list as $row) {
+
+            for ($i = 0; $i < $len; $i++) {
+                $value = isset($row[$params['columns'][$i]['field']])?$row[$params['columns'][$i]['field']]:'';
+                $sheet->setCellValueExplicit($this->column($i, $rownum), $value,PHPExcel_Cell_DataType::TYPE_STRING);
+            }
+            $rownum++;
+        }
+        $filename="单位工会会员";
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment;filename="' .$filename . '.xls"');
+        header('Cache-Control: max-age=0');
+        $writer = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $writer->save('php://output');
+        exit;
+    }
+
+
+
+
     /**
      * 导出Excel
      * @param type $list
@@ -50,7 +95,7 @@ class Excel_EweiShopV2Model {
         foreach ($params['columns'] as $key => $column) {
             $sheet->setCellValue($this->column($key, $rownum), $column['title']);
             if (!empty($column['width'])) {
-                $sheet->getColumnDimension($this->column_str($key))->setWidth($column['width']);
+                $sheet->getColumnDimension($this->column_str($key))->setWidth($column['width'])->setAR;
             }
         }
         $rownum++;
@@ -72,6 +117,8 @@ class Excel_EweiShopV2Model {
         // $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         // $writer->save('php://output');
         //2003格式
+
+
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment;filename="' .$filename . '.xls"');
         header('Cache-Control: max-age=0');
@@ -164,6 +211,58 @@ class Excel_EweiShopV2Model {
         $highestColumnCount= PHPExcel_Cell::columnIndexFromString($highestColumn);
         $values = array();
         for ($row = 2;$row <= $highestRow;$row++)
+        {
+            $rowValue = array();
+            //注意highestColumnIndex的列数索引从0开始
+            for ($col = 0;$col < $highestColumnCount;$col++)
+            {
+                $rowValue[] = $sheet->getCellByColumnAndRow($col, $row)->getValue();
+            }
+            $values[] = $rowValue;
+        }
+        return $values;
+    }
+
+    public function  importall($excefile){
+
+        global $_W;
+        require_once  IA_ROOT . '/framework/library/phpexcel/PHPExcel.php';
+        require_once  IA_ROOT . '/framework/library/phpexcel/PHPExcel/IOFactory.php';
+        require_once  IA_ROOT . '/framework/library/phpexcel/PHPExcel/Reader/Excel5.php';
+
+        $path  = IA_ROOT."/addons/ewei_shop/data/tmp/";
+        if(!is_dir($path)){
+            load()->func('file');
+            mkdirs($path,'0777');
+        }
+
+        $filename = $_FILES[$excefile]['name'];
+        $tmpname = $_FILES[$excefile]['tmp_name'];
+        if(empty($tmpname)){
+            message('请选择要上传的Excel文件!','','error');
+        }
+        $ext =  strtolower( pathinfo($filename, PATHINFO_EXTENSION) );
+        if($ext!='xlsx' && $ext!='xls'){
+            message('请上传 xls 或 xlsx 格式的Excel文件!','','error');
+        }
+
+        $file = time().$_W['uniacid'].".".$ext;
+        $uploadfile = $path.$file;
+
+        $result  = move_uploaded_file($tmpname,$uploadfile);
+        if(!$result){
+            message('上传Excel 文件失败, 请重新上传!','','error');
+        }
+
+        $reader = PHPExcel_IOFactory::createReader($ext=='xls'?'Excel5':'Excel2007');//use excel2007 for 2007 format
+
+        $excel = $reader->load($uploadfile);
+        $sheet = $excel->getActiveSheet();
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnCount= PHPExcel_Cell::columnIndexFromString($highestColumn);
+        $values = array();
+        for ($row = 1;$row <= $highestRow;$row++)
         {
             $rowValue = array();
             //注意highestColumnIndex的列数索引从0开始

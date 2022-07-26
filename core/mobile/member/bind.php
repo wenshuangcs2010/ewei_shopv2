@@ -60,6 +60,7 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 
             if(empty($member2)){
                 $salt = m('account')->getSalt();
+
                 $this->update($member['id'], array('mobile'=>$mobile, 'pwd'=>md5($pwd.$salt), 'salt'=>$salt, 'mobileverify'=>1));
 
                 unset($_SESSION[$key]);

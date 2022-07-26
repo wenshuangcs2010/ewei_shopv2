@@ -11,6 +11,10 @@ if (!defined('IN_IA')) {
 
 class Index_EweiShopV2Page extends MobilePage {
 
+    function certificate(){
+        include $this->template("certificate");
+    }
+
 	function main() {
 		global $_W, $_GPC;
 	

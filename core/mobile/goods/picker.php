@@ -45,10 +45,18 @@ class Picker_EweiShopV2Page extends MobilePage {
 
 
         //商品
-        $goods = pdo_fetch('select id,thumb,title,marketprice,isdiscount_stat_time,total,maxbuy,minbuy,unit,hasoption,isnodiscount,discounts,showtotal,diyformid,diyformtype,diyfields,isdiscount,isdiscount_time,isdiscount_discounts, needfollow, followtip, followurl, type, isverify, maxprice, minprice, merchsale from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        $goods = pdo_fetch('select id,thumb,title,depotid,marketprice,cannotcart,isdiscount_stat_time,total,maxbuy,minbuy,unit,hasoption,isnodiscount,discounts,showtotal,diyformid,diyformtype,diyfields,isdiscount,isdiscount_time,isdiscount_discounts, needfollow, followtip, followurl, type, isverify, maxprice, minprice, merchsale from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
         if (empty($goods)) {
             show_json(0);
         }
+
+        if($_W['uniacid']==DIS_ACCOUNT && !empty($goods['goodssn'])){
+            $depot_info=pdo_fetch("select * from ".tablename("ewei_shop_depot")." where id=:depotid",array(":depotid"=>$goods['depotid']));
+            if($depot_info['id']==118){
+                $goods['total']=m("k3cloud")->get_stock($goods['goodssn'],$goods['id'],$goods['total']);
+            }
+        }
+
         $goods = set_medias($goods, 'thumb');
         $cartdata = pdo_fetch("select id,total,diyformid from " . tablename('ewei_shop_member_cart') . ' where goodsid=:id and openid=:openid and   optionid=:optionid  and deleted=0 and  uniacid=:uniacid   limit 1', array(
             ':uniacid' => $_W['uniacid'],
@@ -275,7 +283,7 @@ class Picker_EweiShopV2Page extends MobilePage {
 
         //是否可以加入购物车
         $goods['canAddCart'] = true;
-        if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund'])) {
+        if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3 || $goods['type'] == 20 || !empty($goods['cannotrefund']) || $goods['cannotcart']==1) {
             $goods['canAddCart'] = false;
         }
    

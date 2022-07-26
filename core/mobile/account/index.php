@@ -49,6 +49,7 @@ class Index_EweiShopV2Page extends MobilePage
             if(md5($pwd.$member['salt'])!==$member['pwd']){
                 show_json(0, '用户或密码错误');
             }
+
             m('account')->setLogin($member);
             show_json(1, '登录成功');
         }

@@ -76,12 +76,39 @@ class Uploader_EweiShopV2Page extends MobilePage
         $_W['uploadsetting']['image']['folder'] = $path;
         $_W['uploadsetting']['image']['extentions'] = $_W['config']['upload']['image']['extentions'];
         $_W['uploadsetting']['image']['limit'] = $_W['config']['upload']['image']['limit'];
+
+
+
         $file = file_upload($uploadfile, 'image');
         if (is_error($file)) {
             $result['message'] = $file['message'];
             return $result;
         }
 
+        if(function_exists("exif_read_data")){
+
+            $base64_data =file_get_contents(ATTACHMENT_ROOT.$file['path']);
+            $image= imagecreatefromstring($base64_data);
+            if($image!=false){
+                $exif = @exif_read_data(ATTACHMENT_ROOT.$file['path']);
+                if (!empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 8:
+                            $image = imagerotate($image, 90, 0);
+                            break;
+                        case 3:
+                            $image = imagerotate($image, 180, 0);
+                            break;
+                        case 6:
+                            $image = imagerotate($image, -90, 0);
+                            break;
+                    }
+                    imagejpeg($image, ATTACHMENT_ROOT.$file['path']);
+                    imagedestroy($image);
+                }
+            }
+
+        }
         //判断远程
         if (function_exists('file_remote_upload')) {
             $remote = file_remote_upload($file['path']);

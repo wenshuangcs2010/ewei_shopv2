@@ -96,6 +96,7 @@ class Index_EweiShopV2Page extends MobilePage {
 			'keywords' => trim($_GPC['keywords']),
 			'cate' => trim($_GPC['cate']),
 			'order' => trim($_GPC['order']),
+            'depotid' => trim($_GPC['depotid']),
 			'by' => trim($_GPC['by'])
 		);
 		if(!empty($args['keywords'])){
@@ -129,6 +130,7 @@ class Index_EweiShopV2Page extends MobilePage {
 			'keywords' => trim($_GPC['keywords']),
 			'cate' => trim($_GPC['cate']),
 			'order' => trim($_GPC['order']),
+            'depotid' => trim($_GPC['depotid']),
 			'by' => trim($_GPC['by'])
 		);
 		$this->_condition($args);
@@ -159,7 +161,7 @@ class Index_EweiShopV2Page extends MobilePage {
             if( $set['pay']['credit'] == 1){
                 $good['creditsuccess']=1;
             }
-
+          
             if(in_array($good['depotid'],$idlist)){
                 $good['creditsuccess']=0;
             }

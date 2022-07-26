@@ -2404,19 +2404,14 @@ class Create_EweiShopV2Page extends MobileLoginPage
                 show_json(0, '姓名和身份证必须填写');
             }
             //验证身份实名
-            // $realname=addslashes(trim($realname));
-            // $idcardno=addslashes(trim($imid));
-            // $returndata=m("kjb2c")->isRealname($realname,$imid);
-            // if(!$returndata){
-            //     show_json(0, '姓名和身份证格式错误');
-            // }
-            // if($returndata['isverify']==-2){
-            //     show_json(0, $returndata['responseMessage']);
-            // }
-       
-            // if($returndata['isverify']){
-            //     show_json(0, "实名认证错误");
-            // }
+             $realname=addslashes(trim($realname));
+             $idcardno=addslashes(trim($imid));
+//             $returndata=m("idcard")->init($realname,$idcardno)->validation();
+//             if(!is_null($returndata)){
+//                if($returndata['errno']==500){
+//                    show_json(0, $returndata['message']);
+//                }
+//            }
         }
         if ($is_openmerch == 1) {
             //读取多商户营销设置

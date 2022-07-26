@@ -160,6 +160,11 @@ class Goods_EweiShopV2Model {
         if (!empty($ishot)) {
             $condition.=" and ishot=1";
         }
+        //仓库
+        $depotid =$args['depotid'];
+        if (!empty($depotid) && is_numeric($depotid)) {
+            $condition.=" and depotid=".$depotid;
+        }
         //推荐
         $isrecommand = !empty($args['isrecommand']) ? 1 : 0;
         if (!empty($isrecommand)) {
