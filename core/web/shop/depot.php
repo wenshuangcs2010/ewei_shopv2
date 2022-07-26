@@ -31,6 +31,19 @@ class Depot_EweiShopV2Page extends WebPage {
         include $this->template();
     }
 
+    /**
+     * 同步商品和更新图片数据
+     */
+    function get_goods(){
+        global $_W, $_GPC;
+        $depotid=$_GPC['id'];
+        $depot=Dispage::getDepot($_GPC['id']);
+        $return=m("httpUtil")->updatecnbuyergoods($depot);
+        if(is_string($return)){
+            show_json(0,$return);
+        }
+        show_json(1);
+    }
     function add() {
         $this->post();
     }
@@ -55,6 +68,9 @@ class Depot_EweiShopV2Page extends WebPage {
         }
         elseif($depot['updateid']==2){
             m("httpUtil")->updateAdStock($_GPC['id'],$depot['storeroomid']);
+            show_json(1);
+        }elseif($depot['updateid']==3){
+            m("httpUtil")->updateOmsStock($depot['id']);
             show_json(1);
         }
         show_json(0,'此仓库无法更新');
@@ -86,6 +102,7 @@ class Depot_EweiShopV2Page extends WebPage {
             $data['ismygoods']=intval($_GPC['ismygoods']);
             if($data['if_customs']){
                 $data['customs_place'] = trim($_GPC['customs_place']);
+                $data['wx_customs_place'] = trim($_GPC['wx_customs_place']);
                 $data['customs_code'] = trim($_GPC['customs_code']);
                 $data['customs_name'] = trim($_GPC['customs_name']);
             }

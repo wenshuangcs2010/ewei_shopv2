@@ -144,7 +144,7 @@ class Realtimedataupload_EweiShopV2Model
             $goods[]=array(
                 'gname'=>$goods_tem['title'],
                 //'gname'=>"lhy-gnsku2",
-                'itemLink'=>"http://wx.lylife.com.cn/app/index.php?i=5&c=entry&m=ewei_shopv2&do=mobile&r=goods.detail&id={$goods_tem['id']}",
+                'itemLink'=>"http://wx.lylife.com.cn/app/index.php?i=5&c=entry&m=ewei_shopv2&do=mobile&r=goods.detail&id={$goods_tem['goodsid']}",
             );
         }
 

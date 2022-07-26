@@ -150,6 +150,8 @@ class Order_EweiShopV2Model
                                 $ret=m("kjb2c")->sendOmsorder($orderid);
                                 WeUtility::logging('log_ret_oms', var_export($ret,true));
                             }
+                        }elseif( $order['isdisorder']==0 && $depot['ismygoods']==1 && $depot['updateid']==3){
+                            $ret=m("kjb2c")->sendOmsorder($orderid);
                         }
                         if($order['isdisorder']==1 && $disInfo['secondpay']==0){
                             if($depot['ismygoods']==1 && $depot['updateid']==1){
@@ -159,6 +161,7 @@ class Order_EweiShopV2Model
                                 $ret=m("kjb2c")->sendOmsorder($orderid);
                             }
                         }
+
                         if($order['isdisorder']==1){
                              m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
                         }
@@ -521,10 +524,10 @@ class Order_EweiShopV2Model
                                     if(empty($value['goodssn'])){
                                         continue;
                                     }
-                                    m("cnbuyerdb")->updateCnbuyerStock($value['goodssn'],$value['total']);//原始保税库存更新
+                                   // m("cnbuyerdb")->updateCnbuyerStock($value['goodssn'],$value['total']);//原始保税库存更新
                                 }
                             }else{
-                                m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],$g['total']);//原始保税库存更新
+                               // m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],$g['total']);//原始保税库存更新
                             }
                         }
                     } else if ($stocktype == -1) {
@@ -538,10 +541,10 @@ class Order_EweiShopV2Model
                                     if(empty($value['goodssn'])){
                                         continue;
                                     }
-                                    m("cnbuyerdb")->updateCnbuyerStock($value['goodssn'],-$value['total']);//原始保税库存更新
+                                  //  m("cnbuyerdb")->updateCnbuyerStock($value['goodssn'],-$value['total']);//原始保税库存更新
                                 }
                             }else{
-                                m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],-$g['total']);//原始保税库存更新
+                               // m("cnbuyerdb")->updateCnbuyerStock($g['goodssn'],-$g['total']);//原始保税库存更新
                             }
                         }
                     }

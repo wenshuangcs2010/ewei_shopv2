@@ -222,7 +222,7 @@ class Refund_EweiShopV2Page extends WebPage {
                 if (is_error($result)) {
                     show_json(0,$result['message']);
                  }
-
+                /*
                 //计算订单中商品累计赠送的积分
                 $credits = m('order')->getGoodsCredit($goods);
 
@@ -230,7 +230,7 @@ class Refund_EweiShopV2Page extends WebPage {
                 if($credits>0){
                     m('member')->setCredit($item['openid'], 'credit1', -$credits, array(0, $shopset['name'] . "退款扣除购物赠送积分: {$credits} 订单号: " . $item['ordersn']));
                 }
-
+                */
                 //返还抵扣积分
                 if ($item['deductcredit'] > 0) {
                     m('member')->setCredit($item['openid'], 'credit1', $item['deductcredit'], array('0', $shopset['name'] . "购物返还抵扣积分 积分: {$item['deductcredit']} 抵扣金额: {$item['deductprice']} 订单号: {$item['ordersn']}"));
@@ -259,6 +259,9 @@ class Refund_EweiShopV2Page extends WebPage {
 
                 //处理赠送余额情况
                 m('order')->setGiveBalance($item['id'], 2);
+
+                //处理订单库存及用户积分情况(赠送积分)
+                m('order')->setStocksAndCredits($item['id'], 2);
 
                 if ($refund['orderprice'] == $refund['applyprice']) {
                     //退还优惠券
@@ -335,7 +338,7 @@ class Refund_EweiShopV2Page extends WebPage {
 
                 $goods = pdo_fetchall("SELECT g.id,g.credit, o.total,o.realprice FROM " . tablename('ewei_shop_order_goods') .
                     " o left join " . tablename('ewei_shop_goods') . " g on o.goodsid=g.id " . " WHERE o.orderid=:orderid and o.uniacid=:uniacid", array(':orderid' => $item['id'], ':uniacid' => $uniacid));
-
+                /*
                 //计算订单中商品累计赠送的积分
                 $credits = m('order')->getGoodsCredit($goods);
 
@@ -343,7 +346,9 @@ class Refund_EweiShopV2Page extends WebPage {
                 if($credits>0){
                     m('member')->setCredit($item['openid'], 'credit1', -$credits, array(0, $shopset['name'] . "退款扣除购物赠送积分: {$credits} 订单号: " . $item['ordersn']));
                 }
-
+                */
+                //处理订单库存及用户积分情况(赠送积分)
+                m('order')->setStocksAndCredits($item['id'], 2);
                 //更新实际销量
                 foreach ($goods as $g) {
                     //实际销量

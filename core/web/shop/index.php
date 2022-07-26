@@ -14,7 +14,12 @@ class Index_EweiShopV2Page extends WebPage {
    function main()
     {
         global $_W;
-        
+        if($_W['uniacid']!=DIS_ACCOUNT){
+            $loginurl = webUrl('union');
+            header('location: ' . $loginurl);
+            exit();
+        }
+
         $shop_data = m('common')->getSysset('shop');
 
         //多商户

@@ -73,12 +73,15 @@ class EweiShopWechatPay
     public function __construct($get)
     {
         global $_W;
+
         $this->get = $get;
         $strs = explode(':', $this->get['attach']);
         $this->type = intval($strs[1]); //类型 0 购物 1 充值 2积分兑换 3 积分兑换运费 4 优惠券购买 5 拼团 11门店充值积分 12门店消费 13收银台
         $this->total_fee= round($this->get['total_fee']/100,2);
         $_W['uniacid'] = $_W['weid'] = intval($strs[0]);
+
         $this->init();
+
     }
 
     public function success()
@@ -103,6 +106,7 @@ class EweiShopWechatPay
     public function init()
     {
         if ($this->type == '0'){
+
             $this->order();
         }elseif ($this->type == '1'){
             $this->recharge();
@@ -132,10 +136,13 @@ class EweiShopWechatPay
      */
     public function order()
     {
-        
+
         if (!$this->publicMethod()){
+
             exit(__FUNCTION__);
+
         }
+
         $tid = $this->get['out_trade_no'];
 
         $isborrow = 0;
@@ -436,6 +443,7 @@ class EweiShopWechatPay
         
         $this->set = m('common')->getSysset(array('shop', 'pay'));
         $this->setting = uni_setting($_W['uniacid'], array('payment'));
+
         $isdisorder=0;
         if (is_array($this->setting['payment']) || $this->set['pay']['weixin_jie'] == 1 || $this->set['pay']['weixin_sub'] ==1 || $this->set['pay']['weixin_jie_sub'] ==1 || $this->get['trade_type']=='APP') {
             
@@ -522,6 +530,7 @@ class EweiShopWechatPay
                 }
             }
         }
+
         return false;
 
     }

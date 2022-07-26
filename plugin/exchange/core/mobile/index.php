@@ -9,11 +9,13 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
+
 		$codetype = intval($_GPC['codetype']);
 		$key = trim($_GPC['key']);
 		$all = 0;
 		$all = intval($_GPC['all']);
 		$id = intval($_GPC['id']);
+
 		if (!(empty($all)) && !(empty($codetype))) 
 		{
 			include $this->template('exchange/common');
@@ -509,7 +511,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$record = array('key' => $key, 'uniacid' => $_W['uniacid'], 'coupon' => $record_coupon, 'time' => time(), 'openid' => $_W['openid'], 'nickname' => $info['nickname'], 'mode' => 5, 'title' => $groupResult['title'], 'groupid' => $groupResult['id'], 'serial' => $codeResult['serial']);
 			pdo_insert('ewei_shop_exchange_record', $record);
 			pdo_query('UPDATE ' . $table1 . ' SET `use` = `use` + 1 WHERE id = :id AND uniacid = :uniacid', array(':id' => $groupResult['id'], ':uniacid' => $_W['uniacid']));
-			show_json(1, '兑换成功');
+			show_json(1, array('message'=>'兑换成功','url'=>mobileUrl("sale.coupon.my"),'type'=>'coupon'));
 			$this->message('兑换成功');
 		}
 		else 
@@ -847,6 +849,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				$this->message('你的兑换码不能兑换优惠券');
 			}
 			$checkSubmit = $this->checkSubmit('exchange_plugin');
+
 			if (is_error($checkSubmit)) 
 			{
 				show_json(0, $checkSubmit['message']);
@@ -1416,5 +1419,41 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			show_json(0, '错误次数太多,' . ($set['freeze'] * 86400) . '秒后再试');
 		}
 	}
+
+
+    function checkSubmit($key, $time = 2, $message = '操作频繁，请稍后再试!')
+    {
+
+        global $_W;
+        $open_redis = function_exists('redis') && !is_error(redis());
+        if ($open_redis) {
+            $redis_key = "{$_W['setting']['site']['key']}_{$_W['account']['key']}_{$_W['uniacid']}_{$_W['openid']}_mobilesubmit_{$key}";
+            $redis = redis();
+            if ($redis->setnx($redis_key, time())) {
+                $redis->expireAt($redis_key, time() + $time);
+            } else {
+                return error(-1, $message);
+            }
+        }
+        return true;
+
+    }
+    function checkSubmitGlobal($key, $time = 2, $message = '操作频繁，请稍后再试!')
+    {
+
+        global $_W;
+        $open_redis = function_exists('redis') && !is_error(redis());
+        if ($open_redis) {
+            $redis_key = "{$_W['setting']['site']['key']}_{$_W['account']['key']}_{$_W['uniacid']}_mobilesubmit_{$key}";
+            $redis = redis();
+            if ($redis->setnx($redis_key, time())) {
+                $redis->expireAt($redis_key, time() + $time);
+            } else {
+                return error(-1, $message);
+            }
+        }
+        return true;
+
+    }
 }
 ?>

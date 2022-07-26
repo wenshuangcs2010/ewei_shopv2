@@ -14,11 +14,33 @@ class Index_EweiShopV2Page extends WebPage {
 
    function test11(){
         global $_W, $_GPC;
-        //$order=pdo_fetch("SELECT * FROM ".tablename($order_table)." where id=:id",array(":id"=>43490));
-      $ret= m("realTimeDataUpload")->init("SHCG120811324587",22);
-        var_dump($ret);
-   }
+       //购物积分
+       $goods = pdo_fetchall("SELECT g.id,g.credit, o.total,o.realprice FROM " . tablename('ewei_shop_order_goods') .
+           " o left join " . tablename('ewei_shop_goods') . " g on o.goodsid=g.id " . " WHERE o.orderid=:orderid and o.uniacid=:uniacid", array(':orderid' =>117382, ':uniacid' => $_W['uniacid']));
+      var_dump($goods);
 
+       $credits = 0;
+
+       foreach ($goods as $g) {
+           //积分累计
+           $gcredit = trim($g['credit']);
+           var_dump($gcredit);
+           if (!empty($gcredit)) {
+               if (strexists($gcredit, '%')) {
+                   //按比例计算
+                   $credits += intval(floatval(str_replace('%', '', $gcredit)) / 100 * $g['realprice']);
+               } else {
+                   //按固定值计算
+                   $credits += intval($g['credit']) * $g['total'];
+               }
+           }
+       }
+        die();
+   }
+    function test(){
+        global $_W, $_GPC;
+        var_dump($_GPC);
+    }
     function main() {
 
         global $_W, $_GPC;
@@ -133,6 +155,7 @@ class Index_EweiShopV2Page extends WebPage {
         //var_dump($levels);
         //wsq 代理等级
         $reseller=pdo_fetchall("SELECT * from ".tablename("ewei_shop_reseller"));
+        //$reseller=array();
         //wsq 代理价格
         $goodsresel=pdo_fetchall("SELECT * from ".tablename("ewei_shop_goodsresel"));
         $t=array();
@@ -148,7 +171,7 @@ class Index_EweiShopV2Page extends WebPage {
                 $de[$value['id']]=$value['title'];
             }
             $categorys = m('shop')->getFullCategory(true);
-            $sql = 'SELECT g.id,g.unit,g.isdis,g.title,g.goodssn,g.productsn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.consumption_tax,g.vat_rate,g.subtitle,g.keywords,g.displayorder FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
+            $sql = 'SELECT g.id,g.unit,g.productprice,g.costprice,g.isdis,g.title,g.goodssn,g.productsn,g.sales,g.total,g.ccates,g.thumb,g.depotid,g.marketprice,g.discounts,g.disgoods_id,g.consumption_tax,g.vat_rate,g.subtitle,g.keywords,g.displayorder,g.isdiscount_discounts FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC';
             $goodslist=pdo_fetchall($sql,$params);
             $categorystemp=array();
             foreach ($categorys as $r) {
@@ -172,19 +195,13 @@ class Index_EweiShopV2Page extends WebPage {
             $columns = array(
                 array('title' => '排序', 'field' => 'displayorder', 'width' => 24),
                 array('title' => '商品SKU', 'field' => 'goodssn', 'width' => 24),
-                array('title' => '商品条码', 'field' => 'productsn', 'width' => 24),
                 array('title' => '商品名称', 'field' => 'title', 'width' => 124),
-                array('title' => '副标题', 'field' => 'subtitle', 'width' => 12),
-                array('title' => '关键字', 'field' => 'keywords', 'width' => 12),
-                array('title' => '单位', 'field' => 'unit', 'width' => 12),
                 array('title' => '商品单价', 'field' => 'marketprice', 'width' => 12),
+                array('title' => '商品原价', 'field' => 'productprice', 'width' => 12),
+                array('title' => '成本', 'field' => 'costprice', 'width' => 12),
                 array("title"=>'仓库','field' => 'depot', 'width' => 12),
-                array('title' => '代理状态', 'field' => 'isdis', 'width' => 12),
-                array('title' => '销量', 'field' => 'sales', 'width' => 12),
+               // array('title' => '销量', 'field' => 'sales', 'width' => 12),
                 array('title' => '库存', 'field' => 'total', 'width' => 12),
-                array('title' => '增值税', 'field' => 'vat_rate', 'width' => 12),
-                array('title' => '消费税', 'field' => 'consumption_tax', 'width' => 12),
-                array('title' => '首图链接', 'field' => 'imgthumb', 'width' => 12),
             );
             if($_W['uniacid']!=DIS_ACCOUNT){
                  $columns[]=array('title' => '代理价', 'field' => 'disprice', 'width' => 24);
@@ -197,15 +214,28 @@ class Index_EweiShopV2Page extends WebPage {
                 $columns[]=array(
                     'title' => $l['levelname'],
                     'field' => $l['key'],
-                    'width' => 24);
+                    'width' => 24
+                );
+                $columns[]=array(
+                    'title' => "促销".$l['levelname'],
+                    'field' => "c".$l['key'],
+                    'width' => 24
+                );
             }
             
             foreach($goodslist as $key=> $goodstemp){
                // var_dump($goodstemp['ccates']);
             $discounts=(array)json_decode($goodslist[$key]['discounts']);
+            $isdiscounts=json_decode($goodslist[$key]['isdiscount_discounts'],true);
+
                foreach($levels as $l){
                 $goodslist[$key][$l['key']]=$discounts[$l['key'].'_pay'];
                }
+                foreach($levels as $l){
+                    $goodslist[$key]['c'.$l['key']]=$isdiscounts[$l['key']]['option0'];
+                }
+
+
                 $goodslist[$key]['goodssn']=$goodstemp['goodssn']."`";
                 $goodslist[$key]['depot']=empty($goodstemp['depotid'])?"默认仓库" :$de[$goodstemp['depotid']];
                 $goodslist[$key]['imgthumb']="http://wx.lylife.com.cn/attachment/".$goodstemp['thumb'];
@@ -620,7 +650,15 @@ update ".tablename('ewei_shop_goods')." set minprice = marketprice,maxprice = ma
         pdo_run($sql);
         show_json(1);
     }
-
+    function stockimport(){
+        $columns = array();
+        $columns[] = array('title' => '商品货号', 'field' => '', 'width' => 32);
+        $columns[] = array('title' => '库存', 'field' => '', 'width' => 32);
+        $columns[] = array('title' => '价格', 'field' => '', 'width' => 32);
+        $columns[] = array('title' => '仓库ID', 'field' => '', 'width' => 32);
+        $columns[] = array('title' => '标题', 'field' => '', 'width' => 32);
+        m('excel')->temp('批量库存导入数据模板', $columns);
+    }
     function stock(){
         global $_W;
         global $_GPC;
@@ -636,11 +674,10 @@ update ".tablename('ewei_shop_goods')." set minprice = marketprice,maxprice = ma
             foreach ($rows as $rownum => $col )
             {
 
-
-
+                if($rownum==0){
+                    continue;
+                }
                 $goodsn = trim($col[0]);
-
-
                 if(empty($goodsn)){
                     continue;
                 }
@@ -648,10 +685,26 @@ update ".tablename('ewei_shop_goods')." set minprice = marketprice,maxprice = ma
                 $goods = pdo_fetch($sql, array(':goods_sn' => $goodsn, ':uniacid' => $_W['uniacid'], ':merchid' => 0));
 
                 if(!empty($goods['id'])){
+                    $updatetimes=array();
                     $stock = !is_numeric($col[1]) ? "":trim($col[1]);
-                    $updatetimes=array(
-                        'total'=>$stock,
-                    );
+
+                    $updatetimes['total'] =$stock;
+
+                    $marketprice = !is_numeric($col[2]) ? 0 : trim($col[2]);
+
+                    if($marketprice>0){
+                        $updatetimes['marketprice'] =$marketprice;
+                    }
+
+                    $depotid = !is_numeric($col[3]) ? 0 : trim($col[3]);
+                    if($depotid>0){
+                        $updatetimes['depotid'] =$depotid;
+                    }
+                    $title = empty($col[4]) ? '' : trim($col[4]);
+                    if(!empty($title)){
+                        $updatetimes['title'] =$title;
+                    }
+
                     $cs=pdo_update("ewei_shop_goods",$updatetimes,array("id"=>$goods['id']));
                     if($cs){
                         ++$i;
@@ -691,6 +744,130 @@ update ".tablename('ewei_shop_goods')." set minprice = marketprice,maxprice = ma
 
         }
         include $this->template();
+    }
+
+    function isdiscount(){
+        global $_W;
+        global $_GPC;
+        if ($_W['ispost'])
+        {
+
+
+            $isdiscount_time=$_GPC['isdiscount_time'];
+            $starttime=strtotime($isdiscount_time['start']);
+            $endtime=strtotime($isdiscount_time['end']);
+            $data=array(
+                'isdiscount'=>1,
+                'isdiscount_stat_time'=>$starttime,
+                'isdiscount_time'=>$endtime,
+            );
+            $levels = m('member')->getLevels();
+            foreach ($levels as &$lev){
+                $lev['key']='level' . $lev['id'];
+            }
+            unset($lev);
+            $levels = array_merge(array( array('id' => 0, 'key' => 'default', 'levelname' => (empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])) ), $levels);
+
+            foreach ($levels as $lev){
+
+                $levels_array[$lev['levelname']]=$lev;
+            }
+            $rows = m('excel')->importall('excelfile');
+
+            pdo_begin();
+            $errormesage='';
+            foreach ($rows as $rownum => $col )
+            {
+                $linecount=count($col);
+
+                if($rownum==0){
+                    for ($i=0;$i<$linecount;$i++){
+                        if(isset($levels_array[$rows[0][$i]])){
+                            $col_array[$i]=$levels_array[$rows[0][$i]];
+                        }
+                    }
+                    continue;
+                }
+                $goodssn=trim($col[0]);
+                if(empty($goodssn)){
+                    continue;
+                }
+                //验证货号是否是正常的
+
+                $goods=pdo_fetch("select hasoption,id from ".tablename("ewei_shop_goods")." where goodssn=:goodssn and uniacid=:uniacid and status=1",array(':goodssn'=>$goodssn,":uniacid"=>$_W['uniacid']) );
+
+
+                if($goods['hasoption']==1 || empty($goods)){
+                    // throw new Exception('货号不存在或者当前商品带有规格属性goodssn='.$goodssn);
+                    $errormesage.='货号不存在或者当前商品带有规格属性goodssn='.$goodssn."<br/>";
+                    continue;
+                }
+
+
+                $isDiscountsDefaultArray=array();
+                $msg="";
+
+                for ($i=0;$i<$linecount;$i++) {
+                    if (isset($col_array[$i]) && $col_array[$i]['key'] == "default") {
+
+                        if($col[$i]<=0){
+                            // throw new Exception('货号'.$goodssn."促销金额不能小于或者等于0");
+                            $errormesage.='货号'.$goodssn."促销金额不能小于或者等于0"."<br/>";
+                            continue;
+                        }
+                        $isDiscountsDefaultArray[$col_array[$i]['key']]['option0'] = $col[$i];
+                        $msg="{$goodssn}:"."设置促销价格-".$col[$i];
+                    } elseif (isset($col_array[$i])) {
+                        if($col[$i]<=0){
+                            // throw new Exception('货号'.$goodssn."促销金额不能小于或者等于0");
+                            $errormesage.='货号'.$goodssn."促销金额不能小于或者等于0"."<br/>";
+                            continue;
+                        }
+                        $msg.="{$goodssn}:"."设置促销价格-".$col[$i];
+                        $isDiscountsDefaultArray[$col_array[$i]['key']]['option0'] = $col[$i];
+                    }
+                }
+                if(empty($isDiscountsDefaultArray)){
+                    // throw new Exception('货号'.$goodssn."促销金额设置失败");
+                    $errormesage.='货号'.$goodssn."促销金额设置失败"."<br/>";
+                    continue;
+                }
+                $is_discounts_arr = array_merge(array('type ' => 0), $isDiscountsDefaultArray);
+                $data['isdiscount_discounts'] = ((is_array($is_discounts_arr) ? json_encode($is_discounts_arr) : json_encode(array())));
+                $data['isdiscount_title']=$col[1];
+                $ret=pdo_update('ewei_shop_goods',$data,array("uniacid"=>$_W['uniacid'],"id"=>$goods['id']));
+                if(!$ret){
+                    // throw new Exception('货号'.$goodssn."促销金额设置失败");
+                    $errormesage.='货号'.$goodssn."促销金额设置失败"."<br/>";
+                    continue;
+                }
+
+            }
+            if(!empty($errormesage)){
+                pdo_rollback();
+                $this->message($errormesage, webUrl("goods.isdiscount"), '');
+            }
+            pdo_commit();
+
+            $this->message("导入数据成功",  webUrl("goods.isdiscount"), '');
+        }
+        include $this->template();
+    }
+
+    public function import(){
+        global $_W;
+        global $_GPC;
+        $levels = m('member')->getLevels();
+        $levels = array_merge(array( array('id' => 0, 'key' => 'default', 'levelname' => (empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])) ), $levels);
+        $columns = array();
+        $columns[] = array('title' => '商品货号', 'field' => '', 'width' => 32);
+        $columns[] = array('title' => '促销名称', 'field' => '', 'width' => 32);
+
+        foreach ($levels as $lev){
+            $columns[] = array('title' => $lev['levelname'], 'field' => '', 'width' => 32);
+        }
+
+        m('excel')->temp('批量导入促销活动模板', $columns);
     }
 
 

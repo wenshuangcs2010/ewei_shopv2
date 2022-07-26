@@ -55,7 +55,7 @@ class Credit_EweiShopV2Page extends WebPage
         }
 
         $sql = "select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from " . tablename('mc_credits_record') . " log "
-            . " left join " . tablename('users') . " u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid"
+            . " left join " . tablename('users') . " u on  log.operator=u.uid"
             . " left join " . tablename('ewei_shop_member') . " m on m.uid=log.uid"
             . " left join " . tablename('ewei_shop_member_group') . " g on m.groupid=g.id"
             . " left join " . tablename('ewei_shop_member_level') . " l on m.level =l.id"

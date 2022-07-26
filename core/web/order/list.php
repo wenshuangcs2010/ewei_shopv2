@@ -617,6 +617,7 @@ class List_EweiShopV2Page extends WebPage {
                 array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36),
                 array('title' => '订单自定义信息', 'field' => 'order_diyformdata', 'width' => 36),
                 array('title' => '商品自定义信息', 'field' => 'goods_diyformdata', 'width' => 36),
+                array('title' => '商家备注', 'field' => 'remarksaler', 'width' => 36),
 
             );
             if (!empty($agentid) && $level > 0) {
