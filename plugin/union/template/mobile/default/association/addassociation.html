@@ -1,0 +1,66 @@
+{template '_header'}
+<script>document.title = "{$_W['union']['title']}"; </script>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<style>
+    a.back:before{
+        left: 5px;
+        border-color: #FFFF;
+    }
+</style>
+
+
+<div class="fui-page  fui-page-current asssview-index-page" >
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"></a>
+            </div>
+        </header>
+    </div>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+
+
+
+        <div class="fui-list no-border" style="top:0rem;text-align: center;display: block;">
+            {$vo['title']}
+        </div>
+        <div class="fui-list no-border" >
+            {$vo['declaration']}
+        </div>
+    {if $count_member}
+        <div class="fui-list no-border" >
+        申请状态:<span>{if $count_member['status']==0}待审核{else}已通过{/if}</span>
+        </div>
+    {/if}
+        <div class="fui-cell-group input_suggest" >
+            <div class="fui-cell must">
+
+                <div class="fui-cell-info" {if $id} style="white-space:inherit;word-wrap: break-word; word-break:break-all;overflow: hidden;" {/if}>
+                    <textarea id="description" style="border: 1px solid #c3c3c3;line-height: 1.2rem;" placeholder="请输入加入理由或者简历" class="form-control" rows="15">{$count_member['desc']}</textarea>
+                </div>
+            </div>
+            <input type="hidden" id="id" value="{$post['id']}">
+        </div>
+    <div class="fui-icon-group ">
+            <a href="#" data-type="{$type}" id="btnSubmit" class="btn btn-danger block">{$bottontext}</a>
+    </div>
+
+</div>
+
+<script language='javascript'>
+    require(['../addons/ewei_shopv2/plugin/union/static/js/post.js'], function (modal) {
+        modal.addassociation_init({assoid:{$id},'assomemberid':"{$count_member['id']}",'type':'{$type}'});
+    });
+</script>
+
+<style>
+    .fui-cell-group .fui-cell.must .fui-cell-label:after{
+        right: 0.7rem;
+    }
+    .fui-cell-group .fui-cell .fui-cell-label{
+        width: 3rem;
+    }
+</style>
+
+

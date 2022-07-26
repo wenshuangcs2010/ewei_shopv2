@@ -16,7 +16,7 @@ class Plugs_EweiShopV2Page extends UnionWebPage
      * @var bool
      */
     public $checkLogin = false;
-
+    public $savefileextlist=array("jpg","png","jpeg","gif",'bmp','ico');
     /**
      * 默认检查节点访问权限
      * @var bool
@@ -36,7 +36,21 @@ class Plugs_EweiShopV2Page extends UnionWebPage
         if (!in_array(($uptype), ['local', 'qiniu', 'oss'])) {
             $uptype = "local";
         }
+        $nvs=false;
         $types =empty($_GPC['type']) ? 'jpg,png':trim($_GPC['type']);
+
+        //处理是否显示图片库
+        $typeslist=explode(",",$types);
+        $typeslist= array_map("strtolower",$typeslist);
+
+        $ar=array_intersect($typeslist,$this->savefileextlist);
+        if($ar){
+            $nvs=true;
+            $year=date("Y");
+
+
+        }
+
         $mode =empty($_GPC['mode']) ? 'one':trim($_GPC['mode']);
 
         $mimes= $this->model->getFileMine($types);
@@ -45,6 +59,61 @@ class Plugs_EweiShopV2Page extends UnionWebPage
         include $this->template("upfile/plugs.upfile");
     }
 
+    public function getimagelist(){
+        global $_W;
+        global $_GPC;
+
+        $condition = ' WHERE uniacid = :uniacid  and type=:type and union_id=:union_id';
+        $params = array(':uniacid' => $_W['uniacid'], ':type' =>1,":union_id"=>$_W['unionid']);
+        $year = intval($_GPC['year']);
+        $month = intval($_GPC['month']);
+        if($year > 0 || $month > 0) {
+            if($month > 0 && !$year) {
+                $year = date('Y');
+                $starttime = strtotime("{$year}-{$month}-01");
+                $endtime = strtotime("+1 month", $starttime);
+            } elseif($year > 0 && !$month) {
+                $starttime = strtotime("{$year}-01-01");
+                $endtime = strtotime("+1 year", $starttime);
+            } elseif($year > 0 && $month > 0) {
+                $year = date('Y');
+                $starttime = strtotime("{$year}-{$month}-01");
+                $endtime = strtotime("+1 month", $starttime);
+            }
+            $condition .= ' AND createtime >= :starttime AND createtime <= :endtime';
+            $params[':starttime'] = $starttime;
+            $params[':endtime'] = $endtime;
+        }
+        $page = intval($_GPC['page']);
+        $page = max(1, $page);
+        $size = $_GPC['pagesize'] ? intval($_GPC['pagesize']) : 32;
+        $sql = 'SELECT * FROM '.tablename('ewei_shop_union_attachment')." {$condition} ORDER BY id DESC LIMIT ".(($page-1)*$size).','.$size;
+        $list = pdo_fetchall($sql, $params, 'id');
+
+        foreach ($list as &$item) {
+            $item['url'] = tomedia($item['imgurl']);
+            $item['createtime'] = date('Y-m-d', $item['createtime']);
+
+        }
+        $total = pdo_fetchcolumn('SELECT count(*) FROM '.tablename('ewei_shop_union_attachment') ." {$condition}", $params);
+        message(array('page'=> pagination($total, $page, $size, '', array('before' => '2', 'after' => '2', 'ajaxcallback'=>'null')), 'items' => $list), '', 'ajax');
+    }
+
+    public function addimgdatabaselist($filename,$path,$ext){
+        global $_W;
+        if(in_array($ext,$this->savefileextlist)){
+            $type=1;
+        }
+        $data=array(
+            'createtime'=>TIMESTAMP,
+            'imgurl'=>$path,
+            'union_id'=>$_W['unionid'],
+            'uniacid'=>$_W['uniacid'],
+            'type'=>$type,
+            'filename'=>$filename,
+        );
+        pdo_insert("ewei_shop_union_attachment",$data);
+    }
     /**
      * 通用文件上传
      * @return \think\response\Json
@@ -60,6 +129,10 @@ class Plugs_EweiShopV2Page extends UnionWebPage
         $year=Date("Y")."/";
         $m=Date("m")."/";
         $ext = strtolower($ext);
+
+        if($file['size']<=0){
+            $this->model->json(['code' => 'ERROR', '文件上传失败']);
+        }
         $filename = $year.$m.$md5s[0] . ".{$ext}";
         // 文件上传Token验证
         if ($token !== md5($filename . session_id())) {
@@ -72,6 +145,9 @@ class Plugs_EweiShopV2Page extends UnionWebPage
         if (!file_move($file['tmp_name'],ATTACHMENT_ROOT . 'union/'.$_W['uniacid'].'/' . $filename)) {
             $this->model->json(['code' => 'ERROR', '保存上传文件失败']);
         }
+
+        $this->addimgdatabaselist($md5s[0].".".$ext,'union/'.$_W['uniacid'].'/' . $filename,$ext);
+
         $result['success'] = true;
         $site_url=$this->model->getBaseUriLocal().$filename;
         $this->model->json(['data' => ['site_url' => $site_url], 'code' => 'SUCCESS', 'msg' => '文件上传成功']);

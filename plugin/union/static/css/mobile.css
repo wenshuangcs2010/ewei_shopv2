@@ -1,4 +1,67 @@
+.jiehun{
+    background:url(../../template/mobile/default/static/images/fuli/bg1.png) no-repeat center!important;;
+    background-size:100%!important;
 
+}
+
+.birth{
+    background:url(../../template/mobile/default/static/images/fuli/bg2.png) no-repeat center!important;;
+    background-size:100%!important;
+}
+.hospitalization{
+    background:url(../../template/mobile/default/static/images/fuli/bg3.png) no-repeat center!important;;
+    background-size:100%!important;
+}
+.retire{
+    background:url(../../template/mobile/default/static/images/fuli/bg4.png) no-repeat center!important;;
+    background-size:100%!important;
+}
+.funeral{
+    background:url(../../template/mobile/default/static/images/fuli/bg5.png) no-repeat center!important;;
+    background-size:100%!important;
+}
+.examine {
+    background: url(../../template/mobile/default/static/images/fuli/sh.jpg) no-repeat center!important;
+    background-size: 100%!important;
+}
+.fui-block-group .fui-block-child{
+    height: 8.7rem;
+
+
+    display:table;
+
+}
+.fui-block-group .fui-block-child .images{
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 20%;
+    bottom: 0;
+    margin: auto;
+}
+.fui-block-group .fui-block-child .title{
+    color: white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+.fui-block-group .fui-block-child .text{
+    color: white;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 39%;
+    bottom: 0;
+    background-color: #e10900;
+    width: 50%;
+    border-radius: 20px;
+    text-align: center;
+}
 
 .fui-img {
     height: auto;

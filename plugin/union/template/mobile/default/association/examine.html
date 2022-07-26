@@ -1,0 +1,137 @@
+{template '_header'}
+<link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/union/static/css/timeline.css" rel="stylesheet" type="text/css"/>
+
+<script>document.title = "{$_W['union']['title']}"; </script>
+<div class='fui-page' style="background-color: #fff">
+
+
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"><span></span></a>
+            </div>
+        </header>
+    </div>
+    <div class='fui-content  welfare_view' style="bottom: 4.5rem;top:0.5rem">
+        <h3 style="text-align: center">小组成员审核</h3>
+        <div class="fui-cell-group">
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 4rem" >公司</div>
+                <div class="fui-cell-text">{$union_info['title']}</div>
+                <div></div>
+            </div>
+            <div class="fui-cell">
+                <div class="fui-cell-icon" style="width: 4rem" >部门</div>
+                <div class="fui-cell-text">{$item['department']}</div>
+                <div>{php echo date("Y-m-d",$item['add_time'])}</div>
+            </div>
+            <div class="class_status">{if $item['status']==1}审批通过{elseif $item['status']==0}审批中{elseif $item['status']==-1}已撤销{/if}</div>
+        </div>
+        <div class="fui-cell-group">
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <td>姓名</td>
+                    <td>{$item['username']} </td>
+                    <td>性别</td>
+                    <td>{if $item['sex']==1}男{else}女{/if}</td>
+                </tr>
+
+                <tr>
+                    <td style="height: 5rem;">备注</td>
+                    <td colspan="3">{$item['desc']}</td>
+                </tr>
+                <tr >
+                    <td colspan="4">
+                        {loop $images $i}
+                        <img src="{$i}">
+                        {/loop}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="fui-cell-group">
+            <section id="cd-timeline" class="cd-container">
+                <div class="cd-timeline-block">
+                    <div class="cd-timeline-img cd-picture">
+                       会员
+                    </div>
+                    <div class="cd-timeline-img yesclass">
+                        <svg t="1576735216446" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="742" width="100%" height="100%"><path d="M489.6 141.6a369.12 369.12 0 1 0 369.28 369.28A369.12 369.12 0 0 0 489.6 141.6z m211.84 273.44L462.56 653.76a33.44 33.44 0 0 1-48 0l-137.44-137.44a33.44 33.44 0 1 1 48-48l113.92 113.92L654.08 368a33.44 33.44 0 1 1 48 48z m0 0" p-id="743" fill="#11af08"></path></svg>
+                    </div>
+                    <div class="cd-timeline-content">
+                        <div>发起申请:{$item['username']}<span style="float: right;margin-right: 1rem;" class="cd-date">{php echo date('Y-m-d H:i:s',$item['add_time'])}</span></div>
+                        <p></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</div>
+{if $this->member['id']==$vo['auditor']}
+<div class="fui-navbar examinebnt" style="bottom: 2.5rem">
+    <div class="fui-block-group col-2" style="margin-top:0; overflow: hidden ;">
+        <a href="#"   class="btn btn-error exportlist block">拒绝</a>
+        <a href="#"   class="btn btn-success exportlist block">同意</a>
+    </div>
+</div>
+{/if}
+<style>
+    .exportlist{
+        width: 45%;float: left;display: table
+    }
+</style>
+<script language='javascript'>
+    require(['core'], function (modal) {
+        core.showImages('.table tr td img');
+        {if $this->member['id']==$vo['auditor']}
+        var id={$item['id']};
+        var asso_id={$asso_id};
+
+            $(".btn-success").click(function () {
+
+
+
+                FoxUI.confirm("确定同意当前申请么？","提示", function () {
+                    core.json("union/association/examinestatus",{id:id,status:1},function(ret){
+                        if(ret.status==1){
+                            FoxUI.toast.show('审核通过!');
+                            window.location.reload();
+                            return;
+
+                        }
+                        FoxUI.toast.show(ret.result.message);
+
+                        return;
+
+                    },false,true)
+
+                });
+            });
+        $(".btn-error").click(function () {
+            FoxUI.confirm("确定拒绝当前申请么？","提示", function () {
+                core.json("union/association/examinestatus",{id:id,status:-1},function(ret){
+                    if(ret.status==1){
+                        FoxUI.toast.show(ret.result.message);
+                        window.location.href=core.getUrl("union/association/assview",{id:asso_id});
+                        return;
+
+                    }
+                    FoxUI.toast.show(ret.result.message);
+
+                    return;
+
+                },false,true)
+
+            });
+        });
+        {/if}
+
+    });
+</script>
+
+
+{template 'union/_footer'}

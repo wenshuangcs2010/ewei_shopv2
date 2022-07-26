@@ -30,11 +30,14 @@ class Index_EweiShopV2Page extends UnionWebPage
                 'name'=>trim($_GPC['name']),
                 'title'=>trim($_GPC['title']),
                 'mobile'=>trim($_GPC['mobile']),
+                'shopstatus'=>intval($_GPC['shopstatus']),
+                'shopurl'=>trim($_GPC['shopurl']),
+                'shopname'=>empty($_GPC['shopname']) ? "福利商城" : trim($_GPC['shopname']),
             );
 
             if($id){
                 unset($data['add_time']);
-                pdo_update("ewei_shop_union_user",$data,array('id'=>$id,'uniacid'=>$_W['uniacid'],'id'=>$id));
+                pdo_update("ewei_shop_union_user",$data,array('id'=>$id,'uniacid'=>$_W['uniacid']));
             }
 
         $this->model->show_json(1,"单位数据修改成功");

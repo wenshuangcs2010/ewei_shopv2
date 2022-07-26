@@ -97,6 +97,7 @@ define(['core','jquery.gcjs'], function (core) {
     modal.suggestions_init=function(params) {
         modal.params = $.extend(defaults, params || {});
         var leng = $.trim($('.container').html());
+        $(".content-empty").hide();
         if (leng == '') {
             modal.page = 1;
             modal.suggestions();
@@ -107,8 +108,36 @@ define(['core','jquery.gcjs'], function (core) {
             }
         });
     };
+    modal.bindsuggchickEvent=function(){
+        $(".fui-cell-group").unbind("click").on("click",function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var id=$(this).data("id");
+            // FoxUI.confirm("是否删除建言","提示", function () {
+            //     core.json("union/index/deletesuggestiions",{id:id},function(ret){
+            //         if(ret.status==1){
+            //             location.refresh();
+            //         }
+            //     },false,true)
+            //
+            // },function () {
+                location.href=core.getUrl("union/index/get_suggestions_post",{id:id});
+            //});
+        })
+    };
+    modal.suggestions_delete=function(params){
+        $("#deletepost").click(function () {
+            FoxUI.confirm("是否删除建言","提示", function () {
+                core.json("union/index/deletesuggestiions",{id:params.id},function(ret){
+                            if(ret.status==1){
+                                location.href=core.getUrl("union/index/mysuggestions");
+                            }},false,true)
+            })
+        })
+    };
     modal.suggestions=function(){
         modal.params.page = modal.page;
+        console.log(modal.params);
         core.json('union/index/get_suggestions_list', modal.params, function (ret) {
             var result = ret.result;
             if (result.total <= 0) {
@@ -122,23 +151,150 @@ define(['core','jquery.gcjs'], function (core) {
                 }
             }
             modal.page++;
-            core.tpl('#goods-list-container', 'tpl_goods_list', result,modal.page>1)
+            if(modal.params.type=="my"){
+                core.tpl('#goods-list-my-container', 'tpl_goods_list_mylist', result,modal.page>1);
+            }else{
+                core.tpl('#goods-list-container', 'tpl_goods_list', result,modal.page>1);
+            }
+
+            if(modal.params.type=="my"){
+                modal.bindsuggchickEvent();
+            }
+
         }, false, true)
     };
     modal.association_init=function(params){
+
+        FoxUI.tab({
+            container: $('#tabjoin'), handlers: {
+                level1: function () {
+                    modal.changeTabmemberjoin(1)
+                }, level2: function () {
+                    modal.changeTabmemberjoin(2)
+                }, level3: function () {
+                    modal.changeTabmemberjoin(3)
+                }
+            }
+        });
+        console.log("sss");
+        $(".fui-content .noborder").children("a").unbind("click").on("click",function () {
+                var categoryid=$(this).data("id");
+                modal.params.category_id=categoryid;
+                modal.page = 1;
+                $('.fui-content').infinite('init');
+                $('.content-empty').hide(), $('.infinite-loading').show();
+                $('#tpl-list-container').html("");
+                modal.association();
+        });
         modal.params = $.extend(defaults, params || {});
         var leng = $.trim($('.container').html());
+        $('.content-empty').hide();
         if (leng == '') {
             modal.page = 1;
-            modal.association();
+            modal.asspcmy_new_get_list();
         }
         $('.fui-content').infinite({
             onLoading: function () {
-                modal.association()
+
+                var tabval=$("#tabjoin").find(".active").data("tab");
+
+
+                if(tabval=='level1'){
+                    modal.asspcmy_new_get_list()
+                }
+                if(tabval=='level2'){
+                    modal.asspcmy_myasso_not_join();
+                }
+                if(tabval=='level3'){
+                    modal.association();
+                }
+
             }
         });
     };
+    modal.changeTabmemberjoin=function(key){
+
+        $('.fui-content').infinite('init');
+        $('.content-empty').hide(), $('.infinite-loading').show(), $('#container').html('');
+        $('#tpl-list-container').html("");
+        modal.page = 1;
+        if(key==1){
+            $(".fui-content .noborder").hide();
+            modal.asspcmy_new_get_list();
+        }
+        if(key==2){
+            $(".fui-content .noborder").hide();
+            modal.asspcmy_myasso_not_join();
+        }
+        if(key==3){
+            $(".fui-content .noborder").show();
+
+            modal.association();
+        }
+    };
+    modal.asspcmy_myasso_not_join=function(){
+        modal.params.page = modal.page;
+        core.json('union/association/myasso_not_join', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('.content-empty').show();
+                $("#empty_show_text").html('未找到其他没有加入的');
+                $('.fui-content').infinite('stop')
+            } else {
+                $('.content-empty').hide();
+                $('.fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.fui-content').infinite('stop')
+                }
+            }
+            modal.page++;
+            core.tpl('#tpl-list-container', 'tpl_asso_list', result,modal.page>1);
+            modal.bindcreate_add();
+        }, false, true)
+    };
+    modal.asspcmy_new_get_list=function(){
+        modal.params.page = modal.page;
+        core.json('union/association/myasso_new_list', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('.content-empty').show();
+                $('.fui-content').infinite('stop')
+            } else {
+                $('.content-empty').hide();
+                $('.fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.fui-content').infinite('stop')
+                }
+            }
+            modal.page++;
+            core.tpl('#tpl-list-container', 'tpl_asso_list', result,modal.page>1);
+            modal.bindcreate_add();
+        }, false, true)
+    };
+
+
+    modal.asspcmy_get_list=function(){
+        modal.params.page = modal.page;
+        core.json('union/association/myasso_list', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('.content-empty').show();
+                $('.fui-content').infinite('stop')
+            } else {
+                $('.content-empty').hide();
+                $('.fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.fui-content').infinite('stop')
+                }
+            }
+            modal.page++;
+            core.tpl('#asso-list-container', 'tpl_asso_list', result,modal.page>1);
+            modal.bindcreate_add();
+        }, false, true)
+    };
+
     modal.association=function(){
+
         modal.params.page = modal.page;
         core.json('union/association/get_list', modal.params, function (ret) {
             var result = ret.result;
@@ -153,17 +309,27 @@ define(['core','jquery.gcjs'], function (core) {
                 }
             }
             modal.page++;
-            core.tpl('#goods-list-container', 'tpl_goods_list', result,modal.page>1)
-        }, false, true)
+            core.tpl('#tpl-list-container', 'tpl_goods_list', result,modal.page>1)
+        }, false, true);
     };
     modal.unionlistbindEvents = function() {
         $('.union_info').unbind('click').click(function() {
             var unionid=$(this).data("unionid");
+            var _chilkthis=$(this);
+
+            if(_chilkthis.find(".default").hasClass("defaultset")){
+                return false;
+            }
+            $(".default").removeClass("defaultset");
+            $(".default").html("设置默认");
+
             core.json('union/member/joinunion', {unionid:unionid}, function (ret) {
                 if(ret.status==0){
                     FoxUI.toast.show(ret.result.message);
                    //var url=core.getUrl("union/member/member_info");
                   // window.location.href=url;
+                    _chilkthis.find(".default").addClass("defaultset");
+                    _chilkthis.find(".default").html("默认");
                     return;
                 }
                 if(ret.status==1){
@@ -223,14 +389,7 @@ define(['core','jquery.gcjs'], function (core) {
     modal.member_info_init=function(){
 
         $("#btn-submit").click(function () {
-            if($("#realname").isEmpty()){
-                FoxUI.toast.show('请填写姓名');
-                return;
-            }
-            if(!$("#mail").isEmail() && !$("#mail").isEmpty()){
-                FoxUI.toast.show('请填写正确邮箱');
-                return;
-            }
+
             var realname=$('#realname').val();
             var mobile=$("#mobile").val();
             var birthday = $('#birthday').val().split('-');
@@ -279,6 +438,10 @@ define(['core','jquery.gcjs'], function (core) {
     modal.dynamic_init=function(params){
         modal.params = $.extend(defaults, params || {});
         var leng = $.trim($('.container').html());
+
+
+
+
         if (leng == '') {
             modal.page = 1;
             modal.dynamic_get_list();
@@ -289,6 +452,46 @@ define(['core','jquery.gcjs'], function (core) {
             }
         });
     };
+    modal.dynamic_bindEvents=function(){
+        $(".dynamic-info .info-detail .data-state-box .follow").unbind("click").on("click",function () {
+            console.log("ssssssss-222222");
+             var status=$(this).data("status");
+             var followid= $(this).data("followid");
+             var amount=core.getNumber($(this).children(".amount").html());
+            if(status==0){
+                $(this).data("status",1);
+                $(this).children(".amount").html(amount+1);
+                $(this).children("img").attr("src","../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_love_selected.png");
+            }
+            if(status==1){
+                $(this).data("status",0);
+                $(this).children(".amount").html(amount-1);
+                $(this).children("img").attr("src","../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_love.png");
+            }
+            core.json('union/dynamic/status', {id:followid}, function (ret) {
+                return;
+            })
+        })
+        $(".dynamic-info .info-detail .re-data-state-box .follow").unbind("click").on("click",function(e){
+           console.log("ssssssss");
+            var followid=$(this).data("followid");
+            var status=$(this).data("status");
+            var amount=core.getNumber($(this).children(".amount").html());
+            if(status==0){
+                $(this).data("status",1);
+                $(this).children(".amount").html(amount+1);
+                $(this).children("img").attr("src","../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_love_selected.png");
+            }
+            if(status==1){
+                $(this).data("status",0);
+                $(this).children(".amount").html(amount-1);
+                $(this).children("img").attr("src","../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_love.png");
+            }
+            core.json('union/dynamic/status', {id:followid}, function (ret) {
+                return;
+            })
+        })
+    }
     modal.dynamic_get_list=function () {
         modal.params.page = modal.page;
         core.json('union/dynamic/get_list', modal.params, function (ret) {
@@ -302,9 +505,12 @@ define(['core','jquery.gcjs'], function (core) {
                 if (result.list.length <= 0 || result.list.length < result.pagesize) {
                     $('.fui-content').infinite('stop')
                 }
+
+
             }
             modal.page++;
             core.tpl('#goods-list-container', 'tpl_goods_list', result,modal.page>1);
+            modal.dynamic_bindEvents();
         }, false, true)
     };
     modal.welist_init=function (params){
@@ -340,10 +546,13 @@ define(['core','jquery.gcjs'], function (core) {
     };
     modal.friendship_init=function(params){
         modal.params = $.extend(defaults, params || {});
+
         $(".d_simp .commission_head .setbtn li .togele").click(function () {
             $(".d_simp .commission_head .setbtn li .menu_list").toggle();
         });
         var leng = $.trim($('.container').html());
+        $('.content-empty').hide();
+
         if (leng == '') {
             modal.page = 1;
             modal.friend_list();
@@ -382,7 +591,6 @@ define(['core','jquery.gcjs'], function (core) {
             var friend_id=$(this).data("friend_id");
             if(fabulous==0){
                 $(this).children("img").attr('src',"../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/ic_like_selected.png");
-
                 $(this).data("fabulous",1);
                 core.json("union/friendship/addfabuls",{"fabulous":1,'friend_id':friend_id},function (ret) {
                     var result = ret.result;
@@ -535,6 +743,7 @@ define(['core','jquery.gcjs'], function (core) {
         $(".venue_page .commission_head .setbtn li .togele").click(function () {
             $(".venue_page .commission_head .setbtn li .menu_list").toggle();
         });
+        $('.content-empty').hide();
         var leng = $.trim($('.container').html());
         if (leng == '') {
             modal.page = 1;
@@ -567,6 +776,8 @@ define(['core','jquery.gcjs'], function (core) {
     modal.venue_mylist_init=function (params) {
         modal.params = $.extend(defaults, params || {});
         var leng = $.trim($('.container').html());
+
+
         if (leng == '') {
             modal.page = 1;
             modal.venue_mylist();
@@ -581,6 +792,7 @@ define(['core','jquery.gcjs'], function (core) {
         modal.params.page = modal.page;
         core.json('union/venue/mylist_list', modal.params, function (ret) {
             var result = ret.result;
+
             if (result.total <= 0) {
                 $('.content-empty').show();
                 $('.fui-content').infinite('stop')
@@ -629,26 +841,9 @@ define(['core','jquery.gcjs'], function (core) {
             }
         });
     };
-    modal.asspcmy_get_list=function(){
-        modal.params.page = modal.page;
-        core.json('union/association/myasso_list', modal.params, function (ret) {
-            var result = ret.result;
-            if (result.total <= 0) {
-                $('.content-empty').show();
-                $('.fui-content').infinite('stop')
-            } else {
-                $('.content-empty').hide();
-                $('.fui-content').infinite('init');
-                if (result.list.length <= 0 || result.list.length < result.pagesize) {
-                    $('.fui-content').infinite('stop')
-                }
-            }
-            modal.page++;
-            core.tpl('#asso-list-container', 'tpl_asso_list', result,modal.page>1);
-            modal.bindcreate_add();
-        }, false, true)
-    };
+
     modal.bindcreate_add=function(){
+        /*
         $(".assocjoin").unbind("click").click(function(e){
             e.preventDefault();
             e.stopPropagation();
@@ -676,11 +871,39 @@ define(['core','jquery.gcjs'], function (core) {
                 },false,true);
             }
             return;
-        })
+        })*/
     }
     modal.assview_init=function(params){
         modal.params = $.extend(defaults, params || {});
         var leng = $.trim($('.container').html());
+
+        $("#btn-submit").unbind("click").on("click",function () {
+            var type=$(this).data("type");
+            var id=$(this).data("id");
+            var memberid=$(this).data("memberid");
+            if(typeof (type)=="undefined"){
+                return;
+            }
+            if(type=="join"){
+                window.location.href=core.getUrl("union/association/addassociation",{id:id});
+            }
+            if(type=="signout"){
+                FoxUI.confirm("确认退出当前小组么？",'提示',function () {
+                    core.json('union/association/addtions',{"assomemberid":memberid,'assoid':id,'type':type}, function (ret) {
+                        if(ret.status!=1){
+                            FoxUI.toast.show(ret.result.message);
+                            return ;
+                        }else{
+                            FoxUI.toast.show(ret.result.msg);
+                            setTimeout(function(){
+                                window.location.href=core.getUrl("union/association/assview",{id:id});
+                            },1000);
+                        }
+                    })
+                })
+            }
+        })
+
         if (leng == '') {
             modal.page = 1;
             modal.asspcview_list();
@@ -764,6 +987,40 @@ define(['core','jquery.gcjs'], function (core) {
 
         }, false, true)
     };
+
+    modal.train_init=function(params){
+        modal.params = $.extend(defaults, params || {});
+        var leng = $.trim($('.container').html());
+        if (leng == '') {
+            modal.page = 1;
+            modal.train_getlist();
+        }
+        $('.asssview-index-page .fui-content').infinite({
+            onLoading: function () {
+                modal.train_getlist()
+            }
+        });
+    };
+    modal.train_getlist=function(){
+        modal.params.page = modal.page;
+
+        core.json('union/train/memberlist', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('.memberlist  .fui-content-inner .content-empty').show();
+                $('.page-member-list .fui-content').infinite('stop')
+            } else {
+                $('.memberlist .fui-content-inner .content-empty').hide();
+                $('.page-member-list .fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.page-member-list .fui-content').infinite('stop')
+                }
+            }
+            modal.page++;
+            core.tpl('#member-list-container', 'tpl_member_list', result,modal.page>1);
+
+        }, false, true)
+    };
     modal.readmember_init=function(params){
         modal.params = $.extend(defaults, params || {});
         var leng = $.trim($('.container').html());
@@ -794,22 +1051,126 @@ define(['core','jquery.gcjs'], function (core) {
     };
     modal.readmember_getlist=function(){
         modal.params.page = modal.page;
-
         core.json('union/readmember', modal.params, function (ret) {
             var result = ret.result;
-            if (result.total <= 0) {
-                $('.fui-content-inner .content-empty').show();
+            if (result.list.length ==0) {
+                $('.fui-content .content-empty').show();
                 $('.fui-content').infinite('stop')
             } else {
-                $('.fui-content-inner .content-empty').hide();
+
+                $('.fui-content .content-empty').hide();
+                $('.fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.page-member-list .fui-content').infinite('stop')
+                }
+            }
+            core.tpl('#container', 'tpl_member_list', result,modal.page>1);
+        }, false, true)
+    };
+    modal.sign_init=function(params){
+        modal.params = $.extend(defaults, params || {});
+        var leng = $.trim($('#container').html());
+
+        if (leng == '') {
+            modal.page = 1;
+            modal.sign_getlist();
+        }
+        $('.fui-content').infinite({
+            onLoading: function () {
+                modal.sign_getlist()
+            }
+        });
+    };
+
+    modal.sign_getlist=function(){
+        modal.params.page = modal.page;
+
+        core.json('union/report/getmemberlist', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.list.length ==0) {
+                $('.fui-content .content-empty').show();
+                $('.fui-content').infinite('stop')
+            } else {
+
+                $('.fui-content .content-empty').hide();
                 $('.fui-content').infinite('init');
                 if (result.list.length <= 0 || result.list.length < result.pagesize) {
                     $('.fui-content').infinite('stop')
                 }
             }
             modal.page++;
-            core.tpl('#container', 'tpl_member_list', result,modal.page>1);
+            core.tpl('#container', 'tpl_list', result,modal.page>1);
+        }, false, true)
+    };
+    modal.leavmessage_init=function(params){
+        modal.params = $.extend(defaults, params || {});
+        $('#container').html("");
 
+        var leng = $.trim($('#container').html());
+
+        if (leng == '') {
+            modal.page = 1;
+            modal.leavmessage_getlist();
+        }
+        $('.fui-content').infinite({
+            onLoading: function () {
+                modal.leavmessage_getlist()
+            }
+        });
+    };
+    modal.leavmessage_getlist=function(){
+        modal.params.page = modal.page;
+        core.json('union/leavmessage/getlist', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.list.length ==0) {
+                $('.fui-content .content-empty').show();
+                $('.fui-content').infinite('stop')
+            } else {
+
+                $('.fui-content .content-empty').hide();
+                $('.fui-content').infinite('init');
+
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.fui-content').infinite('stop')
+                }
+                modal.page++;
+            }
+            core.tpl('#container', 'tpl_list', result,modal.page>1);
+        }, false, true)
+    };
+    modal.leavreply_init=function (params) {
+        modal.params = $.extend(defaults, params || {});
+        $('#container').html("");
+        console.log( $('#container').html());
+        var leng = $.trim( $('#container').html());
+
+        if (leng == '') {
+            modal.page = 1;
+            modal.leavreply_getreplaylist();
+        }
+        $('.fui-content').infinite({
+            onLoading: function () {
+                modal.leavreply_getreplaylist()
+            }
+        });
+    };
+
+    modal.leavreply_getreplaylist=function () {
+        modal.params.page = modal.page;
+        core.json('union/leavmessage/getreplaylist', modal.params, function (ret) {
+            var result = ret.result;
+            if (result.list.length ==0) {
+                $('.fui-content .content-empty').show();
+                $('.fui-content').infinite('stop')
+            } else {
+                $('.fui-content .content-empty').hide();
+                $('.fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.fui-content').infinite('stop')
+                }
+                modal.page++;
+            }
+            core.tpl('#container', 'tpl_getreplay_list', result,modal.page>1);
         }, false, true)
     }
     return modal;

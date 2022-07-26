@@ -18,6 +18,7 @@ class Set_EweiShopV2Page extends PluginWebPage
 			$data['cashalipay'] = (int) $data['cashalipay'];
 			$data['cashcard'] = (int) $data['cashcard'];
 			$data['withdrawcharge'] = (double) $data['withdrawcharge'];
+			$data['mobile_phone'] = $data['mobile_phone'];
 			m('common')->updatePluginset(array('union' => $data));
 			plog('union.set.edit', '修改基本设置');
 			show_json(1, array('url' => webUrl('union/set', array('tab' => str_replace('#tab_', '', $_GPC['tab'])))));

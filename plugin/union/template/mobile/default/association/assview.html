@@ -1,30 +1,52 @@
 {template '_header'}
-<script>document.title = "{$_W['union']['title']}"; </script>
+<script>document.title = "{$vo['title']}成员"; </script>
 <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/article/template/mobile/default/images/mobile.css" />
 <link href="../addons/ewei_shopv2/plugin/union/static/css/mobilestyle.css" rel="stylesheet" type="text/css"/>
-
-
-
-
-
-
+<style>
+    .botton{
+        background-color: #ff3b00;
+        border-radius: 0.3rem;
+        text-align: center;
+        width: 3rem;
+        height: 1rem;
+        line-height: 1rem;
+        ;
+    }
+</style>
 <div class="fui-page  fui-page-current asssview-index-page" >
-    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
-        <div class="fui-header">
-            <div class="fui-header-left">
-                <a class="back"></a>
+    <div id="m_common_header" class="m_item_header">
+        <header class="jd-header jd-header-immerse jd-header-op0">
+            <div class="jd-header-new-bar" id="jd_header_new_bar">
+                <a  class="jd-header-icon-back J_ping back"><span></span></a>
             </div>
-            <div class="title">协会详情</div>
-            <div class="fui-header-right"></div>
-        </div>
-        <div class="fui-list no-border" style="top:2.2rem;text-align: center;
-    display: block;">
-           {$vo['title']}
-        </div>
-        <div class="fui-list no-border" style="top:2.2rem">
+        </header>
+    </div>
+    <div id="fui-page-current" class="fui-content navbar" style="background-color: #fafafa; padding-bottom: 0;top:0;">
+
+
+        <div class="fui-list no-border" >
             {$vo['declaration']}
         </div>
-        <div class="fui-list no-border" style="background: #D9D9D9;margin-top: .1rem;top: 2.2rem;">
+        {if $vo['contacts']}
+        <div class="fui-cell-group">
+            <div class="fui-cell">
+                <div class="fui-cell-icon">
+                    <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_man.png">
+                </div>
+                <div class="fui-cell-info"><p>联系人</p></div>
+                <div class="right">{$vo['contacts']}</div>
+            </div>
+            <a class="fui-cell" href="tel:{$vo['contactsphone']}">
+                <div class="fui-cell-icon">
+                    <img src="../addons/ewei_shopv2//plugin/union/template/mobile/default/static/images/memberac/ic_telephon.png">
+                </div>
+
+                <div class="fui-cell-info"><p>联系方式</p></div>
+                <div class="right" data-start="1">{$vo['contactsphone']}</div>
+            </a>
+        </div>
+        {/if}
+        <div class="fui-list no-border" style="background: #D9D9D9;margin-top: .1rem;">
             全部成员
         </div>
         <div class="fui-content navbar" style="position: relative">
@@ -38,6 +60,9 @@
             </div>
         </div>
     </div>
+</div>
+<div class="fui-navbar">
+    <a data-id="{$vo['id']}" data-type="{$type}" data-memberid="{$count_member['id']}" id="btn-submit" class="btn {if $type=="join"} btn-success {else} btn-danger{/if} block">{$bonttontext}</a>
 </div>
 <script type='text/html' id='tpl_view_list'>
         <%each list as row%>
@@ -62,8 +87,10 @@
                            部门:<%row.udname%>
                         </div>
                     </div>
-
                 </div>
+                <%if row.status==0%>
+                <a class="fui-cell-remark botton" href="{php echo mobileUrl('union.association.examine')}&id=<%row.id%>&assoid=<%row.association_id%>" style="font-size: 0.5rem;color: #f3ecec">审核</a>
+                <%/if%>
             </div>
         </div>
         <%/each%>

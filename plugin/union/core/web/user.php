@@ -142,9 +142,15 @@ class User_EweiShopV2Page extends PluginWebPage
 			$alipay = ((is_array($_GPC['alipay']) ? json_encode($_GPC['alipay']) : ''));
 			$lifetime = $_GPC['lifetime'];
 			$params = array('uniacid' => $_W['uniacid'], 'storeid' => $_GPC['storeid'], 'merchid' => $_GPC['merchid'], 'setmeal' => $_GPC['setmeal'], 'title' => $_GPC['title'], 'logo' => $_GPC['logo'], 'manageopenid' => $_GPC['manageopenid'], 'isopen_commission' => $_GPC['isopen_commission'], 'openid' => $_GPC['openid'], 'name' => $_GPC['name'], 'mobile' => $_GPC['mobile'], 'categoryid' => $_GPC['categoryid'], 'wechat_status' => $_GPC['wechat_status'], 'wechatpay' => $wechatpay, 'alipay_status' => $_GPC['alipay_status'], 'alipay' => $alipay, 'withdraw' => $_GPC['withdraw'], 'username' => $_GPC['username'], 'password' => (!(empty($_GPC['password'])) ? $_GPC['password'] : ''), 'status' => $_GPC['status'], 'lifetimestart' => strtotime($lifetime['start']), 'lifetimeend' => strtotime($lifetime['end']), 'set' => json_encode($userset), 'can_withdraw' => intval($_GPC['can_withdraw']), 'show_paytype' => intval($_GPC['show_paytype']), 'couponid' => (is_array($_GPC['couponid']) ? implode(',', $_GPC['couponid']) : ''), 'management' => (is_array($_GPC['management']) ? implode(',', $_GPC['management']) : ''));
-
+            if($_GPC['parent_id']>0){
+                //查询LEVEL
+                $level=pdo_fetchcolumn("select level from ".tablename('ewei_shop_union_user')." where id=:parent_id",array(':parent_id'=>$_GPC['parent_id']));
+                $params['level']=$level+1;
+            }
             $params['parent_id']=intval($_GPC['parent_id']);
 
+
+            $params['perm_role']=implode(",",$_GPC['perms']);
 			$user_totle = (int) pdo_fetchcolumn('SELECT id FROM ' . tablename('ewei_shop_union_user') . ' WHERE username=:username AND uniacid=:uniacid AND deleted=0 LIMIT 1', array(':username' => $params['username'], ':uniacid' => $_W['uniacid']));
 			$store = pdo_fetch('SELECT id,storeid FROM ' . tablename('ewei_shop_union_user') . ' WHERE uniacid=:uniacid AND deleted=0 LIMIT 1', array(':uniacid' => $_W['uniacid']));
 			$merch = pdo_fetch('SELECT id,merchid FROM ' . tablename('ewei_shop_union_user') . ' WHERE uniacid=:uniacid AND deleted=0 LIMIT 1', array(':uniacid' => $_W['uniacid']));
@@ -190,8 +196,13 @@ class User_EweiShopV2Page extends PluginWebPage
 		$alipay = json_decode($item['alipay'], true);
 		$order_template = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_printer_template') . ' WHERE uniacid=:uniacid  AND merchid=0', array(':uniacid' => $_W['uniacid']));
 
-        $userlist=pdo_fetchall('select * from ' . tablename('ewei_shop_union_user') . ' where id<>:id AND deleted=0 and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
-
+        $userlist=pdo_fetchall('select * from ' . tablename('ewei_shop_union_user') . ' where id<>:id AND deleted=0 and uniacid=:uniacid ', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+        $perms=$this->model->getMenu();
+        if(!empty($item['perm_role'])){
+            $user_perms = explode(',', $item['perm_role']);
+        }else{
+            $user_perms=$this->model->defaultperms();
+        }
 		include $this->template();
 	}
 	public function status() 
