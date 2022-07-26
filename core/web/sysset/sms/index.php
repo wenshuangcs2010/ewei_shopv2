@@ -55,6 +55,10 @@ class Index_EweiShopV2Page extends ComWebPage {
 				'cnbuyer'=>intval($_GPC['cnbuyer']),
 				'cnbuyer_username'=>trim($_GPC['cnbuyer_username']),
 				'cnbuyer_pw'=>intval($_GPC['cnbuyer_pw']),
+				'chuang'=>intval($_GPC['chuang']),
+				'clliuk'=>trim($_GPC['clliuk']),
+				'clyzaccount'=>trim($_GPC['clyzaccount']),
+				'clyzpassword'=>trim($_GPC['clyzpassword']),
 
 			);
 			if(empty($item)){

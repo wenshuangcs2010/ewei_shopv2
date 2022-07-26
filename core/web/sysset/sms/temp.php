@@ -197,6 +197,9 @@ class Temp_EweiShopV2Page extends ComWebPage {
 			elseif ($item['type']=='cnbuyer'){
 				$sms_data = trim($postdata);
 			}
+            elseif ($item['type']=='chuang'){
+                $sms_data = trim($postdata);
+            }
 			
 			$result = com('sms')->send($mobile, $item['id'], $sms_data, false);
 

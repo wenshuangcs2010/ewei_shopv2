@@ -74,7 +74,7 @@ class Route_EweiShopV2Model {
 				}
 			case 1: {
 					$file = $root . $routes[0] . ".php";
-					
+
 					if (is_file($file)) {
 						$class = ucfirst($routes[0]);
 					} elseif (is_dir($root . $routes[0])) {
@@ -85,7 +85,7 @@ class Route_EweiShopV2Model {
 						$file = $root . "index.php";
 						$class = "Index";
 					}
-					
+
 					$_W['action'] = $routes[0];
 				}
 				break;

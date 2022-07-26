@@ -117,6 +117,9 @@ class HttpUtil_EweiShopV2Model
 		foreach ($options as $key => $value) {
 			 $specs2[]=$value['specs'][0];
 		}
+		if(empty($specs2)){
+		    return false;
+        }
 		$specs2=array_unique($specs2);
 		foreach ($specs2 as $key => $value) {
 			$size=pdo_fetch("SELECT title,specid from ".tablename("ewei_shop_goods_spec_item")." where uniacid=:uniacid and id=:specsid",array(":specsid"=>$value,":uniacid"=>$_W['uniacid']));
@@ -377,6 +380,233 @@ class HttpUtil_EweiShopV2Model
 	    return 1;
 	}
 
+	function updatecnbuyergoods($depot){
+        global $_W;
+	     $depotid=$depot['id'];
+         $storeroomid=$depot['storeroomid'];
+
+
+         $dsn = "mysql:host=cgtx001-gmys.rwlb.rds.aliyuncs.com;dbname=xsdb_db";
+         $account="xsdb_cnbuyer_db";
+
+         $password="xsdb_cnbuyer_db!@#)(*ABC";
+         $db = new PDO($dsn, $account,$password,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES'utf8';"));
+
+        $pagecount=100;
+        $pageindex=1;
+
+        $countsql="select count(*) from ".tablename("ewei_shop_goods")." where goods_source =:warehouseid and hasoption=0 and uniacid=1 ";
+        $stmt=$db->prepare($countsql);
+        $stmt->execute(array(":warehouseid"=>$storeroomid));
+        foreach($stmt as $row){
+            $total=$row[0];
+        }
+
+        $allpage=ceil($total/$pagecount);
+
+        for($pageindex=1;$pageindex<=$allpage;$pageindex++){
+            $sql="SELECT * from ".tablename("ewei_shop_goods")." where goods_source =:warehouseid and hasoption=0 and uniacid=1 limit ".($pageindex-1)*$pagecount.",".$pagecount;
+            $stmtitem=$db->prepare($sql);
+            $stmtitem->execute(array(":warehouseid"=>$storeroomid));
+            $temp = $stmtitem->fetchAll(pdo::FETCH_ASSOC);
+            if (!empty($temp)) {
+                $r=array();
+                foreach ($temp as $key => $row) {
+                    $r[$row['goodssn']]=$row;
+                }
+               $goodssnlist= array_keys($r);
+
+                $filed=array(
+                    'id'=>'',
+                    'title'=>'',
+                    'total'=>'',
+                    'marketprice'=>"",
+                    'thumb'=>'',
+                    'thumb_url'=>'',
+                    'content'=>'',
+                    'productprice'=>'',
+                    'costprice'=>'',
+                    'minprice'=>'',
+                    'maxprice'=>'',
+                );
+                $instalfiled=array(
+                    'id'=>'',
+                    'title'=>'',
+                    'total'=>'',
+                    'marketprice'=>"",
+                    'thumb'=>'',
+                    'thumb_url'=>'',
+                    'content'=>'',
+                    'productprice'=>'',
+                    'costprice'=>'',
+                    'minprice'=>'',
+                    'maxprice'=>'',
+                    'uniacid'=>'',
+                    'depotid'=>$depotid,
+                    'goodssn'=>'',
+                    'weight'=>'',
+                    'status'=>'',
+                    'createtime'=>time(),
+                );
+                $goodslist=pdo_fetchall("select id,goodssn from ".tablename("ewei_shop_goods")." where uniacid=:uniacid and goodssn in(".implode(",",array_map('array_str',$goodssnlist)).") ",array(":uniacid"=>$_W['uniacid']),'goodssn');
+                $goodsupdatesql="INSERT into ".tablename("ewei_shop_goods")."(".implode(",",array_keys($filed)).") values";
+                unset($instalfiled['id']);
+                $installsql="INSERT into ".tablename("ewei_shop_goods")."(".implode(",",array_keys($instalfiled)).") values";
+
+                $isupdate=false;
+                $isinstall=false;
+                foreach ($r as $k=>$v){
+
+                    $instalfiled['title']=$filed['title']=$v['title'];
+                    $instalfiled['total']=$filed['total']=$v['total'];
+                    $instalfiled['marketprice']= $filed['marketprice']=$v['marketprice'];
+                    $thumb='';
+                    $thumb_url=serialize(array());
+                    if(!(strexists($v['thumb'], 'http:') || strexists($v['thumb'], 'https:')) ){
+                        $thumb="https://xsdbimg.cnbuyers.cn/".$v['thumb'] ;
+                        $thumb_url=iunserializer($v['thumb_url']);
+                        $temp_thumb_list=array();
+                        foreach ($thumb_url as $temp_thumb){
+                            $temp_thumb_list[]="https://xsdbimg.cnbuyers.cn/".$temp_thumb ;
+                        }
+                        $thumb_url=serialize($temp_thumb_list);
+
+                    }else{
+                        $thumb=$v['thumb'];
+                        $thumb_url=$v['thumb_url'];
+                    }
+                    $instalfiled['thumb']=$filed['thumb']=$thumb;
+                    $instalfiled['thumb_url']=$filed['thumb_url']=empty($thumb_url) ? serialize(array()) :$thumb_url;
+                    $instalfiled['content']=$filed['content']=$v['content'];
+                    $instalfiled['productprice']=$filed['productprice']=$v['productprice'];
+                    $instalfiled['costprice']=$filed['costprice']=$v['costprice'];
+                    $instalfiled['minprice']=$filed['minprice']=$v['minprice'];
+                    $instalfiled['maxprice']=$filed['maxprice']=$v['maxprice'];
+                    $instalfiled['uniacid']=$_W['uniacid'];
+                    $instalfiled['depotid']=$depotid;
+                    $instalfiled['goodssn']=$v['goodssn'];
+                    $instalfiled['weight']=$v['weight'];
+                    $instalfiled['status']=-1;
+                    $instalfiled['createtime']=time();
+
+
+
+                    if(isset($goodslist[$v['goodssn']]) && !empty($goodslist[$v['goodssn']])){
+                        $isupdate=true;
+                        $filed['id']=$goodslist[$v['goodssn']]['id'];
+                        $goodsupdatesql.="(".implode(",",array_map('array_str',array_values($filed)))."),";
+                    }else{
+                        $isinstall=true;
+                        $installsql.="(".implode(",",array_map('array_str',array_values($instalfiled)))."),";
+
+                    }
+                }
+
+                if($isupdate){
+                    $goodsupdatesql=substr($goodsupdatesql,0,strlen($goodsupdatesql)-1);
+                    unset($filed['id']);
+                    $goodsupdatesql.=" on duplicate key update ".implode(",",array_map('array_updatesqlstr',array_keys($filed)));
+
+                    try{
+                        pdo_query($goodsupdatesql,array());
+                    }catch (Exception $e){
+                        return $e->getMessage();
+                    }
+
+
+                }
+                if($isinstall){
+                    $installsql=substr($installsql,0,strlen($installsql)-1);
+
+                    try{
+                        pdo_query($installsql);
+                    }catch (Exception $e){
+                        return $e->getMessage();
+                    }
+
+                }
+            }
+        }
+        return 1;
+
+    }
+
+    function updateOmsStock($depostid){
+        global $_W;
+        $pagecount='100';
+        $pageindex=1;
+
+        $countsql="select count(*) from ".tablename("ewei_shop_goods")." where depotid =:depotid and uniacid=:uniacid";
+        $total= pdo_fetchcolumn($countsql,array(":depotid"=>$depostid,":uniacid"=>$_W['uniacid']));
+
+        $allpage=ceil($total/$pagecount);
+
+        for($pageindex=1;$pageindex<=$allpage;$pageindex++){
+            $sql="SELECT id,goodssn,hasoption from ".tablename("ewei_shop_goods")." where depotid =:depotid and uniacid=:uniacid limit ".($pageindex-1)*$pagecount.",".$pagecount;
+            $goodslist=pdo_fetchall($sql,array(":depotid"=>$depostid,":uniacid"=>$_W['uniacid']));
+            if(empty($goodslist)){
+                return 0;
+            }
+            $goodssnlist=array();
+            foreach ($goodslist as $l){
+
+                if($l['hasoption']){
+                    $optionlist=pdo_fetchall("select id,goodssn from ".tablename("ewei_shop_goods_option")." where goodsid=:goodsid",array(":goodsid"=>$l['id']));
+
+                    foreach ($optionlist as $option){
+                        $goodssnlist[$option['goodssn']]=array('id'=>$option['id'],'hasoption'=>1,'skucode'=>$option['goodssn']);
+                    }
+
+                }else{
+                    $goodssnlist[$l['goodssn']]=array('id'=>$l['id'],'hasoption'=>$l['hasoption'],'skucode'=>$l['goodssn']);
+                }
+
+
+            }
+            $url="http://oms.cnbuyers.cn/api/omsstock";
+            load()->func('communication');
+            $postdata=array(
+                'sku'=> json_encode(array_keys($goodssnlist)),
+            );
+
+            $resp = ihttp_request($url, $postdata);
+            $content=(array)json_decode($resp['content'],true);
+            if(isset($content['data'])&& !empty($content['data']) ){
+                $updatesql="insert into ".tablename("ewei_shop_goods")."  (id,total) values ";
+                $updateoptionsql="insert into ".tablename("ewei_shop_goods_option")."  (id,stock) values ";
+                $array_data=array();
+                foreach ($content['data'] as $item){
+                    $array_data[$item['sku']]=$item['stock'];
+                }
+
+                $is_update=false;
+                $is_updateoption=false;
+                foreach ($goodssnlist as $item){
+                    if($item['hasoption']){
+                        $stock=empty($array_data[$item['skucode']]) ? 0 :$array_data[$item['skucode']];
+                        $updateoptionsql.="({$item['id']},{$stock}),";
+                        $is_updateoption=true;
+                    }else{
+                        $is_update=true;
+                        $stock=empty($array_data[$item['skucode']]) ? 0 :$array_data[$item['skucode']];
+                        $updatesql.="({$item['id']},{$stock}),";
+                    }
+                }
+                $updatesql=substr($updatesql,0,strlen($updatesql)-1);
+                $updateoptionsql=substr($updateoptionsql,0,strlen($updateoptionsql)-1);
+                $updatesql.=" on duplicate key update total=values(total)";
+                $updateoptionsql.=" on duplicate key update stock=values(stock)";
+                if($is_update){
+                    pdo_query($updatesql);
+                }
+                if($is_updateoption){
+                    pdo_query($updateoptionsql);
+                }
+            }
+        }
+
+
+    }
 	function updatecnbuyerStock($depostid,$storeroomid){
 		global $_W;
 		$sql="SELECT id,goodssn from ".tablename("ewei_shop_goods")." where depotid =:depotid and uniacid=:uniacid";

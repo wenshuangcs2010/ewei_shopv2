@@ -223,10 +223,14 @@ if ($_W['ispost']) {
     , 'cashier'=>intval($_GPC['cashier'])
     , 'isdis'=>intval($_GPC['isdis'])
     , 'depotid'=>intval($_GPC['depotid'])
+    , 'cannotcart'=>intval($_GPC['cannotcart'])
     , 'consumption_tax'=>floatval($_GPC['consumption_tax']/100)
     , 'vat_rate'=>floatval($_GPC['vat_rate']/100)
 
     );
+    if($data['costprice']>$data['marketprice'] || $data['marketprice']<=0 || $data['costprice']<=0){
+        show_json(0,'成本和售价异常！');
+    }
     $buyagain_commission = is_array($_GPC['buyagain_commission']) ? $_GPC['buyagain_commission'] : array();
     if (!empty($buyagain_commission)){
         $buyagain_commission['type'] = 0;
@@ -607,7 +611,9 @@ if ($_W['ispost']) {
             "specs" => $newids,
             'virtual' => $data['type'] == 3 ? $optionArray['option_virtual'][$k] : 0,
         );
-
+        if($a['costprice']>$a['marketprice'] || $a['costprice']==0 || $a['marketprice']==0){
+            show_json(0,array('message'=>'规格成本异常，请处理'));
+        }
         $totalstocks+=$a['stock'];
         if (empty($get_option_id)) {
             pdo_insert("ewei_shop_goods_option", $a);

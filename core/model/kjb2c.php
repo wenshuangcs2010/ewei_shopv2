@@ -84,6 +84,8 @@ class Kjb2c_EweiShopV2Model {
                  $params['out_trade_no']=$params['out_trade_no']."_borrow";
 
             }
+            $depot=$this->get_depot($order['depotid']);
+            $params['customs']=$depot['wx_customs_place'];
 
         	$setting = uni_setting($uniacid, array('payment'));
         	if (is_array($setting['payment']['wechat']) && $setting['payment']['wechat']['switch']) {
@@ -94,11 +96,10 @@ class Kjb2c_EweiShopV2Model {
                     	'apikey'=>$setting['payment']['wechat']['apikey'],
                     	);
                     $paytype="wx";
-              
-               
             }else{
             	return array("paytype"=>0,'retrundata'=>"微信支付已经关闭请重新开启");
             }
+
 		}elseif($order['paytype']==22){
 			load()->model('payment');
 			$paytype="alipay";
@@ -110,7 +111,6 @@ class Kjb2c_EweiShopV2Model {
 					'key'=>$setting['payment']['alipay']['secret']
 					);
 			}
-
 			$params=array(
 				"order_sn" => $order['ordersn'],
 				"customs_place" => $customs,//报关地点
@@ -120,7 +120,6 @@ class Kjb2c_EweiShopV2Model {
 				'merchant_customs_name'=>$depot['customs_name'],
 				'mch_customs_no'=>$depot['customs_code'],
 				);
-
 		}
 //		if( $order['if_customs_z']==1 && $order['zhuan_status']==1 ){
 //			$sporder=pdo_fetch("SELECT * FROM ".tablename("ewei_shop_zpay_log")." where order_sn=:ordersn",array(":ordersn"=>$order['ordersn']));
@@ -147,9 +146,12 @@ class Kjb2c_EweiShopV2Model {
 
 		$coustoms=customs::getObject($paytype,$config);
 
-		
-		$retrundata=(array)$coustoms->to_customs($params);
 
+		$retrundata=(array)$coustoms->to_customs($params);
+//        if($order['ordersn']=="SHCG2021071115030165"){
+//            var_dump($coustoms->get_values());
+//            die();
+//        }
         if(isset($retrundata['is_success'])){
             $response=(array)$retrundata['response'];
             $response=(array)$response['alipay'];

@@ -43,6 +43,7 @@ class OmsApi_EweiShopV2Page extends WebPage
 		$ret=m("kjb2c")->sendOmsorder($orderid,$type);
 
 		if($ret['status']==0){
+
 			show_json(0,$ret['msg']);
 		}else{
 			show_json(1,$ret['msg']);

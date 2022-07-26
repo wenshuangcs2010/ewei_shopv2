@@ -24,6 +24,7 @@ class Index_EweiShopV2Page extends WebPage
 
 		 switch ($paytype) {
 			case 'wx':
+
 			if($returndata['result_code']=="FAIL"){
                 	show_json(0,$returndata['err_code_des']);
              }else{
@@ -44,6 +45,8 @@ class Index_EweiShopV2Page extends WebPage
 				if($returndata['is_success']=="F"){
 					show_json(0,"失败");
 				}else{
+
+
 					$response=(array)$returndata['response'];
 					$alipay=(array)$response['alipay'];
 					show_json(1,$alipay['result_code']);

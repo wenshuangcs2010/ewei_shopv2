@@ -78,6 +78,10 @@ class Member_EweiShopV2Model {
                     $openid = str_replace('sns_wx_', '', $openid);
                     $condition = " openid_wx=:openid ";
                     $bindsns = 'wx';
+                } elseif(strexists($openid, 'wap_user_')){
+                    $openid = str_replace('wap_user_', '', $openid);
+                    $condition = " openid_wx=:openid ";
+                    $bindsns = 'mobile';
                 }
                 if(!empty($condition)){
                     $info = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where '.$condition.'  and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' =>$openid));

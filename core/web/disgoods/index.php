@@ -11,10 +11,20 @@ class Index_EweiShopV2Page extends WebPage {
             $starttime = strtotime('-1 month');
             $endtime = time();
         }
+        //查询主站可用仓库
+
+        $sql="select id,title from ".tablename("ewei_shop_depot")." where enabled=1 and uniacid=:uniacid";
+        $depotlist=pdo_fetchall($sql,array(":uniacid"=>DIS_ACCOUNT));
+
         $condition=" WHERE 1 and g.uniacid=:uniacid";
+
         $endtime=time();
         $sqlcondition = ' left join '.tablename("ewei_shop_goodsresel").' gr on g.id = gr.goods_id';
         $params = array(':uniacid' => $uniacid);
+        if(!empty($_GPC['depotid']) && $_GPC['depotid']!=-1){
+            $condition.=" and g.depotid=:depotid";
+            $params[':depotid']=intval($_GPC['depotid']);
+        }
         if (!empty($_GPC['keyword'])) {
             $_GPC['keyword'] = trim($_GPC['keyword']);
 
@@ -35,6 +45,8 @@ class Index_EweiShopV2Page extends WebPage {
             $params[':keyword'] = '%' . $_GPC['keyword'] . '%';
             $params[':id'] = $_GPC['keyword'];
         }
+
+
         if(!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])){
             $starttime = strtotime($_GPC['time']['start']);
             $endtime = strtotime($_GPC['time']['end']);
@@ -51,6 +63,7 @@ class Index_EweiShopV2Page extends WebPage {
         $condition.=" AND g.status > 0 and g.checked=0 and g.deleted=0 and g.total>0 and  g.isdis=1 ";
         //var_dump($condition);
         $sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
+
         $total_all = pdo_fetchall($sql, $params);
         $total = count($total_all);
         unset($total_all);
