@@ -14,9 +14,11 @@
     {ifp 'member.group'}
     	<li {if $_W['action']=='member.group'} class="active" {/if}><a href="{php echo webUrl('member/group')}">会员分组</a></li>
     {/if}
+    <!--
     {ifp 'member.group' && $_W['uniacid']==DIS_ACCOUNT}
         <li {if $_W['action']=='member.unit'} class="active" {/if}><a href="{php echo webUrl('member/unit')}">单位分组</a></li>
     {/if}
+    -->
 </ul>
 {/if}
 {ifp 'member.rank'}

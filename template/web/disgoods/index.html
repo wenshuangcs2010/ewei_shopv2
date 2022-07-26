@@ -11,7 +11,7 @@
     <input type="hidden" name="r"  value="disgoods" />
     <input type="hidden" name="goodsfrom" value="dis" />
     <div class="page-toolbar row m-b-sm m-t-sm">
-        <div class="col-sm-8 pull-right">
+        <div class="col-sm pull-right">
             {php echo tpl_daterange('time', array('sm'=>true,'placeholder'=>'创建时间'),true);}
             <select name="cate" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="商品分类">
                 <option value="" {if empty($_GPC['cate'])}selected{/if} >商品分类</option>
@@ -19,11 +19,17 @@
                 <option value="{$c['id']}" {if $_GPC['cate']==$c['id']}selected{/if} >{$c['name']}</option>
                 {/loop}
             </select>
+            <select name="depotid" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="仓库选择">
+                <option value="" {if empty($_GPC['depotid'])}selected{/if} >仓库选择</option>
+                {loop $depotlist $de}
+                <option value="{$de['id']}" {if $_GPC['depotid']==$de['id']}selected{/if} >{$de['title']}</option>
+                {/loop}
+            </select>
 
              <select name="disstatus" class='form-control input-sm select-sm select2' style="width:200px;" data-placeholder="代理状态">
                 <option value="0" {if empty($_GPC['disstatus'])}selected{/if}  >全部</option>
                 <option value="1" {if $_GPC['disstatus']==2}selected{/if} >未代理</option>
-               
+
             </select>
             <div class="input-group">				 
                 <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="ID/名称/编号/条码{if $merch_plugin}/商户名称{/if}"> <span class="input-group-btn">

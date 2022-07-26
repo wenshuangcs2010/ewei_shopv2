@@ -7,7 +7,7 @@
 <a class="btn btn-primary btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/op/send', array('id' => $item['id']))}">1确认发货</a><br/>
 {else}
      {if $item['ismerch'] == 0}
-    <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('order/op/pay', array('id' => $item['id']))}" data-confirm="确认此订单已付款吗？">dis确认付款</a>
+   <!-- <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('order/op/pay', array('id' => $item['id']))}" data-confirm="确认此订单已付款吗？">dis确认付款</a>-->
     {/if}
 {/if}
 {/if}
@@ -41,7 +41,7 @@
 {/if}
 {else}
 {if $item['isverify']==1}
-<!--核销 确认核销-->
+<!--核销 确认核销-->  b
 {ifp 'order.op.verify'}
 <a class="btn btn-primary btn-xs" data-toggle='ajaxPost' href="{php echo webUrl('order/op/fetch', array('id' => $item['id']))}" data-confirm="确认使用吗？">4确认使用</a>
 {/if}

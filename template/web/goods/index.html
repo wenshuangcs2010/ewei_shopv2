@@ -25,7 +25,7 @@
             <div class="input-group-btn">
                 <button class="btn btn-default btn-sm"  type="button" data-toggle='refresh'><i class='fa fa-refresh'></i></button>
                 {ifp 'goods.edit'}
-                {if $_GPC['goodsfrom']=='sale'}
+                {if $_GPC['goodsfrom']=='sale' || $_GPC['goodsfrom']=='out'}
                 <button class="btn btn-default btn-sm" type="button" data-toggle='batch'  data-href="{php echo webUrl('goods/status',array('status'=>0))}"><i class='fa fa-circle-o'></i> 下架</button>
                 {/if}
                 {if $_GPC['goodsfrom']=='stock'}
@@ -49,7 +49,11 @@
                 {/if}
                 {/if}
               <button class="btn btn-default btn-sm" id="data-ajax-update" type="button"  data-toggle="ajaxModal"  href=""><i class='fa fa-trash'></i> 批量更新分类</button>
-               
+                {if $_GPC['goodsfrom']=='stock'}
+                <a  class='btn btn-default btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('goods/import', array('id' => $item['id']))}" ><i class='fa fa-plus'></i> 批量导入商品</a>
+
+                {/if}
+
                 <script type="text/javascript">
                      
                     $("#data-ajax-update").click(function(event) {

@@ -114,7 +114,7 @@
     <tr class='trorder'>
         <td colspan='4' >
             订单编号:  {$item['ordersn']}
-            {if $_W['uniacid']==DIS_ACCOUNT && !empty($item['cnbuyers_order_sn'])}
+            {if !empty($item['cnbuyers_order_sn'])}
                 <span style="color: red">关联订单:{$item['cnbuyers_order_sn']}</span>
             {/if}
 

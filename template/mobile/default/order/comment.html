@@ -9,12 +9,12 @@
     </div>
   <div class='fui-content margin navbar'>
     
-	  <div class="fui-list-group goods-list-group">  
+	  <div class="fui-list-group goods-list-group">
 		  <div class="fui-list-group-title"><i class="icon icon-shop"></i> {$_W['shopset']['shop']['name']}</div>
-		  
+
 	    {loop $goods $g}
-		
-			
+
+
 	    <div class="fui-list goods-list" data-goodsid="{$g['goodsid']}">
 		<a class="fui-list-media" href="{php echo mobileUrl('goods/detail',array('id'=>$g['goodsid']))}">
 			<img src="{php echo tomedia($g['thumb'])}" class="round">

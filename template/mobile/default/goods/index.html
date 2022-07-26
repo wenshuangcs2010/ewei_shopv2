@@ -26,10 +26,14 @@
 	    <span class="sorting">
 		<i class="icon icon-sanjiao2"></i>
 		<i class="icon icon-sanjiao1"></i>
+		
 	    </span>
 	</div>
 	<div class="item"  data-order="filter"><span class='text'>筛选 <i class="icon icon-filter "></i></span> </div>
     </div>
+
+
+
     <div class="fui-content navbar">
 	<div class='fui-content-inner'>
 	    <div class='content-empty' style='display:none;'>
@@ -40,6 +44,7 @@
 	</div>
 		{template '_copyright'}
     </div>
+
      <div class='fui-mask-m'></div>
      <div class="screen">
 	<div class="attribute">
@@ -135,6 +140,7 @@
 					istime: "{$_GPC['istime']}",
 					cate: "{$_GPC['cate']}",
 					order: "{$_GPC['order']}",
+					depotid: "{$_GPC['depotid']}",
 					by: "{$_GPC['by']}",
 					merchid: "{$_GPC['merchid']}",
 					frommyshop: "{php echo intval($_GPC['frommyshop'])}"

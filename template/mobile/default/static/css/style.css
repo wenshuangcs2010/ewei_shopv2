@@ -2873,6 +2873,7 @@ a {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
+    bottom: 2.5rem;
 }
 
 .fui-fullHigh-item {
@@ -2880,6 +2881,7 @@ a {
     width: 100%;
     background: #fff;
     overflow-y: auto;
+
 }
 
 .fui-fullHigh-item.menu {

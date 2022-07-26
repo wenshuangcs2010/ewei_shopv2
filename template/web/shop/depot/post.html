@@ -99,20 +99,40 @@
     </div>
     
     <div class="form-group customs">
-        <label class="col-sm-2 control-label must">报关地点</label>
+        <label class="col-sm-2 control-label must">支付宝报关地点</label>
         <div class="col-sm-9 col-xs-12" >
            <select class="form-control tpl-category-parent select2"  id="customs_place" name="customs_place" style="width:300px;">
                 <option value="NINGBO" {if $item['customs_place'] == 'NINGBO'}selected="true"{/if}>宁波</option>
-                <option value="HANGZHOU" {if $item['customs_place'] == 'HANGZHOU'}selected="true"{/if}>杭州</option>
-                <option value="GUANGZHOU" {if $item['customs_place'] == 'GUANGZHOU'}selected="true"{/if}>广州</option>
-                <option value="SHANGHAI" {if $item['customs_place'] == 'SHANGHAI'}selected="true"{/if}>上海</option>
-                <option value="GUANGZHOU_ZS" {if $item['customs_place'] == 'GUANGZHOU_ZS'}selected="true"{/if}>广州(总署版)</option>
-                <option value="SHANGHAI_ZS" {if $item['customs_place'] == 'SHANGHAI_ZS'}selected="true"{/if}>上海(总署版)</option>
-                <option value="CHONGQING" {if $item['customs_place'] == 'CHONGQING'}selected="true"{/if}>重庆</option>
+                <option value="ZONGSHU" {if $item['customs_place'] == 'ZONGSHU'}selected="true"{/if}>直连总署</option>
+                <option value="HANGZHOU_ZONGSHU" {if $item['customs_place'] == 'HANGZHOU_ZONGSHU'}selected="true"{/if}>杭州海关</option>
 
             </select>
         </div>
+
+
     </div>
+
+<div class="form-group customs">
+    <label class="col-sm-2 control-label must">微信报关地点</label>
+    <div class="col-sm-9 col-xs-12" >
+        <select class="form-control tpl-category-parent select2"  id="wx_customs_place" name="wx_customs_place" style="width:300px;">
+            <option value="NINGBO" {if $item['wx_customs_place'] == 'NINGBO'}selected="true"{/if}>宁波</option>
+            <option value="CHONGQING" {if $item['wx_customs_place'] == 'CHONGQING'}selected="true"{/if}>重庆</option>
+            <option value="HANGZHOU_ZS" {if $item['wx_customs_place'] == 'HANGZHOU_ZS'}selected="true"{/if}>杭州海关</option>
+            <option value="GUANGZHOU_ZS" {if $item['wx_customs_place'] == 'GUANGZHOU_ZS'}selected="true"{/if}>广州-总署</option>
+        </select>
+    </div>
+</div>
+<div class="form-group customs">
+    <label class="col-sm-2 control-label must">海关备案名</label>
+    <div class="col-sm-9 col-xs-12">
+        {ife 'shop.depot' $item}
+        <input type="text" id='customs_name' name="customs_name" class="form-control" value="{$item['customs_name']}" {if $item['if_customs']==1} data-rule-required='true'{else} data-rule-required='true'{/if} style="width:300px;"/>
+        {else}
+        <div class='form-control-static'>{$item['customs_name']}</div>
+        {/if}
+    </div>
+</div>
     <div class="form-group customs">
         <label class="col-sm-2 control-label must">海关编码</label>
         <div class="col-sm-9 col-xs-12">
@@ -139,17 +159,7 @@
     </div>
     
     
-    <div class="form-group declare">
-        <label class="col-sm-2 control-label must">海关备案名</label>
-        <div class="col-sm-9 col-xs-12">
-            {ife 'shop.depot' $item}
-            	<input type="text" id='customs_name' name="customs_name" class="form-control" value="{$item['customs_name']}" {if $item['if_customs']==1} data-rule-required='true'{else} data-rule-required='true'{/if} style="width:300px;"/>
-            {else}
-            	<div class='form-control-static'>{$item['customs_name']}</div>
-            {/if}
 
-        </div>
-    </div>
      
             
 

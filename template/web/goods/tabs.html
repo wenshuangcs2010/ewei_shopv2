@@ -15,7 +15,9 @@
     <li {if $_GPC['goodsfrom'] == 'sale'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'sale'))}">出售中<span>{$totals['sale']}</span></a></li>
      <li {if $_GPC['goodsfrom'] == 'out'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'out'))}">已售罄<span  class='text-danger'>{$totals['out']}</span></a></li>
     {if $_W['uniacid']!= DIS_ACCOUNT}
+    {ifp 'disgoods'}
     <li {if $_GPC['goodsfrom'] == 'dis'} class="active" {/if}><a href="{php echo webUrl('disgoods',array('goodsfrom'=>'dis'))}">代理商品<span>{$totals['dis']}</span></a></li>
+    {/if}
     {/if}
 
     {if $_W['uniacid']== DIS_ACCOUNT}
@@ -25,8 +27,10 @@
     <li {if $_GPC['goodsfrom'] == 'cycle'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'cycle'))}">回收站<span  class='text-default'>{$totals['cycle']}</span></a></li>
      {ifp 'goods.category'}<li {if $_W['action'] == 'goods.category'} class="active" {/if}><a href="{php echo webUrl('goods/category')}">商品分类</a></li>{/if}
     {ifp 'goods.group'}<li {if $_GPC['r'] == 'goods.group' || $_GPC['r'] == 'goods.group.edit'}class="active" {/if}><a href="{php echo webUrl('goods/group')}">商品组</a></li>{/if}
-    <li {if $_W['action'] == 'goods.label'} class="active" {/if}><a href="{php echo webUrl('goods/label')}">标签管理</a></li>
-    <li {if $_W['action'] == 'goods.stock'} class="active" {/if}><a href="{php echo webUrl('goods/stock')}">库存导入</a></li>
+    {ifp 'goods.label'}<li {if $_W['action'] == 'goods.label'} class="active" {/if}><a href="{php echo webUrl('goods/label')}">标签管理</a></li>{/if}
+    {ifp 'goods.stock'} <li {if $_W['action'] == 'goods.stock'} class="active" {/if}><a href="{php echo webUrl('goods/stock')}">库存导入</a></li>{/if}
+    {ifp 'goods.isdiscount'} <li {if $_W['action'] == 'goods.isdiscount'} class="active" {/if}><a href="{php echo webUrl('goods/isdiscount')}">促销导入</a></li>{/if}
+    {ifp 'goods.importgoods'}  <li {if $_W['action'] == 'goods.import'} class="active" {/if}><a href="{php echo webUrl('goods/importgoods')}">商品导入</a></li>{/if}
 </ul>
 {/if}
 

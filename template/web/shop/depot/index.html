@@ -41,10 +41,10 @@
         <thead class="navbar-inner">
             <tr>
                 <th style="width:25px;"><input type='checkbox' /></th>
-                <th style="width:25%;">名称</th>
+                <th style="width:10%;">名称</th>
                 <th style="width:25%;">报关</th>
                 <th style="width:25%;">启用</th>
-                <th style="width:25%;">操作</th>
+                <th style="width:40%;">操作</th>
             </tr>
         </thead>
         <tbody>
@@ -59,6 +59,9 @@
                 <a data-toggle="ajaxPost" data-confirm='此操作会占用大量内存与带宽，在获取过程中，请不要进行任何操作!' href="{php echo webUrl('shop/depot/updatastock', array('id' => $item['id']))}" class="btn btn-default btn-sm">
                     <i class='fa fa-globe'></i>更新库存
                 </a>
+                    <a data-toggle="ajaxPost" data-confirm='此操作会占用大量内存与带宽，在获取过程中，请不要进行任何操作!' href="{php echo webUrl('shop/depot/get_goods', array('id' => $item['id']))}" class="btn btn-default btn-sm">
+                        <i class='fa fa-globe'></i>同步商品
+                    </a>
                 {/if}
                     {ifp 'shop.depot.view|shop.depot.edit'}
                     	<a href="{php echo webUrl('shop/depot/edit', array('id' => $item['id']))}" class="btn btn-default btn-sm">

@@ -16,7 +16,7 @@
                             <input type="number" name="mobile" class="form-control" value="" placeholder="请输入被发送手机号" data-rule-required="true" maxlength="11"></span>
                         </div>
                     </div>
-                    {if empty($item['template'])}
+                    {if empty($item['template']) || $item['template']==2 }
                         <div class="form-group">
                             <label class="col-sm-2 control-label must">短信内容</label>
                             <div class="col-sm-9 col-xs-12">

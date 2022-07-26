@@ -32,6 +32,7 @@
 				<div class="fui-cell-info"><input type="tel" class='fui-input' id='verifycode' name='verifycode' placeholder="5位验证码"  value="" maxlength="5" /></div>
 				<div class="fui-cell-remark noremark"><a class="btn btn-default btn-default-o btn-sm" id="btnCode">获取验证码</a></div>
 			</div>
+			<!--
 			<div class="fui-cell must">
 				<div class="fui-cell-label">登录密码</div>
 				<div class="fui-cell-info"><input type="password" class='fui-input' id='pwd' name='pwd' placeholder="请输入您的登录密码"  value="" /></div>
@@ -40,7 +41,14 @@
 				<div class="fui-cell-label">确认密码</div>
 				<div class="fui-cell-info"><input type="password" class='fui-input' id='pwd1' name='pwd1' placeholder="请输入确认登录密码"  value="" /></div>
 			</div>
-
+			-->
+			{if $_W['uniacid']==102 && $member['mobileverify']==0}
+			<div class="fui-cell">
+				<div class="text_info">
+					您的微信号还未与您的工会账号关联，请通过验证手机号进行绑定，完成绑定后访问可免登录。
+				</div>
+			</div>
+			{/if}
 		</div>
 
 		<a href='#' id='btnSubmit' class='btn btn-success block'>立即绑定</a>
@@ -53,7 +61,18 @@
 			});
 		});
 </script>
-
+	<style>
+		.text_info{
+			border: 1px solid #dcdcdc;
+			-webkit-border-radius: 0.3rem;
+			border-radius: 0.3rem;
+			font-size: 0.6rem;
+			background-color: #b2e7ed;
+			padding: .2rem .2rem;
+			text-indent: 0.8rem;
+			color: #ff0000;
+		}
+	</style>
 </div>
 {template '_footer'}
 

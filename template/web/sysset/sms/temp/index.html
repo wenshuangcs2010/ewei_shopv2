@@ -37,6 +37,7 @@
                 <option value="dayu" {if $_GPC['type']=='dayu'}selected{/if}>阿里大于</option>
                 <option value="emay" {if $_GPC['type']=='emay'}selected{/if}>亿美软通</option>
                 <option value="cnbuyer" {if $_GPC['type']=='cnbuyer'}selected{/if}>梦网平台</option>
+                <option value="cnbuyer" {if $_GPC['type']=='chuang'}selected{/if}>创蓝253</option>
             </select>
             <select name="status" class="form-control input-sm select-sm" style="width:80px;">
                 <option value="" {if $_GPC['status']==''}selected{/if}>状态</option>
@@ -81,6 +82,8 @@
                         <span class="label label-warning">亿美软通</span>
                     {elseif $item['type']=='cnbuyer'}
                         <span class="label label-warning">梦网平台</span>
+                    {elseif $item['type']=='chuang'}
+                    <span class="label label-warning">创蓝253</span>
                     {/if}
                 </td>
                 <td style="text-align: center;">

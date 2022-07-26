@@ -12,8 +12,8 @@
         {/if}
 
         <link rel="stylesheet" type="text/css" href="{php echo EWEI_SHOPV2_LOCAL}static/fonts/iconfont.css?v=2016070717">
-<script src="./resource/js/lib/jquery-1.11.1.min.js"></script>
-       <script src='//res.wx.qq.com/open/js/jweixin-1.1.0.js'></script>
+        <script src="./resource/js/lib/jquery-1.11.1.min.js"></script>
+       <script src='//res.wx.qq.com/open/js/jweixin-1.6.0.js?a=1.0.1'></script>
 <!--   <script src="../addons/ewei_shopv2/static/js/dist/foxui/js/foxui.min.js"></script>-->
         <script src="{php echo EWEI_SHOPV2_LOCAL}static/js/require.js"></script>
         <script src="{php echo EWEI_SHOPV2_LOCAL}static/js/myconfig-app.js"></script>
@@ -22,7 +22,12 @@
         {if !empty($_W['shopset']['shop']['loading'])}
         <style>.fui-goods-group.block .fui-goods-item .image {background-image: url("{php echo tomedia($_W['shopset']['shop']['loading'])}");}</style>
         {/if}
+
         {if !is_mobile() && !is_weixin() && !is_h5app()}
+
+
+
+
         <style type="text/css">
             body {
                 position: absolute;;
