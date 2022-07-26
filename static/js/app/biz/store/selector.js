@@ -1,8 +1,8 @@
-    define(['core', 'tpl', 'http://api.map.baidu.com/getscript?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7'], function (core, tpl) {
+    define(['core', 'tpl', 'https://api.map.baidu.com/api?v=2.0&ak=A4oOZwxKSobDEK8sF0EwKGi7'], function (core, tpl) {
         var modal = {};
         modal.init = function () {
               modal.bindEvents();
-              
+
               if (typeof (window.selectedStoreData) !== 'undefined') {
                       $(".store-item .fui-list-media i").removeClass('selected');
                      $(".store-item[data-storeid='" + window.selectedStoreData.id + "'] .fui-list-media i").addClass('selected');
@@ -75,6 +75,7 @@
         };
         modal.bindEvents  =function(){
              $('.store-item').unbind('click').click(function(){
+
                  var $this = $(this);
                     window.selectedStoreData = {
                           'id':  $this.data('storeid'),

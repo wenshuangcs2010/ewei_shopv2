@@ -184,14 +184,6 @@ define(['core'], function (core, tpl, picker) {
                 FoxUI.toast.show('请输入5位数字验证码!');
                 return
             }
-            if ($('#pwd').isEmpty()) {
-                FoxUI.toast.show('请输入登录密码!');
-                return
-            }
-            if ($('#pwd').val() !== $('#pwd1').val()) {
-                FoxUI.toast.show('两次密码输入不一致!');
-                return
-            }
             $('#btnSubmit').html('正在绑定...').attr('stop', 1);
             core.json('member/bind', {
                 mobile: $('#mobile').val(),

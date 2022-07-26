@@ -992,7 +992,8 @@
   <county name="高淳县" /> 
   </city>
  <city name="无锡市">
-  <county name="市辖区" /> 
+  <county name="市辖区" />
+  <county name="新吴区" />
   <county name="崇安区" /> 
   <county name="南长区" /> 
   <county name="北塘区" /> 
@@ -1000,7 +1001,7 @@
   <county name="惠山区" /> 
   <county name="滨湖区" /> 
   <county name="江阴市" /> 
-  <county name="宜兴市" /> 
+  <county name="宜兴市" />
   </city>
  <city name="徐州市">
   <county name="市辖区" /> 
