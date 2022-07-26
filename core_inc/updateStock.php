@@ -44,6 +44,7 @@ class updateStock
             $this->depotsids[]=$item['id'];
             $this->depot_list[$item['id']]=$item;
         }
+
         for ($pageindex=1;$pageindex<=$pagenumber;$pageindex++){
             $goodslist=$this->get_goods($pageindex,$pagecount);
 
@@ -62,31 +63,46 @@ class updateStock
 
         foreach ($goodslist as $goods){
 
-            if(in_array($goods['depotid'],$this->depotsids) && $goods['depotid']!=27){
-                $depot=$this->depot_list[$goods['depotid']];
 
-                if($goods['hasoption']){
-                   $optionlist= pdo_fetchall("select goodssn,id from ".tablename("ewei_shop_goods_option")." where goodsid=:goodsid",array(":goodsid"=>$goods['id']));
-                    foreach ($optionlist as $option){
-                        $stock=$this->ihttp_postdata($depot,$option['goodssn']);
-                        if(isset($stock['error']) && $stock['error']==0){
-                            $this->updateGoodsopeionlist[]=array('id'=>$option['id'],'stock'=>$stock['data']['stock']);
+
+            //正常在售商品
+            if($goods['deleted']==0 && $goods['status']==1) {
+                if(in_array($goods['depotid'],$this->depotsids) && $goods['depotid']!=27){
+                        $depot = $this->depot_list[$goods['depotid']];
+                        if ($goods['hasoption']) {
+                            $optionlist = pdo_fetchall("select goodssn,id from " . tablename("ewei_shop_goods_option") . " where goodsid=:goodsid", array(":goodsid" => $goods['id']));
+                            foreach ($optionlist as $option) {
+                                $stock = $this->ihttp_postdata($depot, $option['goodssn']);
+                                if (isset($stock['error']) && $stock['error'] == 0) {
+                                    $this->updateGoodsopeionlist[] = array('id' => $option['id'], 'stock' => $stock['data']['stock']);
+                                }
+                            }
+                        } else {
+
+                            $stock = $this->ihttp_postdata($depot, $goods['goodssn']);
+                            if (isset($stock['error']) && $stock['error'] == 0) {
+                                $this->updateGoodslist[] = array('id' => $goods['id'], 'stock' => $stock['data']['stock']);
+                            }
+
                         }
+
+                }
+                if($goods['depotid']==27){//运动库存单独更新
+                    $depot=$this->depot_list[$goods['depotid']];
+                   if(!empty($goods['goodssn']) && !empty($depot['storeroomid'])){
+                       m("httpUtil")->updateAdressGoods($goods['goodssn'],$goods['id'],$depot['storeroomid']);
+                   }
+                }
+            }else{
+                if ($goods['hasoption']) {
+                    $optionlist = pdo_fetchall("select goodssn,id from " . tablename("ewei_shop_goods_option") . " where goodsid=:goodsid", array(":goodsid" => $goods['id']));
+                    foreach ($optionlist as $option) {
+                        $this->updateGoodsopeionlist[] = array('id' => $option['id'], 'stock' => 0);
                     }
                 }else{
-                    $stock=$this->ihttp_postdata($depot,$goods['goodssn']);
-                    if(isset($stock['error']) && $stock['error']==0){
-                        $this->updateGoodslist[]=array('id'=>$goods['id'],'stock'=>$stock['data']['stock']);
-                    }
+                    $this->updateGoodslist[] = array('id' => $goods['id'], 'stock' => 0);
                 }
             }
-            if($goods['depotid']==27){//运动库存单独更新
-                $depot=$this->depot_list[$goods['depotid']];
-               if(!empty($goods['goodssn']) && !empty($depot['storeroomid'])){
-                   m("httpUtil")->updateAdressGoods($goods['goodssn'],$goods['id'],$depot['storeroomid']);
-               }
-            }
-
 
             //每50条更新一下数据
             if(count($this->updateGoodsopeionlist)>=50){
@@ -97,7 +113,9 @@ class updateStock
                 $this->updateStock();
                 $this->updateGoodslist=array();
             }
+
         }
+
         if(count($this->updateGoodsopeionlist)>0){
             $this->updateOptionStock();
             $this->updateGoodsopeionlist=array();
@@ -165,12 +183,12 @@ class updateStock
         }
     }
     private  function get_goods($pageindex,$pagesize){
-        $sql="select id,depotid,goodssn,hasoption from ".tablename("ewei_shop_goods")." where uniacid=:uniacid and deleted=0 and status>=0   LIMIT " . ($pageindex - 1) * $pagesize . ',' . $pagesize;
+        $sql="select id,depotid,goodssn,hasoption,deleted,status from ".tablename("ewei_shop_goods")." where uniacid=:uniacid   LIMIT " . ($pageindex - 1) * $pagesize . ',' . $pagesize;
 
         return pdo_fetchall($sql,array(":uniacid"=>DIS_ACCOUNT));
     }
     private  function get_total(){
-       return pdo_fetchcolumn("select count(*) from ".tablename("ewei_shop_goods")." where uniacid =:uniacid and deleted=0 and status>=0 ",array(":uniacid"=>DIS_ACCOUNT));
+       return pdo_fetchcolumn("select count(*) from ".tablename("ewei_shop_goods")." where uniacid =:uniacid ",array(":uniacid"=>DIS_ACCOUNT));
     }
     //全部需要从OMS 更新的库存的商品
     private function get_depots(){

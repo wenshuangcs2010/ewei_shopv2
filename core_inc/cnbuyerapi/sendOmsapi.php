@@ -30,10 +30,14 @@ class SendOmsapi{
         if($this->params['discount']<0 || $this->params['discount']<0.03){
             $this->params['discount']=0;
         }
-        if($this->params['price']==0){
+        if($order['deductcredit2']>0){
+            $this->params['payment_name']="混合支付";
+        }
+        if($order['price']==0 && $order['disorderamount']==0){
             $this->params['price']=$order['price']+$order['deductcredit2'];
             $this->params['disoutorder_amount']=$order['price']+$order['deductcredit2'];
         }
+        $this->update_out_goodsprice();
 		$orders=json_encode($this->get_values());
 		$postData=array(
 			'app_id'=>self::$APP_ID,
@@ -67,6 +71,29 @@ class SendOmsapi{
 		}
 		return $this->iHttpPost($url,$postData);
 	}
+    //将商品优惠中的优惠去掉
+    private function update_out_goodsprice(){
+        $goodsamount=0;
+        $discount=$this->params['discount'];
+
+        if($discount>0){
+            $shipping_fee=$this->params['shipping_fee'];//运费
+            $orderprice=$this->params['order_amount'];//用户实付包含运费
+            $order_goods_price=$orderprice-$shipping_fee;//商品时间收款金额
+            foreach ( $this->params['goods'] as $good){
+                $goodsamount+=$good['price']*$good['quantity'];
+            }
+            $rate=$order_goods_price/$goodsamount;//优惠比例
+
+            foreach ($this->params['goods'] as &$good){
+                $good['price']=$good['price']*$rate;
+                $good['outprice']=$good['outprice']*$rate;
+            }
+            unset($good);
+            $this->params['discount']=0;
+            $this->params['goods_amount']=$order_goods_price;
+        }
+    }
 	private function getPayment_name($payid){
 		switch ($payid) {
 			case 21:
@@ -130,7 +157,10 @@ class SendOmsapi{
 		if($params['isdisorder']==1){
 			$this->params['disshipping_fee']=$params['dis_shipping_fee'];
 			$this->params['disoutorder_amount']=$params['disorderamount'];
+
 		}
+
+
 
 	}
 	private  function init_out_goods($goodslist,$uniacid,$isdisorder=0){

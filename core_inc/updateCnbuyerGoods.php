@@ -26,7 +26,9 @@ class updateCnbuyerGoods
         '8'=>17,
         '7'=>57,
         '6'=>21,
-        '13'=>88
+        '13'=>88,
+        '14'=>95,
+        '15'=>97,
     );
     public function __construct()
     {
@@ -44,6 +46,7 @@ class updateCnbuyerGoods
     private function init(){
         $warehouse=$this->getwarehouse();
         $this->resellerlist=pdo_fetchall("select * from ".tablename("ewei_shop_reseller"));
+
         foreach ($warehouse as $item){
             $pageindex=1;
             $pagecount=50;
@@ -59,11 +62,11 @@ class updateCnbuyerGoods
                         if(isset($goods_list['goods_list']) && empty($goods_list['goods_list'])){
                             $this->save_goods($goods_list['goods_list'],$item['id']);
                         }
-
                     }
                 }
             }
         }
+        echo "处理完成";
     }
 
     private  function save_goods($goods_list,$warehouse_id){
