@@ -122,9 +122,17 @@ class Pay_EweiShopV2Page extends MobileLoginPage
             $params['user'] = $openid;
             $params['fee'] = $order['price'];
             $params['title'] = $param_title;
-            $jearray=Dispage::getDisaccountArray();
+            $jearray=Dispage::getDisaccountArray($_W['uniacid']);
+
             if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
                 $jie = 1;
+            }
+            if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
+                $jie = 1;
+            }
+            if($_W['openid']=="oIeNnwzHrT6vXpiIUss3l5lt_W2w"){
+              //  var_dump($jearray);
+              //  die();
             }
             if (isset($set['pay']) && $set['pay']['weixin'] == 1 && $jie !== 1) {
                 //如果开启微信支付
@@ -139,11 +147,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                     }
                 }
                 $wechat = m('common')->wechat_build($params, $options, 0);
-//                if($_W['openid']=="oIeNnwzHrT6vXpiIUss3l5lt_W2w"){
-//                    var_dump($options);
-//                    var_dump($wechat);
-//                    die();
-//                }
+
                 if (!is_error($wechat)) {
                     $wechat['success'] = true;
                     $wechat['weixin'] = true;
@@ -155,20 +159,23 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 
                 if (!empty($order['ordersn2'])) {
                     $params['tid'] = $params['tid'] . '_B';
-                } else {
+                }
+                else {
                     $params['tid'] = $params['tid'] . '_borrow';
                 }
 
+
                 $options = array();
-                $options['appid'] = $sec['appid'];
-                $options['mchid'] = $sec['mchid'];
-                $options['apikey'] = $sec['apikey'];
+                $options['appid'] = empty($sec['appid']) ? "" :$sec['appid'];
+                $options['mchid'] = empty($sec['mchid']) ? "" :$sec['mchid'];
+                $options['apikey'] = empty($sec['apikey']) ? "" :$sec['apikey'];
                 if(in_array($_W['uniacid'], $jearray) && $order['isdisorder']==1){
                     load()->model('payment');
                     $setting = uni_setting(DIS_ACCOUNT, array('payment'));
                     if (is_array($setting['payment'])) {
                          $jieweipay = $setting['payment']['wechat'];
                     }
+
                     $APPID = pdo_fetchcolumn('SELECT `key` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>DIS_ACCOUNT));
                     $secret = pdo_fetchcolumn('SELECT `secret` FROM '.tablename('account_wechats')." WHERE uniacid=:uniacid",array(':uniacid'=>DIS_ACCOUNT));
                     $sec['appid']=$APPID;
@@ -182,14 +189,20 @@ class Pay_EweiShopV2Page extends MobileLoginPage
                 }
                 if (!empty($set['pay']['weixin_jie_sub']) && !empty($sec['sub_secret_jie_sub'])){
                     $wxuser = m('member')->wxuser($sec['sub_appid_jie_sub'],$sec['sub_secret_jie_sub']);
+
                     $params['openid'] = $wxuser['openid'];
                 }elseif(!empty($sec['secret'])){
                     $wxuser = m('member')->wxuser($sec['appid'],$sec['secret']);
                     $params['openid'] = $wxuser['openid'];
                 }
-
+                if(Dispage::get_union_data($_W['uniacid'])){
+                    $params['profit_sharing']="Y";
+                };
                 $wechat = m('common')->wechat_native_build($params, $options, 0);
-
+//                if($_W['openid']=="oIeNnwzHrT6vXpiIUss3l5lt_W2w"){
+//                    var_dump($params);
+//                    die();
+//                 }
                 if (!is_error($wechat)) {
                     $wechat['success'] = true;
                     if (!empty($params['openid'])){
@@ -203,7 +216,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
         }
 
        // WeUtility::logging('aaa', var_export($wechat,true));
-        $alipay = array('success' => false);
+            $alipay = array('success' => false);
           
             //支付宝
             if (isset($set['pay']) && $set['pay']['alipay'] == 1) {

@@ -136,7 +136,7 @@ class EweiShopWechatPay
      */
     public function order()
     {
-
+        //WeUtility::logging('trace', $this->get);
         if (!$this->publicMethod()){
 
             exit(__FUNCTION__);
@@ -454,7 +454,7 @@ class EweiShopWechatPay
           
             $tid = $this->get['out_trade_no'];
             
-            $jearray=Dispage::getDisaccountArray();
+            $jearray=Dispage::getDisaccountArray($_W['uniacid']);
 
             if(in_array($_W['uniacid'], $jearray)){
                 if($this->is_jie){

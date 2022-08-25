@@ -16,12 +16,16 @@ class Index_EweiShopV2Page extends MobileLoginPage {
 		global $_W, $_GPC;
 
         $this->diypage('member');
+        $shopset = m('common')->getSysset(array('shop','wap'));
+        $followed = m('user')->followed($_W['openid']);
+
+         mc_oauth_userinfo();
 
 		//会员信息
 		$member = m('member')->getMember($_W['openid'], true);
 		//会员等级
 		$level = m('member')->getLevel($_W['openid']);
-	 
+
 		 
 		//是否开启积分兑换
 		$open_creditshop = p('creditshop') && $_W['shopset']['creditshop']['centeropen'];

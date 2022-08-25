@@ -324,7 +324,19 @@ class Member_EweiShopV2Model {
 		if ($followed || empty($shopset['shop']['getinfo']) || $shopset['shop']['getinfo'] == 1  ) {
 			$uid = mc_openid2uid($openid);
 			if( !EWEI_SHOPV2_DEBUG ){
-				$userinfo = mc_oauth_userinfo();
+				//$userinfo = mc_oauth_userinfo();
+                $fan = mc_fansinfo($openid);
+
+                if(!empty($fan)){
+                    $userinfo = array(
+                        'openid' => $fan['openid'],
+                        'nickname' => $fan['nickname'],
+                        'headimgurl' => $fan['avatar'],
+                        'gender' => "",
+                        'province' => '',
+                        'city' =>"",
+                    );
+                }
 
 			} else {
 				$userinfo = array(

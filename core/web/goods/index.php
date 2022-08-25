@@ -12,34 +12,11 @@ if (!defined('IN_IA')) {
 class Index_EweiShopV2Page extends WebPage {
 
 
-   function test11(){
-        global $_W, $_GPC;
-       //购物积分
-       $goods = pdo_fetchall("SELECT g.id,g.credit, o.total,o.realprice FROM " . tablename('ewei_shop_order_goods') .
-           " o left join " . tablename('ewei_shop_goods') . " g on o.goodsid=g.id " . " WHERE o.orderid=:orderid and o.uniacid=:uniacid", array(':orderid' =>117382, ':uniacid' => $_W['uniacid']));
-      var_dump($goods);
-
-       $credits = 0;
-
-       foreach ($goods as $g) {
-           //积分累计
-           $gcredit = trim($g['credit']);
-           var_dump($gcredit);
-           if (!empty($gcredit)) {
-               if (strexists($gcredit, '%')) {
-                   //按比例计算
-                   $credits += intval(floatval(str_replace('%', '', $gcredit)) / 100 * $g['realprice']);
-               } else {
-                   //按固定值计算
-                   $credits += intval($g['credit']) * $g['total'];
-               }
-           }
-       }
-        die();
-   }
     function test(){
         global $_W, $_GPC;
-        var_dump($_GPC);
+
+        var_dump( m("wxpayv3")->get_certificates());
+
     }
     function main() {
 

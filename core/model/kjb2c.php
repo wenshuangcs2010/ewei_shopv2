@@ -76,8 +76,9 @@ class Kjb2c_EweiShopV2Model {
 //		 }
 		if($order['paytype']==21){
 		 	load()->model('payment');
-		 	$jearray=Dispage::getDisaccountArray();
-		 	$uniacid=$order['uniacid'];
+            $uniacid=$order['uniacid'];
+		 	$jearray=Dispage::getDisaccountArray($uniacid);
+
 		 	if(in_array($uniacid, $jearray) && $order['isdisorder']==1 && $order['isborrow']==1){
                  $uniacid=DIS_ACCOUNT;
                  //$params['order_sn']=$params['out_trade_no']."_borrow";

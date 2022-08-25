@@ -251,10 +251,10 @@ class Dispage{
 			$deductenough=$order['deductenough'];//满额立减优惠
 			$couponprice=$order['couponprice'];//优惠券优惠
 			$buyagainprice=$order['buyagainprice'];//重复购买优惠
-			$discountprice=$oder['discountprice'];//会员优惠
+			$discountprice=$order['discountprice'];//会员优惠
 			$isdiscountprice=$order['isdiscountprice'];//促销优惠
 			$deductprice=$order['deductprice'];//抵扣
-			$seckilldiscountprice=$oder['seckilldiscountprice'];//秒杀优惠
+			$seckilldiscountprice=$order['seckilldiscountprice'];//秒杀优惠
 			$alldeduct=$deductenough+$couponprice+$buyagainprice+$discountprice+$isdiscountprice+$deductprice+$seckilldiscountprice;//总优惠
 			$depotid=$order['depotid'];
 			$ordergoods=Dispage::get_ordergoods($orderid,$type);
@@ -476,9 +476,29 @@ class Dispage{
 		return $prefix . $billno;
 	}
 
+    /**
+     * 是否是平台分账借用主站支付
+     * @param $uniacid
+     * @return bool
+     */
+	public static function get_union_data($uniacid){
+       $data= self::getDisInfo($uniacid);
+       if($data['ifpayment']==2){
+           return true;
+       }
+       return false;
+    }
 
-	public static function getDisaccountArray(){
-		return array(37,47);
+	public static function getDisaccountArray($uniacid=0){
+	    $data=array(37,47);
+	    if($uniacid>0){
+           $disInfo= self::getDisInfo($uniacid);
+            if($disInfo['ifpayment']==2){
+                array_push($data,$uniacid);
+            }
+        }
+
+		return $data;
 	}
 	//获取组合中的商品
 	public static function getPackgoods($goodsid,$uniacid){

@@ -9,7 +9,7 @@
 {else}
 {ifp 'groups.order.send'}
 
-{if  (!empty($disinfo) && $disinfo['secondpay']==0) || $item['paystatus']==2}
+{if  (!empty($disinfo) && $disinfo['ifpayment']==0 && $disinfo['secondpay']==0 && $item['paystatus']==2) }
         {if $item['depot']['if_customs']==1}
         <a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/order/to_customs', array('id' => $item['id']))}">报关</a><br />
         {/if}
@@ -20,8 +20,11 @@
         {else}
             <span class="text-danger">待供货商发货</span><br/>
         {/if}
-    {else}
+    {elseif (!empty($disinfo) && $disinfo['ifpayment']==0 && $disinfo['secondpay']==1 && $item['paystatus']==2) }
+
         <a class="btn btn-primary btn-xs" {if !empty($disinfo) && $disinfo['secondpaytype']==0} data-toggle="ajaxPost" {else} target="_blank" {/if}  href="{php echo webUrl('groups/orderpay', array('order_id' => $item['id']))}">代理结算</a><br/>
+    {else}
+<a class="btn btn-primary btn-xs" {if !empty($disinfo) && $disinfo['secondpaytype']==0} data-toggle="ajaxPost" {else} target="_blank" {/if}  href="{php echo webUrl('groups/orderpay', array('order_id' => $item['id']))}">平台分账</a><br/>
     {/if}
 {/if}
 {ifp 'groups.order.sendcancel'}

@@ -1,4 +1,8 @@
-
+<style>
+    .showpayent{
+        display: none;
+    }
+</style>
 <form class="form-horizontal form-validate" action="{if $globalaction=='add'}{php echo weburl('disseting.reslcomadd')}{else}{php echo weburl('disseting.reslcomedit')}{/if}" method="post" enctype="multipart/form-data">
 	<input type='hidden' name='id' value='{$id}' />
 
@@ -42,6 +46,9 @@
                             </label>
                             <label class='radio-inline'>
                                 <input type='radio' name='ifpayment' value='1' {if $resellerlevelrow['ifpayment']==1}checked{/if} onclick="hideDiscount()"/> 平台
+                            </label>
+                            <label class='radio-inline'>
+                                <input type='radio' name='ifpayment' value='2' {if $resellerlevelrow['ifpayment']==2}checked{/if} onclick="showpayent()"/> 平台分账
                             </label>
                             <span class="help-block-validate" id="keyword-error">请确认当前公众号是否开通收款功能</span>
                         </div>
@@ -90,10 +97,52 @@
                     <label class="col-sm-2 control-label must">唯一标示符</label>
                     <div class="col-sm-9 col-xs-12">
                         <input type="text" name="distcode" class="form-control" value="{$resellerlevelrow['distcode']}" />
-                        <span class="help-block-validate" id="keyword-error">必填(非汉字、非符号，4个字符)，该参数将追加到订单编号之前</span>
+                        <span class="help-block-validate" >必填(非汉字、非符号，4个字符)，该参数将追加到订单编号之前</span>
                     </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group showpayent"  {if $resellerlevelrow['ifpayment']==2}style="display:block;"{/if}>
+                        <label class="col-sm-2 control-label">微信分账接收方类型</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class='radio-inline'>
+                                <input type='radio' name='wx_receivers_type' value='MERCHANT_ID' {if $resellerlevelrow['wx_receivers_type']=="MERCHANT_ID"}checked{/if}  /> 商户
+                            </label>
+                            <label class='radio-inline'>
+                                <input type='radio' name='wx_receivers_type' value='PERSONAL_OPENID' {if $resellerlevelrow['wx_receivers_type']=="PERSONAL_OPENID"}checked{/if} /> 个人
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group showpayent" {if $resellerlevelrow['ifpayment']==2}style="display:block;"{/if}>
+                        <label class="col-sm-2 control-label">分账接收方账号</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type="text" name="account_wx" class="form-control" value="{$resellerlevelrow['account']}" />
+                            <span class="help-block-validate" >类型是商户时，是商户号类型是个人，是个人openid</span>
+                        </div>
+                    </div>
+                    <div class="form-group showpayent" {if $resellerlevelrow['ifpayment']==2}style="display:block;"{/if}>
+                        <label class="col-sm-2 control-label">分账个人接收方姓名</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <input type="text" name="accountname" class="form-control" value="{$resellerlevelrow['accountname']}" />
+                            <span class="help-block-validate" >分账接收方类型是商户时，是商户全称（必传），当商户是小微商户或个体户时，是开户人姓名 分账接收方类型是个人openid时，是个人姓名</span>
+                        </div>
+                    </div>
+                    <div class="form-group showpayent" {if $resellerlevelrow['ifpayment']==2}style="display:block;"{/if}>
+                        <label class="col-sm-2 control-label must">与分账方的关系类型</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <select name="relation_type" class='form-control input-sm select-sm select2' aria-required="true" style="width:200px;" data-placeholder="与分账方的关系类型">
+                                <option value="STORE" {if $resellerlevelrow['relation_type']=="STORE"}selected{/if} >门店</option>
+                                <option value="STAFF" {if $resellerlevelrow['relation_type']=="STAFF"}selected{/if} >员工</option>
+                                <option value="STORE_OWNER" {if $resellerlevelrow['relation_type']=="STORE_OWNER"}selected{/if} >店主</option>
+                                <option value="PARTNER" {if $resellerlevelrow['relation_type']=="PARTNER"}selected{/if} >合作伙伴</option>
+                                <option value="HEADQUARTER" {if $resellerlevelrow['relation_type']=="HEADQUARTER"}selected{/if} >总部</option>
+                                <option value="BRAND" {if $resellerlevelrow['relation_type']=="BRAND"}selected{/if} >品牌方</option>
+                                <option value="DISTRIBUTOR" {if $resellerlevelrow['relation_type']=="DISTRIBUTOR"}selected{/if} >分销商</option>
+                                <option value="USER" {if $resellerlevelrow['relation_type']=="USER"}selected{/if} >用户</option>
+                                <option value="SUPPLIER" {if $resellerlevelrow['relation_type']=="SUPPLIER"}selected{/if} >供应商</option>
+                            </select>
+                            <span  class="help-block-validate">此项必须填写</span>
+                        </div>
+                    </div>
+                    <div class="form-group secondpay">
                         <label class="col-sm-2 control-label must">收款OPENID</label>
                         <div class="col-sm-9 col-xs-12">
                             <input type="text" name="openid" class="form-control" value="{$resellerlevelrow['openid']}" />
@@ -113,10 +162,16 @@
 <script language="javascript">
 function showDiscount(){
         $('.secondpay').show();
+        $('.showpayent').hide();
     }
     
     function hideDiscount(){
         $('.secondpay').hide();
+        $('.showpayent').hide();
+    }
+    function showpayent() {
+        $('.secondpay').hide();
+        $('.showpayent').show();
     }
 
 </script>

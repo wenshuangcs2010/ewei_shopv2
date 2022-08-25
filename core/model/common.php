@@ -488,6 +488,12 @@ class Common_EweiShopV2Model {
 			$wechat['version'] = 1;
 		}
 		$wOpt = array();
+
+		$profit_sharing="N";
+        if(isset($params['profit_sharing'])){
+            $profit_sharing=$params['profit_sharing'];
+        }
+
 		if ($wechat['version'] == 1) {
 			$wOpt['appId'] = $wechat['appid'];
 			$wOpt['timeStamp'] = TIMESTAMP . "";
@@ -501,6 +507,7 @@ class Common_EweiShopV2Model {
 			$package['out_trade_no'] = $params['tid'];
 			$package['total_fee'] = $params['fee'] * 100;
 			$package['fee_type'] = '1';
+			$package['profit_sharing'] = $profit_sharing;
 			// $package['notify_url'] = $_W['siteroot'] . 'payment/wechat/notify.php';
 			$package['notify_url'] = $_W['siteroot'] . "addons/ewei_shopv2/payment/wechat/notify.php";
 			$package['spbill_create_ip'] = CLIENT_IP;
@@ -553,6 +560,7 @@ class Common_EweiShopV2Model {
 			$package['out_trade_no'] = $params['tid'];
 			$package['total_fee'] = $params['fee'] * 100;
 			$package['spbill_create_ip'] = CLIENT_IP;
+            $package['profit_sharing'] = $profit_sharing;
 			if ( !empty($params["goods_tag"]) )
 				$package['goods_tag'] = $params['goods_tag'];  //商品标记
 			//$package['time_start'] = date('YmdHis', TIMESTAMP);
@@ -561,6 +569,7 @@ class Common_EweiShopV2Model {
 			$package['notify_url'] = $_W['siteroot'] . "addons/ewei_shopv2/payment/wechat/notify.php";
 			$package['trade_type'] = 'JSAPI';
 			$package['openid'] = empty($params['openid']) ? $_W['openid'] : $params['openid'];
+
 			ksort($package, SORT_STRING);
 			$string1 = '';
 			foreach ($package as $key => $v) {
@@ -608,6 +617,7 @@ class Common_EweiShopV2Model {
 		global $_W;
 		load()->func('communication');
 		$package = array();
+        $profit_sharing="N";
 		$package['appid'] = $wechat['appid'];
 		$package['mch_id'] = $wechat['mch_id'];
 		$package['sub_mch_id'] = $wechat['sub_mch_id'];  //子商户的mchid
@@ -619,6 +629,7 @@ class Common_EweiShopV2Model {
 		$package['total_fee'] = $params['fee'] * 100;
 		$package['spbill_create_ip'] = CLIENT_IP;
 		$package['product_id'] = $params['goods_id'];
+		$package['profit_sharing'] = $profit_sharing;
 		if ( !empty($params["goods_tag"]) )
 			$package['goods_tag'] = $params['goods_tag'];  //商品标记，代金券或立减优惠功能的参数
 		$package['time_start'] = date('YmdHis', TIMESTAMP);
@@ -692,13 +703,20 @@ class Common_EweiShopV2Model {
                 return $this->wechat_native_child_build($params,$wechat,$type);
             }
         }
+
         if (!empty($params['openid'])){
             $wechat['version'] = 2;
             $wechat['signkey'] = $wechat['apikey'];
             $wechat['mch_id'] = $wechat['mchid'];
             return $this->wechat_build($params,$wechat,$type);
         }
+        $profit_sharing="N";
+
 		$package = array();
+
+		if(isset($params['profit_sharing'])){
+            $profit_sharing=$params['profit_sharing'];
+        }
 		$package['appid'] = $wechat['appid'];
 		$package['mch_id'] = $wechat['mchid'];
 		$package['nonce_str'] = random(32);
@@ -709,12 +727,14 @@ class Common_EweiShopV2Model {
 		$package['total_fee'] = $params['fee'] * 100;
 		$package['spbill_create_ip'] = CLIENT_IP;
 		$package['product_id'] = $params['tid'];
+        $package['profit_sharing'] = $profit_sharing;
 		if ( !empty($params["goods_tag"]) )
 			$package['goods_tag'] = $params['goods_tag'];  //商品标记，代金券或立减优惠功能的参数
 		$package['time_start'] = date('YmdHis', TIMESTAMP);
 		$package['time_expire'] = date('YmdHis', TIMESTAMP + 3600);
 		$package['notify_url'] = empty($params['notify_url']) ? $_W['siteroot'] . "addons/ewei_shopv2/payment/wechat/notify.php" : $params['notify_url'];
 		$package['trade_type'] = 'NATIVE';
+
 		ksort($package, SORT_STRING);
 		$string1 = '';
 		foreach ($package as $key => $v) {

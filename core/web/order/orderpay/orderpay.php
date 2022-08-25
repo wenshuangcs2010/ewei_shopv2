@@ -165,4 +165,6 @@ class orderpay_EweiShopV2Page extends WebPage {
 		global $_W, $_GPC;
 		include $this->template();
 	}
+
+
 }

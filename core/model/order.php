@@ -91,7 +91,44 @@ class Order_EweiShopV2Model
                         $this->setStocksAndCredits($orderid, 1);
                        
                         $customs=m("kjb2c")->check_if_customs($order['depotid']);
-
+                        $depot=m("kjb2c")->get_depot($order['depotid']);
+                        if($customs){
+                            if($depot['if_customs']){ //订单报关
+                                m("kjb2c")->to_customs_new($orderid);
+                            }
+                        }
+                        //非自营仓库推单非代理订单推单
+                        if($order['isdisorder']==0 && $depot['ismygoods']==1){
+                            //oms订单推动
+                            if($depot['updateid']==3){
+                                $ret=m("kjb2c")->sendOmsorder($orderid);
+                            }
+                        }
+                        //代理订单
+                        if($order['isdisorder']==1){
+                            //代理关系
+                            $disInfo=Dispage::getDisInfo($_W['uniacid']);
+                            $ifpayment=$disInfo['ifpayment'];//分账方式
+                            switch ($ifpayment){
+                                case 0://自己公众号收款 订单支付
+                                    m('kjb2c')->pay_disorder_wx($orderid,$_W['uniacid']);
+                                    break;
+                                case 1://平台代收
+                                    $ret=m("kjb2c")->sendOmsorder($orderid);
+                                    break;
+                                case 2://平台分账
+                                     //创建一个分账订单
+                                    $ret=m("wxpayv3")->createOrder($orderid,$params['paymentno']);
+                                    if(true==$ret){
+                                        $status=m("wxpayv3")->profitsharing($orderid,$params['paymentno']);
+                                        if($status===true){
+                                            $ret=m("kjb2c")->sendOmsorder($orderid);
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        /*
                         if($customs){
                             
                             if($order['if_customs_z']==1 || $order['deductcredit2']>0 || $params['paytype']==1){//需要盛付通处理不在此次报关和申报
@@ -142,11 +179,7 @@ class Order_EweiShopV2Model
                         $depot=m("kjb2c")->get_depot($order['depotid']);
                         //全部订单推送非代理 主站
                         if($order['isdisorder']==0 && $_W['uniacid']==DIS_ACCOUNT){
-                            //主站订单指定推单
-                            if($depot['ismygoods']==1 && $depot['updateid']==1){
-                                //推送到保税超市
-                                m("kjb2c")->sendOrder($orderid);
-                            }elseif($depot['ismygoods']==1 && $depot['updateid']==3){
+                            if($depot['ismygoods']==1 && $depot['updateid']==3){
                                 $ret=m("kjb2c")->sendOmsorder($orderid);
                                 WeUtility::logging('log_ret_oms', var_export($ret,true));
                             }
@@ -168,6 +201,7 @@ class Order_EweiShopV2Model
                         if($order['deductcredit2']>0 && $customs){
                             pdo_update("ewei_shop_order",array("if_customs_z"=>1),array("id"=>$orderid));
                         }
+                        */
                         //发送赠送优惠券
                         if (com('coupon')) {
                             WeUtility::logging('coupon_test', var_export($order['id'], true));
@@ -178,7 +212,7 @@ class Order_EweiShopV2Model
                         if (com('coupon') && !empty($order['couponid'])) {
                             com('coupon')->backConsumeCoupon($order['id']); //订单支付
                         }
-                       
+
                             //模板消息
                             m('notice')->sendOrderMessage($orderid);    
                        

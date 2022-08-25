@@ -282,8 +282,8 @@ class Index_EweiShopV2Page extends WebPage {
 			}
 			if ($_FILES['weixin_root_file']['name']) {
 				$sec['root'] = $this->upload_cert('weixin_root_file');
-
 			}
+
             //子商户微信支付
             if ($_FILES['weixin_sub_cert_file']['name']) {
                 $sec['sub']['cert'] = $this->upload_cert('weixin_sub_cert_file');
@@ -326,6 +326,7 @@ class Index_EweiShopV2Page extends WebPage {
 			if ($_FILES['app_wechat_root_file']['name']) {
 				$sec['app_wechat']['root'] = $this->upload_cert('app_wechat_root_file');
 			}
+            $sec['merchantCertificateSerial'] = trim($_GPC['data']['merchantCertificateSerial']);
 			//微信APP支付
             $sec['app_wechat']['appid'] = trim($_GPC['data']['app_wechat_appid']);
             $sec['app_wechat']['appsecret'] = trim($_GPC['data']['app_wechat_appsecret']);

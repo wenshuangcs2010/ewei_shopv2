@@ -76,8 +76,10 @@ class Index_EweiShopV2Page extends WebPage {
 			$row['resellerid']=$t[$row['resellerid']];
 			if($row['ifpayment']==0){
 				$row['ifpayment']="公众号";
-			}else{
-				$row['ifpayment']="平台";
+			}elseif($row['ifpayment']==1){
+                $row['ifpayment']="平台";
+            }else{
+				$row['ifpayment']="平台分账";
 			}
 			if($row['secondpay']==1){
 				$row['secondpay']="是";
@@ -125,6 +127,17 @@ class Index_EweiShopV2Page extends WebPage {
 			$data['openid']=trim($_GPC['openid']);//二次支付的公众号
 			$data['autoretainage']=intval($_GPC['autoretainage']);//二次支付是否自动结算
 			$data['secondpaytype']=intval($_GPC['secondpaytype']);//二次支付是否自动结算
+            $data['wx_receivers_type']=trim($_GPC['wx_receivers_type']);//微信分账接收方类型
+            $data['account']=trim($_GPC['account_wx']);//分账接收方账号
+            $data['accountname']=trim($_GPC['accountname']);//分账个人接收方姓名
+            $data['relation_type']=trim($_GPC['relation_type']);//与分账方的关系类型
+           if($data['ifpayment']==2){
+               $ret=m("wxpayv3")->addreceivers($data['Accountsid']);
+               if(true!==$ret){
+                   show_json(0,$ret);
+               }
+           }
+
 			$re=pdo_insert("ewei_shop_resellerlevel",$data);
 			if($re){
 				$id=pdo_insertid();
@@ -151,6 +164,18 @@ class Index_EweiShopV2Page extends WebPage {
 			$data['openid']=trim($_GPC['openid']);//二次支付的公众号
 			$data['autoretainage']=intval($_GPC['autoretainage']);//二次支付是否自动结算
 			$data['secondpaytype']=intval($_GPC['secondpaytype']);//二次支付是否自动结算方式
+            $data['wx_receivers_type']=trim($_GPC['wx_receivers_type']);//微信分账接收方类型
+            $data['account']=trim($_GPC['account_wx']);//分账接收方账号
+            $data['accountname']=trim($_GPC['accountname']);//分账个人接收方姓名
+            $data['relation_type']=trim($_GPC['relation_type']);//与分账方的关系类型
+            if($resellerlevelrow['ifpayment']!=2 && $data['ifpayment']==2){
+                $ret=m("wxpayv3")->addreceivers($data['Accountsid'],$data['wx_receivers_type'],$data['account'],$data['accountname'],$data['relation_type']);
+                if(true!==$ret){
+                    show_json(0,$ret);
+                }
+            }
+
+
 			$re=pdo_update("ewei_shop_resellerlevel",$data,array("id"=>$id));
 			if($re){
 				plog('log.add', "修改代理关系ID{$id},{$data['name']}");

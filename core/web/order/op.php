@@ -22,6 +22,42 @@ class Op_EweiShopV2Page extends WebPage {
         show_json(1, webUrl('order', array('status' => $status)));
     }
 
+    /**
+     * 平台分账
+     */
+    function orderpayunfreeze(){
+        global $_W, $_GPC;
+        $orderid=$_GPC['order_id'];
+        $order=pdo_fetch("SELECT * from ".tablename("ewei_shop_order")." where id=:id",array(":id"=>$orderid));
+        $disInfo=Dispage::getDisInfo($order['uniacid']);
+        if($disInfo['ifpayment']!=2){
+            show_json(0,"当前公众号并非平台分账模式");
+        }
+        $payfee=$order['disorderamount'];
+        $lirui=$order['price']-$payfee;
+        if($lirui<=0){
+            show_json(0,"利润金额:{$lirui}出现异常");
+        }
+        $ret= m("wxpayv3")->checkunfreeOrder($orderid);
+        if(is_array($ret)){
+            $ret=m("wxpayv3")->profitsharing($orderid,$order['paymentno']);
+            if($ret!==true){
+                show_json(0,$ret);
+            }
+        }
+        elseif(true===$ret){
+            m("wxpayv3")->createOrder($orderid,$order['paymentno']);
+            $ret=m("wxpayv3")->profitsharing($orderid,$order['paymentno']);
+            if($ret!==true){
+                show_json(0,$ret);
+            }
+        }else{
+            show_json(0,"分账异常:{$ret}");
+        }
+        show_json(1,"已发起分账等待分账结果");
+
+    }
+
     protected function opData() {
 
         global $_W, $_GPC;

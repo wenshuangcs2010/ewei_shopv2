@@ -139,20 +139,46 @@ class Index_EweiShopV2Page extends UnionWebPage
         global $_GPC,$_W;
         $id=intval($_GPC['id']);
         $union_id=$_W['unionid'];
+        /*
         $sql="select m.name,m.mobile_phone,op.option_name,m.idcard from ".tablename("ewei_shop_union_activityresearch_sign")." as sg LEFT JOIN  "
             .tablename("ewei_shop_union_activityresearch_option")." as op ON op.id=sg.option_id "
-            ." LEFT JOIN ".tablename("ewei_shop_union_members")." as m ON sg.openid=m.openid and m.union_id={$union_id}"
+            ."JOIN ".tablename("ewei_shop_union_members")." as m ON sg.openid=m.openid and m.union_id={$union_id}"
             .' where sg.research_id=:research_id'
         ;
         $list=pdo_fetchall($sql,array(":research_id"=>$id));
+        */
+        $sql="select name,mobile_phone,idcard,openid from ".tablename('ewei_shop_union_members')." where union_id=:union_id order by sort desc,add_time desc ";
+        $list=pdo_fetchall($sql,array(":union_id"=>$union_id));
 
+        $data=array();
+
+        foreach ($list as $item){
+            $data_temp=array(
+                'name'=>$item['name'],
+                'mobile_phone'=>$item['mobile_phone'],
+                'idcard'=>$item['idcard'],
+            );
+            if(!empty($item['openid'])){
+                $sql="select op.option_name from ".tablename('ewei_shop_union_activityresearch_sign')
+                    ." as sg LEFT JOIN ".tablename('ewei_shop_union_activityresearch_option')
+                    ." as op ON op.id=sg.option_id "
+                    ."JOIN ".tablename("ewei_shop_union_members")." as m ON sg.openid=m.openid"
+                    .' where sg.research_id=:research_id and sg.openid=:openid and m.union_id=:union_id';
+                $option_name=pdo_fetchcolumn($sql,array(":research_id"=>$id,":openid"=>$item['openid'],':union_id'=>$union_id));
+                $data_temp['option_name']=$option_name;
+                $data[]=$data_temp;
+            }else{
+                $data_temp['option_name']="";
+                $data[]=$data_temp;
+            }
+        }
         $columns=array(
             array('title' => '工会会员', 'field' => 'name', 'width' => 32),
             array('title' => "会员电话", 'field' => 'mobile_phone', 'width' => 32),
             array('title' => "身份证号码", 'field' => 'idcard', 'width' => 32),
             array('title' => "选项", 'field' => 'option_name', 'width' => 32),
         );
-        m('excel')->export($list, array(
+        m('excel')->export($data, array(
             "title" => "记录导出",
             'columns'=>$columns,
         ));
